@@ -13,12 +13,14 @@ class RoleSeeder extends Seeder
         $data = Yaml::parseFile(database_path('data/roles.yaml'));
 
         foreach ($data['roles'] as $roleData) {
-            Role::firstOrCreate(
+            $role = Role::firstOrCreate(
                 [
                     'name' => $roleData['name'],
                     'guard_name' => $roleData['guard'],
                 ],
             );
+
+            $role->syncPermissions($roleData['permissions'] ?? []);
         }
     }
 }

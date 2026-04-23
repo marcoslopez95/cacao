@@ -1,0 +1,11 @@
+permissions:
+  - name: roles.view
+    guard: web
+  - name: roles.create
+    guard: web
+  - name: roles.update
+    guard: web
+  - name: roles.delete
+    guard: web
+  - name: roles.assign-permissions
+    guard: web
