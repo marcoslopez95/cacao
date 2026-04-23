@@ -7,11 +7,14 @@ export type User = {
     created_at: string;
     updated_at: string;
     roles: string[];
+    permissions: string[];
     [key: string]: unknown;
 };
 
 export type Auth = {
     user: User;
+    roles: string[];
+    permissions: string[];
 };
 
 export type TwoFactorConfigContent = {

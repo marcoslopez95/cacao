@@ -27,12 +27,12 @@ createInertiaApp({
         }
     },
     setup({ el, App, props, plugin }) {
-        const roles = (props.initialPage?.props?.auth as { roles?: string[] })?.roles ?? [];
-        ability.update(buildRules(roles));
+        const auth = (props.initialPage?.props?.auth as { roles?: string[]; permissions?: string[] }) ?? {};
+        ability.update(buildRules(auth.permissions ?? [], auth.roles ?? []));
 
         router.on('success', (event) => {
-            const updatedRoles = (event.detail.page.props.auth as { roles?: string[] })?.roles ?? [];
-            ability.update(buildRules(updatedRoles));
+            const updatedAuth = (event.detail.page.props.auth as { roles?: string[]; permissions?: string[] }) ?? {};
+            ability.update(buildRules(updatedAuth.permissions ?? [], updatedAuth.roles ?? []));
         });
 
         createApp({ render: () => h(App, props) })
