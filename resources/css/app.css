@@ -175,3 +175,9 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* Override tokens.css unlayered body rule so dark mode variables take effect */
+body {
+    color: var(--foreground);
+    background-color: var(--background);
+}
