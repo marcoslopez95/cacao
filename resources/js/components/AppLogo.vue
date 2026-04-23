@@ -1,16 +1,16 @@
-<script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
-</script>
-
 <template>
-    <div
-        class="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground"
-    >
-        <AppLogoIcon class="size-5 fill-current text-white dark:text-black" />
-    </div>
-    <div class="ml-1 grid flex-1 text-left text-sm">
-        <span class="mb-0.5 truncate leading-tight font-semibold"
-            >Laravel Starter Kit</span
-        >
+    <div class="flex items-center gap-2.5">
+        <div class="grid grid-cols-3 gap-[2.5px] w-5 shrink-0">
+            <span class="rounded-xs aspect-square bg-white/90"></span>
+            <span class="rounded-xs aspect-square bg-white/90"></span>
+            <span class="rounded-xs aspect-square bg-terracota"></span>
+            <span class="rounded-xs aspect-square bg-white/90"></span>
+            <span class="rounded-xs aspect-square bg-white/90"></span>
+            <span class="invisible aspect-square"></span>
+            <span class="rounded-xs aspect-square bg-white/90"></span>
+            <span class="rounded-xs aspect-square bg-white/90"></span>
+            <span class="rounded-xs aspect-square bg-white/90"></span>
+        </div>
+        <span class="text-[13px] font-bold tracking-[4px] text-white uppercase leading-none">CACAO</span>
     </div>
 </template>
