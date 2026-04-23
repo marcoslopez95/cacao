@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { login, register } from '@/routes';
+import { computed } from 'vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { login, register, dashboard } from '@/routes';
+
+const page = usePage();
+const dashboardHref = computed(() => {
+    const team = page.props.currentTeam as { id: number } | null;
+    return team ? dashboard(team.id) : login();
+});
 
 withDefaults(
     defineProps<{
@@ -39,7 +46,7 @@ withDefaults(
                 </span>
                 <template v-if="$page.props.auth.user">
                     <Link
-                        href="/dashboard"
+                        :href="dashboardHref"
                         class="bg-terracota hover:bg-terra-hover text-white text-[12px] font-semibold px-4 py-1.75 rounded-[7px] transition-colors"
                     >
                         Dashboard
