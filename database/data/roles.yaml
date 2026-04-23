@@ -1,0 +1,16 @@
+roles:
+  - name: Admin
+    description: Acceso total al sistema
+    guard: web
+
+  - name: Profesor
+    description: Gestión de secciones, evaluaciones y recursos propios
+    guard: web
+
+  - name: Estudiante
+    description: Acceso a inscripciones, notas y materiales
+    guard: web
+
+  - name: Coordinador de Area
+    description: Supervisión académica de un área o departamento
+    guard: web
