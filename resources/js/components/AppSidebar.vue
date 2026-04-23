@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-vue-next';
+import { BookOpen, FolderGit2, LayoutGrid, Shield } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -17,6 +17,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as rolesIndex } from '@/routes/security/roles';
 import type { NavItem } from '@/types';
 
 const page = usePage();
@@ -25,13 +26,28 @@ const dashboardUrl = computed(() =>
     page.props.currentTeam ? dashboard(page.props.currentTeam.slug).url : '/',
 );
 
-const mainNavItems = computed<NavItem[]>(() => [
-    {
-        title: 'Dashboard',
-        href: dashboardUrl.value,
-        icon: LayoutGrid,
-    },
-]);
+const mainNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Dashboard',
+            href: dashboardUrl.value,
+            icon: LayoutGrid,
+        },
+    ];
+
+    if (
+        page.props.auth.permissions?.includes('roles.view') ||
+        page.props.auth.roles?.includes('Admin')
+    ) {
+        items.push({
+            title: 'Roles',
+            href: rolesIndex.url(),
+            icon: Shield,
+        });
+    }
+
+    return items;
+});
 
 const footerNavItems: NavItem[] = [
     {
