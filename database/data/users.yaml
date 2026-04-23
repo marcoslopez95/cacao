@@ -1,0 +1,20 @@
+users:
+  - name: Administrador CACAO
+    email: admin@cacao.edu.ve
+    password: password
+    role: Admin
+
+  - name: Profesor Demo
+    email: profesor@cacao.edu.ve
+    password: password
+    role: Profesor
+
+  - name: Estudiante Demo
+    email: estudiante@cacao.edu.ve
+    password: password
+    role: Estudiante
+
+  - name: Coordinador Demo
+    email: coordinador@cacao.edu.ve
+    password: password
+    role: Coordinador de Area
