@@ -1,0 +1,348 @@
+/*
+ * CACAO — Design Tokens
+ * Sistema de gestión académica
+ * Tipografía: Space Grotesk (Google Fonts)
+ *
+ * Uso: importar en app.css o resources/css/app.css de Laravel
+ * @import url('tokens.css');
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+:root {
+
+  /* ─────────────────────────────────────────
+     TIPOGRAFÍA
+  ───────────────────────────────────────── */
+
+  --font-sans:    'Space Grotesk', sans-serif;
+  --font-mono:    'Courier New', Courier, monospace;
+
+  /* Escala tipográfica */
+  --text-wordmark:  36px;
+  --text-h1:        24px;
+  --text-h2:        18px;
+  --text-h3:        15px;
+  --text-body:      13px;
+  --text-label:     11px;
+  --text-caption:   11px;
+  --text-code:      12px;
+
+  /* Pesos */
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
+  /* Letter spacing */
+  --tracking-wordmark: 7px;
+  --tracking-label:    0.8px;
+  --tracking-loose:    2.5px;
+  --tracking-tight:    -0.3px;
+
+  /* Line height */
+  --leading-tight:  1.3;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+
+  /* ─────────────────────────────────────────
+     COLORES DE MARCA
+  ───────────────────────────────────────── */
+
+  /* Primarios */
+  --color-tinta:        #131110;
+  --color-tinta-soft:   #2A2826;
+  --color-terracota:    #C8521A;
+  --color-terra-hover:  #E8895A;
+  --color-terra-light:  #F5E8E0;
+  --color-terra-text:   #7A3010;
+  --color-pizarra:      #3D3A36;
+
+  /* Superficies y fondos */
+  --color-papel:        #F4F2EF;
+  --color-papel-dark:   #EDEBE7;
+  --color-hueso:        #FAFAF8;
+
+  /* Texto */
+  --color-text-primary:   #131110;
+  --color-text-secondary: #888780;
+  --color-text-tertiary:  #C8C6C2;
+
+  /* Bordes */
+  --color-border:         #E0DDD8;
+  --color-border-medium:  #C8C6C2;
+  --color-border-dark:    #888780;
+
+  /* Semánticos — Éxito */
+  --color-success-bg:     #EAF3DE;
+  --color-success-border: #C0DD97;
+  --color-success-text:   #27500A;
+
+  /* Semánticos — Alerta */
+  --color-warning-bg:     #FAEEDA;
+  --color-warning-border: #FAC775;
+  --color-warning-text:   #633806;
+
+  /* Semánticos — Error */
+  --color-danger-bg:      #FCEBEB;
+  --color-danger-border:  #F7C1C1;
+  --color-danger-text:    #791F1F;
+
+  /* Semánticos — Info */
+  --color-info-bg:        #E6F1FB;
+  --color-info-border:    #85B7EB;
+  --color-info-text:      #185FA5;
+
+
+  /* ─────────────────────────────────────────
+     ESPACIADO
+  ───────────────────────────────────────── */
+
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-7:   28px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-15:  60px;
+
+
+  /* ─────────────────────────────────────────
+     BORDER RADIUS
+  ───────────────────────────────────────── */
+
+  --radius-sm:   6px;   /* chips, badges, módulos pequeños */
+  --radius-md:   8px;   /* inputs, botones */
+  --radius-lg:   12px;  /* cards */
+  --radius-xl:   14px;  /* modales, panels grandes */
+  --radius-full: 9999px; /* pills */
+
+
+  /* ─────────────────────────────────────────
+     SOMBRAS
+  ───────────────────────────────────────── */
+
+  --shadow-none:  none;
+  --shadow-card:  0 2px 16px rgba(19, 17, 16, 0.06);
+  --shadow-modal: 0 8px 32px rgba(19, 17, 16, 0.12);
+  --shadow-focus: 0 0 0 3px rgba(200, 82, 26, 0.25);
+
+
+  /* ─────────────────────────────────────────
+     TRANSICIONES
+  ───────────────────────────────────────── */
+
+  --transition-fast:   0.1s ease;
+  --transition-normal: 0.15s ease;
+  --transition-slow:   0.25s ease;
+
+
+  /* ─────────────────────────────────────────
+     Z-INDEX
+  ───────────────────────────────────────── */
+
+  --z-base:     0;
+  --z-raised:   10;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-modal:    300;
+  --z-toast:    400;
+  --z-tooltip:  500;
+
+
+  /* ─────────────────────────────────────────
+     LAYOUT
+  ───────────────────────────────────────── */
+
+  --sidebar-width:    200px;
+  --topbar-height:    52px;
+  --content-max-width: 1280px;
+
+}
+
+
+/* ─────────────────────────────────────────
+   CLASES UTILITARIAS BASE
+───────────────────────────────────────── */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family:  var(--font-sans);
+  font-size:    var(--text-body);
+  font-weight:  var(--weight-regular);
+  color:        var(--color-text-primary);
+  background:   var(--color-papel-dark);
+  line-height:  var(--leading-relaxed);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings */
+h1 { font-size: var(--text-h1); font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); }
+h2 { font-size: var(--text-h2); font-weight: var(--weight-semibold); letter-spacing: -0.2px; }
+h3 { font-size: var(--text-h3); font-weight: var(--weight-medium); }
+
+/* Inputs base */
+input, select, textarea {
+  font-family:  var(--font-sans);
+  font-size:    var(--text-body);
+  font-weight:  var(--weight-regular);
+  color:        var(--color-text-primary);
+  background:   var(--color-hueso);
+  border:       1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding:      9px 13px;
+  outline:      none;
+  transition:   border-color var(--transition-normal);
+  width:        100%;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-terracota);
+  box-shadow:   var(--shadow-focus);
+}
+
+input.error,
+select.error,
+textarea.error {
+  border-color: #E24B4A;
+}
+
+/* Botones base */
+button, .btn {
+  font-family:   var(--font-sans);
+  font-size:     var(--text-body);
+  font-weight:   var(--weight-medium);
+  border-radius: var(--radius-md);
+  padding:       8px 20px;
+  border:        none;
+  cursor:        pointer;
+  transition:    background var(--transition-fast), opacity var(--transition-fast);
+  display:       inline-flex;
+  align-items:   center;
+  gap:           var(--space-2);
+}
+
+.btn-primary {
+  background: var(--color-tinta);
+  color:      var(--color-papel);
+}
+.btn-primary:hover { background: var(--color-tinta-soft); }
+
+.btn-terra {
+  background: var(--color-terracota);
+  color:      var(--color-terra-light);
+}
+.btn-terra:hover { background: var(--color-terra-hover); }
+
+.btn-outline {
+  background: transparent;
+  color:      var(--color-text-primary);
+  border:     1px solid var(--color-border);
+}
+.btn-outline:hover { background: var(--color-papel-dark); }
+
+.btn-subtle {
+  background: var(--color-papel-dark);
+  color:      var(--color-text-primary);
+}
+.btn-subtle:hover { background: var(--color-border); }
+
+button:disabled, .btn:disabled {
+  opacity: 0.4;
+  cursor:  not-allowed;
+}
+
+/* Badges */
+.badge {
+  display:       inline-flex;
+  align-items:   center;
+  font-size:     11px;
+  font-weight:   var(--weight-medium);
+  padding:       3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.badge-success { background: var(--color-success-bg); color: var(--color-success-text); }
+.badge-warning { background: var(--color-warning-bg); color: var(--color-warning-text); }
+.badge-danger  { background: var(--color-danger-bg);  color: var(--color-danger-text);  }
+.badge-info    { background: var(--color-info-bg);    color: var(--color-info-text);    }
+.badge-neutral { background: #ECEAE6;                 color: #4A4845;                   }
+.badge-dark    { background: var(--color-tinta);      color: var(--color-papel);        }
+.badge-terra   { background: var(--color-terra-light);color: var(--color-terra-text);   }
+
+/* Cards */
+.card {
+  background:    var(--color-hueso);
+  border:        0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding:       var(--space-4) var(--space-5);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card);
+}
+
+/* Stat cards */
+.stat-card {
+  background:    var(--color-papel-dark);
+  border-radius: var(--radius-md);
+  padding:       var(--space-4);
+}
+
+.stat-card .stat-label {
+  font-size:   11px;
+  color:       var(--color-text-secondary);
+  margin-bottom: var(--space-1);
+}
+
+.stat-card .stat-value {
+  font-size:     26px;
+  font-weight:   var(--weight-bold);
+  letter-spacing: -0.5px;
+  color:         var(--color-text-primary);
+}
+
+.stat-card .stat-sub {
+  font-size: 11px;
+  color:     var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+/* Dividers */
+hr, .divider {
+  border:     none;
+  border-top: 0.5px solid var(--color-border);
+  margin:     0;
+}
+
+/* Labels de formulario */
+label {
+  font-size:   12px;
+  font-weight: var(--weight-medium);
+  color:       var(--color-text-primary);
+  display:     block;
+  margin-bottom: var(--space-1);
+}
+
+.field-hint {
+  font-size: 11px;
+  color:     var(--color-text-secondary);
+  margin-top: var(--space-1);
+}
+
+.field-error {
+  font-size: 11px;
+  color:     var(--color-danger-text);
+  margin-top: var(--space-1);
+}

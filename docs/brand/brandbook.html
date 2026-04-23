@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CACAO — Brand Book</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --tinta:        #131110;
+    --tinta-soft:   #2A2826;
+    --terracota:    #C8521A;
+    --terra-hover:  #E8895A;
+    --terra-light:  #F5E8E0;
+    --terra-text:   #7A3010;
+    --pizarra:      #3D3A36;
+    --papel:        #F4F2EF;
+    --papel-dark:   #EDEBE7;
+    --hueso:        #FAFAF8;
+    --gris:         #888780;
+    --gris-light:   #C8C6C2;
+    --borde:        #E0DDD8;
+    --sg:           'Space Grotesk', sans-serif;
+    --success-bg:   #EAF3DE; --success-t: #27500A;
+    --warn-bg:      #FAEEDA; --warn-t:    #633806;
+    --danger-bg:    #FCEBEB; --danger-t:  #791F1F;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--papel-dark);
+    color: var(--tinta);
+  }
+
+  /* ── PORTADA ── */
+  .cover {
+    background: var(--tinta);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 60px;
+  }
+
+  .cover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .cover-isotipo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    width: 64px;
+  }
+
+  .cover-isotipo span {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: var(--papel);
+    display: block;
+  }
+
+  .cover-isotipo span.hot { background: var(--terracota); }
+  .cover-isotipo span.empty { background: transparent; }
+
+  .cover-tag {
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    color: var(--gris);
+    text-transform: uppercase;
+  }
+
+  .cover-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 0 40px;
+  }
+
+  .cover-wordmark {
+    font-size: 120px;
+    font-weight: 700;
+    letter-spacing: 20px;
+    color: var(--papel);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .cover-sub {
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--gris);
+    text-transform: uppercase;
+  }
+
+  .cover-line {
+    width: 48px;
+    height: 2px;
+    background: var(--terracota);
+    margin-bottom: 16px;
+  }
+
+  .cover-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .cover-desc {
+    font-size: 12px;
+    color: var(--gris);
+    line-height: 1.8;
+    max-width: 400px;
+  }
+
+  .cover-version {
+    font-size: 11px;
+    color: var(--pizarra);
+    letter-spacing: 1px;
+  }
+
+  /* ── SECCIONES ── */
+  .section {
+    padding: 80px 60px;
+    border-bottom: 0.5px solid var(--borde);
+  }
+
+  .section:nth-child(even) { background: var(--hueso); }
+  .section:nth-child(odd)  { background: var(--papel); }
+
+  .section-number {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--terracota);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--tinta);
+    margin-bottom: 40px;
+    letter-spacing: -0.5px;
+  }
+
+  /* ── LOGO GRID ── */
+  .logo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .logo-cell {
+    border-radius: 14px;
+    padding: 40px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    min-height: 180px;
+  }
+
+  .logo-cell-label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  .wordmark-svg-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .wm-text {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 6px;
+  }
+
+  .wm-sub {
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+  }
+
+  /* Isotipo inline */
+  .isotipo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .isotipo span {
+    width: 13px;
+    height: 13px;
+    border-radius: 2.5px;
+    display: block;
+  }
+
+  /* ── ANATOMÍA ── */
+  .anatomy-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .anatomy-iso-large {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 160px;
+    flex-shrink: 0;
+  }
+
+  .anatomy-iso-large span {
+    width: 46px;
+    height: 46px;
+    border-radius: 9px;
+    display: block;
+    position: relative;
+  }
+
+  .anatomy-iso-large span.empty {
+    background: transparent;
+    border: 1.5px dashed var(--borde);
+  }
+
+  .anatomy-notes {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 8px;
+  }
+
+  .anatomy-note {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .note-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .note-text { font-size: 13px; color: var(--gris); line-height: 1.7; }
+  .note-text strong { color: var(--tinta); font-weight: 500; }
+
+  /* ── PALETA ── */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .swatch {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 0.5px solid var(--borde);
+  }
+
+  .swatch-color { height: 80px; }
+
+  .swatch-info {
+    padding: 12px 14px;
+    background: var(--hueso);
+  }
+
+  .swatch-name { font-size: 12px; font-weight: 500; color: var(--tinta); }
+  .swatch-hex  { font-size: 10px; color: var(--gris); margin-top: 2px; font-family: 'Courier New', monospace; }
+  .swatch-role { font-size: 9px; color: var(--gris-light); margin-top: 4px; letter-spacing: 0.3px; text-transform: uppercase; }
+
+  .semantic-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .sem-card {
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 0.5px solid var(--borde);
+  }
+
+  .sem-name { font-size: 11px; font-weight: 600; margin-bottom: 3px; }
+  .sem-use  { font-size: 11px; line-height: 1.6; }
+
+  /* ── TIPOGRAFÍA ── */
+  .type-scale {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    gap: 32px;
+    padding: 20px 0;
+    border-bottom: 0.5px solid var(--borde);
+  }
+
+  .type-row:last-child { border-bottom: none; }
+
+  .type-meta {
+    min-width: 160px;
+    flex-shrink: 0;
+  }
+
+  .type-meta-name { font-size: 11px; font-weight: 500; color: var(--tinta); }
+  .type-meta-spec { font-size: 10px; color: var(--gris); margin-top: 3px; font-family: 'Courier New', monospace; }
+
+  /* ── ESPACIADO ── */
+  .spacing-grid {
+    display: grid;
+    grid-template-columns: repeat(8, auto);
+    gap: 0;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 20px;
+  }
+
+  .space-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .space-bar  { background: var(--terracota); border-radius: 3px; width: 24px; }
+  .space-val  { font-size: 10px; font-weight: 600; color: var(--tinta); font-family: 'Courier New', monospace; }
+  .space-name { font-size: 9px; color: var(--gris); }
+
+  /* ── COMPONENTES ── */
+  .comp-section { display: flex; flex-direction: column; gap: 40px; }
+
+  .comp-group-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: var(--gris);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 0.5px solid var(--borde);
+  }
+
+  /* Badges */
+  .badges-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* Botones */
+  .btns-wrap { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.2px;
+  }
+
+  .btn-primary  { background: var(--tinta);      color: var(--papel); }
+  .btn-terra    { background: var(--terracota);   color: var(--terra-light); }
+  .btn-outline  { background: transparent; color: var(--tinta); border: 1px solid var(--borde); }
+  .btn-subtle   { background: var(--papel-dark);  color: var(--tinta); }
+  .btn-ghost    { background: transparent; color: var(--terracota); border: 1px solid var(--terracota); }
+
+  /* Inputs */
+  .input-group { display: flex; flex-direction: column; gap: 4px; max-width: 360px; }
+  .inp-label   { font-size: 12px; font-weight: 500; color: var(--tinta); }
+  .inp-help    { font-size: 11px; color: var(--gris); }
+  .inp {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    padding: 9px 13px;
+    border-radius: 8px;
+    border: 1px solid var(--borde);
+    background: var(--hueso);
+    color: var(--tinta);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .inp:focus { border-color: var(--terracota); }
+  .inp.error { border-color: #E24B4A; }
+
+  .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+
+  /* Avatares */
+  .avatars-wrap { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .avatar {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* Stat cards */
+  .stats-wrap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .stat-card  {
+    background: var(--papel-dark);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .stat-label { font-size: 11px; color: var(--gris); margin-bottom: 6px; }
+  .stat-value { font-size: 26px; font-weight: 700; color: var(--tinta); letter-spacing: -0.5px; }
+  .stat-sub   { font-size: 11px; color: var(--gris); margin-top: 3px; }
+
+  /* ── APLICACIÓN ── */
+  .app-shell {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 0.5px solid var(--borde);
+    box-shadow: 0 2px 24px rgba(19,17,16,0.06);
+  }
+
+  .app-topbar {
+    background: var(--tinta);
+    padding: 0 24px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .app-logo-row { display: flex; align-items: center; gap: 10px; }
+
+  .app-isotipo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5px;
+    width: 20px;
+  }
+
+  .app-isotipo span {
+    width: 5.5px;
+    height: 5.5px;
+    border-radius: 1.2px;
+    background: var(--papel);
+    display: block;
+  }
+
+  .app-isotipo span.hot { background: var(--terracota); }
+  .app-isotipo span.empty { background: transparent; }
+
+  .app-wordmark {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3.5px;
+    color: var(--papel);
+  }
+
+  .app-nav-links { display: flex; gap: 20px; margin-left: 16px; }
+  .app-nav-link  { font-size: 12px; color: #666462; }
+  .app-nav-link.active { color: var(--terracota); font-weight: 500; }
+
+  .app-nav-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .app-period {
+    font-size: 11px;
+    color: var(--pizarra);
+    background: var(--tinta-soft);
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+
+  .app-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--terracota);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--terra-light);
+  }
+
+  .app-body { display: flex; min-height: 520px; }
+
+  .app-sidebar {
+    width: 200px;
+    background: #1A1815;
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-section-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: #3D3A36;
+    text-transform: uppercase;
+    padding: 12px 10px 4px;
+  }
+
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    font-size: 12px;
+    color: #666462;
+    cursor: pointer;
+  }
+
+  .sidebar-item:hover { background: #242220; color: #A8A6A2; }
+
+  .sidebar-item.active {
+    background: var(--terracota);
+    color: var(--terra-light);
+    font-weight: 500;
+  }
+
+  .sidebar-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 14px 10px 0;
+    border-top: 0.5px solid #2A2826;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sf-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--pizarra);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--gris);
+    flex-shrink: 0;
+  }
+
+  .sf-name  { font-size: 11px; font-weight: 500; color: #A8A6A2; }
+  .sf-role  { font-size: 9px; color: #3D3A36; }
+
+  .app-main {
+    flex: 1;
+    background: var(--papel-dark);
+    padding: 28px;
+    overflow: hidden;
+  }
+
+  .main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .main-title { font-size: 18px; font-weight: 700; color: var(--tinta); letter-spacing: -0.3px; }
+  .main-sub   { font-size: 12px; color: var(--gris); margin-top: 3px; }
+
+  .app-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+
+  .app-stat {
+    background: var(--hueso);
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 0.5px solid var(--borde);
+  }
+
+  .app-stat-label { font-size: 10px; color: var(--gris); margin-bottom: 4px; }
+  .app-stat-value { font-size: 22px; font-weight: 700; color: var(--tinta); letter-spacing: -0.5px; }
+  .app-stat-sub   { font-size: 10px; color: var(--gris); margin-top: 2px; }
+
+  .app-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .app-panel {
+    background: var(--hueso);
+    border-radius: 10px;
+    padding: 16px;
+    border: 0.5px solid var(--borde);
+  }
+
+  .panel-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .panel-title { font-size: 13px; font-weight: 500; color: var(--tinta); }
+  .panel-link  { font-size: 11px; color: var(--terracota); cursor: pointer; }
+
+  .list-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 0.5px solid var(--borde);
+  }
+
+  .list-row:last-child { border-bottom: none; }
+
+  .list-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .list-name { font-size: 12px; font-weight: 500; color: var(--tinta); }
+  .list-sub  { font-size: 10px; color: var(--gris); }
+  .list-info { flex: 1; }
+
+  .list-badge {
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+
+  /* ── REGLAS ── */
+  .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .rule-card {
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .rule-do   { background: var(--success-bg); border: 0.5px solid #C0DD97; }
+  .rule-dont { background: var(--danger-bg);  border: 0.5px solid #F7C1C1; }
+
+  .rule-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .tag-do   { color: var(--success-t); }
+  .tag-dont { color: var(--danger-t); }
+
+  .rule-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .rule-item {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--tinta);
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .rule-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+  }
+
+  .rule-do .rule-item::before   { background: var(--success-t); }
+  .rule-dont .rule-item::before { background: var(--danger-t); }
+
+  /* ── FOOTER ── */
+  .brand-footer {
+    background: var(--tinta);
+    padding: 48px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo-row { display: flex; align-items: center; gap: 14px; }
+
+  .footer-iso {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    width: 30px;
+  }
+
+  .footer-iso span {
+    width: 8px;
+    height: 8px;
+    border-radius: 1.5px;
+    background: var(--papel);
+    display: block;
+  }
+
+  .footer-iso span.hot   { background: var(--terracota); }
+  .footer-iso span.empty { background: transparent; }
+
+  .footer-wordmark {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: var(--papel);
+  }
+
+  .footer-sub {
+    font-size: 11px;
+    color: var(--pizarra);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-right { text-align: right; }
+  .footer-label { font-size: 10px; letter-spacing: 1.5px; color: var(--pizarra); text-transform: uppercase; }
+
+  /* ── UTILIDADES ── */
+  .terra-line { width: 32px; height: 2px; background: var(--terracota); margin-bottom: 12px; }
+  .mt-20 { margin-top: 20px; }
+  .mt-32 { margin-top: 32px; }
+
+  @media print {
+    body { background: white; }
+    .cover { min-height: auto; padding: 40px; }
+    .cover-wordmark { font-size: 72px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ PORTADA ══════════════════ -->
+<div class="cover">
+  <div class="cover-top">
+    <span class="cover-tag">Brand identity system · v1.0</span>
+    <div class="cover-isotipo">
+      <span></span><span></span><span class="hot"></span>
+      <span></span><span></span><span class="empty"></span>
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+
+  <div class="cover-center">
+    <div class="cover-line"></div>
+    <div class="cover-wordmark">CACAO</div>
+    <div class="cover-sub">Control Académico, Cursos y Administración de Operaciones</div>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-desc">
+      Sistema de gestión académica integral — inscripciones, notas, evaluaciones, horarios y más. Diseñado para instituciones educativas venezolanas de todos los niveles.
+    </div>
+    <div class="cover-version">Space Grotesk · #131110 · #C8521A</div>
+  </div>
+</div>
+
+<!-- ══════════════════ 01 LOGOTIPO ══════════════════ -->
+<div class="section">
+  <div class="section-number">01</div>
+  <div class="section-title">Logotipo y variantes</div>
+
+  <div class="logo-grid">
+    <!-- Fondo claro -->
+    <div>
+      <div class="logo-cell" style="background:#F4F2EF; border:0.5px solid var(--borde);">
+        <div class="isotipo">
+          <span style="background:var(--tinta);width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:var(--tinta);width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:var(--terracota);width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:var(--tinta);width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:var(--tinta);width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:transparent;width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:var(--tinta);width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:var(--tinta);width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:var(--tinta);width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+        </div>
+        <div class="wordmark-svg-container">
+          <div class="wm-text" style="color:var(--tinta);">CACAO</div>
+          <div class="wm-sub" style="color:var(--gris);">Plataforma académica</div>
+        </div>
+      </div>
+      <div class="logo-cell-label" style="color:var(--gris);">Principal · fondo claro</div>
+    </div>
+
+    <!-- Fondo oscuro -->
+    <div>
+      <div class="logo-cell" style="background:#131110;">
+        <div class="isotipo">
+          <span style="background:#F4F2EF;width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:var(--terracota);width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:transparent;width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:13px;height:13px;border-radius:2.5px;display:block;"></span>
+        </div>
+        <div class="wordmark-svg-container">
+          <div class="wm-text" style="color:#F4F2EF;">CACAO</div>
+          <div class="wm-sub" style="color:#666462;">Plataforma académica</div>
+        </div>
+      </div>
+      <div class="logo-cell-label" style="color:var(--gris);">Negativo · fondo oscuro</div>
+    </div>
+
+    <!-- Fondo terracota - solo isotipo -->
+    <div>
+      <div class="logo-cell" style="background:var(--terracota); flex-direction:row; gap:0;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:46px;">
+          <span style="background:#F4F2EF;width:12px;height:12px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:12px;height:12px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#131110;width:12px;height:12px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:12px;height:12px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:12px;height:12px;border-radius:2.5px;display:block;"></span>
+          <span style="background:transparent;width:12px;height:12px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:12px;height:12px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:12px;height:12px;border-radius:2.5px;display:block;"></span>
+          <span style="background:#F4F2EF;width:12px;height:12px;border-radius:2.5px;display:block;"></span>
+        </div>
+      </div>
+      <div class="logo-cell-label" style="color:var(--gris);">Isotipo solo · fondo terracota</div>
+    </div>
+  </div>
+
+  <!-- Tamaños mínimos -->
+  <div style="background:var(--papel-dark);border-radius:12px;padding:24px;display:flex;gap:40px;align-items:flex-end;flex-wrap:wrap;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="font-size:32px;font-weight:700;letter-spacing:6px;color:var(--tinta);">CACAO</div>
+      <span style="font-size:9px;color:var(--gris);">Display · 32px+</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="font-size:20px;font-weight:700;letter-spacing:4px;color:var(--tinta);">CACAO</div>
+      <span style="font-size:9px;color:var(--gris);">Navbar · 20px</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="font-size:14px;font-weight:700;letter-spacing:3px;color:var(--tinta);">CACAO</div>
+      <span style="font-size:9px;color:var(--gris);">Sidebar · 14px</span>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;width:24px;">
+        <span style="background:var(--tinta);width:6px;height:6px;border-radius:1.5px;display:block;"></span>
+        <span style="background:var(--tinta);width:6px;height:6px;border-radius:1.5px;display:block;"></span>
+        <span style="background:var(--terracota);width:6px;height:6px;border-radius:1.5px;display:block;"></span>
+        <span style="background:var(--tinta);width:6px;height:6px;border-radius:1.5px;display:block;"></span>
+        <span style="background:var(--tinta);width:6px;height:6px;border-radius:1.5px;display:block;"></span>
+        <span style="background:transparent;width:6px;height:6px;border-radius:1.5px;display:block;"></span>
+        <span style="background:var(--tinta);width:6px;height:6px;border-radius:1.5px;display:block;"></span>
+        <span style="background:var(--tinta);width:6px;height:6px;border-radius:1.5px;display:block;"></span>
+        <span style="background:var(--tinta);width:6px;height:6px;border-radius:1.5px;display:block;"></span>
+      </div>
+      <span style="font-size:9px;color:var(--gris);">Favicon · 24px</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ 02 ANATOMÍA ══════════════════ -->
+<div class="section">
+  <div class="section-number">02</div>
+  <div class="section-title">Anatomía del isotipo</div>
+
+  <div class="anatomy-grid">
+    <div>
+      <div class="anatomy-iso-large">
+        <span style="background:var(--tinta);"></span>
+        <span style="background:var(--tinta);"></span>
+        <span style="background:var(--terracota);"></span>
+        <span style="background:var(--tinta);"></span>
+        <span style="background:var(--tinta);"></span>
+        <span class="empty"></span>
+        <span style="background:var(--tinta);"></span>
+        <span style="background:var(--tinta);"></span>
+        <span style="background:var(--tinta);"></span>
+      </div>
+    </div>
+    <div class="anatomy-notes">
+      <div class="anatomy-note">
+        <div class="note-dot" style="background:var(--tinta);"></div>
+        <div class="note-text"><strong>7 módulos base</strong> — representan la estructura del sistema: carreras, materias, secciones, estudiantes, profesores, aulas y períodos académicos.</div>
+      </div>
+      <div class="anatomy-note">
+        <div class="note-dot" style="background:var(--terracota);"></div>
+        <div class="note-text"><strong>Módulo acento (posición 0,2)</strong> — el elemento diferenciador. Terracota como acento vivo. Su posición en la esquina superior derecha señala dirección y dinamismo.</div>
+      </div>
+      <div class="anatomy-note">
+        <div class="note-dot" style="background:var(--borde); border:1px solid var(--gris-light);"></div>
+        <div class="note-text"><strong>Espacio vacío (posición 1,2)</strong> — tensión intencional. La grilla incompleta comunica que el sistema está vivo y en construcción permanente.</div>
+      </div>
+      <div class="anatomy-note">
+        <div class="note-dot" style="background:var(--gris-light);"></div>
+        <div class="note-text"><strong>Ratio del módulo</strong> — cada bloque es un cuadrado 1:1 con radio de esquina igual al 20% del lado. El gap entre módulos es el 25% del lado de cada uno.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ 03 PALETA ══════════════════ -->
+<div class="section">
+  <div class="section-number">03</div>
+  <div class="section-title">Paleta de color</div>
+
+  <div class="palette-grid">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#131110;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Tinta</div>
+        <div class="swatch-hex">#131110</div>
+        <div class="swatch-role">Color primario · UI base</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#C8521A;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Terracota</div>
+        <div class="swatch-hex">#C8521A</div>
+        <div class="swatch-role">Acento · CTAs · isotipo</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#3D3A36;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Pizarra</div>
+        <div class="swatch-hex">#3D3A36</div>
+        <div class="swatch-role">Sidebar · paneles oscuros</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#F4F2EF;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Papel</div>
+        <div class="swatch-hex">#F4F2EF</div>
+        <div class="swatch-role">Fondos · superficies</div>
+      </div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-color" style="background:#E8895A;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Ámbar</div>
+        <div class="swatch-hex">#E8895A</div>
+        <div class="swatch-role">Hover terracota · activos</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="semantic-row">
+    <div class="sem-card" style="background:var(--success-bg);border-color:#C0DD97;">
+      <div class="sem-name" style="color:var(--success-t);">Éxito · verde</div>
+      <div class="sem-use" style="color:#3B6D11;">Inscripción aprobada · nota aprobatoria · acción completada</div>
+    </div>
+    <div class="sem-card" style="background:var(--warn-bg);border-color:#FAC775;">
+      <div class="sem-name" style="color:var(--warn-t);">Alerta · ámbar</div>
+      <div class="sem-use" style="color:#854F0B;">Inscripción pendiente · materia en riesgo · acción requerida</div>
+    </div>
+    <div class="sem-card" style="background:var(--danger-bg);border-color:#F7C1C1;">
+      <div class="sem-name" style="color:var(--danger-t);">Error · rojo</div>
+      <div class="sem-use" style="color:#A32D2D;">Reprobado · inscripción rechazada · prelación no cumplida</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ 04 TIPOGRAFÍA ══════════════════ -->
+<div class="section">
+  <div class="section-number">04</div>
+  <div class="section-title">Tipografía — Space Grotesk</div>
+
+  <div style="background:var(--papel-dark);border-radius:12px;padding:24px 28px;margin-bottom:32px;display:flex;gap:32px;align-items:center;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:11px;color:var(--gris);margin-bottom:8px;letter-spacing:0.5px;">Pesos disponibles</div>
+      <div style="display:flex;gap:20px;align-items:baseline;flex-wrap:wrap;">
+        <span style="font-size:22px;font-weight:300;color:var(--tinta);">Light</span>
+        <span style="font-size:22px;font-weight:400;color:var(--tinta);">Regular</span>
+        <span style="font-size:22px;font-weight:500;color:var(--tinta);">Medium</span>
+        <span style="font-size:22px;font-weight:600;color:var(--tinta);">Semibold</span>
+        <span style="font-size:22px;font-weight:700;color:var(--tinta);">Bold</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;color:var(--gris);margin-bottom:8px;letter-spacing:0.5px;">Caracteres especiales (interfaz)</div>
+      <div style="font-size:16px;font-weight:400;color:var(--tinta);letter-spacing:2px;">0123456789 · % / . → ← ↑</div>
+    </div>
+  </div>
+
+  <div class="type-scale">
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-name">Wordmark</div>
+        <div class="type-meta-spec">700 · 36px · ls:7px · uppercase</div>
+      </div>
+      <span style="font-size:36px;font-weight:700;letter-spacing:7px;color:var(--tinta);">CACAO</span>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-name">Heading 1</div>
+        <div class="type-meta-spec">700 · 24px · ls:-0.3px</div>
+      </div>
+      <span style="font-size:24px;font-weight:700;letter-spacing:-0.3px;color:var(--tinta);">Dashboard administrativo</span>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-name">Heading 2</div>
+        <div class="type-meta-spec">600 · 18px · ls:-0.2px</div>
+      </div>
+      <span style="font-size:18px;font-weight:600;letter-spacing:-0.2px;color:var(--tinta);">Inscripciones del período</span>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-name">Heading 3</div>
+        <div class="type-meta-spec">500 · 15px</div>
+      </div>
+      <span style="font-size:15px;font-weight:500;color:var(--tinta);">Materias con prelación activa</span>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-name">Body</div>
+        <div class="type-meta-spec">400 · 13px · lh:1.7</div>
+      </div>
+      <span style="font-size:13px;font-weight:400;color:var(--gris);line-height:1.7;max-width:480px;">El sistema valida automáticamente las prelaciones antes de aprobar cualquier inscripción. El estudiante solo verá materias disponibles para su nivel.</span>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-name">Label / caption</div>
+        <div class="type-meta-spec">500 · 11px · ls:0.8px · uppercase</div>
+      </div>
+      <span style="font-size:11px;font-weight:500;letter-spacing:0.8px;text-transform:uppercase;color:var(--gris);">Período activo · 2024-II</span>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-meta-name">Código / dato técnico</div>
+        <div class="type-meta-spec">Courier New · 400 · 12px</div>
+      </div>
+      <span style="font-size:12px;font-family:'Courier New',monospace;color:var(--tinta);">#C8521A · MAT-204-A · 2024-II</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ 05 COMPONENTES ══════════════════ -->
+<div class="section">
+  <div class="section-number">05</div>
+  <div class="section-title">Componentes UI</div>
+
+  <div class="comp-section">
+
+    <div>
+      <div class="comp-group-title">Badges de estado</div>
+      <div class="badges-wrap">
+        <span class="badge" style="background:var(--warn-bg);color:var(--warn-t);">Pendiente</span>
+        <span class="badge" style="background:var(--success-bg);color:var(--success-t);">Aprobado</span>
+        <span class="badge" style="background:var(--danger-bg);color:var(--danger-t);">Reprobado</span>
+        <span class="badge" style="background:var(--terra-light);color:var(--terra-text);">En proceso</span>
+        <span class="badge" style="background:#ECEAE6;color:#4A4845;">Inactivo</span>
+        <span class="badge" style="background:#E6F1FB;color:#185FA5;">En curso</span>
+        <span class="badge" style="background:transparent;border:1px solid var(--terracota);color:var(--terra-text);">Prelación</span>
+        <span class="badge" style="background:var(--tinta);color:var(--papel);">Nuevo</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="comp-group-title">Botones</div>
+      <div class="btns-wrap">
+        <button class="btn btn-primary">Inscribir materia</button>
+        <button class="btn btn-terra">Confirmar acción</button>
+        <button class="btn btn-outline">Ver detalle</button>
+        <button class="btn btn-subtle">Cancelar</button>
+        <button class="btn btn-ghost">Exportar</button>
+        <button class="btn btn-primary" disabled style="opacity:0.4;cursor:not-allowed;">Deshabilitado</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="comp-group-title">Formularios</div>
+      <div class="inputs-grid">
+        <div class="input-group">
+          <label class="inp-label">Nombre completo</label>
+          <input class="inp" type="text" value="María Aguilar" readonly>
+        </div>
+        <div class="input-group">
+          <label class="inp-label">Cédula de identidad</label>
+          <input class="inp" type="text" value="V-28.456.123" readonly>
+        </div>
+        <div class="input-group">
+          <label class="inp-label">Carrera</label>
+          <select class="inp">
+            <option>Ingeniería en Sistemas</option>
+            <option>Economía</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label class="inp-label">Materia <span style="color:var(--danger-t);">*</span></label>
+          <input class="inp error" type="text" value="Matemática III" readonly>
+          <span class="inp-help" style="color:var(--danger-t);">Prelación no cumplida — requiere Mat. II</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="comp-group-title">Avatares</div>
+      <div class="avatars-wrap">
+        <div class="avatar" style="width:48px;height:48px;font-size:14px;background:#F5E8E0;color:#7A3010;">MA</div>
+        <div class="avatar" style="width:48px;height:48px;font-size:14px;background:#E1F5EE;color:#085041;">JP</div>
+        <div class="avatar" style="width:48px;height:48px;font-size:14px;background:#EEEDFE;color:#3C3489;">LC</div>
+        <div class="avatar" style="width:48px;height:48px;font-size:14px;background:var(--tinta);color:var(--terracota);">RG</div>
+        <div class="avatar" style="width:48px;height:48px;font-size:14px;background:var(--terracota);color:var(--terra-light);">AD</div>
+        <div class="avatar" style="width:36px;height:36px;font-size:11px;background:#F5E8E0;color:#7A3010;">MA</div>
+        <div class="avatar" style="width:28px;height:28px;font-size:9px;background:#E1F5EE;color:#085041;">JP</div>
+        <div class="avatar" style="width:20px;height:20px;font-size:7px;background:var(--tinta);color:var(--terracota);">RG</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="comp-group-title">Tarjetas de estadística</div>
+      <div class="stats-wrap">
+        <div class="stat-card">
+          <div class="stat-label">Estudiantes activos</div>
+          <div class="stat-value">1,284</div>
+          <div class="stat-sub" style="color:var(--success-t);">↑ +38 este período</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Materias activas</div>
+          <div class="stat-value">92</div>
+          <div class="stat-sub">14 carreras registradas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Profesores</div>
+          <div class="stat-value">147</div>
+          <div class="stat-sub">8 departamentos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Inscripciones pendientes</div>
+          <div class="stat-value" style="color:var(--terracota);">63</div>
+          <div class="stat-sub" style="color:var(--warn-t);">Requieren revisión</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ 06 APLICACIÓN EN INTERFAZ ══════════════════ -->
+<div class="section">
+  <div class="section-number">06</div>
+  <div class="section-title">Aplicación en interfaz</div>
+
+  <div class="app-shell">
+    <!-- Topbar -->
+    <div class="app-topbar">
+      <div class="app-logo-row">
+        <div class="app-isotipo">
+          <span></span><span></span><span class="hot"></span>
+          <span></span><span></span><span class="empty"></span>
+          <span></span><span></span><span></span>
+        </div>
+        <span class="app-wordmark">CACAO</span>
+      </div>
+      <div class="app-nav-links">
+        <span class="app-nav-link active">Dashboard</span>
+        <span class="app-nav-link">Carreras</span>
+        <span class="app-nav-link">Materias</span>
+        <span class="app-nav-link">Estudiantes</span>
+        <span class="app-nav-link">Reportes</span>
+      </div>
+      <div class="app-nav-right">
+        <span class="app-period">2024-II</span>
+        <div class="app-avatar">AD</div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="app-body">
+      <!-- Sidebar -->
+      <div class="app-sidebar">
+        <div class="sidebar-section-label">General</div>
+        <div class="sidebar-item active"><div class="sidebar-dot"></div>Dashboard</div>
+
+        <div class="sidebar-section-label">Académico</div>
+        <div class="sidebar-item hover"><div class="sidebar-dot"></div>Carreras y pensums</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Materias</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Profesores</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Estudiantes</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Inscripciones</div>
+
+        <div class="sidebar-section-label">Infraestructura</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Aulas y labs</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Horarios</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Departamentos</div>
+
+        <div class="sidebar-section-label">Reportes</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Estadísticas</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Historial académico</div>
+
+        <div class="sidebar-footer">
+          <div class="sf-avatar">AD</div>
+          <div>
+            <div class="sf-name">Administrador</div>
+            <div class="sf-role">Super admin</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main -->
+      <div class="app-main">
+        <div class="main-header">
+          <div>
+            <div class="main-title">Dashboard administrativo</div>
+            <div class="main-sub">Inicio · General · Período 2024-II</div>
+          </div>
+          <button class="btn btn-terra" style="font-size:12px;padding:7px 16px;">+ Nueva inscripción</button>
+        </div>
+
+        <div class="app-stats">
+          <div class="app-stat">
+            <div class="app-stat-label">Estudiantes activos</div>
+            <div class="app-stat-value">1,284</div>
+            <div class="app-stat-sub" style="color:#3B6D11;">↑ +38</div>
+          </div>
+          <div class="app-stat">
+            <div class="app-stat-label">Materias activas</div>
+            <div class="app-stat-value">92</div>
+            <div class="app-stat-sub">14 carreras</div>
+          </div>
+          <div class="app-stat">
+            <div class="app-stat-label">Profesores</div>
+            <div class="app-stat-value">147</div>
+            <div class="app-stat-sub">8 deptos.</div>
+          </div>
+          <div class="app-stat">
+            <div class="app-stat-label">Pendientes</div>
+            <div class="app-stat-value" style="color:var(--terracota);">63</div>
+            <div class="app-stat-sub" style="color:var(--warn-t);">Por revisar</div>
+          </div>
+        </div>
+
+        <div class="app-panels">
+          <div class="app-panel">
+            <div class="panel-head">
+              <span class="panel-title">Inscripciones recientes</span>
+              <span class="panel-link">Ver todas →</span>
+            </div>
+            <div class="list-row">
+              <div class="list-avatar" style="background:#F5E8E0;color:#7A3010;">MA</div>
+              <div class="list-info">
+                <div class="list-name">María Aguilar</div>
+                <div class="list-sub">Ing. en Sistemas · Sem. 3</div>
+              </div>
+              <span class="list-badge" style="background:var(--warn-bg);color:var(--warn-t);">Pendiente</span>
+            </div>
+            <div class="list-row">
+              <div class="list-avatar" style="background:#E1F5EE;color:#085041;">JP</div>
+              <div class="list-info">
+                <div class="list-name">José Pereira</div>
+                <div class="list-sub">Economía · Sem. 5</div>
+              </div>
+              <span class="list-badge" style="background:var(--success-bg);color:var(--success-t);">Aprobada</span>
+            </div>
+            <div class="list-row">
+              <div class="list-avatar" style="background:#EEEDFE;color:#3C3489;">LC</div>
+              <div class="list-info">
+                <div class="list-name">Laura Castro</div>
+                <div class="list-sub">Humanidades · Sem. 2</div>
+              </div>
+              <span class="list-badge" style="background:var(--success-bg);color:var(--success-t);">Aprobada</span>
+            </div>
+            <div class="list-row">
+              <div class="list-avatar" style="background:var(--terra-light);color:var(--terra-text);">RG</div>
+              <div class="list-info">
+                <div class="list-name">Ricardo Gómez</div>
+                <div class="list-sub">Ing. Civil · Sem. 1</div>
+              </div>
+              <span class="list-badge" style="background:var(--danger-bg);color:var(--danger-t);">Rechazada</span>
+            </div>
+          </div>
+
+          <div class="app-panel">
+            <div class="panel-head">
+              <span class="panel-title">Materias con prelación</span>
+              <span class="panel-link">Ver mapa →</span>
+            </div>
+            <div class="list-row">
+              <div class="list-info">
+                <div class="list-name">Matemática II</div>
+                <div class="list-sub">Prela: Mat. I · 3 secciones A/B/C</div>
+              </div>
+              <span class="list-badge" style="background:#E6F1FB;color:#185FA5;">48 est.</span>
+            </div>
+            <div class="list-row">
+              <div class="list-info">
+                <div class="list-name">Cálculo III</div>
+                <div class="list-sub">Prela: Cálculo II · 2 secciones A/B</div>
+              </div>
+              <span class="list-badge" style="background:#E6F1FB;color:#185FA5;">30 est.</span>
+            </div>
+            <div class="list-row">
+              <div class="list-info">
+                <div class="list-name">Programación II</div>
+                <div class="list-sub">Prela: Prog. I · 2 secciones</div>
+              </div>
+              <span class="list-badge" style="background:#E6F1FB;color:#185FA5;">36 est.</span>
+            </div>
+            <div class="list-row">
+              <div class="list-info">
+                <div class="list-name">Física II (Lab.)</div>
+                <div class="list-sub">Teórica + Lab. 204 · Sección A</div>
+              </div>
+              <span class="list-badge" style="background:#ECEAE6;color:#4A4845;">18 est.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ 07 REGLAS ══════════════════ -->
+<div class="section">
+  <div class="section-number">07</div>
+  <div class="section-title">Reglas de uso</div>
+
+  <div class="rules-grid">
+    <div class="rule-card rule-do">
+      <div class="rule-tag tag-do">Correcto</div>
+      <div class="rule-list">
+        <div class="rule-item">Usar Space Grotesk como única tipografía del sistema — todos los pesos disponibles.</div>
+        <div class="rule-item">Mantener el módulo terracota siempre en la posición [0,2] del isotipo (esquina superior derecha).</div>
+        <div class="rule-item">Usar terracota exclusivamente como acento — CTAs, isotipo, enlaces activos y datos críticos.</div>
+        <div class="rule-item">Mantener espacio mínimo alrededor del logo igual a la altura de un módulo del isotipo.</div>
+        <div class="rule-item">Aplicar el wordmark solo en mayúsculas con tracking de al menos 4px.</div>
+        <div class="rule-item">Usar los colores semánticos (verde/ámbar/rojo) solo para su significado asignado.</div>
+      </div>
+    </div>
+    <div class="rule-card rule-dont">
+      <div class="rule-tag tag-dont">Incorrecto</div>
+      <div class="rule-list">
+        <div class="rule-item">No rotar, inclinar ni deformar el isotipo. La cuadrícula siempre alineada a los ejes.</div>
+        <div class="rule-item">No mover el módulo terracota a otra posición dentro de la grilla.</div>
+        <div class="rule-item">No usar terracota como color de fondo en áreas grandes de interfaz.</div>
+        <div class="rule-item">No reemplazar Space Grotesk por otra fuente en ningún elemento del sistema.</div>
+        <div class="rule-item">No colocar el logo sobre fondos con textura, fotografías o colores que reduzcan contraste.</div>
+        <div class="rule-item">No usar el wordmark en minúsculas ni sin tracking.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<div class="brand-footer">
+  <div>
+    <div class="footer-logo-row">
+      <div class="footer-iso">
+        <span></span><span></span><span class="hot"></span>
+        <span></span><span></span><span class="empty"></span>
+        <span></span><span></span><span></span>
+      </div>
+      <div>
+        <div class="footer-wordmark">CACAO</div>
+        <div class="footer-sub">Control Académico, Cursos y Administración de Operaciones</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-right">
+    <div class="footer-label">Brand Book v1.0</div>
+    <div style="font-size:11px;color:#3D3A36;margin-top:4px;">Space Grotesk · #131110 · #C8521A · #F4F2EF</div>
+  </div>
+</div>
+
+</body>
+</html>
