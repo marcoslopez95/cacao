@@ -120,11 +120,10 @@
     --chart-3: #185FA5;
     --chart-4: #633806;
     --chart-5: #888780;
-    --radius: 8px;
     --sidebar-background: #131110;
     --sidebar-foreground: #C8C6C2;
     --sidebar-primary: #C8521A;
-    --sidebar-primary-foreground: #ffffff;
+    --sidebar-primary-foreground: #FFFFFF;
     --sidebar-accent: #2A2826;
     --sidebar-accent-foreground: #F4F2EF;
     --sidebar-border: #2A2826;
@@ -157,7 +156,7 @@
     --chart-3: #85B7EB;
     --chart-4: #FAC775;
     --chart-5: #888780;
-    --sidebar-background: #0e0d0c;
+    --sidebar-background: #0E0D0C;
     --sidebar-foreground: #888780;
     --sidebar-primary: #7A3010;
     --sidebar-primary-foreground: #F5E8E0;
@@ -165,7 +164,7 @@
     --sidebar-accent-foreground: #C8C6C2;
     --sidebar-border: #1E1C1A;
     --sidebar-ring: #E8895A;
-    --sidebar: #0e0d0c;
+    --sidebar: #0E0D0C;
 }
 
 @layer base {
