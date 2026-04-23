@@ -1,11 +1,13 @@
 import { createApp, h } from 'vue';
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, router } from '@inertiajs/vue3';
+import { abilitiesPlugin } from '@casl/vue';
 import { initializeTheme } from '@/composables/useAppearance';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
 import { i18n } from '@/i18n';
+import { ability, buildRules } from '@/casl/ability';
 
 const appName = import.meta.env.VITE_APP_NAME || 'CACAO';
 
@@ -25,9 +27,18 @@ createInertiaApp({
         }
     },
     setup({ el, App, props, plugin }) {
+        const roles = (props.initialPage?.props?.auth as { roles?: string[] })?.roles ?? [];
+        ability.update(buildRules(roles));
+
+        router.on('success', (event) => {
+            const updatedRoles = (event.detail.page.props.auth as { roles?: string[] })?.roles ?? [];
+            ability.update(buildRules(updatedRoles));
+        });
+
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(i18n)
+            .use(abilitiesPlugin, ability, { useGlobalProperties: true })
             .mount(el);
     },
     progress: {
