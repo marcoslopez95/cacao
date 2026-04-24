@@ -9,3 +9,17 @@ permissions:
     guard: web
   - name: roles.assign-permissions
     guard: web
+  - name: users.view
+    guard: web
+  - name: users.create
+    guard: web
+  - name: users.update
+    guard: web
+  - name: users.delete
+    guard: web
+  - name: users.deactivate
+    guard: web
+  - name: users.reset-password
+    guard: web
+  - name: users.invite
+    guard: web

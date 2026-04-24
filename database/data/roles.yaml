@@ -2,7 +2,19 @@ roles:
   - name: Admin
     description: Acceso total al sistema
     guard: web
-    permissions: []
+    permissions:
+      - roles.view
+      - roles.create
+      - roles.update
+      - roles.delete
+      - roles.assign-permissions
+      - users.view
+      - users.create
+      - users.update
+      - users.delete
+      - users.deactivate
+      - users.reset-password
+      - users.invite
 
   - name: Profesor
     description: Gestión de secciones, evaluaciones y recursos propios
