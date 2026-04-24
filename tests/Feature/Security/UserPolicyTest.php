@@ -28,57 +28,140 @@ function userWithPerm(string $permission): User
     return $user;
 }
 
-test('viewAny requires users.view', function () {
+// ---------------------------------------------------------------------------
+// viewAny
+// ---------------------------------------------------------------------------
+
+test('viewAny returns true for user with users.view', function () {
     $policy = new UserPolicy;
 
-    expect($policy->viewAny(userWithPerm('users.view')))->toBeTrue()
-        ->and($policy->viewAny(User::factory()->create()))->toBeFalse();
+    expect($policy->viewAny(userWithPerm('users.view')))->toBeTrue();
 });
 
-test('create requires users.create', function () {
+test('viewAny returns false for user without users.view', function () {
     $policy = new UserPolicy;
 
-    expect($policy->create(userWithPerm('users.create')))->toBeTrue()
-        ->and($policy->create(User::factory()->create()))->toBeFalse();
+    expect($policy->viewAny(User::factory()->create()))->toBeFalse();
 });
 
-test('update requires users.update and cannot edit self', function () {
+// ---------------------------------------------------------------------------
+// create
+// ---------------------------------------------------------------------------
+
+test('create returns true for user with users.create', function () {
+    $policy = new UserPolicy;
+
+    expect($policy->create(userWithPerm('users.create')))->toBeTrue();
+});
+
+test('create returns false for user without users.create', function () {
+    $policy = new UserPolicy;
+
+    expect($policy->create(User::factory()->create()))->toBeFalse();
+});
+
+// ---------------------------------------------------------------------------
+// update
+// ---------------------------------------------------------------------------
+
+test('update returns true for user with users.update targeting another user', function () {
     $policy = new UserPolicy;
     $actor = userWithPerm('users.update');
     $other = User::factory()->create();
 
-    expect($policy->update($actor, $other))->toBeTrue()
-        ->and($policy->update($actor, $actor))->toBeFalse();
+    expect($policy->update($actor, $other))->toBeTrue();
 });
 
-test('delete requires users.delete', function () {
+test('update returns false for user without users.update', function () {
+    $policy = new UserPolicy;
+    $actor = User::factory()->create();
+    $other = User::factory()->create();
+
+    expect($policy->update($actor, $other))->toBeFalse();
+});
+
+test('update returns false when targeting self', function () {
+    $policy = new UserPolicy;
+    $actor = userWithPerm('users.update');
+
+    expect($policy->update($actor, $actor))->toBeFalse();
+});
+
+// ---------------------------------------------------------------------------
+// delete
+// ---------------------------------------------------------------------------
+
+test('delete returns true for user with users.delete', function () {
     $policy = new UserPolicy;
     $actor = userWithPerm('users.delete');
     $other = User::factory()->create();
 
-    expect($policy->delete($actor, $other))->toBeTrue()
-        ->and($policy->delete(User::factory()->create(), $other))->toBeFalse();
+    expect($policy->delete($actor, $other))->toBeTrue();
 });
 
-test('deactivate requires users.deactivate and cannot deactivate self', function () {
+test('delete returns false for user without users.delete', function () {
+    $policy = new UserPolicy;
+    $actor = User::factory()->create();
+    $other = User::factory()->create();
+
+    expect($policy->delete($actor, $other))->toBeFalse();
+});
+
+// ---------------------------------------------------------------------------
+// deactivate
+// ---------------------------------------------------------------------------
+
+test('deactivate returns true for user with users.deactivate targeting another user', function () {
     $policy = new UserPolicy;
     $actor = userWithPerm('users.deactivate');
     $other = User::factory()->create();
 
-    expect($policy->deactivate($actor, $other))->toBeTrue()
-        ->and($policy->deactivate($actor, $actor))->toBeFalse();
+    expect($policy->deactivate($actor, $other))->toBeTrue();
 });
 
-test('resetPassword requires users.reset-password', function () {
+test('deactivate returns false for user without users.deactivate', function () {
     $policy = new UserPolicy;
+    $actor = User::factory()->create();
+    $other = User::factory()->create();
 
-    expect($policy->resetPassword(userWithPerm('users.reset-password')))->toBeTrue()
-        ->and($policy->resetPassword(User::factory()->create()))->toBeFalse();
+    expect($policy->deactivate($actor, $other))->toBeFalse();
 });
 
-test('invite requires users.invite', function () {
+test('deactivate returns false when targeting self', function () {
+    $policy = new UserPolicy;
+    $actor = userWithPerm('users.deactivate');
+
+    expect($policy->deactivate($actor, $actor))->toBeFalse();
+});
+
+// ---------------------------------------------------------------------------
+// resetPassword
+// ---------------------------------------------------------------------------
+
+test('resetPassword returns true for user with users.reset-password', function () {
     $policy = new UserPolicy;
 
-    expect($policy->invite(userWithPerm('users.invite')))->toBeTrue()
-        ->and($policy->invite(User::factory()->create()))->toBeFalse();
+    expect($policy->resetPassword(userWithPerm('users.reset-password')))->toBeTrue();
+});
+
+test('resetPassword returns false for user without users.reset-password', function () {
+    $policy = new UserPolicy;
+
+    expect($policy->resetPassword(User::factory()->create()))->toBeFalse();
+});
+
+// ---------------------------------------------------------------------------
+// invite
+// ---------------------------------------------------------------------------
+
+test('invite returns true for user with users.invite', function () {
+    $policy = new UserPolicy;
+
+    expect($policy->invite(userWithPerm('users.invite')))->toBeTrue();
+});
+
+test('invite returns false for user without users.invite', function () {
+    $policy = new UserPolicy;
+
+    expect($policy->invite(User::factory()->create()))->toBeFalse();
 });
