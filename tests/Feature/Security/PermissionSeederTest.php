@@ -50,7 +50,12 @@ test('Admin role has all users permissions after seeding', function () {
 
     $admin = Role::findByName('Admin');
 
-    expect($admin->hasPermissionTo('users.view'))->toBeTrue()
-        ->and($admin->hasPermissionTo('users.create'))->toBeTrue()
-        ->and($admin->hasPermissionTo('users.invite'))->toBeTrue();
+    $expectedPerms = [
+        'users.view', 'users.create', 'users.update', 'users.delete',
+        'users.deactivate', 'users.reset-password', 'users.invite',
+    ];
+
+    foreach ($expectedPerms as $permission) {
+        expect($admin->hasPermissionTo($permission))->toBeTrue("Admin missing permission: {$permission}");
+    }
 });
