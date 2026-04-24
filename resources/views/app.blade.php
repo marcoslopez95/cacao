@@ -8,12 +8,14 @@
         {{-- Detect theme before paint to avoid flash --}}
         <script>
             (function() {
-                var stored = localStorage.getItem('cacao-theme');
-                if (stored) {
-                    document.documentElement.setAttribute('data-theme', stored);
-                } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                }
+                try {
+                    var stored = localStorage.getItem('cacao-theme');
+                    if (stored) {
+                        document.documentElement.setAttribute('data-theme', stored);
+                    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                    }
+                } catch (_) {}
             })();
         </script>
 
