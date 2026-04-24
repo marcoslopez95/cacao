@@ -23,7 +23,11 @@ const gradeYearMax = computed(() => (selectedSecondaryType.value === 'bachillera
 
 function close(v: boolean): void {
     emit('update:open', v)
-    if (!v) formKey.value++
+    if (!v) {
+        formKey.value++
+        selectedType.value = props.coordination.type
+        selectedSecondaryType.value = props.coordination.secondary_type ?? ''
+    }
 }
 </script>
 

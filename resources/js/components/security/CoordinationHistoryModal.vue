@@ -4,6 +4,7 @@ import Badge from '@/components/base/Badge.vue'
 import Button from '@/components/base/Button.vue'
 import Modal from '@/components/feedback/Modal.vue'
 import type { CoordinationAssignment, CoordinationRow } from '@/types/security'
+import { index as assignmentsIndex } from '@/actions/App/Http/Controllers/Security/CoordinationAssignmentController'
 
 const props = defineProps<{
     open: boolean
@@ -25,10 +26,14 @@ watch(
 
         loading.value = true
         try {
-            const res = await fetch(`/security/coordinations/${props.coordination.id}/assignments`, {
+            const res = await fetch(assignmentsIndex.url(props.coordination), {
                 headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 credentials: 'same-origin',
             })
+            if (!res.ok) {
+                assignments.value = []
+                return
+            }
             assignments.value = await res.json()
         } finally {
             loading.value = false
