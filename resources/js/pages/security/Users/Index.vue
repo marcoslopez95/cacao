@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3'
+import { Head, router, usePage } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import Badge from '@/components/base/Badge.vue'
 import Button from '@/components/base/Button.vue'
@@ -59,7 +59,7 @@ const deleteUser     = ref<UserRow | null>(null)
 const showCreate     = ref(false)
 const showInvite     = ref(false)
 
-const authId = (window as any).__page?.props?.auth?.user?.id
+const authId = (usePage().props as any).auth?.user?.id
 </script>
 
 <template>
