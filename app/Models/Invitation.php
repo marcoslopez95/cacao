@@ -24,14 +24,21 @@ class Invitation extends Model
     }
 
     /** @param Builder<Invitation> $query */
-    public function scopePending(Builder $query): void
+    public function scopePending(Builder $query): Builder
     {
-        $query->whereNull('used_at')->where('expires_at', '>', now());
+        return $query->whereNull('used_at')->where('expires_at', '>', now());
     }
 
     public function isExpired(): bool
     {
-        return $this->expires_at->isPast();
+        return $this->expires_at?->isPast() ?? false;
+    }
+
+    public function markAsUsed(): bool
+    {
+        $this->used_at = now();
+
+        return $this->save();
     }
 
     public function isUsed(): bool
@@ -44,7 +51,7 @@ class Invitation extends Model
         return ! $this->isUsed() && ! $this->isExpired();
     }
 
-    /** @return BelongsTo<User, $this> */
+    /** @return BelongsTo<User, Invitation> */
     public function invitedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'invited_by');

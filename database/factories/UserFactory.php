@@ -78,6 +78,9 @@ class UserFactory extends Factory
         ]);
     }
 
+    /**
+     * Indicate that the user account is deactivated.
+     */
     public function inactive(): static
     {
         return $this->state(fn (array $attributes) => [
