@@ -9,6 +9,7 @@ import CoordinationHistoryModal from '@/components/security/CoordinationHistoryM
 import CreateCoordinationModal from '@/components/security/CreateCoordinationModal.vue'
 import DeleteCoordinationModal from '@/components/security/DeleteCoordinationModal.vue'
 import EditCoordinationModal from '@/components/security/EditCoordinationModal.vue'
+import { usePermission } from '@/composables/usePermission'
 import { index } from '@/routes/security/coordinations'
 import type { CoordinationPaginator, CoordinationRow } from '@/types/security'
 
@@ -30,6 +31,8 @@ defineOptions({
         ],
     },
 })
+
+const { can } = usePermission()
 
 const search = ref(props.filters.search ?? '')
 const typeFilter = ref(props.filters.type ?? '')
@@ -154,7 +157,7 @@ function levelLabel(level: string): string {
                         <td>
                             <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;">
                                 <Button
-                                    v-if="props.can.update"
+                                    v-if="can('coordinations.edit')"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
@@ -163,7 +166,7 @@ function levelLabel(level: string): string {
                                     @click="editingCoordination = c"
                                 />
                                 <Button
-                                    v-if="props.can.assign"
+                                    v-if="can('coordinations.assign')"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
@@ -172,7 +175,7 @@ function levelLabel(level: string): string {
                                     @click="assigningCoordination = c"
                                 />
                                 <Button
-                                    v-if="props.can.viewHistory"
+                                    v-if="can('coordinations.view_history')"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
@@ -181,7 +184,7 @@ function levelLabel(level: string): string {
                                     @click="historyCoordination = c"
                                 />
                                 <Button
-                                    v-if="props.can.delete"
+                                    v-if="can('coordinations.delete')"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
