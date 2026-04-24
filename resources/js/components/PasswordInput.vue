@@ -26,7 +26,7 @@ defineExpose({
             type="button"
             @click="showPassword = !showPassword"
             style="position:absolute;inset-y:0;right:0;display:flex;align-items:center;padding:0 0.75rem;color:var(--text-muted);background:transparent;border:none;cursor:pointer;"
-            :aria-label="showPassword ? 'Hide password' : 'Show password'"
+            :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
             :tabindex="-1"
         >
             <Icon :name="showPassword ? 'eyeOff' : 'eye'" :size="16" />

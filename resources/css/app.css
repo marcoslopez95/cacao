@@ -2,17 +2,26 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
 @theme inline {
   --color-tinta:         #131110;
+  --color-tinta-soft:    #2A2826;
   --color-terracota:     #C8521A;
   --color-pizarra:       #3D3A36;
   --color-papel:         #F4F2EF;
   --color-papel-dark:    #EDEBE7;
   --color-hueso:         #FAFAF8;
   --color-ambar:         #E8895A;
+  --color-terra-hover:   #E8895A;
+  --color-terra-light:   #F5E8E0;
+  --color-terra-text:    #7A3010;
+  --color-gris:          #888780;
+  --color-gris-light:    #C8C6C2;
+  --color-gris-borde:    #E0DDD8;
 
   --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;

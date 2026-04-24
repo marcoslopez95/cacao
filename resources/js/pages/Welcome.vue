@@ -336,7 +336,7 @@ const aulas = [65, 30, 88, 45, 92, 60, 78, 40, 55, 95, 70, 82]
                         Solicitar acceso
                     </Link>
                     <a href="#como" class="px-6 py-3.5 text-[15px] font-medium rounded-md transition-colors" style="text-decoration:none;border:1px solid color-mix(in srgb,var(--bg-page) 30%,transparent);color:var(--bg-page);">
-                        Agendar demo
+                        Ver cómo funciona →
                     </a>
                 </div>
             </div>
@@ -360,7 +360,7 @@ const aulas = [65, 30, 88, 45, 92, 60, 78, 40, 55, 95, 70, 82]
                         </div>
                         CACAO
                     </div>
-                    <p class="text-[13px] text-gris leading-[1.5] max-w-[34ch]">Control Académico, Curricular y de Actividades Organizadas. Un sistema para administrar la vida académica de tu institución.</p>
+                    <p class="text-[13px] text-gris leading-[1.5] max-w-[34ch]">Control Académico, Cursos y Administración de Operaciones. Un sistema para administrar la vida académica de tu institución.</p>
                 </div>
                 <div v-for="col in [
                     {title:'Producto',links:['Funcionalidades','Roles','Integraciones','Changelog']},
