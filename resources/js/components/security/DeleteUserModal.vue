@@ -12,12 +12,14 @@ const props = defineProps<{
 
 const emit = defineEmits<{ 'update:open': [value: boolean] }>()
 
+const form = useForm({})
+
 function close(v: boolean): void {
     emit('update:open', v)
 }
 
 function submit(): void {
-    useForm({}).delete(destroy.url(props.user), {
+    form.delete(destroy.url(props.user), {
         onSuccess: () => close(false),
     })
 }
@@ -36,7 +38,7 @@ function submit(): void {
 
         <div style="display:flex;justify-content:flex-end;gap:8px;">
             <Button variant="ghost" @click="close(false)">Cancelar</Button>
-            <Button variant="danger" @click="submit">Eliminar</Button>
+            <Button variant="danger" :loading="form.processing" @click="submit">Eliminar</Button>
         </div>
     </Modal>
 </template>

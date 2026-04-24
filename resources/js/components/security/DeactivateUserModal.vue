@@ -12,12 +12,14 @@ const props = defineProps<{
 
 const emit = defineEmits<{ 'update:open': [value: boolean] }>()
 
+const form = useForm({})
+
 function close(v: boolean): void {
     emit('update:open', v)
 }
 
 function submit(): void {
-    useForm({}).patch(deactivate.url(props.user), {
+    form.patch(deactivate.url(props.user), {
         onSuccess: () => close(false),
     })
 }
@@ -41,7 +43,7 @@ function submit(): void {
 
         <div style="display:flex;justify-content:flex-end;gap:8px;">
             <Button variant="ghost" @click="close(false)">Cancelar</Button>
-            <Button :variant="user.active ? 'danger' : 'primary'" @click="submit">
+            <Button :variant="user.active ? 'danger' : 'primary'" :loading="form.processing" @click="submit">
                 {{ user.active ? 'Desactivar' : 'Reactivar' }}
             </Button>
         </div>
