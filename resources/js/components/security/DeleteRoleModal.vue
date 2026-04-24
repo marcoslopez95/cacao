@@ -1,83 +1,54 @@
 <script setup lang="ts">
-import { Form } from '@inertiajs/vue3';
-import { ref } from 'vue';
-import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
-import { destroy } from '@/routes/security/roles';
-import type { Role } from '@/types';
+import { Form } from '@inertiajs/vue3'
+import Button from '@/components/base/Button.vue'
+import Modal from '@/components/feedback/Modal.vue'
+import { destroy } from '@/routes/security/roles'
+import type { Role } from '@/types'
 
-type Props = {
-    role: Role;
-    open: boolean;
-};
+const props = defineProps<{
+    open: boolean
+    role: Role
+}>()
 
-const props = defineProps<Props>();
-const emit = defineEmits<{
-    'update:open': [value: boolean];
-}>();
+const emit = defineEmits<{ 'update:open': [value: boolean] }>()
 
-const formKey = ref(0);
-
-function handleOpenChange(value: boolean) {
-    emit('update:open', value);
-    if (!value) {
-        formKey.value++;
-    }
+function close(v: boolean): void {
+    emit('update:open', v)
 }
 </script>
 
 <template>
-    <Dialog :open="props.open" @update:open="handleOpenChange">
-        <DialogContent>
-            <template v-if="props.role.usersCount > 0">
-                <DialogHeader>
-                    <DialogTitle>¿Eliminar rol?</DialogTitle>
-                    <DialogDescription>
-                        Este rol tiene <strong>{{ props.role.usersCount }}</strong>
-                        {{ props.role.usersCount === 1 ? 'usuario asignado' : 'usuarios asignados' }}
-                        y no puede eliminarse.
-                    </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <Button variant="secondary" @click="handleOpenChange(false)">Cerrar</Button>
-                </DialogFooter>
-            </template>
+    <Modal
+        :open="open"
+        title="Eliminar rol"
+        size="sm"
+        @update:open="close"
+    >
+        <template v-if="props.role.usersCount > 0">
+            <p style="font-size:var(--text-sm);color:var(--text-secondary);">
+                Este rol tiene <strong>{{ props.role.usersCount }}</strong>
+                {{ props.role.usersCount === 1 ? 'usuario asignado' : 'usuarios asignados' }}
+                y no puede eliminarse.
+            </p>
+            <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:16px;border-top:1px solid var(--border);margin-top:16px;">
+                <Button variant="secondary" type="button" @click="close(false)">Cerrar</Button>
+            </div>
+        </template>
 
-            <Form
-                v-else
-                :key="formKey"
-                v-bind="destroy.form(props.role.id)"
-                class="space-y-6"
-                v-slot="{ processing }"
-                @success="handleOpenChange(false)"
-            >
-                <DialogHeader>
-                    <DialogTitle>¿Eliminar rol?</DialogTitle>
-                    <DialogDescription>
-                        Esta acción eliminará el rol
-                        <strong>"{{ props.role.name }}"</strong>
-                        permanentemente. Esta acción no se puede deshacer.
-                    </DialogDescription>
-                </DialogHeader>
-
-                <DialogFooter class="gap-2">
-                    <DialogClose as-child>
-                        <Button variant="secondary">Cancelar</Button>
-                    </DialogClose>
-
-                    <Button type="submit" variant="destructive" :disabled="processing">
-                        Eliminar
-                    </Button>
-                </DialogFooter>
-            </Form>
-        </DialogContent>
-    </Dialog>
+        <Form
+            v-else
+            v-bind="destroy.form(props.role.id)"
+            v-slot="{ processing }"
+            @success="close(false)"
+        >
+            <p style="font-size:var(--text-sm);color:var(--text-secondary);">
+                Esta acción eliminará el rol <strong>"{{ props.role.name }}"</strong> permanentemente.
+                Esta acción no se puede deshacer.
+            </p>
+            <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:16px;border-top:1px solid var(--border);margin-top:16px;">
+                <Button variant="secondary" type="button" @click="close(false)">Cancelar</Button>
+                <Button type="submit" variant="danger" :loading="processing">Eliminar</Button>
+            </div>
+        </Form>
+    </Modal>
 </template>

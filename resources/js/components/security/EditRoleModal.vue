@@ -1,140 +1,106 @@
 <script setup lang="ts">
-import { Form } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
-import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { update } from '@/routes/security/roles';
-import type { Role } from '@/types';
-import { groupPermissions, permissionGroupLabel } from '@/utils/permissions';
+import { Form } from '@inertiajs/vue3'
+import { ref, watch } from 'vue'
+import Button from '@/components/base/Button.vue'
+import Modal from '@/components/feedback/Modal.vue'
+import InputError from '@/components/InputError.vue'
+import { update } from '@/routes/security/roles'
+import { groupPermissions, permissionGroupLabel } from '@/utils/permissions'
+import type { Role } from '@/types'
 
-type Props = {
-    role: Role;
-    permissions: string[];
-    canAssignPermissions: boolean;
-    open: boolean;
-};
+const props = defineProps<{
+    open: boolean
+    role: Role
+    permissions: string[]
+    canAssignPermissions?: boolean
+}>()
 
-const props = defineProps<Props>();
-const emit = defineEmits<{
-    'update:open': [value: boolean];
-}>();
-
-const formKey = ref(0);
-const checkedPerms = ref<string[]>([...props.role.permissions]);
+const emit = defineEmits<{ 'update:open': [value: boolean] }>()
+const formKey = ref(0)
+const checkedPerms = ref<string[]>([...props.role.permissions])
 
 watch(
     [() => props.open, () => props.role.id],
     ([open]) => {
         if (open) {
-            checkedPerms.value = [...props.role.permissions];
+            checkedPerms.value = [...props.role.permissions]
         }
     },
-);
+)
 
-function handleOpenChange(value: boolean) {
-    emit('update:open', value);
-    if (!value) {
-        formKey.value++;
-    }
+function close(v: boolean): void {
+    emit('update:open', v)
+    if (!v) formKey.value++
 }
-
 </script>
 
 <template>
-    <Dialog :open="props.open" @update:open="handleOpenChange">
-        <DialogContent>
-            <template v-if="props.role.isAdmin">
-                <DialogHeader>
-                    <DialogTitle>Editar rol</DialogTitle>
-                    <DialogDescription>
-                        El rol <strong>Admin</strong> no puede ser modificado.
-                    </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                    <Button variant="secondary" @click="handleOpenChange(false)">Cerrar</Button>
-                </DialogFooter>
-            </template>
-
-            <Form
-                v-else
-                :key="formKey"
-                v-bind="update.form(props.role.id)"
-                class="space-y-6"
-                v-slot="{ errors, processing }"
-                @success="handleOpenChange(false)"
-            >
-                <DialogHeader>
-                    <DialogTitle>Editar rol</DialogTitle>
-                    <DialogDescription>
-                        Actualiza el nombre y los permisos del rol.
-                    </DialogDescription>
-                </DialogHeader>
-
-                <div class="grid gap-2">
-                    <Label for="edit-name">Nombre</Label>
-                    <Input
+    <Modal
+        :open="open"
+        title="Editar rol"
+        :description="`Modifica el rol ${props.role.name}.`"
+        size="md"
+        @update:open="close"
+    >
+        <Form
+            :key="formKey"
+            v-bind="update.form(props.role.id)"
+            v-slot="{ errors, processing }"
+            @success="close(false)"
+        >
+            <div style="display:grid;gap:16px;">
+                <div style="display:grid;gap:6px;">
+                    <label
+                        for="edit-name"
+                        style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);"
+                    >
+                        Nombre
+                    </label>
+                    <input
                         id="edit-name"
                         name="name"
-                        :default-value="props.role.name"
-                        placeholder="Nombre del rol"
+                        class="input"
+                        :value="props.role.name"
                         required
                     />
                     <InputError :message="errors.name" />
                 </div>
 
-                <div v-if="canAssignPermissions && permissions.length > 0" class="grid gap-3">
-                    <Label>Permisos</Label>
+                <div v-if="canAssignPermissions && permissions.length" style="display:grid;gap:10px;">
+                    <span style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">
+                        Permisos
+                    </span>
                     <div
                         v-for="(groupPerms, group) in groupPermissions(permissions)"
                         :key="group"
-                        class="space-y-1"
                     >
-                        <p class="text-sm font-medium text-muted-foreground">
+                        <p style="font-size:var(--text-xs);font-weight:600;color:var(--text-muted);text-transform:uppercase;margin:0 0 6px;">
                             {{ permissionGroupLabel(group) }}
                         </p>
-                        <div class="ml-3 space-y-1">
-                            <div
+                        <div style="display:grid;gap:4px;padding-left:8px;">
+                            <label
                                 v-for="permission in groupPerms"
                                 :key="permission"
-                                class="flex items-center gap-2"
+                                style="display:flex;align-items:center;gap:8px;font-size:var(--text-sm);cursor:pointer;"
                             >
                                 <input
-                                    :id="`edit-${permission}`"
                                     v-model="checkedPerms"
                                     type="checkbox"
                                     name="permissions[]"
                                     :value="permission"
-                                    class="h-4 w-4 rounded border-gris-borde"
+                                    style="width:14px;height:14px;accent-color:var(--accent);"
                                 />
-                                <label :for="`edit-${permission}`" class="text-sm">
-                                    {{ permission }}
-                                </label>
-                            </div>
+                                {{ permission }}
+                            </label>
                         </div>
                     </div>
                 </div>
 
-                <DialogFooter class="gap-2">
-                    <DialogClose as-child>
-                        <Button variant="secondary">Cancelar</Button>
-                    </DialogClose>
-
-                    <Button type="submit" :disabled="processing">
-                        Guardar cambios
-                    </Button>
-                </DialogFooter>
-            </Form>
-        </DialogContent>
-    </Dialog>
+                <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:16px;border-top:1px solid var(--border);">
+                    <Button variant="secondary" type="button" @click="close(false)">Cancelar</Button>
+                    <Button type="submit" variant="primary" :loading="processing">Guardar cambios</Button>
+                </div>
+            </div>
+        </Form>
+    </Modal>
 </template>
