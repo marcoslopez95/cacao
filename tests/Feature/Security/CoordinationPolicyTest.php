@@ -31,7 +31,6 @@ function coordinationUserWith(string $permission): User
 test('viewAny requires coordinations.view', function () {
     $noPermUser = User::factory()->create();
     $permUser = coordinationUserWith('coordinations.view');
-    $coordination = Coordination::factory()->create();
 
     expect($noPermUser->can('viewAny', Coordination::class))->toBeFalse();
     expect($permUser->can('viewAny', Coordination::class))->toBeTrue();
