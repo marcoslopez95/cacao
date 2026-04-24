@@ -29,7 +29,9 @@ class CoordinationAssignmentController extends Controller
             ->map(fn (CoordinationAssignment $a) => [
                 'id' => $a->id,
                 'user' => ['id' => $a->user->id, 'name' => $a->user->name],
-                'assigned_by' => ['id' => $a->assignedBy->id, 'name' => $a->assignedBy->name],
+                'assigned_by' => $a->assignedBy
+                    ? ['id' => $a->assignedBy->id, 'name' => $a->assignedBy->name]
+                    : null,
                 'assigned_at' => $a->assigned_at->toDateTimeString(),
                 'ended_at' => $a->ended_at?->toDateTimeString(),
             ]);
@@ -54,7 +56,6 @@ class CoordinationAssignmentController extends Controller
                 'user_id' => $data['user_id'],
                 'assigned_by' => $request->user()->id,
                 'assigned_at' => now(),
-                'ended_at' => null,
             ]);
         });
 

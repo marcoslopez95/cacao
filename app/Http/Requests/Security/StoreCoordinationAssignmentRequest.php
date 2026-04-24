@@ -25,10 +25,11 @@ class StoreCoordinationAssignmentRequest extends FormRequest
             'user_id' => [
                 'required',
                 'integer',
-                'exists:users,id',
                 function (string $attribute, mixed $value, \Closure $fail): void {
-                    $user = User::find($value);
-                    if (! $user || ! $user->hasRole(Role::Coordinator->value)) {
+                    $exists = User::where('id', $value)
+                        ->whereHas('roles', fn ($q) => $q->where('name', Role::Coordinator->value))
+                        ->exists();
+                    if (! $exists) {
                         $fail('El usuario seleccionado no tiene el rol de Coordinador de Área.');
                     }
                 },
