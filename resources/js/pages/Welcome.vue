@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
 import { login, register } from '@/routes'
+import { useAppearance } from '@/composables/useAppearance'
 
 withDefaults(defineProps<{
     canRegister?: boolean
@@ -17,6 +18,27 @@ onMounted(() => window.addEventListener('scroll', onScroll))
 onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 const aulas = [65, 30, 88, 45, 92, 60, 78, 40, 55, 95, 70, 82]
+
+const { appearance, updateAppearance } = useAppearance()
+
+const cycleOrder = ['light', 'dark', 'system'] as const
+type AppearanceVal = typeof cycleOrder[number]
+
+function cycleAppearance() {
+    const idx = cycleOrder.indexOf(appearance.value as AppearanceVal)
+    updateAppearance(cycleOrder[(idx + 1) % cycleOrder.length])
+}
+
+const appearanceIcon: Record<AppearanceVal, string> = {
+    light:  'M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5',
+    dark:   'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8',
+    system: 'M4 6h16M4 12h16M4 18h16',
+}
+const appearanceLabel: Record<AppearanceVal, string> = {
+    light: 'Modo claro',
+    dark:  'Modo oscuro',
+    system: 'Modo sistema',
+}
 </script>
 
 <template>
@@ -51,7 +73,26 @@ const aulas = [65, 30, 88, 45, 92, 60, 78, 40, 55, 95, 70, 82]
                 <a href="#como" class="text-gris hover:text-tinta dark:hover:text-papel transition-colors" style="text-decoration:none;">Cómo funciona</a>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
+                <button
+                    type="button"
+                    @click="cycleAppearance"
+                    :title="appearanceLabel[appearance as AppearanceVal]"
+                    :aria-label="appearanceLabel[appearance as AppearanceVal]"
+                    class="w-9 h-9 flex items-center justify-center rounded-md text-gris hover:text-tinta dark:hover:text-papel hover:bg-papel dark:hover:bg-tinta-soft transition-colors"
+                >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path v-if="appearance === 'dark'" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8"/>
+                        <template v-else-if="appearance === 'system'">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/>
+                            <path d="M8 21h8M12 17v4"/>
+                        </template>
+                        <template v-else>
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>
+                        </template>
+                    </svg>
+                </button>
                 <Link :href="login()" class="px-4 py-2 text-[13px] font-medium text-gris hover:text-tinta dark:hover:text-papel transition-colors" style="text-decoration:none;">
                     Iniciar sesión
                 </Link>
