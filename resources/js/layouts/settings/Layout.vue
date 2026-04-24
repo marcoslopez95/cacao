@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import Heading from '@/components/Heading.vue';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
@@ -34,42 +32,33 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 </script>
 
 <template>
-    <div class="px-4 py-6">
+    <div style="padding:1.5rem 1rem;">
         <Heading
             title="Settings"
             description="Manage your profile and account settings"
         />
 
-        <div class="flex flex-col lg:flex-row lg:space-x-12">
-            <aside class="w-full max-w-xl lg:w-48">
+        <div style="display:flex;flex-direction:column;gap:3rem;">
+            <aside style="width:100%;max-width:36rem;">
                 <nav
-                    class="flex flex-col space-y-1 space-x-0"
+                    style="display:flex;flex-direction:column;gap:0.25rem;"
                     aria-label="Settings"
                 >
-                    <Button
+                    <Link
                         v-for="item in sidebarNavItems"
                         :key="toUrl(item.href)"
-                        variant="ghost"
-                        :class="[
-                            'w-full justify-start',
-                            { 'bg-muted': isCurrentOrParentUrl(item.href) },
-                        ]"
-                        as-child
+                        :href="item.href"
+                        style="display:flex;align-items:center;padding:0.375rem 0.75rem;border-radius:0.375rem;font-size:var(--text-sm);text-decoration:none;color:var(--text-secondary);"
+                        :style="isCurrentOrParentUrl(item.href) ? { background: 'var(--bg-subtle)', color: 'var(--text-primary)', fontWeight: '500' } : {}"
                     >
-                        <Link :href="item.href">
-                            <component :is="item.icon" class="h-4 w-4" />
-                            {{ item.title }}
-                        </Link>
-                    </Button>
+                        <component v-if="item.icon" :is="item.icon" style="margin-right:0.5rem;width:1rem;height:1rem;" />
+                        {{ item.title }}
+                    </Link>
                 </nav>
             </aside>
 
-            <Separator class="my-6 lg:hidden" />
-
-            <div class="flex-1 md:max-w-2xl">
-                <section class="max-w-xl space-y-12">
-                    <slot />
-                </section>
+            <div style="display:flex;flex-direction:column;gap:3rem;flex:1;max-width:36rem;">
+                <slot />
             </div>
         </div>
     </div>

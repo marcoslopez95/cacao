@@ -1,16 +1,8 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import Button from '@/components/base/Button.vue';
+import Modal from '@/components/feedback/Modal.vue';
 import { destroy as destroyMember } from '@/routes/teams/members';
 import type { Team, TeamMember } from '@/types';
 
@@ -41,30 +33,30 @@ const removeMember = () => {
 </script>
 
 <template>
-    <Dialog :open="props.open" @update:open="emit('update:open', $event)">
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>Remove team member</DialogTitle>
-                <DialogDescription>
-                    Are you sure you want to remove
-                    <strong>{{ props.member?.name }}</strong> from this team?
-                </DialogDescription>
-            </DialogHeader>
+    <Modal
+        :open="props.open"
+        @update:open="emit('update:open', $event)"
+        title="Remove team member"
+        size="sm"
+    >
+        <p style="font-size:var(--text-sm);color:var(--text-muted);margin-bottom:1.5rem;">
+            Are you sure you want to remove
+            <strong>{{ props.member?.name }}</strong> from this team?
+        </p>
 
-            <DialogFooter class="gap-2">
-                <DialogClose as-child>
-                    <Button variant="secondary"> Cancel </Button>
-                </DialogClose>
-
-                <Button
-                    data-test="remove-member-confirm"
-                    variant="destructive"
-                    :disabled="processing"
-                    @click="removeMember"
-                >
-                    Remove member
-                </Button>
-            </DialogFooter>
-        </DialogContent>
-    </Dialog>
+        <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+            <Button variant="secondary" @click="emit('update:open', false)">
+                Cancel
+            </Button>
+            <Button
+                data-test="remove-member-confirm"
+                variant="danger"
+                :disabled="processing"
+                :loading="processing"
+                @click="removeMember"
+            >
+                Remove member
+            </Button>
+        </div>
+    </Modal>
 </template>

@@ -1,11 +1,4 @@
 <script setup lang="ts">
-import {
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from '@/components/ui/sidebar';
 import { toUrl } from '@/lib/utils';
 import type { NavItem } from '@/types';
 
@@ -18,27 +11,19 @@ defineProps<Props>();
 </script>
 
 <template>
-    <SidebarGroup
-        :class="`group-data-[collapsible=icon]:p-0 ${$props.class || ''}`"
-    >
-        <SidebarGroupContent>
-            <SidebarMenu>
-                <SidebarMenuItem v-for="item in items" :key="item.title">
-                    <SidebarMenuButton
-                        class="text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100"
-                        as-child
-                    >
-                        <a
-                            :href="toUrl(item.href)"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <component :is="item.icon" />
-                            <span>{{ item.title }}</span>
-                        </a>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-        </SidebarGroupContent>
-    </SidebarGroup>
+    <div :class="$props.class">
+        <nav style="display:flex;flex-direction:column;gap:0.25rem;">
+            <a
+                v-for="item in items"
+                :key="item.title"
+                :href="toUrl(item.href)"
+                target="_blank"
+                rel="noopener noreferrer"
+                style="display:flex;align-items:center;gap:0.5rem;padding:0.375rem 0.5rem;border-radius:0.375rem;color:var(--text-muted);text-decoration:none;font-size:var(--text-sm);"
+            >
+                <component v-if="item.icon" :is="item.icon" style="width:1rem;height:1rem;" />
+                <span>{{ item.title }}</span>
+            </a>
+        </nav>
+    </div>
 </template>

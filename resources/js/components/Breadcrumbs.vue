@@ -1,13 +1,5 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 
 type Props = {
@@ -18,21 +10,23 @@ defineProps<Props>();
 </script>
 
 <template>
-    <Breadcrumb>
-        <BreadcrumbList>
+    <nav aria-label="breadcrumb">
+        <ol style="display:flex;align-items:center;gap:0.375rem;font-size:var(--text-sm);">
             <template v-for="(item, index) in breadcrumbs" :key="index">
-                <BreadcrumbItem>
+                <li style="display:flex;align-items:center;gap:0.375rem;">
                     <template v-if="index === breadcrumbs.length - 1">
-                        <BreadcrumbPage>{{ item.title }}</BreadcrumbPage>
+                        <span style="color:var(--text-primary);font-weight:500;">{{ item.title }}</span>
                     </template>
                     <template v-else>
-                        <BreadcrumbLink as-child>
-                            <Link :href="item.href">{{ item.title }}</Link>
-                        </BreadcrumbLink>
+                        <Link :href="item.href" style="color:var(--text-muted);text-decoration:none;" :class="'hover:text-primary'">
+                            {{ item.title }}
+                        </Link>
                     </template>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator v-if="index !== breadcrumbs.length - 1" />
+                </li>
+                <li v-if="index !== breadcrumbs.length - 1" aria-hidden="true" style="color:var(--text-muted);">
+                    /
+                </li>
             </template>
-        </BreadcrumbList>
-    </Breadcrumb>
+        </ol>
+    </nav>
 </template>

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Form, Head, router } from '@inertiajs/vue3';
-import { ChevronDown, Mail, UserPlus, X } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import CancelInvitationModal from '@/components/CancelInvitationModal.vue';
 import DeleteTeamModal from '@/components/DeleteTeamModal.vue';
@@ -8,23 +7,10 @@ import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import InviteMemberModal from '@/components/InviteMemberModal.vue';
 import RemoveMemberModal from '@/components/RemoveMemberModal.vue';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
+import Avatar from '@/components/base/Avatar.vue';
+import Badge from '@/components/base/Badge.vue';
+import Button from '@/components/base/Button.vue';
+import Icon from '@/components/base/Icon.vue';
 import { useInitials } from '@/composables/useInitials';
 import { edit, index, update } from '@/routes/teams';
 import { update as updateMember } from '@/routes/teams/members';
@@ -76,7 +62,10 @@ const pageTitle = computed(() =>
         : `View ${props.team.name}`,
 );
 
+const openRoleDropdown = ref<number | null>(null);
+
 const updateMemberRole = (member: TeamMember, newRole: string) => {
+    openRoleDropdown.value = null;
     router.visit(updateMember([props.team.slug, member.id]), {
         data: { role: newRole },
         preserveScroll: true,
@@ -99,9 +88,9 @@ const confirmCancelInvitation = (invitation: TeamInvitation) => {
 
     <h1 class="sr-only">{{ pageTitle }}</h1>
 
-    <div class="flex flex-col space-y-10">
+    <div style="display:flex;flex-direction:column;gap:2.5rem;">
         <!-- Team Name Section -->
-        <div v-if="permissions.canUpdateTeam" class="space-y-6">
+        <div v-if="permissions.canUpdateTeam" style="display:flex;flex-direction:column;gap:1.5rem;">
             <Heading
                 variant="small"
                 title="Team settings"
@@ -110,26 +99,28 @@ const confirmCancelInvitation = (invitation: TeamInvitation) => {
 
             <Form
                 v-bind="update.form(team.slug)"
-                class="space-y-6"
+                style="display:flex;flex-direction:column;gap:1.5rem;"
                 v-slot="{ errors, processing }"
             >
-                <div class="grid gap-2">
-                    <Label for="name">Team name</Label>
-                    <Input
-                        id="name"
+                <div style="display:grid;gap:0.5rem;">
+                    <label for="team-name" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">Team name</label>
+                    <input
+                        id="team-name"
                         name="name"
                         data-test="team-name-input"
                         :default-value="team.name"
                         required
+                        class="input"
                     />
                     <InputError :message="errors.name" />
                 </div>
 
-                <div class="flex items-center gap-4">
+                <div style="display:flex;align-items:center;gap:1rem;">
                     <Button
                         type="submit"
                         data-test="team-save-button"
                         :disabled="processing"
+                        :loading="processing"
                     >
                         Save
                     </Button>
@@ -137,13 +128,13 @@ const confirmCancelInvitation = (invitation: TeamInvitation) => {
             </Form>
         </div>
 
-        <div v-else class="space-y-6">
+        <div v-else style="display:flex;flex-direction:column;gap:1.5rem;">
             <Heading variant="small" :title="team.name" />
         </div>
 
         <!-- Members Section -->
-        <div class="space-y-6">
-            <div class="flex items-center justify-between">
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
                 <Heading
                     variant="small"
                     title="Team members"
@@ -159,149 +150,138 @@ const confirmCancelInvitation = (invitation: TeamInvitation) => {
                     data-test="invite-member-button"
                     @click="inviteDialogOpen = true"
                 >
-                    <UserPlus /> Invite member
+                    <template #icon>
+                        <Icon name="userPlus" :size="16" />
+                    </template>
+                    Invite member
                 </Button>
             </div>
 
-            <div class="space-y-3">
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
                 <div
                     v-for="member in members"
                     :key="member.id"
                     data-test="member-row"
-                    class="flex items-center justify-between rounded-lg border p-4"
+                    style="display:flex;align-items:center;justify-content:space-between;border-radius:0.5rem;border:1px solid var(--border);padding:1rem;"
                 >
-                    <div class="flex items-center gap-4">
-                        <Avatar class="h-10 w-10">
-                            <AvatarImage
-                                v-if="member.avatar"
-                                :src="member.avatar"
-                                :alt="member.name"
-                            />
-                            <AvatarFallback>{{
-                                getInitials(member.name)
-                            }}</AvatarFallback>
-                        </Avatar>
+                    <div style="display:flex;align-items:center;gap:1rem;">
+                        <Avatar
+                            :initials="getInitials(member.name)"
+                            :src="member.avatar ?? undefined"
+                            size="md"
+                        />
                         <div>
-                            <div class="font-medium">
+                            <div style="font-weight:500;">
                                 {{ member.name }}
                             </div>
-                            <div class="text-sm text-muted-foreground">
+                            <div style="font-size:var(--text-sm);color:var(--text-muted);">
                                 {{ member.email }}
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <DropdownMenu
-                            v-if="
-                                member.role !== 'owner' &&
-                                permissions.canUpdateMember
-                            "
+                    <div style="display:flex;align-items:center;gap:0.5rem;position:relative;">
+                        <div
+                            v-if="member.role !== 'owner' && permissions.canUpdateMember"
+                            style="position:relative;"
                         >
-                            <DropdownMenuTrigger as-child>
-                                <Button
-                                    data-test="member-role-trigger"
-                                    variant="outline"
-                                    size="sm"
-                                >
-                                    {{ member.role_label }}
-                                    <ChevronDown
-                                        class="ml-2 h-4 w-4 opacity-50"
-                                    />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem
+                            <Button
+                                data-test="member-role-trigger"
+                                variant="secondary"
+                                size="sm"
+                                @click="openRoleDropdown = openRoleDropdown === member.id ? null : member.id"
+                            >
+                                {{ member.role_label }}
+                                <template #iconRight>
+                                    <Icon name="chevronDown" :size="14" />
+                                </template>
+                            </Button>
+                            <div
+                                v-if="openRoleDropdown === member.id"
+                                style="position:absolute;right:0;top:100%;margin-top:0.25rem;min-width:10rem;border-radius:0.5rem;border:1px solid var(--border);background:var(--bg-card);box-shadow:0 4px 16px rgba(0,0,0,0.12);z-index:50;padding:0.25rem;"
+                            >
+                                <button
                                     v-for="role in availableRoles"
                                     :key="role.value"
                                     data-test="member-role-option"
-                                    @click="
-                                        updateMemberRole(member, role.value)
-                                    "
+                                    @click="updateMemberRole(member, role.value)"
+                                    style="display:block;width:100%;padding:0.375rem 0.75rem;text-align:left;font-size:var(--text-sm);border:none;background:transparent;cursor:pointer;border-radius:0.25rem;color:var(--text-primary);"
                                 >
                                     {{ role.label }}
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                        <Badge v-else variant="secondary">
+                                </button>
+                            </div>
+                            <div
+                                v-if="openRoleDropdown === member.id"
+                                @click="openRoleDropdown = null"
+                                style="position:fixed;inset:0;z-index:49;"
+                            />
+                        </div>
+                        <Badge v-else variant="neutral">
                             {{ member.role_label }}
                         </Badge>
 
-                        <TooltipProvider
-                            v-if="
-                                member.role !== 'owner' &&
-                                permissions.canRemoveMember
-                            "
+                        <Button
+                            v-if="member.role !== 'owner' && permissions.canRemoveMember"
+                            data-test="member-remove-button"
+                            variant="ghost"
+                            size="sm"
+                            :icon-only="true"
+                            title="Remove member"
+                            @click="confirmRemoveMember(member)"
                         >
-                            <Tooltip>
-                                <TooltipTrigger as-child>
-                                    <Button
-                                        data-test="member-remove-button"
-                                        variant="ghost"
-                                        size="sm"
-                                        @click="confirmRemoveMember(member)"
-                                    >
-                                        <X class="h-4 w-4" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>Remove member</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
+                            <template #icon>
+                                <Icon name="x" :size="14" />
+                            </template>
+                        </Button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Pending Invitations Section -->
-        <div v-if="invitations.length > 0" class="space-y-6">
+        <div v-if="invitations.length > 0" style="display:flex;flex-direction:column;gap:1.5rem;">
             <Heading
                 variant="small"
                 title="Pending invitations"
                 description="Invitations that haven't been accepted yet"
             />
 
-            <div class="space-y-3">
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
                 <div
                     v-for="invitation in invitations"
                     :key="invitation.code"
                     data-test="invitation-row"
-                    class="flex items-center justify-between rounded-lg border p-4"
+                    style="display:flex;align-items:center;justify-content:space-between;border-radius:0.5rem;border:1px solid var(--border);padding:1rem;"
                 >
-                    <div class="flex items-center gap-4">
+                    <div style="display:flex;align-items:center;gap:1rem;">
                         <div
-                            class="flex h-10 w-10 items-center justify-center rounded-full bg-muted"
+                            style="display:flex;height:2.5rem;width:2.5rem;align-items:center;justify-content:center;border-radius:50%;background:var(--bg-subtle);"
                         >
-                            <Mail class="h-5 w-5 text-muted-foreground" />
+                            <Icon name="mail" :size="18" style="color:var(--text-muted);" />
                         </div>
                         <div>
-                            <div class="font-medium">
+                            <div style="font-weight:500;">
                                 {{ invitation.email }}
                             </div>
-                            <div class="text-sm text-muted-foreground">
+                            <div style="font-size:var(--text-sm);color:var(--text-muted);">
                                 {{ invitation.role_label }}
                             </div>
                         </div>
                     </div>
 
-                    <TooltipProvider v-if="permissions.canCancelInvitation">
-                        <Tooltip>
-                            <TooltipTrigger as-child>
-                                <Button
-                                    data-test="invitation-cancel-button"
-                                    variant="ghost"
-                                    size="sm"
-                                    @click="confirmCancelInvitation(invitation)"
-                                >
-                                    <X class="h-4 w-4" />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Cancel invitation</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                    <Button
+                        v-if="permissions.canCancelInvitation"
+                        data-test="invitation-cancel-button"
+                        variant="ghost"
+                        size="sm"
+                        :icon-only="true"
+                        title="Cancel invitation"
+                        @click="confirmCancelInvitation(invitation)"
+                    >
+                        <template #icon>
+                            <Icon name="x" :size="14" />
+                        </template>
+                    </Button>
                 </div>
             </div>
         </div>
@@ -309,7 +289,7 @@ const confirmCancelInvitation = (invitation: TeamInvitation) => {
         <!-- Danger Zone -->
         <div
             v-if="permissions.canDeleteTeam && !team.isPersonal"
-            class="space-y-6"
+            style="display:flex;flex-direction:column;gap:1.5rem;"
         >
             <Heading
                 variant="small"
@@ -317,22 +297,23 @@ const confirmCancelInvitation = (invitation: TeamInvitation) => {
                 description="Permanently delete your team"
             />
             <div
-                class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
+                style="display:flex;flex-direction:column;gap:1rem;border-radius:0.5rem;border:1px solid #fecaca;background:#fef2f2;padding:1rem;"
             >
-                <div
-                    class="relative space-y-0.5 text-red-600 dark:text-red-100"
-                >
-                    <p class="font-medium">Warning</p>
-                    <p class="text-sm">
+                <div style="color:#dc2626;">
+                    <p style="font-weight:500;margin:0;">Warning</p>
+                    <p style="font-size:var(--text-sm);margin:0;">
                         Please proceed with caution, this cannot be undone.
                     </p>
                 </div>
-                <Button
-                    data-test="delete-team-button"
-                    variant="destructive"
-                    @click="deleteDialogOpen = true"
-                    >Delete team</Button
-                >
+                <div>
+                    <Button
+                        data-test="delete-team-button"
+                        variant="danger"
+                        @click="deleteDialogOpen = true"
+                    >
+                        Delete team
+                    </Button>
+                </div>
             </div>
         </div>
     </div>

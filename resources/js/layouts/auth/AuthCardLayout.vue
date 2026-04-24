@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
 import { home } from '@/routes';
 
 defineProps<{
@@ -18,32 +11,30 @@ defineProps<{
 
 <template>
     <div
-        class="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10"
+        style="display:flex;min-height:100svh;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;background:var(--bg-page);padding:1.5rem;"
     >
-        <div class="flex w-full max-w-md flex-col gap-6">
+        <div style="display:flex;width:100%;max-width:28rem;flex-direction:column;gap:1.5rem;">
             <Link
                 :href="home()"
-                class="flex items-center gap-2 self-center font-medium"
+                style="display:flex;align-items:center;gap:0.5rem;align-self:center;font-weight:500;text-decoration:none;"
             >
-                <div class="flex h-9 w-9 items-center justify-center">
+                <div style="display:flex;height:2.25rem;width:2.25rem;align-items:center;justify-content:center;">
                     <AppLogoIcon
-                        class="size-9 fill-current text-black dark:text-white"
+                        style="width:2.25rem;height:2.25rem;fill:currentColor;"
                     />
                 </div>
             </Link>
 
-            <div class="flex flex-col gap-6">
-                <Card class="rounded-xl">
-                    <CardHeader class="px-10 pt-8 pb-0 text-center">
-                        <CardTitle class="text-xl">{{ title }}</CardTitle>
-                        <CardDescription>
-                            {{ description }}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent class="px-10 py-8">
+            <div style="display:flex;flex-direction:column;gap:1.5rem;">
+                <div class="card" style="border-radius:0.75rem;">
+                    <div class="card-head" style="padding:2rem 2.5rem 0;text-align:center;">
+                        <h2 style="font-size:var(--text-xl);font-weight:600;color:var(--text-primary);margin:0 0 0.25rem;">{{ title }}</h2>
+                        <p style="font-size:var(--text-sm);color:var(--text-muted);margin:0;">{{ description }}</p>
+                    </div>
+                    <div class="card-body" style="padding:2rem 2.5rem;">
                         <slot />
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

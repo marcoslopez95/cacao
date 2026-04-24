@@ -2,19 +2,8 @@
 import { Form } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import InputError from '@/components/InputError.vue';
-import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import Button from '@/components/base/Button.vue';
+import Modal from '@/components/feedback/Modal.vue';
 import { store } from '@/routes/teams';
 
 const open = ref(false);
@@ -30,51 +19,52 @@ function handleOpenChange(value: boolean) {
 </script>
 
 <template>
-    <Dialog :open="open" @update:open="handleOpenChange">
-        <DialogTrigger as-child>
-            <slot />
-        </DialogTrigger>
-        <DialogContent>
-            <Form
-                :key="formKey"
-                v-bind="store.form()"
-                class="space-y-6"
-                v-slot="{ errors, processing }"
-                @success="open = false"
-            >
-                <DialogHeader>
-                    <DialogTitle>Create a new team</DialogTitle>
-                    <DialogDescription>
-                        Create a new team to collaborate with others.
-                    </DialogDescription>
-                </DialogHeader>
+    <span @click="open = true" style="display:contents;">
+        <slot />
+    </span>
 
-                <div class="grid gap-2">
-                    <Label for="name">Team name</Label>
-                    <Input
-                        id="name"
-                        name="name"
-                        data-test="create-team-name"
-                        placeholder="My team"
-                        required
-                    />
-                    <InputError :message="errors.name" />
-                </div>
+    <Modal
+        :open="open"
+        @update:open="handleOpenChange"
+        title="Create a new team"
+        size="md"
+    >
+        <Form
+            :key="formKey"
+            v-bind="store.form()"
+            v-slot="{ errors, processing }"
+            @success="open = false"
+        >
+            <p style="font-size:var(--text-sm);color:var(--text-muted);margin-bottom:1rem;">
+                Create a new team to collaborate with others.
+            </p>
 
-                <DialogFooter class="gap-2">
-                    <DialogClose as-child>
-                        <Button variant="secondary"> Cancel </Button>
-                    </DialogClose>
+            <div style="display:grid;gap:0.5rem;margin-bottom:1.5rem;">
+                <label for="create-team-name" style="font-size:var(--text-sm);font-weight:500;">Team name</label>
+                <input
+                    id="create-team-name"
+                    name="name"
+                    data-test="create-team-name"
+                    placeholder="My team"
+                    required
+                    class="input"
+                />
+                <InputError :message="errors.name" />
+            </div>
 
-                    <Button
-                        type="submit"
-                        data-test="create-team-submit"
-                        :disabled="processing"
-                    >
-                        Create team
-                    </Button>
-                </DialogFooter>
-            </Form>
-        </DialogContent>
-    </Dialog>
+            <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+                <Button variant="secondary" type="button" @click="open = false">
+                    Cancel
+                </Button>
+                <Button
+                    type="submit"
+                    data-test="create-team-submit"
+                    :disabled="processing"
+                    :loading="processing"
+                >
+                    Create team
+                </Button>
+            </div>
+        </Form>
+    </Modal>
 </template>

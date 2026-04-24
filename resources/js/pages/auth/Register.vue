@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import Button from '@/components/base/Button.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
 
@@ -25,12 +22,12 @@ defineOptions({
         v-bind="store.form()"
         :reset-on-success="['password', 'password_confirmation']"
         v-slot="{ errors, processing }"
-        class="flex flex-col gap-6"
+        style="display:flex;flex-direction:column;gap:1.5rem;"
     >
-        <div class="grid gap-6">
-            <div class="grid gap-2">
-                <Label for="name">Name</Label>
-                <Input
+        <div style="display:grid;gap:1.5rem;">
+            <div style="display:grid;gap:0.375rem;">
+                <label for="name" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">Name</label>
+                <input
                     id="name"
                     type="text"
                     required
@@ -39,13 +36,14 @@ defineOptions({
                     autocomplete="name"
                     name="name"
                     placeholder="Full name"
+                    class="input"
                 />
                 <InputError :message="errors.name" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="email">Email address</Label>
-                <Input
+            <div style="display:grid;gap:0.375rem;">
+                <label for="email" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">Email address</label>
+                <input
                     id="email"
                     type="email"
                     required
@@ -53,12 +51,13 @@ defineOptions({
                     autocomplete="email"
                     name="email"
                     placeholder="email@example.com"
+                    class="input"
                 />
                 <InputError :message="errors.email" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="password">Password</Label>
+            <div style="display:grid;gap:0.375rem;">
+                <label for="password" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">Password</label>
                 <PasswordInput
                     id="password"
                     required
@@ -70,8 +69,8 @@ defineOptions({
                 <InputError :message="errors.password" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="password_confirmation">Confirm password</Label>
+            <div style="display:grid;gap:0.375rem;">
+                <label for="password_confirmation" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">Confirm password</label>
                 <PasswordInput
                     id="password_confirmation"
                     required
@@ -85,24 +84,21 @@ defineOptions({
 
             <Button
                 type="submit"
-                class="mt-2 w-full"
-                tabindex="5"
+                variant="primary"
+                size="lg"
+                style="width:100%;margin-top:0.5rem;"
+                :tabindex="5"
                 :disabled="processing"
+                :loading="processing"
                 data-test="register-user-button"
             >
-                <Spinner v-if="processing" />
                 Create account
             </Button>
         </div>
 
-        <div class="text-center text-sm text-muted-foreground">
+        <div style="text-align:center;font-size:var(--text-sm);color:var(--text-muted);">
             Already have an account?
-            <TextLink
-                :href="login()"
-                class="underline underline-offset-4"
-                :tabindex="6"
-                >Log in</TextLink
-            >
+            <TextLink :href="login()" :tabindex="6">Log in</TextLink>
         </div>
     </Form>
 </template>

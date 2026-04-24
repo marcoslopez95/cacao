@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { Eye, Pencil, Plus } from 'lucide-vue-next';
 import CreateTeamModal from '@/components/CreateTeamModal.vue';
 import Heading from '@/components/Heading.vue';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
+import Badge from '@/components/base/Badge.vue';
+import Button from '@/components/base/Button.vue';
+import Icon from '@/components/base/Icon.vue';
 import { edit, index } from '@/routes/teams';
 import type { Team } from '@/types';
 
@@ -37,8 +31,8 @@ defineOptions({
 
     <h1 class="sr-only">Teams</h1>
 
-    <div class="flex flex-col space-y-6">
-        <div class="flex items-center justify-between">
+    <div style="display:flex;flex-direction:column;gap:1.5rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
             <Heading
                 variant="small"
                 title="Teams"
@@ -47,76 +41,54 @@ defineOptions({
 
             <CreateTeamModal>
                 <Button data-test="teams-new-team-button">
-                    <Plus /> New team
+                    <template #icon>
+                        <Icon name="plus" :size="16" />
+                    </template>
+                    New team
                 </Button>
             </CreateTeamModal>
         </div>
 
-        <div class="space-y-3">
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
             <div
                 v-for="team in teams"
                 :key="team.id"
                 data-test="team-row"
-                class="flex items-center justify-between rounded-lg border p-4"
+                style="display:flex;align-items:center;justify-content:space-between;border-radius:0.5rem;border:1px solid var(--border);padding:1rem;"
             >
-                <div class="flex items-center gap-4">
+                <div style="display:flex;align-items:center;gap:1rem;">
                     <div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium">{{ team.name }}</span>
-                            <Badge v-if="team.isPersonal" variant="secondary">
+                        <div style="display:flex;align-items:center;gap:0.5rem;">
+                            <span style="font-weight:500;">{{ team.name }}</span>
+                            <Badge v-if="team.isPersonal" variant="neutral">
                                 Personal
                             </Badge>
                         </div>
-                        <span class="text-sm text-muted-foreground">
+                        <span style="font-size:var(--text-sm);color:var(--text-muted);">
                             {{ team.roleLabel }}
                         </span>
                     </div>
                 </div>
 
-                <TooltipProvider>
-                    <div class="flex items-center gap-2">
-                        <Tooltip v-if="team.role === 'member'">
-                            <TooltipTrigger as-child>
-                                <Button
-                                    data-test="team-view-button"
-                                    variant="ghost"
-                                    size="sm"
-                                    as-child
-                                >
-                                    <Link :href="edit(team.slug)">
-                                        <Eye class="h-4 w-4" />
-                                    </Link>
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>View team</p>
-                            </TooltipContent>
-                        </Tooltip>
-
-                        <Tooltip v-else>
-                            <TooltipTrigger as-child>
-                                <Button
-                                    data-test="team-edit-button"
-                                    variant="ghost"
-                                    size="sm"
-                                    as-child
-                                >
-                                    <Link :href="edit(team.slug)">
-                                        <Pencil class="h-4 w-4" />
-                                    </Link>
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Edit team</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </div>
-                </TooltipProvider>
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <Link :href="edit(team.slug)" title="View/Edit team">
+                        <Button
+                            :data-test="team.role === 'member' ? 'team-view-button' : 'team-edit-button'"
+                            variant="ghost"
+                            size="sm"
+                            :icon-only="true"
+                        >
+                            <template #icon>
+                                <Icon :name="team.role === 'member' ? 'eye' : 'edit'" :size="14" />
+                            </template>
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             <p
                 v-if="teams.length === 0"
-                class="py-8 text-center text-muted-foreground"
+                style="padding:2rem 0;text-align:center;color:var(--text-muted);"
             >
                 You don't belong to any teams yet.
             </p>

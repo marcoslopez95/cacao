@@ -1,46 +1,35 @@
 <script setup lang="ts">
-import { Eye, EyeOff } from 'lucide-vue-next';
 import { ref, useTemplateRef } from 'vue';
-import type { HTMLAttributes } from 'vue';
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
+import Icon from '@/components/base/Icon.vue';
 
 defineOptions({ inheritAttrs: false });
 
-const props = defineProps<{
-    class?: HTMLAttributes['class'];
-}>();
-
 const showPassword = ref(false);
-const inputRef = useTemplateRef('inputRef');
+const inputRef = useTemplateRef<HTMLInputElement>('inputRef');
 
 defineExpose({
     $el: inputRef,
-    focus: () => inputRef.value?.$el?.focus(),
+    focus: () => inputRef.value?.focus(),
 });
 </script>
 
 <template>
     <div class="relative">
-        <Input
+        <input
             ref="inputRef"
             :type="showPassword ? 'text' : 'password'"
-            :class="cn('pr-10', props.class)"
+            class="input"
+            style="padding-right: 2.5rem;"
             v-bind="$attrs"
         />
         <button
             type="button"
             @click="showPassword = !showPassword"
-            :class="
-                cn(
-                    'absolute inset-y-0 right-0 flex items-center rounded-r-md px-3 text-muted-foreground hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:outline-none',
-                )
-            "
+            style="position:absolute;inset-y:0;right:0;display:flex;align-items:center;padding:0 0.75rem;color:var(--text-muted);background:transparent;border:none;cursor:pointer;"
             :aria-label="showPassword ? 'Hide password' : 'Show password'"
             :tabindex="-1"
         >
-            <EyeOff v-if="showPassword" class="size-4" />
-            <Eye v-else class="size-4" />
+            <Icon :name="showPassword ? 'eyeOff' : 'eye'" :size="16" />
         </button>
     </div>
 </template>

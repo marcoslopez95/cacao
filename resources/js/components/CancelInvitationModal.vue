@@ -1,16 +1,8 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import Button from '@/components/base/Button.vue';
+import Modal from '@/components/feedback/Modal.vue';
 import { destroy as destroyInvitation } from '@/routes/teams/invitations';
 import type { Team, TeamInvitation } from '@/types';
 
@@ -41,31 +33,30 @@ const cancelInvitation = () => {
 </script>
 
 <template>
-    <Dialog :open="props.open" @update:open="emit('update:open', $event)">
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>Cancel invitation</DialogTitle>
-                <DialogDescription>
-                    Are you sure you want to cancel the invitation for
-                    <strong>{{ props.invitation?.email }}</strong
-                    >?
-                </DialogDescription>
-            </DialogHeader>
+    <Modal
+        :open="props.open"
+        @update:open="emit('update:open', $event)"
+        title="Cancel invitation"
+        size="sm"
+    >
+        <p style="font-size:var(--text-sm);color:var(--text-muted);margin-bottom:1.5rem;">
+            Are you sure you want to cancel the invitation for
+            <strong>{{ props.invitation?.email }}</strong>?
+        </p>
 
-            <DialogFooter class="gap-2">
-                <DialogClose as-child>
-                    <Button variant="secondary"> Keep invitation </Button>
-                </DialogClose>
-
-                <Button
-                    data-test="cancel-invitation-confirm"
-                    variant="destructive"
-                    :disabled="processing"
-                    @click="cancelInvitation"
-                >
-                    Cancel invitation
-                </Button>
-            </DialogFooter>
-        </DialogContent>
-    </Dialog>
+        <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+            <Button variant="secondary" @click="emit('update:open', false)">
+                Keep invitation
+            </Button>
+            <Button
+                data-test="cancel-invitation-confirm"
+                variant="danger"
+                :disabled="processing"
+                :loading="processing"
+                @click="cancelInvitation"
+            >
+                Cancel invitation
+            </Button>
+        </div>
+    </Modal>
 </template>

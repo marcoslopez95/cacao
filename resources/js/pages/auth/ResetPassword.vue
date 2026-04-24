@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import Button from '@/components/base/Button.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { update } from '@/routes/password';
 
 defineOptions({
@@ -33,41 +30,39 @@ const inputEmail = ref(props.email);
         :reset-on-success="['password', 'password_confirmation']"
         v-slot="{ errors, processing }"
     >
-        <div class="grid gap-6">
-            <div class="grid gap-2">
-                <Label for="email">Email</Label>
-                <Input
+        <div style="display:grid;gap:1.5rem;">
+            <div style="display:grid;gap:0.5rem;">
+                <label for="email" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">Email</label>
+                <input
                     id="email"
                     type="email"
                     name="email"
                     autocomplete="email"
                     v-model="inputEmail"
-                    class="mt-1 block w-full"
+                    class="input"
                     readonly
                 />
-                <InputError :message="errors.email" class="mt-2" />
+                <InputError :message="errors.email" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="password">Password</Label>
+            <div style="display:grid;gap:0.5rem;">
+                <label for="password" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">Password</label>
                 <PasswordInput
                     id="password"
                     name="password"
                     autocomplete="new-password"
-                    class="mt-1 block w-full"
                     autofocus
                     placeholder="Password"
                 />
                 <InputError :message="errors.password" />
             </div>
 
-            <div class="grid gap-2">
-                <Label for="password_confirmation"> Confirm password </Label>
+            <div style="display:grid;gap:0.5rem;">
+                <label for="password_confirmation" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">Confirm password</label>
                 <PasswordInput
                     id="password_confirmation"
                     name="password_confirmation"
                     autocomplete="new-password"
-                    class="mt-1 block w-full"
                     placeholder="Confirm password"
                 />
                 <InputError :message="errors.password_confirmation" />
@@ -75,11 +70,13 @@ const inputEmail = ref(props.email);
 
             <Button
                 type="submit"
-                class="mt-4 w-full"
+                variant="primary"
+                size="lg"
+                style="width:100%;margin-top:1rem;"
                 :disabled="processing"
+                :loading="processing"
                 data-test="reset-password-button"
             >
-                <Spinner v-if="processing" />
                 Reset password
             </Button>
         </div>
