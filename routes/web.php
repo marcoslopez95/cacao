@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Security\InvitationController;
 use App\Http\Controllers\Security\RoleController;
 use App\Http\Controllers\Security\UserController;
 use App\Http\Controllers\Teams\TeamInvitationController;
@@ -34,6 +35,10 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::patch('users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
     Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
+
+    // Invitations
+    Route::post('invitations', [InvitationController::class, 'store'])->name('invitations.store');
+    Route::delete('invitations/{invitation}', [InvitationController::class, 'destroy'])->name('invitations.destroy');
 });
 
 require __DIR__.'/settings.php';
