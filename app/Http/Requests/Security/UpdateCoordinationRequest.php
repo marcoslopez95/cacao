@@ -39,6 +39,7 @@ class UpdateCoordinationRequest extends FormRequest
                 Rule::in(['media_general', 'bachillerato']),
             ],
             'career_id' => [
+                Rule::requiredIf($type === 'career'),
                 'nullable',
                 'integer',
             ],
@@ -59,6 +60,19 @@ class UpdateCoordinationRequest extends FormRequest
                 },
             ],
             'active' => ['sometimes', 'boolean'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'type.in' => 'El tipo de coordinación no es válido.',
+            'education_level.in' => 'El nivel educativo no es válido.',
+            'secondary_type.in' => 'El tipo de educación media no es válido.',
+            'grade_year.min' => 'El año escolar debe ser al menos 1.',
         ];
     }
 }

@@ -132,10 +132,22 @@ test('stores a career coordination', function () {
             'name' => 'Coordinación de Ingeniería',
             'type' => 'career',
             'education_level' => 'university',
+            'career_id' => 1,
         ])
         ->assertRedirect('/security/coordinations');
 
     expect(Coordination::where('name', 'Coordinación de Ingeniería')->exists())->toBeTrue();
+});
+
+test('rejects career coordination without career_id', function () {
+    $this->actingAs(userWithCoordPerm('coordinations.create'))
+        ->post('/security/coordinations', [
+            'name' => 'Sin Carrera',
+            'type' => 'career',
+            'education_level' => 'university',
+            // no career_id
+        ])
+        ->assertSessionHasErrors('career_id');
 });
 
 test('stores a grade coordination', function () {
@@ -196,6 +208,7 @@ test('updates a coordination', function () {
             'name' => 'Actualizada',
             'type' => 'career',
             'education_level' => 'university',
+            'career_id' => 1,
         ])
         ->assertRedirect('/security/coordinations');
 

@@ -38,6 +38,7 @@ class StoreCoordinationRequest extends FormRequest
                 Rule::in(['media_general', 'bachillerato']),
             ],
             'career_id' => [
+                Rule::requiredIf($type === 'career'),
                 'nullable',
                 'integer',
             ],
