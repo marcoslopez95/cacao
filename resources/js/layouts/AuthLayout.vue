@@ -1,14 +1,25 @@
 <script setup lang="ts">
-import AuthLayout from '@/layouts/auth/AuthSimpleLayout.vue';
+import AuthSplitLayout from '@/layouts/auth/AuthSplitLayout.vue'
 
-const { title = '', description = '' } = defineProps<{
-    title?: string;
-    description?: string;
-}>();
+defineProps<{
+    title?: string
+    description?: string
+    panelQuote?: string
+    panelHighlight?: string
+    panelRole?: string
+    panelContext?: string
+}>()
 </script>
 
 <template>
-    <AuthLayout :title="title" :description="description">
+    <AuthSplitLayout
+        :title="title"
+        :description="description"
+        :panel-quote="panelQuote"
+        :panel-highlight="panelHighlight"
+        :panel-role="panelRole"
+        :panel-context="panelContext"
+    >
         <slot />
-    </AuthLayout>
+    </AuthSplitLayout>
 </template>
