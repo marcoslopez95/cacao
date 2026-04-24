@@ -6,6 +6,7 @@ import Icon from '@/components/base/Icon.vue'
 import Isotipo from '@/components/base/Isotipo.vue'
 import { dashboard } from '@/routes'
 import { index as rolesIndex } from '@/routes/security/roles'
+import { index as usersIndex } from '@/routes/security/users'
 
 const page = usePage()
 
@@ -27,14 +28,28 @@ const navGroups = computed(() => {
 
     if (
         page.props.auth?.permissions?.includes('roles.view') ||
+        page.props.auth?.permissions?.includes('users.view') ||
         page.props.auth?.roles?.includes('Admin')
     ) {
-        groups.push({
-            label: 'Seguridad',
-            items: [
-                { icon: 'shield', label: 'Roles', href: rolesIndex.url() },
-            ],
-        })
+        const securityItems: { icon: string; label: string; href: string }[] = []
+
+        if (
+            page.props.auth?.permissions?.includes('roles.view') ||
+            page.props.auth?.roles?.includes('Admin')
+        ) {
+            securityItems.push({ icon: 'shield', label: 'Roles', href: rolesIndex.url() })
+        }
+
+        if (
+            page.props.auth?.permissions?.includes('users.view') ||
+            page.props.auth?.roles?.includes('Admin')
+        ) {
+            securityItems.push({ icon: 'users', label: 'Usuarios', href: usersIndex.url() })
+        }
+
+        if (securityItems.length) {
+            groups.push({ label: 'Seguridad', items: securityItems })
+        }
     }
 
     return groups
