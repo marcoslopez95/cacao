@@ -1,27 +1,25 @@
 <script setup lang="ts">
-import AppContent from '@/components/AppContent.vue';
-import AppShell from '@/components/AppShell.vue';
-import AppSidebar from '@/components/AppSidebar.vue';
-import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
-import { Toaster } from '@/components/ui/sonner';
-import type { BreadcrumbItem } from '@/types';
+import AppSidebar from '@/components/AppSidebar.vue'
+import AppTopbar from '@/components/AppTopbar.vue'
+// import Toast from '@/components/feedback/Toast.vue' // TODO: Task 7
+import type { BreadcrumbItem } from '@/types'
 
-type Props = {
-    breadcrumbs?: BreadcrumbItem[];
-};
-
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<{
+    breadcrumbs?: BreadcrumbItem[]
+}>(), {
     breadcrumbs: () => [],
-});
+})
 </script>
 
 <template>
-    <AppShell variant="sidebar">
+    <div class="app-shell">
         <AppSidebar />
-        <AppContent variant="sidebar" class="overflow-x-hidden">
-            <AppSidebarHeader :breadcrumbs="breadcrumbs" />
-            <slot />
-        </AppContent>
-        <Toaster />
-    </AppShell>
+        <main class="app-main">
+            <AppTopbar :breadcrumbs="breadcrumbs" />
+            <div class="app-content">
+                <slot />
+            </div>
+        </main>
+    </div>
+    <!-- <Toast /> TODO: Task 7 -->
 </template>

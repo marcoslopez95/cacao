@@ -1,95 +1,100 @@
 <script setup lang="ts">
-import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid, Shield } from 'lucide-vue-next';
-import { computed } from 'vue';
-import AppLogo from '@/components/AppLogo.vue';
-import NavFooter from '@/components/NavFooter.vue';
-import NavMain from '@/components/NavMain.vue';
-import NavUser from '@/components/NavUser.vue';
-import TeamSwitcher from '@/components/TeamSwitcher.vue';
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-} from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
-import { index as rolesIndex } from '@/routes/security/roles';
-import type { NavItem } from '@/types';
+import { Link, router, usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
+import Avatar from '@/components/base/Avatar.vue'
+import Icon from '@/components/base/Icon.vue'
+import Isotipo from '@/components/base/Isotipo.vue'
+import { dashboard } from '@/routes'
+import { index as rolesIndex } from '@/routes/security/roles'
 
-const page = usePage();
+const page = usePage()
+
+const currentUrl = computed(() => page.url)
 
 const dashboardUrl = computed(() =>
     page.props.currentTeam ? dashboard(page.props.currentTeam.slug).url : '/',
-);
+)
 
-const mainNavItems = computed<NavItem[]>(() => {
-    const items: NavItem[] = [
+const navGroups = computed(() => {
+    const groups = [
         {
-            title: 'Dashboard',
-            href: dashboardUrl.value,
-            icon: LayoutGrid,
+            label: 'General',
+            items: [
+                { icon: 'grid', label: 'Dashboard', href: dashboardUrl.value },
+            ],
         },
-    ];
+    ]
 
     if (
-        page.props.auth.permissions?.includes('roles.view') ||
-        page.props.auth.roles?.includes('Admin')
+        page.props.auth?.permissions?.includes('roles.view') ||
+        page.props.auth?.roles?.includes('Admin')
     ) {
-        items.push({
-            title: 'Roles',
-            href: rolesIndex.url(),
-            icon: Shield,
-        });
+        groups.push({
+            label: 'Seguridad',
+            items: [
+                { icon: 'shield', label: 'Roles', href: rolesIndex.url() },
+            ],
+        })
     }
 
-    return items;
-});
+    return groups
+})
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const user = computed(() => page.props.auth?.user)
+
+const initials = computed(() => {
+    const name = user.value?.name ?? ''
+    return name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
+})
+
+function isActive(href: string): boolean {
+    return currentUrl.value === href || currentUrl.value.startsWith(href + '/')
+}
+
+function logout(): void {
+    router.post('/logout')
+}
 </script>
 
 <template>
-    <Sidebar collapsible="icon" variant="inset">
-        <SidebarHeader>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboardUrl">
-                            <AppLogo />
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <TeamSwitcher />
-                </SidebarMenuItem>
-            </SidebarMenu>
-        </SidebarHeader>
+    <aside class="app-sidebar">
+        <div class="sidebar-brand">
+            <Isotipo size="sm" />
+            <span class="sidebar-wordmark">CACAO</span>
+        </div>
 
-        <SidebarContent>
-            <NavMain :items="mainNavItems" />
-        </SidebarContent>
+        <nav style="flex:1;padding:8px;">
+            <div v-for="group in navGroups" :key="group.label" class="sidebar-group">
+                <div class="sidebar-group-label">{{ group.label }}</div>
+                <Link
+                    v-for="item in group.items"
+                    :key="item.href"
+                    :href="item.href"
+                    :class="['sidebar-item', isActive(item.href) ? 'active' : '']"
+                >
+                    <Icon :name="item.icon" :size="16" />
+                    {{ item.label }}
+                </Link>
+            </div>
+        </nav>
 
-        <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
-            <NavUser />
-        </SidebarFooter>
-    </Sidebar>
-    <slot />
+        <div class="sidebar-footer">
+            <div class="sidebar-user" style="justify-content:space-between;">
+                <div style="display:flex;align-items:center;gap:10px;overflow:hidden;">
+                    <Avatar :initials="initials" size="sm" :color-preset="1" />
+                    <span style="font-size:13px;font-weight:500;color:var(--sidebar-fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                        {{ user?.name }}
+                    </span>
+                </div>
+                <button
+                    class="btn btn-ghost btn-icon btn-sm"
+                    style="color:var(--sidebar-muted);"
+                    aria-label="Cerrar sesión"
+                    @click="logout"
+                >
+                    <Icon name="logout" :size="15" />
+                </button>
+            </div>
+        </div>
+    </aside>
 </template>
