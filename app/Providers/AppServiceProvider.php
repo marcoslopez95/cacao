@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Coordination;
 use App\Models\User;
+use App\Policies\CoordinationPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use Carbon\CarbonImmutable;
@@ -41,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Coordination::class, CoordinationPolicy::class);
     }
 
     /**

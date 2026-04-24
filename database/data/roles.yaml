@@ -15,6 +15,12 @@ roles:
       - users.deactivate
       - users.reset-password
       - users.invite
+      - coordinations.view
+      - coordinations.create
+      - coordinations.edit
+      - coordinations.delete
+      - coordinations.assign
+      - coordinations.view_history
 
   - name: Profesor
     description: Gestión de secciones, evaluaciones y recursos propios

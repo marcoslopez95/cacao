@@ -23,3 +23,15 @@ permissions:
     guard: web
   - name: users.invite
     guard: web
+  - name: coordinations.view
+    guard: web
+  - name: coordinations.create
+    guard: web
+  - name: coordinations.edit
+    guard: web
+  - name: coordinations.delete
+    guard: web
+  - name: coordinations.assign
+    guard: web
+  - name: coordinations.view_history
+    guard: web
