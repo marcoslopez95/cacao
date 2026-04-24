@@ -50,8 +50,14 @@ const FundamentosSection = () => {
             <div className="wordmark-row" style={{ background:'var(--terracota)', padding:'12px 20px', borderRadius:8 }}>
               <div className="iso iso-28" style={{ }}>
                 {[...Array(9)].map((_,i)=>{
-                  if (i===2) return <span key={i} className="cell" style={{ background:'var(--papel)' }}/>;
-                  if (i===5) return <span key={i} className="cell empty"/>;
+                  if (i===2) {
+return <span key={i} className="cell" style={{ background:'var(--papel)' }}/>;
+}
+
+                  if (i===5) {
+return <span key={i} className="cell empty"/>;
+}
+
                   return <span key={i} className="cell" style={{ background:'var(--papel)' }}/>;
                 })}
               </div>

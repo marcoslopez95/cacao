@@ -298,6 +298,7 @@ const DashboardDemo = () => {
                     { c:'Lab LC-1', o:22, t:24 },
                   ].map(a => {
                     const pct = Math.round(a.o/a.t*100);
+
                     return (
                       <div key={a.c}>
                         <div style={{ display:'flex', justifyContent:'space-between', fontSize: 13, marginBottom: 4 }}>

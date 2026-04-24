@@ -45,7 +45,11 @@ const Icon = ({ name, size = 16, stroke = 1.75 }) => {
     star: <><path d="m12 2 3.1 6.9 7.4.8-5.5 5.1 1.6 7.3L12 18.3 5.4 22.1l1.6-7.3L1.5 9.7l7.4-.8z"/></>,
   };
   const p = paths[name];
-  if (!p) return null;
+
+  if (!p) {
+return null;
+}
+
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
          stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round">
@@ -78,6 +82,7 @@ const Button = ({ variant = 'primary', size = 'md', icon, iconRight, loading, di
     iconOnly ? 'btn-icon' : '',
     className
   ].join(' ');
+
   return (
     <button className={classes} disabled={disabled || loading} {...rest}>
       {loading && <span className="spin" />}

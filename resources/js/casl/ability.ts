@@ -1,4 +1,5 @@
-import { AbilityBuilder, createMongoAbility, type MongoAbility } from '@casl/ability';
+import { AbilityBuilder, createMongoAbility  } from '@casl/ability';
+import type {MongoAbility} from '@casl/ability';
 
 export type AppActions = 'manage' | 'view' | 'create' | 'edit' | 'delete' | string;
 

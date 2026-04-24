@@ -141,6 +141,7 @@ function useTweaks(defaults) {
     setValues((prev) => ({ ...prev, [key]: val }));
     window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: val } }, '*');
   }, []);
+
   return [values, setTweak];
 }
 
@@ -159,7 +160,11 @@ function TweaksPanel({ title = 'Tweaks', children }) {
 
   const clampToViewport = React.useCallback(() => {
     const panel = dragRef.current;
-    if (!panel) return;
+
+    if (!panel) {
+return;
+}
+
     const w = panel.offsetWidth, h = panel.offsetHeight;
     const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
     const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
@@ -172,25 +177,37 @@ function TweaksPanel({ title = 'Tweaks', children }) {
   }, []);
 
   React.useEffect(() => {
-    if (!open) return;
+    if (!open) {
+return;
+}
+
     clampToViewport();
+
     if (typeof ResizeObserver === 'undefined') {
       window.addEventListener('resize', clampToViewport);
+
       return () => window.removeEventListener('resize', clampToViewport);
     }
+
     const ro = new ResizeObserver(clampToViewport);
     ro.observe(document.documentElement);
+
     return () => ro.disconnect();
   }, [open, clampToViewport]);
 
   React.useEffect(() => {
     const onMsg = (e) => {
       const t = e?.data?.type;
-      if (t === '__activate_edit_mode') setOpen(true);
-      else if (t === '__deactivate_edit_mode') setOpen(false);
+
+      if (t === '__activate_edit_mode') {
+setOpen(true);
+} else if (t === '__deactivate_edit_mode') {
+setOpen(false);
+}
     };
     window.addEventListener('message', onMsg);
     window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
     return () => window.removeEventListener('message', onMsg);
   }, []);
 
@@ -201,7 +218,11 @@ function TweaksPanel({ title = 'Tweaks', children }) {
 
   const onDragStart = (e) => {
     const panel = dragRef.current;
-    if (!panel) return;
+
+    if (!panel) {
+return;
+}
+
     const r = panel.getBoundingClientRect();
     const sx = e.clientX, sy = e.clientY;
     const startRight = window.innerWidth - r.right;
@@ -221,7 +242,10 @@ function TweaksPanel({ title = 'Tweaks', children }) {
     window.addEventListener('mouseup', up);
   };
 
-  if (!open) return null;
+  if (!open) {
+return null;
+}
+
   return (
     <>
       <style>{__TWEAKS_STYLE}</style>
@@ -300,17 +324,28 @@ function TweakRadio({ label, value, options, onChange }) {
     const r = trackRef.current.getBoundingClientRect();
     const inner = r.width - 4;
     const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+
     return opts[Math.max(0, Math.min(n - 1, i))].value;
   };
 
   const onPointerDown = (e) => {
     setDragging(true);
     const v0 = segAt(e.clientX);
-    if (v0 !== valueRef.current) onChange(v0);
+
+    if (v0 !== valueRef.current) {
+onChange(v0);
+}
+
     const move = (ev) => {
-      if (!trackRef.current) return;
+      if (!trackRef.current) {
+return;
+}
+
       const v = segAt(ev.clientX);
-      if (v !== valueRef.current) onChange(v);
+
+      if (v !== valueRef.current) {
+onChange(v);
+}
     };
     const up = () => {
       setDragging(false);
@@ -345,6 +380,7 @@ function TweakSelect({ label, value, options, onChange }) {
         {options.map((o) => {
           const v = typeof o === 'object' ? o.value : o;
           const l = typeof o === 'object' ? o.label : o;
+
           return <option key={v} value={v}>{l}</option>;
         })}
       </select>
@@ -363,8 +399,14 @@ function TweakText({ label, value, placeholder, onChange }) {
 
 function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) {
   const clamp = (n) => {
-    if (min != null && n < min) return min;
-    if (max != null && n > max) return max;
+    if (min != null && n < min) {
+return min;
+}
+
+    if (max != null && n > max) {
+return max;
+}
+
     return n;
   };
   const startRef = React.useRef({ x: 0, val: 0 });
@@ -385,6 +427,7 @@ function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) 
     window.addEventListener('pointermove', move);
     window.addEventListener('pointerup', up);
   };
+
   return (
     <div className="twk-num">
       <span className="twk-num-lbl" onPointerDown={onScrubStart}>{label}</span>

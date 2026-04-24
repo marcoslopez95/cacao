@@ -111,6 +111,7 @@ const BadgesSection = () => (
 
 const ChipsDemo = () => {
   const [chips, setChips] = useStateC(['Ingeniería en Sistemas', 'Período 2026-I', 'Semestre 5', 'Estado: aprobada']);
+
   return (
     <div className="row" style={{ width: '100%' }}>
       {chips.map(c => (

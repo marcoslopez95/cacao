@@ -139,11 +139,13 @@ function CacaoTweaks({ theme }) {
 
   React.useEffect(() => {
     let el = document.getElementById('__cacao_tweaks');
+
     if (!el) {
       el = document.createElement('style');
       el.id = '__cacao_tweaks';
       document.head.appendChild(el);
     }
+
     el.textContent = applyTweaks(t, theme);
   }, [t.acento, t.temperamento, t.tejido, theme]);
 

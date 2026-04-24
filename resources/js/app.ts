@@ -1,13 +1,13 @@
-import { createApp, h } from 'vue';
-import { createInertiaApp, router } from '@inertiajs/vue3';
 import { abilitiesPlugin } from '@casl/vue';
+import { createInertiaApp, router } from '@inertiajs/vue3';
+import { createApp, h } from 'vue';
+import { ability, buildRules } from '@/casl/ability';
 import { initializeTheme } from '@/composables/useAppearance';
+import { i18n } from '@/i18n';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
-import { i18n } from '@/i18n';
-import { ability, buildRules } from '@/casl/ability';
 
 const appName = import.meta.env.VITE_APP_NAME || 'CACAO';
 

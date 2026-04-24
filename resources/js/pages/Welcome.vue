@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { login, register, dashboard } from '@/routes';
 
 const page = usePage();
 const dashboardHref = computed(() => {
     const team = page.props.currentTeam as { id: number } | null;
+
     return team ? dashboard(team.id) : login();
 });
 

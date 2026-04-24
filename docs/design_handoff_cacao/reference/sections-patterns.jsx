@@ -30,26 +30,48 @@ const EnrollmentsTable = () => {
 
   const filtered = useMemoP(() => {
     let rows = ENROLLMENTS.slice();
-    if (query) rows = rows.filter(r =>
+
+    if (query) {
+rows = rows.filter(r =>
       (r.student + ' ' + r.code + ' ' + r.subject + ' ' + r.career).toLowerCase().includes(query.toLowerCase()));
-    if (status !== 'all') rows = rows.filter(r => r.status === status);
+}
+
+    if (status !== 'all') {
+rows = rows.filter(r => r.status === status);
+}
+
     rows.sort((a,b) => {
       const av = a[sort.key], bv = b[sort.key];
-      if (av < bv) return sort.dir === 'asc' ? -1 : 1;
-      if (av > bv) return sort.dir === 'asc' ? 1 : -1;
+
+      if (av < bv) {
+return sort.dir === 'asc' ? -1 : 1;
+}
+
+      if (av > bv) {
+return sort.dir === 'asc' ? 1 : -1;
+}
+
       return 0;
     });
+
     return rows;
   }, [sort, query, status]);
 
   const pages = Math.max(1, Math.ceil(filtered.length / perPage));
   const pageRows = filtered.slice((page-1)*perPage, page*perPage);
 
-  useEffectP(() => { if (page > pages) setPage(1); }, [pages, page]);
+  useEffectP(() => {
+ if (page > pages) {
+setPage(1);
+} 
+}, [pages, page]);
 
   const toggleSort = (key) => {
-    if (sort.key === key) setSort({ key, dir: sort.dir === 'asc' ? 'desc' : 'asc' });
-    else setSort({ key, dir: 'asc' });
+    if (sort.key === key) {
+setSort({ key, dir: sort.dir === 'asc' ? 'desc' : 'asc' });
+} else {
+setSort({ key, dir: 'asc' });
+}
   };
   const sortInd = (key) => sort.key !== key ? '↕' : sort.dir === 'asc' ? '↑' : '↓';
   const toggleRow = (id) => {
@@ -58,8 +80,13 @@ const EnrollmentsTable = () => {
   const allOn = pageRows.length > 0 && pageRows.every(r => selected.has(r.id));
   const toggleAll = () => {
     const s = new Set(selected);
-    if (allOn) pageRows.forEach(r => s.delete(r.id));
-    else pageRows.forEach(r => s.add(r.id));
+
+    if (allOn) {
+pageRows.forEach(r => s.delete(r.id));
+} else {
+pageRows.forEach(r => s.add(r.id));
+}
+
     setSelected(s);
   };
 
@@ -116,6 +143,7 @@ const EnrollmentsTable = () => {
             {pageRows.map(r => {
               const st = STATUS_BADGE[r.status];
               const isSel = selected.has(r.id);
+
               return (
                 <tr key={r.id} className={isSel ? 'selected' : ''}>
                   <td>
@@ -427,6 +455,7 @@ const CardsSection = () => (
 const NavigationSection = () => {
   const [tab, setTab] = useStateP('personales');
   const [seg, setSeg] = useStateP('semana');
+
   return (
     <section className="ds-section">
       <header className="ds-section-head">
@@ -605,7 +634,9 @@ const FeedbackSection = () => {
             </div>
             <div className="modal-foot">
               <Button variant="ghost" onClick={()=>setModal(false)}>Cancelar</Button>
-              <Button variant={modal==='danger'?'danger':'primary'} onClick={()=>{ push(modal==='danger'?'danger':'success', modal==='danger'?'Inscripción rechazada':'Inscripción aprobada', 'María Rodríguez · Algoritmos II'); setModal(false); }}>
+              <Button variant={modal==='danger'?'danger':'primary'} onClick={()=>{
+ push(modal==='danger'?'danger':'success', modal==='danger'?'Inscripción rechazada':'Inscripción aprobada', 'María Rodríguez · Algoritmos II'); setModal(false); 
+}}>
                 {modal==='danger' ? 'Rechazar inscripción' : 'Sí, aprobar'}
               </Button>
             </div>
