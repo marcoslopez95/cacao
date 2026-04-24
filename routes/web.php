@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AcceptInvitationController;
+use App\Http\Controllers\Security\CoordinationAssignmentController;
 use App\Http\Controllers\Security\CoordinationController;
 use App\Http\Controllers\Security\InvitationController;
 use App\Http\Controllers\Security\RoleController;
@@ -50,6 +51,10 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     Route::post('coordinations', [CoordinationController::class, 'store'])->name('coordinations.store');
     Route::patch('coordinations/{coordination}', [CoordinationController::class, 'update'])->name('coordinations.update');
     Route::delete('coordinations/{coordination}', [CoordinationController::class, 'destroy'])->name('coordinations.destroy');
+
+    // Coordination Assignments
+    Route::get('coordinations/{coordination}/assignments', [CoordinationAssignmentController::class, 'index'])->name('coordinations.assignments.index');
+    Route::post('coordinations/{coordination}/assignments', [CoordinationAssignmentController::class, 'store'])->name('coordinations.assignments.store');
 });
 
 require __DIR__.'/settings.php';
