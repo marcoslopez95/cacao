@@ -250,3 +250,17 @@ test('resetPassword with manual mode updates password', function () {
 
     expect(Hash::check('newpassword1', $target->fresh()->password))->toBeTrue();
 });
+
+test('resetPassword with random mode updates password', function () {
+    $actor = userWithUserPerm('users.reset-password');
+    $target = User::factory()->create();
+    $oldPassword = $target->password;
+
+    $this->actingAs($actor)
+        ->post("/security/users/{$target->id}/reset-password", [
+            'password_mode' => 'random',
+        ])
+        ->assertRedirect(route('security.users.index'));
+
+    expect($target->fresh()->password)->not->toBe($oldPassword);
+});
