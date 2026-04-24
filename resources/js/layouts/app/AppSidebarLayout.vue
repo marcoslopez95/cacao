@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppSidebar from '@/components/AppSidebar.vue'
 import AppTopbar from '@/components/AppTopbar.vue'
-// import Toast from '@/components/feedback/Toast.vue' // TODO: Task 7
+import Toast from '@/components/feedback/Toast.vue'
 import type { BreadcrumbItem } from '@/types'
 
 withDefaults(defineProps<{
@@ -21,5 +21,5 @@ withDefaults(defineProps<{
             </div>
         </main>
     </div>
-    <!-- <Toast /> TODO: Task 7 -->
+    <Toast />
 </template>
