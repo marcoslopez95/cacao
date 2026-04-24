@@ -6,6 +6,7 @@ export type AppActions = 'manage' | 'view' | 'create' | 'edit' | 'delete' | stri
 export type AppSubjects =
     | 'all'
     | 'Academic'
+    | 'Coordination'
     | 'People'
     | 'Enrollment'
     | 'Evaluation'

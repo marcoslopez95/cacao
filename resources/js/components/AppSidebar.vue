@@ -7,6 +7,7 @@ import Isotipo from '@/components/base/Isotipo.vue'
 import { dashboard } from '@/routes'
 import { index as rolesIndex } from '@/routes/security/roles'
 import { index as usersIndex } from '@/routes/security/users'
+import { index as coordinationsIndex } from '@/routes/security/coordinations'
 
 const page = usePage()
 
@@ -29,6 +30,7 @@ const navGroups = computed(() => {
     if (
         page.props.auth?.permissions?.includes('roles.view') ||
         page.props.auth?.permissions?.includes('users.view') ||
+        page.props.auth?.permissions?.includes('coordinations.view') ||
         page.props.auth?.roles?.includes('Admin')
     ) {
         const securityItems: { icon: string; label: string; href: string }[] = []
@@ -45,6 +47,13 @@ const navGroups = computed(() => {
             page.props.auth?.roles?.includes('Admin')
         ) {
             securityItems.push({ icon: 'users', label: 'Usuarios', href: usersIndex.url() })
+        }
+
+        if (
+            page.props.auth?.permissions?.includes('coordinations.view') ||
+            page.props.auth?.roles?.includes('Admin')
+        ) {
+            securityItems.push({ icon: 'building-2', label: 'Coordinaciones', href: coordinationsIndex.url() })
         }
 
         if (securityItems.length) {
