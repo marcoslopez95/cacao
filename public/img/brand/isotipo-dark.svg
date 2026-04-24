@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <!-- CACAO Isotipo — variante oscura (para fondos tinta/pizarra) -->
+  <!-- Fila 0 -->
+  <rect x="0"  y="0"  width="22" height="22" rx="4.4" fill="#F4F2EF"/>
+  <rect x="29" y="0"  width="22" height="22" rx="4.4" fill="#F4F2EF"/>
+  <rect x="58" y="0"  width="22" height="22" rx="4.4" fill="#C8521A"/>
+  <!-- Fila 1 -->
+  <rect x="0"  y="29" width="22" height="22" rx="4.4" fill="#F4F2EF"/>
+  <rect x="29" y="29" width="22" height="22" rx="4.4" fill="#F4F2EF"/>
+  <!-- posición [1,2] vacía intencional -->
+  <!-- Fila 2 -->
+  <rect x="0"  y="58" width="22" height="22" rx="4.4" fill="#F4F2EF"/>
+  <rect x="29" y="58" width="22" height="22" rx="4.4" fill="#F4F2EF"/>
+  <rect x="58" y="58" width="22" height="22" rx="4.4" fill="#F4F2EF"/>
+</svg>

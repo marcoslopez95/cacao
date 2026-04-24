@@ -25,9 +25,28 @@
             html[data-theme="dark"] { background-color: #1C1A18; }
         </style>
 
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
+        <link rel="icon" type="image/svg+xml" href="/img/brand/favicon.svg">
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/brand/favicon-32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/img/brand/favicon-16.png">
+
+        <!-- Apple Touch Icon -->
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/brand/apple-touch-icon.png">
+
+        <!-- PWA Manifest -->
+        <link rel="manifest" href="/site.webmanifest">
+        <meta name="theme-color" content="#C8521A">
+
+        <!-- Open Graph -->
+        <meta property="og:image" content="{{ asset('img/brand/og-image.png') }}">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:site_name" content="CACAO">
+
+        <!-- Twitter Card -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:image" content="{{ asset('img/brand/og-image.png') }}">
 
         @vite(['resources/css/app.css', 'resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
         <x-inertia::head>
