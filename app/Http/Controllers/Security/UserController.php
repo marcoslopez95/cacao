@@ -65,6 +65,10 @@ class UserController extends Controller
             'can' => [
                 'create' => $actor->can('create', User::class),
                 'invite' => $actor->can('invite', User::class),
+                'update' => $actor->can('update', new User),
+                'delete' => $actor->can('delete', new User),
+                'deactivate' => $actor->can('deactivate', new User),
+                'resetPassword' => $actor->can('resetPassword', User::class),
             ],
         ]);
     }
@@ -147,9 +151,10 @@ class UserController extends Controller
     {
         Gate::authorize('deactivate', $user);
 
-        $user->update(['active' => ! $user->active]);
+        $isNowActive = ! $user->active;
+        $user->update(['active' => $isNowActive]);
 
-        $msg = $user->active ? 'Usuario reactivado.' : 'Usuario desactivado.';
+        $msg = $isNowActive ? 'Usuario reactivado.' : 'Usuario desactivado.';
         Inertia::flash('toast', ['type' => 'success', 'message' => $msg]);
 
         return to_route('security.users.index');

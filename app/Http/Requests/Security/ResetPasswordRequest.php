@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Security;
 
-use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -11,7 +10,7 @@ class ResetPasswordRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('resetPassword', User::class) ?? false;
+        return $this->user()?->can('resetPassword', $this->route('user')) ?? false;
     }
 
     /**
