@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Policies\RolePolicy;
+use App\Policies\UserPolicy;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(fn (User $user) => $user->hasRole('Admin') ? true : null);
 
         Gate::policy(Role::class, RolePolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
     }
 
     /**
