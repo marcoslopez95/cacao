@@ -1,38 +1,30 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
-import InputError from '@/components/InputError.vue';
-import PasswordInput from '@/components/PasswordInput.vue';
-import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import { register } from '@/routes';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
+import { Form, Head } from '@inertiajs/vue3'
+import Button from '@/components/base/Button.vue'
+import InputError from '@/components/InputError.vue'
+import TextLink from '@/components/TextLink.vue'
+import { register } from '@/routes'
+import { store } from '@/routes/login'
+import { request } from '@/routes/password'
 
 defineOptions({
     layout: {
-        title: 'Log in to your account',
-        description: 'Enter your email and password below to log in',
+        title: 'Iniciar sesión',
+        description: 'Ingresa tu correo y contraseña para acceder',
     },
-});
+})
 
 defineProps<{
-    status?: string;
-    canResetPassword: boolean;
-    canRegister: boolean;
-}>();
+    status?: string
+    canResetPassword: boolean
+    canRegister: boolean
+}>()
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head title="Iniciar sesión" />
 
-    <div
-        v-if="status"
-        class="mb-4 text-center text-sm font-medium text-green-600"
-    >
+    <div v-if="status" style="margin-bottom:16px;text-align:center;font-size:var(--text-sm);font-weight:500;color:var(--success);">
         {{ status }}
     </div>
 
@@ -40,72 +32,76 @@ defineProps<{
         v-bind="store.form()"
         :reset-on-success="['password']"
         v-slot="{ errors, processing }"
-        class="flex flex-col gap-6"
+        style="display:flex;flex-direction:column;gap:20px;"
     >
-        <div class="grid gap-6">
-            <div class="grid gap-2">
-                <Label for="email">Email address</Label>
-                <Input
+        <div style="display:grid;gap:16px;">
+            <div style="display:grid;gap:6px;">
+                <label for="email" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">
+                    Correo electrónico
+                </label>
+                <input
                     id="email"
                     type="email"
                     name="email"
+                    class="input"
                     required
                     autofocus
                     :tabindex="1"
                     autocomplete="email"
-                    placeholder="email@example.com"
+                    placeholder="correo@ejemplo.com"
                 />
                 <InputError :message="errors.email" />
             </div>
 
-            <div class="grid gap-2">
-                <div class="flex items-center justify-between">
-                    <Label for="password">Password</Label>
-                    <TextLink
-                        v-if="canResetPassword"
-                        :href="request()"
-                        class="text-sm"
-                        :tabindex="5"
-                    >
-                        Forgot password?
+            <div style="display:grid;gap:6px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <label for="password" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">
+                        Contraseña
+                    </label>
+                    <TextLink v-if="canResetPassword" :href="request()" style="font-size:var(--text-xs);" :tabindex="5">
+                        ¿Olvidaste tu contraseña?
                     </TextLink>
                 </div>
-                <PasswordInput
+                <input
                     id="password"
+                    type="password"
                     name="password"
+                    class="input"
                     required
                     :tabindex="2"
                     autocomplete="current-password"
-                    placeholder="Password"
+                    placeholder="Contraseña"
                 />
                 <InputError :message="errors.password" />
             </div>
 
-            <div class="flex items-center justify-between">
-                <Label for="remember" class="flex items-center space-x-3">
-                    <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Remember me</span>
-                </Label>
-            </div>
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:var(--text-sm);">
+                <input
+                    id="remember"
+                    type="checkbox"
+                    name="remember"
+                    :tabindex="3"
+                    style="width:14px;height:14px;accent-color:var(--accent);"
+                />
+                Recuérdame
+            </label>
 
             <Button
                 type="submit"
-                class="mt-4 w-full"
-                :tabindex="4"
+                variant="primary"
+                size="lg"
+                :loading="processing"
                 :disabled="processing"
-                data-test="login-button"
+                :tabindex="4"
+                style="width:100%;margin-top:4px;"
             >
-                <Spinner v-if="processing" />
-                Log in
+                Iniciar sesión
             </Button>
         </div>
 
-        <div
-            class="text-center text-sm text-muted-foreground"
-            v-if="canRegister"
-        >
-            Don't have an account?
-            <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
+        <div v-if="canRegister" style="text-align:center;font-size:var(--text-sm);color:var(--text-muted);">
+            ¿No tienes cuenta?
+            <TextLink :href="register()" :tabindex="5">Regístrate</TextLink>
         </div>
     </Form>
 </template>
