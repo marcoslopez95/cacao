@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AcceptInvitationController;
+use App\Http\Controllers\Security\CoordinationController;
 use App\Http\Controllers\Security\InvitationController;
 use App\Http\Controllers\Security\RoleController;
 use App\Http\Controllers\Security\UserController;
@@ -43,6 +44,12 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     // Invitations
     Route::post('invitations', [InvitationController::class, 'store'])->name('invitations.store');
     Route::delete('invitations/{invitation}', [InvitationController::class, 'destroy'])->name('invitations.destroy');
+
+    // Coordinations
+    Route::get('coordinations', [CoordinationController::class, 'index'])->name('coordinations.index');
+    Route::post('coordinations', [CoordinationController::class, 'store'])->name('coordinations.store');
+    Route::patch('coordinations/{coordination}', [CoordinationController::class, 'update'])->name('coordinations.update');
+    Route::delete('coordinations/{coordination}', [CoordinationController::class, 'destroy'])->name('coordinations.destroy');
 });
 
 require __DIR__.'/settings.php';
