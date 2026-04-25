@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Academic\CareerCategoryController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\Security\CoordinationAssignmentController;
 use App\Http\Controllers\Security\CoordinationController;
@@ -55,6 +56,13 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     // Coordination Assignments
     Route::get('coordinations/{coordination}/assignments', [CoordinationAssignmentController::class, 'index'])->name('coordinations.assignments.index');
     Route::post('coordinations/{coordination}/assignments', [CoordinationAssignmentController::class, 'store'])->name('coordinations.assignments.store');
+});
+
+Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->group(function () {
+    Route::get('career-categories', [CareerCategoryController::class, 'index'])->name('career-categories.index');
+    Route::post('career-categories', [CareerCategoryController::class, 'store'])->name('career-categories.store');
+    Route::patch('career-categories/{careerCategory}', [CareerCategoryController::class, 'update'])->name('career-categories.update');
+    Route::delete('career-categories/{careerCategory}', [CareerCategoryController::class, 'destroy'])->name('career-categories.destroy');
 });
 
 require __DIR__.'/settings.php';
