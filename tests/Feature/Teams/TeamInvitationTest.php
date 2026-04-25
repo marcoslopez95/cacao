@@ -4,7 +4,10 @@ use App\Enums\TeamRole;
 use App\Models\Team;
 use App\Models\TeamInvitation;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+
+uses(RefreshDatabase::class);
 
 test('team invitations can be created', function () {
     Notification::fake();
