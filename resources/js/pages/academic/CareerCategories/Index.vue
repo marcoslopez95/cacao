@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Button from '@/components/base/Button.vue'
+import Button from '@/components/UI/AppButton.vue'
 import CreateCareerCategoryModal from '@/components/academic/CreateCareerCategoryModal.vue'
 import DeleteCareerCategoryModal from '@/components/academic/DeleteCareerCategoryModal.vue'
 import EditCareerCategoryModal from '@/components/academic/EditCareerCategoryModal.vue'
+import { useCareerCategoryPermissions } from '@/composables/permissions/useCareerCategoryPermissions'
 import { index } from '@/routes/academic/career-categories'
 import type { CareerCategory } from '@/types/academic'
 
@@ -13,7 +14,7 @@ type Props = {
     can: { create: boolean; update: boolean; delete: boolean }
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 defineOptions({
     layout: {
@@ -23,6 +24,8 @@ defineOptions({
         ],
     },
 })
+
+const { canCreate, canUpdate, canDelete } = useCareerCategoryPermissions()
 
 const showCreate = ref(false)
 const editingCategory = ref<CareerCategory | null>(null)
@@ -42,7 +45,7 @@ const deletingCategory = ref<CareerCategory | null>(null)
                     Agrupaciones para organizar las carreras del sistema
                 </p>
             </div>
-            <Button v-if="props.can.create" variant="primary" icon="plus" @click="showCreate = true">
+            <Button v-if="canCreate" variant="primary" icon="plus" @click="showCreate = true">
                 Nueva categoría
             </Button>
         </div>
@@ -56,12 +59,12 @@ const deletingCategory = ref<CareerCategory | null>(null)
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="category in props.categories" :key="category.id">
+                    <tr v-for="category in categories" :key="category.id">
                         <td style="font-weight:500;">{{ category.name }}</td>
                         <td>
                             <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;">
                                 <Button
-                                    v-if="props.can.update"
+                                    v-if="canUpdate"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
@@ -70,7 +73,7 @@ const deletingCategory = ref<CareerCategory | null>(null)
                                     @click="editingCategory = category"
                                 />
                                 <Button
-                                    v-if="props.can.delete"
+                                    v-if="canDelete"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
@@ -81,7 +84,7 @@ const deletingCategory = ref<CareerCategory | null>(null)
                             </div>
                         </td>
                     </tr>
-                    <tr v-if="!props.categories.length">
+                    <tr v-if="!categories.length">
                         <td colspan="2" style="text-align:center;color:var(--text-muted);padding:32px 16px;">
                             No hay categorías registradas.
                         </td>

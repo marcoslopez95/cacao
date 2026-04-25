@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\Academic;
 
+use App\Actions\Academic\CreateCareerCategoryAction;
+use App\Actions\Academic\DeleteCareerCategoryAction;
+use App\Actions\Academic\UpdateCareerCategoryAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Academic\StoreCareerCategoryRequest;
 use App\Http\Requests\Academic\UpdateCareerCategoryRequest;
+use App\Http\Resources\Academic\CareerCategoryResource;
+use App\Http\Wrappers\Academic\CareerCategoryWrapper;
 use App\Models\CareerCategory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,18 +23,12 @@ class CareerCategoryController extends Controller
     {
         Gate::authorize('viewAny', CareerCategory::class);
 
-        $categories = CareerCategory::query()
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->map(fn (CareerCategory $c) => [
-                'id' => $c->id,
-                'name' => $c->name,
-            ]);
-
         $actor = $request->user();
 
         return Inertia::render('academic/CareerCategories/Index', [
-            'categories' => $categories,
+            'categories' => CareerCategoryResource::collection(
+                CareerCategory::orderBy('name')->get()
+            )->resolve(),
             'can' => [
                 'create' => $actor->can('create', CareerCategory::class),
                 'update' => $actor->can('update', new CareerCategory),
@@ -38,29 +37,29 @@ class CareerCategoryController extends Controller
         ]);
     }
 
-    public function store(StoreCareerCategoryRequest $request): RedirectResponse
+    public function store(StoreCareerCategoryRequest $request, CreateCareerCategoryAction $action): RedirectResponse
     {
-        CareerCategory::create($request->validated());
+        $action->handle(new CareerCategoryWrapper($request->validated()));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Categoría creada.']);
 
         return to_route('academic.career-categories.index');
     }
 
-    public function update(UpdateCareerCategoryRequest $request, CareerCategory $careerCategory): RedirectResponse
+    public function update(UpdateCareerCategoryRequest $request, CareerCategory $careerCategory, UpdateCareerCategoryAction $action): RedirectResponse
     {
-        $careerCategory->update($request->validated());
+        $action->handle($careerCategory, new CareerCategoryWrapper($request->validated()));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Categoría actualizada.']);
 
         return to_route('academic.career-categories.index');
     }
 
-    public function destroy(Request $request, CareerCategory $careerCategory): RedirectResponse
+    public function destroy(CareerCategory $careerCategory, DeleteCareerCategoryAction $action): RedirectResponse
     {
         Gate::authorize('delete', $careerCategory);
 
-        if ($careerCategory->careers()->exists()) {
+        if (! $action->handle($careerCategory)) {
             Inertia::flash('toast', [
                 'type' => 'error',
                 'message' => 'No se puede eliminar: la categoría tiene carreras asociadas.',
@@ -68,8 +67,6 @@ class CareerCategoryController extends Controller
 
             return to_route('academic.career-categories.index');
         }
-
-        $careerCategory->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Categoría eliminada.']);
 
