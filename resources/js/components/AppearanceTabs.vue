@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Icon from '@/components/base/Icon.vue'
+import Icon from '@/components/UI/AppIcon.vue'
 import { useAppearance } from '@/composables/useAppearance'
 
 const { appearance, updateAppearance } = useAppearance()

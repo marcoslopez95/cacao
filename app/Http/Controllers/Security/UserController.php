@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers\Security;
 
+use App\Actions\Security\CreateUserAction;
+use App\Actions\Security\DeactivateUserAction;
+use App\Actions\Security\DeleteUserAction;
+use App\Actions\Security\ResetUserPasswordAction;
+use App\Actions\Security\UpdateUserAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Security\ResetPasswordRequest;
 use App\Http\Requests\Security\StoreUserRequest;
 use App\Http\Requests\Security\UpdateUserRequest;
+use App\Http\Resources\Security\UserResource;
+use App\Http\Wrappers\Security\UserWrapper;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
@@ -30,38 +34,26 @@ class UserController extends Controller
 
         $query = User::query()->with('roles:id,name');
 
-        if ($search = $request->input('search')) {
-            $query->where(fn ($q) => $q
-                ->where('name', 'ilike', "%{$search}%")
-                ->orWhere('email', 'ilike', "%{$search}%")
-            );
-        }
+        $query->when($request->input('search'), fn ($q, $s) => $q
+            ->where('name', 'ilike', "%{$s}%")
+            ->orWhere('email', 'ilike', "%{$s}%")
+        );
 
-        if ($role = $request->input('role')) {
-            $query->whereHas('roles', fn ($q) => $q->where('name', $role));
-        }
+        $query->when($request->input('role'), fn ($q, $r) => $q->whereHas('roles', fn ($q) => $q->where('name', $r))
+        );
 
-        if ($status = $request->input('status')) {
-            match ($status) {
-                'active' => $query->where('active', true),
-                'inactive' => $query->where('active', false),
+        $query->when($request->input('status'), function ($q, $s): void {
+            match ($s) {
+                'active' => $q->where('active', true),
+                'inactive' => $q->where('active', false),
                 default => null,
             };
-        }
+        });
 
         $perPage = min(100, max(10, (int) $request->input('per_page', 20)));
 
-        $users = $query->orderBy('name')->paginate($perPage)->through(fn (User $user) => [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'active' => $user->active,
-            'roles' => $user->roles->pluck('name')->values(),
-            'created_at' => $user->created_at?->toDateString(),
-        ]);
-
         return Inertia::render('security/Users/Index', [
-            'users' => $users,
+            'users' => UserResource::collection($query->orderBy('name')->paginate($perPage)),
             'roles' => Role::orderBy('name')->pluck('name')->values(),
             'filters' => $request->only('search', 'role', 'status'),
             'can' => [
@@ -78,37 +70,11 @@ class UserController extends Controller
     /**
      * Store a newly created user.
      */
-    public function store(StoreUserRequest $request): RedirectResponse
+    public function store(StoreUserRequest $request, CreateUserAction $action): RedirectResponse
     {
-        $data = $request->validated();
-
-        $password = match ($data['password_mode']) {
-            'manual' => $data['password'],
-            'random' => Str::random(16),
-            default => null,
-        };
-
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($password ?? Str::random(32)),
-            'active' => true,
-        ]);
-
-        $user->syncRoles([$data['role']]);
-
-        if ($data['password_mode'] === 'link') {
-            Password::sendResetLink(['email' => $user->email]);
-            Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuario creado. Se envió un link para establecer la contraseña.']);
-        } elseif ($data['password_mode'] === 'random') {
-            Inertia::flash('toast', [
-                'type' => 'password',
-                'message' => "Usuario creado. Contraseña generada: {$password}",
-                'password' => $password,
-            ]);
-        } else {
-            Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuario creado.']);
-        }
+        $wrapper = new UserWrapper($request->validated());
+        $action->handle($wrapper);
+        $this->flashCreated($wrapper);
 
         return to_route('security.users.index');
     }
@@ -116,16 +82,9 @@ class UserController extends Controller
     /**
      * Update the specified user's name, email and roles.
      */
-    public function update(UpdateUserRequest $request, User $user): RedirectResponse
+    public function update(UpdateUserRequest $request, User $user, UpdateUserAction $action): RedirectResponse
     {
-        $data = $request->validated();
-
-        $user->update([
-            'name' => $data['name'],
-            'email' => $data['email'],
-        ]);
-
-        $user->syncRoles($data['roles'] ?? []);
+        $action->handle($user, new UserWrapper($request->validated()));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuario actualizado.']);
 
@@ -135,11 +94,11 @@ class UserController extends Controller
     /**
      * Delete the specified user.
      */
-    public function destroy(Request $request, User $user): RedirectResponse
+    public function destroy(Request $request, User $user, DeleteUserAction $action): RedirectResponse
     {
         Gate::authorize('delete', $user);
 
-        $user->delete();
+        $action->handle($user);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuario eliminado.']);
 
@@ -149,14 +108,13 @@ class UserController extends Controller
     /**
      * Toggle the active state of the specified user.
      */
-    public function deactivate(Request $request, User $user): RedirectResponse
+    public function deactivate(Request $request, User $user, DeactivateUserAction $action): RedirectResponse
     {
         Gate::authorize('deactivate', $user);
 
-        $isNowActive = ! $user->active;
-        $user->update(['active' => $isNowActive]);
+        $updated = $action->handle($user);
 
-        $msg = $isNowActive ? 'Usuario reactivado.' : 'Usuario desactivado.';
+        $msg = $updated->active ? 'Usuario reactivado.' : 'Usuario desactivado.';
         Inertia::flash('toast', ['type' => 'success', 'message' => $msg]);
 
         return to_route('security.users.index');
@@ -165,33 +123,40 @@ class UserController extends Controller
     /**
      * Reset the specified user's password.
      */
-    public function resetPassword(ResetPasswordRequest $request, User $user): RedirectResponse
+    public function resetPassword(ResetPasswordRequest $request, User $user, ResetUserPasswordAction $action): RedirectResponse
     {
-        $data = $request->validated();
-
-        $password = match ($data['password_mode']) {
-            'manual' => $data['password'],
-            'random' => Str::random(16),
-            default => null,
-        };
-
-        if ($data['password_mode'] === 'link') {
-            Password::sendResetLink(['email' => $user->email]);
-            Inertia::flash('toast', ['type' => 'success', 'message' => 'Link de contraseña enviado.']);
-        } else {
-            $user->update(['password' => Hash::make($password)]);
-
-            if ($data['password_mode'] === 'random') {
-                Inertia::flash('toast', [
-                    'type' => 'password',
-                    'message' => "Contraseña cambiada. Nueva contraseña: {$password}",
-                    'password' => $password,
-                ]);
-            } else {
-                Inertia::flash('toast', ['type' => 'success', 'message' => 'Contraseña actualizada.']);
-            }
-        }
+        $wrapper = new UserWrapper($request->validated());
+        $action->handle($user, $wrapper);
+        $this->flashPasswordReset($wrapper);
 
         return to_route('security.users.index');
+    }
+
+    /**
+     * Flash the appropriate toast for user creation based on the password mode.
+     */
+    private function flashCreated(UserWrapper $wrapper): void
+    {
+        if ($wrapper->sendsResetLink()) {
+            Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuario creado. Se envió un link para establecer la contraseña.']);
+        } elseif ($wrapper->getPasswordMode() === 'random') {
+            Inertia::flash('toast', ['type' => 'password', 'message' => "Usuario creado. Contraseña generada: {$wrapper->getPlainPassword()}", 'password' => $wrapper->getPlainPassword()]);
+        } else {
+            Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuario creado.']);
+        }
+    }
+
+    /**
+     * Flash the appropriate toast for password reset based on the password mode.
+     */
+    private function flashPasswordReset(UserWrapper $wrapper): void
+    {
+        if ($wrapper->sendsResetLink()) {
+            Inertia::flash('toast', ['type' => 'success', 'message' => 'Link de contraseña enviado.']);
+        } elseif ($wrapper->getPasswordMode() === 'random') {
+            Inertia::flash('toast', ['type' => 'password', 'message' => "Contraseña cambiada. Nueva contraseña: {$wrapper->getPlainPassword()}", 'password' => $wrapper->getPlainPassword()]);
+        } else {
+            Inertia::flash('toast', ['type' => 'success', 'message' => 'Contraseña actualizada.']);
+        }
     }
 }

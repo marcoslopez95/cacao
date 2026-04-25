@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue';
-import Icon from '@/components/base/Icon.vue';
+import Icon from '@/components/UI/AppIcon.vue';
 
 defineOptions({ inheritAttrs: false });
 

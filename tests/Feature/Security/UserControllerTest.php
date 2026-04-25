@@ -67,7 +67,7 @@ test('index filters by search', function () {
     $this->actingAs($actor)
         ->get('/security/users?search=Ana')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->where('users.total', 1));
+        ->assertInertia(fn ($page) => $page->where('users.meta.total', 1));
 });
 
 test('index filters by status active only returns active users', function () {
@@ -79,7 +79,7 @@ test('index filters by status active only returns active users', function () {
     $this->actingAs($actor)
         ->get('/security/users?status=active')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->where('users.total', 2)); // actor + 1 active user
+        ->assertInertia(fn ($page) => $page->where('users.meta.total', 2)); // actor + 1 active user
 });
 
 // ---------------------------------------------------------------------------

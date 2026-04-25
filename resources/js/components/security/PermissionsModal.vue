@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3'
 import { computed, onUnmounted, ref, watch } from 'vue'
-import Button from '@/components/base/Button.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { update } from '@/routes/security/roles'
 import type { Role } from '@/types'
 

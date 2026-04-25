@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Security;
 
+use App\Actions\Security\CreateCoordinationAction;
+use App\Actions\Security\DeleteCoordinationAction;
+use App\Actions\Security\UpdateCoordinationAction;
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Security\StoreCoordinationRequest;
 use App\Http\Requests\Security\UpdateCoordinationRequest;
+use App\Http\Resources\Security\CoordinationResource;
+use App\Http\Wrappers\Security\CoordinationWrapper;
 use App\Models\Coordination;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -24,44 +29,18 @@ class CoordinationController extends Controller
 
         $query = Coordination::query()->with(['currentAssignment.user']);
 
-        if ($search = $request->input('search')) {
-            $query->where('name', 'ilike', "%{$search}%");
-        }
-
-        if ($type = $request->input('type')) {
-            $query->where('type', $type);
-        }
-
-        if ($level = $request->input('education_level')) {
-            $query->where('education_level', $level);
-        }
-
-        if ($status = $request->input('status')) {
-            match ($status) {
-                'active' => $query->where('active', true),
-                'inactive' => $query->where('active', false),
+        $query->when($request->input('search'), fn ($q, $s) => $q->where('name', 'ilike', "%{$s}%"));
+        $query->when($request->input('type'), fn ($q, $t) => $q->where('type', $t));
+        $query->when($request->input('education_level'), fn ($q, $l) => $q->where('education_level', $l));
+        $query->when($request->input('status'), function ($q, $s): void {
+            match ($s) {
+                'active' => $q->where('active', true),
+                'inactive' => $q->where('active', false),
                 default => null,
             };
-        }
+        });
 
         $perPage = min(100, max(10, (int) $request->input('per_page', 20)));
-
-        $coordinations = $query
-            ->orderBy('name')
-            ->paginate($perPage)
-            ->through(fn (Coordination $c) => [
-                'id' => $c->id,
-                'name' => $c->name,
-                'type' => $c->type,
-                'education_level' => $c->education_level,
-                'secondary_type' => $c->secondary_type,
-                'career_id' => $c->career_id,
-                'grade_year' => $c->grade_year,
-                'active' => $c->active,
-                'current_coordinator' => $c->currentAssignment?->user
-                    ? ['id' => $c->currentAssignment->user->id, 'name' => $c->currentAssignment->user->name]
-                    : null,
-            ]);
 
         $coordinators = User::role(Role::Coordinator->value)
             ->where('active', true)
@@ -71,9 +50,9 @@ class CoordinationController extends Controller
             ->values();
 
         return Inertia::render('security/Coordinations/Index', [
-            'coordinations' => $coordinations,
+            'coordinations' => CoordinationResource::collection($query->orderBy('name')->paginate($perPage)),
             'coordinators' => $coordinators,
-            'careers' => [], // populated when Academic module is built
+            'careers' => [],
             'filters' => $request->only('search', 'type', 'education_level', 'status'),
             'can' => [
                 'create' => $actor->can('create', Coordination::class),
@@ -85,29 +64,29 @@ class CoordinationController extends Controller
         ]);
     }
 
-    public function store(StoreCoordinationRequest $request): RedirectResponse
+    public function store(StoreCoordinationRequest $request, CreateCoordinationAction $action): RedirectResponse
     {
-        Coordination::create($request->validated());
+        $action->handle(new CoordinationWrapper($request->validated()));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Coordinación creada.']);
 
         return to_route('security.coordinations.index');
     }
 
-    public function update(UpdateCoordinationRequest $request, Coordination $coordination): RedirectResponse
+    public function update(UpdateCoordinationRequest $request, Coordination $coordination, UpdateCoordinationAction $action): RedirectResponse
     {
-        $coordination->update($request->validated());
+        $action->handle($coordination, new CoordinationWrapper($request->validated()));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Coordinación actualizada.']);
 
         return to_route('security.coordinations.index');
     }
 
-    public function destroy(Request $request, Coordination $coordination): RedirectResponse
+    public function destroy(Request $request, Coordination $coordination, DeleteCoordinationAction $action): RedirectResponse
     {
         Gate::authorize('delete', $coordination);
 
-        if ($coordination->currentAssignment()->exists()) {
+        if (! $action->handle($coordination)) {
             Inertia::flash('toast', [
                 'type' => 'error',
                 'message' => 'No se puede eliminar: la coordinación tiene un coordinador activo.',
@@ -115,8 +94,6 @@ class CoordinationController extends Controller
 
             return to_route('security.coordinations.index');
         }
-
-        $coordination->delete();
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Coordinación eliminada.']);
 

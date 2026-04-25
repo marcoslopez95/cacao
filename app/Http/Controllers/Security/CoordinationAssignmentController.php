@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Security;
 
+use App\Actions\Security\AssignCoordinatorAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Security\StoreCoordinationAssignmentRequest;
 use App\Models\Coordination;
 use App\Models\CoordinationAssignment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
@@ -43,21 +43,9 @@ class CoordinationAssignmentController extends Controller
      * Assign a coordinator to the given coordination.
      * Closes any existing active assignment first.
      */
-    public function store(StoreCoordinationAssignmentRequest $request, Coordination $coordination): RedirectResponse
+    public function store(StoreCoordinationAssignmentRequest $request, Coordination $coordination, AssignCoordinatorAction $action): RedirectResponse
     {
-        $data = $request->validated();
-
-        DB::transaction(function () use ($data, $coordination, $request): void {
-            $coordination->assignments()
-                ->whereNull('ended_at')
-                ->update(['ended_at' => now()]);
-
-            $coordination->assignments()->create([
-                'user_id' => $data['user_id'],
-                'assigned_by' => $request->user()->id,
-                'assigned_at' => now(),
-            ]);
-        });
+        $action->handle($coordination, $request->validated('user_id'), $request->user()->id);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Coordinador asignado.']);
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3'
-import Isotipo from '@/components/base/Isotipo.vue'
+import Isotipo from '@/components/UI/AppIsotipo.vue'
 import { home } from '@/routes'
 
 defineProps<{

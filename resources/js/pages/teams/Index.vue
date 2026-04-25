@@ -2,9 +2,9 @@
 import { Head, Link } from '@inertiajs/vue3';
 import CreateTeamModal from '@/components/CreateTeamModal.vue';
 import Heading from '@/components/Heading.vue';
-import Badge from '@/components/base/Badge.vue';
-import Button from '@/components/base/Button.vue';
-import Icon from '@/components/base/Icon.vue';
+import Badge from '@/components/UI/AppBadge.vue';
+import Button from '@/components/UI/AppButton.vue';
+import Icon from '@/components/UI/AppIcon.vue';
 import { edit, index } from '@/routes/teams';
 import type { Team } from '@/types';
 

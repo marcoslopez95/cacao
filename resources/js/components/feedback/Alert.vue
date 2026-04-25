@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Icon from '@/components/base/Icon.vue'
+import Icon from '@/components/UI/AppIcon.vue'
 
 withDefaults(defineProps<{
     variant?: 'success' | 'warning' | 'danger' | 'info'

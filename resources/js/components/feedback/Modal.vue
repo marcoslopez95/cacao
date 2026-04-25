@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { nextTick, watch } from 'vue'
-import Icon from '@/components/base/Icon.vue'
+import Icon from '@/components/UI/AppIcon.vue'
 
 const props = withDefaults(defineProps<{
     open: boolean

@@ -1,3 +1,5 @@
+import type { PaginationMeta, PaginationLink } from './pagination'
+
 export type Permission = {
     id: number;
     name: string;
@@ -21,14 +23,15 @@ export type UserRow = {
     created_at: string;
 };
 
-export type UserPaginator = {
+export interface UserCollection {
     data: UserRow[];
+    meta: PaginationMeta;
+    links: PaginationLink[];
     current_page: number;
     last_page: number;
     per_page: number;
     total: number;
-    links: Array<{ url: string | null; label: string; active: boolean }>;
-};
+}
 
 export type CoordinationRow = {
     id: number;
@@ -50,11 +53,12 @@ export type CoordinationAssignment = {
     ended_at: string | null;
 };
 
-export type CoordinationPaginator = {
+export interface CoordinationCollection {
     data: CoordinationRow[];
+    meta: PaginationMeta;
+    links: PaginationLink[];
     current_page: number;
     last_page: number;
     per_page: number;
     total: number;
-    links: Array<{ url: string | null; label: string; active: boolean }>;
-};
+}

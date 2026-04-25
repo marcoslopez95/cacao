@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import CacaoAvatar from '@/components/base/Avatar.vue';
+import CacaoAvatar from '@/components/UI/AppAvatar.vue';
 import { useInitials } from '@/composables/useInitials';
 import type { Team, User } from '@/types';
 

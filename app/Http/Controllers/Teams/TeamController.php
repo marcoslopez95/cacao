@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\Teams;
 
-use App\Actions\Teams\CreateTeam;
+use App\Actions\Teams\CreateTeamAction;
+use App\Actions\Teams\DeleteTeamAction;
+use App\Actions\Teams\UpdateTeamAction;
 use App\Enums\TeamRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Teams\DeleteTeamRequest;
 use App\Http\Requests\Teams\SaveTeamRequest;
+use App\Http\Resources\Teams\TeamInvitationResource;
+use App\Http\Resources\Teams\TeamMemberResource;
+use App\Http\Wrappers\Teams\TeamWrapper;
 use App\Models\Team;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -33,9 +36,9 @@ class TeamController extends Controller
     /**
      * Store a newly created team.
      */
-    public function store(SaveTeamRequest $request, CreateTeam $createTeam): RedirectResponse
+    public function store(SaveTeamRequest $request, CreateTeamAction $action): RedirectResponse
     {
-        $team = $createTeam->handle($request->user(), $request->validated('name'));
+        $team = $action->handle($request->user(), new TeamWrapper($request->validated()));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Team created.')]);
 
@@ -56,24 +59,10 @@ class TeamController extends Controller
                 'slug' => $team->slug,
                 'isPersonal' => $team->is_personal,
             ],
-            'members' => $team->members()->get()->map(fn ($member) => [
-                'id' => $member->id,
-                'name' => $member->name,
-                'email' => $member->email,
-                'avatar' => $member->avatar ?? null,
-                'role' => $member->pivot->role->value,
-                'role_label' => $member->pivot->role?->label(),
-            ]),
-            'invitations' => $team->invitations()
-                ->whereNull('accepted_at')
-                ->get()
-                ->map(fn ($invitation) => [
-                    'code' => $invitation->code,
-                    'email' => $invitation->email,
-                    'role' => $invitation->role->value,
-                    'role_label' => $invitation->role->label(),
-                    'created_at' => $invitation->created_at->toISOString(),
-                ]),
+            'members' => TeamMemberResource::collection($team->members()->get()),
+            'invitations' => TeamInvitationResource::collection(
+                $team->invitations()->whereNull('accepted_at')->get()
+            ),
             'permissions' => $user->toTeamPermissions($team),
             'availableRoles' => TeamRole::assignable(),
         ]);
@@ -82,17 +71,11 @@ class TeamController extends Controller
     /**
      * Update the specified team.
      */
-    public function update(SaveTeamRequest $request, Team $team): RedirectResponse
+    public function update(SaveTeamRequest $request, Team $team, UpdateTeamAction $action): RedirectResponse
     {
         Gate::authorize('update', $team);
 
-        $team = DB::transaction(function () use ($request, $team) {
-            $team = Team::whereKey($team->id)->lockForUpdate()->firstOrFail();
-
-            $team->update(['name' => $request->validated('name')]);
-
-            return $team;
-        });
+        $team = $action->handle($team, new TeamWrapper($request->validated()));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Team updated.')]);
 
@@ -114,22 +97,12 @@ class TeamController extends Controller
     /**
      * Delete the specified team.
      */
-    public function destroy(DeleteTeamRequest $request, Team $team): RedirectResponse
+    public function destroy(DeleteTeamRequest $request, Team $team, DeleteTeamAction $action): RedirectResponse
     {
         $user = $request->user();
-        $fallbackTeam = $user->isCurrentTeam($team)
-            ? $user->fallbackTeam($team)
-            : null;
+        $fallbackTeam = $user->isCurrentTeam($team) ? $user->fallbackTeam($team) : null;
 
-        DB::transaction(function () use ($user, $team) {
-            User::where('current_team_id', $team->id)
-                ->where('id', '!=', $user->id)
-                ->each(fn (User $affectedUser) => $affectedUser->switchTeam($affectedUser->personalTeam()));
-
-            $team->invitations()->delete();
-            $team->memberships()->delete();
-            $team->delete();
-        });
+        $action->handle($team, $user);
 
         if ($fallbackTeam) {
             $user->switchTeam($fallbackTeam);

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3'
-import Button from '@/components/base/Button.vue'
+import Button from '@/components/UI/AppButton.vue'
 import Modal from '@/components/feedback/Modal.vue'
 import { destroy } from '@/routes/security/coordinations'
 import type { CoordinationRow } from '@/types/security'

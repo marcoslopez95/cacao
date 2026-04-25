@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { Head, router, usePage } from '@inertiajs/vue3'
-import { computed, ref } from 'vue'
-import Badge from '@/components/base/Badge.vue'
-import Button from '@/components/base/Button.vue'
-import Pagination from '@/components/base/Pagination.vue'
+import { Head, usePage } from '@inertiajs/vue3'
+import { ref } from 'vue'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
+import Pagination from '@/components/UI/AppPagination.vue'
 import CreateUserModal from '@/components/security/CreateUserModal.vue'
 import DeactivateUserModal from '@/components/security/DeactivateUserModal.vue'
 import DeleteUserModal from '@/components/security/DeleteUserModal.vue'
 import EditUserModal from '@/components/security/EditUserModal.vue'
 import InviteUserModal from '@/components/security/InviteUserModal.vue'
 import ResetPasswordModal from '@/components/security/ResetPasswordModal.vue'
-import { usePermission } from '@/composables/usePermission'
+import { useUserPermissions } from '@/composables/permissions/useUserPermissions'
+import { useUserFilters } from '@/composables/filters/useUserFilters'
 import { index } from '@/routes/security/users'
-import type { UserPaginator, UserRow } from '@/types'
+import type { UserCollection, UserRow } from '@/types'
 
 type Props = {
-    users: UserPaginator
+    users: UserCollection
     roles: string[]
     filters: { search?: string; role?: string; status?: string }
     can: { create: boolean; invite: boolean }
@@ -32,33 +33,10 @@ defineOptions({
     },
 })
 
-const { can } = usePermission()
+const { canUpdate, canDelete, canDeactivate, canResetPassword } = useUserPermissions()
 
-const search = ref(props.filters.search ?? '')
-const roleFilter = ref(props.filters.role ?? '')
-const statusFilter = ref(props.filters.status ?? '')
-
-let debounceTimer: ReturnType<typeof setTimeout>
-
-function applyFilters(): void {
-    router.get(index.url(), {
-        search:   search.value || undefined,
-        role:     roleFilter.value || undefined,
-        status:   statusFilter.value || undefined,
-        per_page: props.users.per_page !== 20 ? props.users.per_page : undefined,
-    }, { preserveState: true, replace: true })
-}
-
-function onSearchInput(): void {
-    clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(applyFilters, 350)
-}
-
-const paginationFilters = computed(() => ({
-    search:  search.value || undefined,
-    role:    roleFilter.value || undefined,
-    status:  statusFilter.value || undefined,
-}))
+const { search, roleFilter, statusFilter, applyFilters, onSearchInput, paginationFilters } =
+    useUserFilters(props.filters, props.users.per_page)
 
 const editingUser    = ref<UserRow | null>(null)
 const resetUser      = ref<UserRow | null>(null)
@@ -172,26 +150,26 @@ const authId = (usePage().props as any).auth?.user?.id
                         <td>
                             <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;">
                                 <Button
-                                    v-if="can('users.update') && user.id !== authId"
+                                    v-if="canUpdate(user) && user.id !== authId"
                                     variant="ghost" size="sm" icon-only icon="edit"
                                     :aria-label="`Editar ${user.name}`"
                                     @click="editingUser = user"
                                 />
                                 <Button
-                                    v-if="can('users.reset-password')"
+                                    v-if="canResetPassword"
                                     variant="ghost" size="sm" icon-only icon="key"
                                     :aria-label="`Cambiar contraseña de ${user.name}`"
                                     @click="resetUser = user"
                                 />
                                 <Button
-                                    v-if="can('users.deactivate') && user.id !== authId"
+                                    v-if="canDeactivate(user) && user.id !== authId"
                                     variant="ghost" size="sm" icon-only
                                     :icon="user.active ? 'toggle-right' : 'toggle-left'"
                                     :aria-label="user.active ? `Desactivar ${user.name}` : `Reactivar ${user.name}`"
                                     @click="deactivateUser = user"
                                 />
                                 <Button
-                                    v-if="can('users.delete')"
+                                    v-if="canDelete(user)"
                                     variant="ghost" size="sm" icon-only icon="trash"
                                     :aria-label="`Eliminar ${user.name}`"
                                     @click="deleteUser = user"

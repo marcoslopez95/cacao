@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Icon from '@/components/base/Icon.vue'
+import Icon from '@/components/UI/AppIcon.vue'
 import { useToast } from '@/components/feedback/useToast'
 
 const { toasts, dismiss } = useToast()

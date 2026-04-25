@@ -245,6 +245,105 @@ colors: {
 6. **`pint --dirty` después de cada cambio PHP** — antes de dar por finalizado cualquier cambio.
 
 ---
+
+## Arquitectura — Estándares obligatorios
+
+> Estos patrones son inamovibles. Todo código nuevo DEBE seguirlos.
+> Toda refactorización DEBE acercarse a ellos, nunca alejarse.
+
+### Backend: `FormRequest → Controller → Wrapper → Action → Resource`
+
+```
+HTTP Request
+    → FormRequest   valida input + autoriza vía Policy en authorize()
+    → Controller    crea Wrapper, inyecta Action, devuelve Resource/Redirect (máx 8 líneas)
+    → Wrapper       encapsula validated data con getters tipados y métodos de agregación
+    → Action        recibe Wrapper, ejecuta lógica de negocio pura
+    → Resource      transforma modelo → array para Inertia (nunca inline en controller)
+```
+
+**Regla del controller** — no crea modelos, no hashea, no hace transacciones:
+```php
+public function store(StoreUserRequest $request, CreateUserAction $action): RedirectResponse
+{
+    $action->handle(new UserWrapper($request->validated()));
+    Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuario creado.']);
+    return to_route('security.users.index');
+}
+```
+
+**Convenciones de nomenclatura:**
+
+| Capa | Carpeta | Nombre |
+|---|---|---|
+| FormRequest | `app/Http/Requests/{Dominio}/` | `Store{Entidad}Request` |
+| Controller | `app/Http/Controllers/{Dominio}/` | `{Entidad}Controller` |
+| Policy | `app/Policies/` | `{Entidad}Policy` |
+| Wrapper | `app/Http/Wrappers/{Dominio}/` | `{Entidad}Wrapper` — extiende `Collection` |
+| Action | `app/Actions/{Dominio}/` | `{Verbo}{Entidad}Action` — método `handle()` |
+| Resource | `app/Http/Resources/{Dominio}/` | `{Entidad}Resource` — extiende `JsonResource` |
+
+**Reglas del Wrapper:**
+- Extiende `Illuminate\Support\Collection`
+- Uno por entidad (no por operación) — solo crear dos si los datos son estructuralmente distintos
+- Getters semánticos: `getName()`, `getEmail()`, `getRoleName()`
+- Toda manipulación de datos va en el Wrapper (hashing, resolución de valores, aggregation)
+- El Action NUNCA recibe `array $validated` — siempre recibe un Wrapper tipado
+
+**Reglas del Action:**
+- Sufijo `Action` obligatorio: `CreateUserAction`, `DeleteRoleAction`
+- Método siempre `handle()`
+- Solo lógica de negocio: DB writes, side effects, eventos
+- Sin manipulación de datos cruda — para eso está el Wrapper
+
+---
+
+### Frontend: `FormComposable → Page → PermissionComposable → Type`
+
+```
+Page (solo imports + template declarativo)
+    → composables/forms/use{Entity}Form.ts        posee useForm + Wayfinder + create/update/remove
+    → composables/permissions/use{Entity}Permissions.ts  wrappea CASL, expone canCreate/canEdit/etc.
+    → composables/filters/use{Entity}Filters.ts   estado de filtros + router.get debounced
+    → types/{entity}.ts                           mirror exacto del Laravel Resource
+```
+
+**Estructura de carpetas frontend:**
+```
+resources/js/
+├── pages/                    (minúscula)
+│   └── {domain}/{Entity}/Index.vue
+├── composables/
+│   ├── forms/use{Entity}Form.ts
+│   ├── permissions/use{Entity}Permissions.ts
+│   └── filters/use{Entity}Filters.ts
+├── types/{entity}.ts
+└── components/
+    ├── {domain}/             (security/, teams/ — componentes de entidad)
+    └── UI/                   (prefijo App — AppButton, AppModal, AppBadge…)
+```
+
+**Paralelo backend → frontend:**
+
+| Backend | Frontend | Responsabilidad |
+|---|---|---|
+| `FormRequest` | `use{Entity}Form.ts` | Shape del input + envío |
+| `Controller` | `Page.vue` | Orquestación pura |
+| `Policy` | `use{Entity}Permissions.ts` | Autorización (CASL) |
+| `Wrapper` | TypeScript types (`UserFormData`) | Tipado fuerte — TS es el Wrapper |
+| `Resource` | `types/{entity}.ts` | Shape de los datos de salida |
+
+**Reglas inamovibles frontend:**
+- `router.post/.put/.delete` solo dentro de composables de form — nunca en páginas ni componentes
+- `usePage().props.auth` solo dentro de composables de permisos — nunca en páginas
+- Interfaces de entidad siempre en `types/` — nunca inline
+- Rutas siempre via Wayfinder — nunca `route()` raw ni strings hardcodeados
+- Nunca `any` — usar `Pick<>`, `Omit<>`, `Partial<>` para derivar tipos
+- Componentes UI en `components/UI/` con prefijo `App` (AppButton, AppModal, AppBadge…)
+- Tipos de colección paginada: `{Entidad}Collection` — nunca `{Entidad}Paginator`
+- Un composable = un concern (form ≠ permisos ≠ filtros — nunca mezclar)
+
+---
 ---
 
 # Laravel Boost Guidelines

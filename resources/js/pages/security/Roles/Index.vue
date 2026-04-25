@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
-import { computed, ref } from 'vue'
-import Badge from '@/components/base/Badge.vue'
-import Button from '@/components/base/Button.vue'
+import { ref } from 'vue'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
 import CreateRoleModal from '@/components/security/CreateRoleModal.vue'
 import DeleteRoleModal from '@/components/security/DeleteRoleModal.vue'
 import PermissionsModal from '@/components/security/PermissionsModal.vue'
+import { useRolePermissions } from '@/composables/permissions/useRolePermissions'
+import { useRoleFilters } from '@/composables/filters/useRoleFilters'
 import { index } from '@/routes/security/roles'
 import type { Role } from '@/types'
 
@@ -31,16 +33,13 @@ defineOptions({
     },
 })
 
-const search          = ref('')
-const editingRole     = ref<Role | null>(null)
-const deletingRole    = ref<Role | null>(null)
-const showCreate      = ref(false)
+const { canCreate, canUpdate, canDelete, canAssignPermissions } = useRolePermissions()
 
-const filteredRoles = computed(() => {
-    const q = search.value.trim().toLowerCase()
-    if (!q) return props.roles
-    return props.roles.filter(r => r.name.toLowerCase().includes(q))
-})
+const { search, filteredRoles } = useRoleFilters(() => props.roles)
+
+const editingRole  = ref<Role | null>(null)
+const deletingRole = ref<Role | null>(null)
+const showCreate   = ref(false)
 
 // ── Permission chips ───────────────────────────────────────────
 const GROUP_LABELS: Record<string, string> = {
@@ -82,7 +81,7 @@ function permChips(permissions: string[]): { key: string; label: string; count: 
                     Gestioná los roles y permisos del sistema.
                 </p>
             </div>
-            <Button v-if="props.can.create" icon="plus" variant="primary" @click="showCreate = true">
+            <Button v-if="canCreate" icon="plus" variant="primary" @click="showCreate = true">
                 Nuevo rol
             </Button>
         </div>
@@ -135,7 +134,7 @@ function permChips(permissions: string[]): { key: string; label: string; count: 
                                     </span>
                                 </span>
                                 <button
-                                    v-if="props.can.assignPermissions && !role.isAdmin"
+                                    v-if="canAssignPermissions && !role.isAdmin"
                                     style="background:transparent;border:1px dashed var(--border-strong,var(--border));color:var(--text-muted);padding:3px 10px;border-radius:999px;font-size:11.5px;cursor:pointer;font-family:inherit;transition:border-color .12s,color .12s;"
                                     @click="editingRole = role"
                                     @mouseover="($event.target as HTMLElement).style.color='var(--accent)'"
@@ -164,7 +163,7 @@ function permChips(permissions: string[]): { key: string; label: string; count: 
                         <td>
                             <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;">
                                 <Button
-                                    v-if="props.can.update && !role.isAdmin"
+                                    v-if="canUpdate && !role.isAdmin"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
@@ -173,7 +172,7 @@ function permChips(permissions: string[]): { key: string; label: string; count: 
                                     @click="editingRole = role"
                                 />
                                 <Button
-                                    v-if="props.can.delete && !role.isAdmin"
+                                    v-if="canDelete && !role.isAdmin"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
@@ -198,7 +197,7 @@ function permChips(permissions: string[]): { key: string; label: string; count: 
     <CreateRoleModal
         :open="showCreate"
         :permissions="props.permissions"
-        :can-assign-permissions="props.can.assignPermissions"
+        :can-assign-permissions="canAssignPermissions"
         @update:open="v => { if (!v) showCreate = false }"
     />
 

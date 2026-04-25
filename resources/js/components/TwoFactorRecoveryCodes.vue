@@ -2,9 +2,9 @@
 import { Form } from '@inertiajs/vue3';
 import { nextTick, onMounted, ref, useTemplateRef } from 'vue';
 import AlertError from '@/components/AlertError.vue';
-import Button from '@/components/base/Button.vue';
-import Card from '@/components/base/Card.vue';
-import Icon from '@/components/base/Icon.vue';
+import Button from '@/components/UI/AppButton.vue';
+import Card from '@/components/UI/AppCard.vue';
+import Icon from '@/components/UI/AppIcon.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { regenerateRecoveryCodes } from '@/routes/two-factor';
 

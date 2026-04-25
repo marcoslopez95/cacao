@@ -5,7 +5,7 @@ import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileCo
 import DeleteUser from '@/components/DeleteUser.vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
-import Button from '@/components/base/Button.vue';
+import Button from '@/components/UI/AppButton.vue';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
 

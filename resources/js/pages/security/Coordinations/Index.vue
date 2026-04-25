@@ -1,20 +1,21 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3'
-import { computed, ref } from 'vue'
-import Badge from '@/components/base/Badge.vue'
-import Button from '@/components/base/Button.vue'
-import Pagination from '@/components/base/Pagination.vue'
+import { Head } from '@inertiajs/vue3'
+import { ref } from 'vue'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
+import Pagination from '@/components/UI/AppPagination.vue'
 import AssignCoordinatorModal from '@/components/security/AssignCoordinatorModal.vue'
 import CoordinationHistoryModal from '@/components/security/CoordinationHistoryModal.vue'
 import CreateCoordinationModal from '@/components/security/CreateCoordinationModal.vue'
 import DeleteCoordinationModal from '@/components/security/DeleteCoordinationModal.vue'
 import EditCoordinationModal from '@/components/security/EditCoordinationModal.vue'
-import { usePermission } from '@/composables/usePermission'
+import { useCoordinationPermissions } from '@/composables/permissions/useCoordinationPermissions'
+import { useCoordinationFilters } from '@/composables/filters/useCoordinationFilters'
 import { index } from '@/routes/security/coordinations'
-import type { CoordinationPaginator, CoordinationRow } from '@/types/security'
+import type { CoordinationCollection, CoordinationRow } from '@/types/security'
 
 type Props = {
-    coordinations: CoordinationPaginator
+    coordinations: CoordinationCollection
     coordinators: { id: number; name: string }[]
     careers: { id: number; name: string }[]
     filters: { search?: string; type?: string; education_level?: string; status?: string }
@@ -32,46 +33,16 @@ defineOptions({
     },
 })
 
-const { can } = usePermission()
+const { canCreate, canEdit, canDelete, canAssign, canViewHistory } = useCoordinationPermissions()
 
-const search = ref(props.filters.search ?? '')
-const typeFilter = ref(props.filters.type ?? '')
-const levelFilter = ref(props.filters.education_level ?? '')
-const statusFilter = ref(props.filters.status ?? '')
+const { search, typeFilter, levelFilter, statusFilter, applyFilters, onSearchInput, paginationFilters } =
+    useCoordinationFilters(props.filters, props.coordinations.per_page)
 
-let debounceTimer: ReturnType<typeof setTimeout>
-
-function applyFilters(): void {
-    router.get(
-        index.url(),
-        {
-            search: search.value || undefined,
-            type: typeFilter.value || undefined,
-            education_level: levelFilter.value || undefined,
-            status: statusFilter.value || undefined,
-            per_page: props.coordinations.per_page !== 20 ? props.coordinations.per_page : undefined,
-        },
-        { preserveState: true, replace: true },
-    )
-}
-
-function onSearchInput(): void {
-    clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(applyFilters, 350)
-}
-
-const paginationFilters = computed(() => ({
-    search: search.value || undefined,
-    type: typeFilter.value || undefined,
-    education_level: levelFilter.value || undefined,
-    status: statusFilter.value || undefined,
-}))
-
-const showCreate = ref(false)
-const editingCoordination = ref<CoordinationRow | null>(null)
+const showCreate            = ref(false)
+const editingCoordination   = ref<CoordinationRow | null>(null)
 const assigningCoordination = ref<CoordinationRow | null>(null)
-const historyCoordination = ref<CoordinationRow | null>(null)
-const deletingCoordination = ref<CoordinationRow | null>(null)
+const historyCoordination   = ref<CoordinationRow | null>(null)
+const deletingCoordination  = ref<CoordinationRow | null>(null)
 
 function typeLabel(type: string): string {
     const labels: Record<string, string> = { career: 'Carrera', grade: 'Año escolar', academic: 'Académica' }
@@ -97,7 +68,7 @@ function levelLabel(level: string): string {
                     Gestiona las coordinaciones académicas del sistema
                 </p>
             </div>
-            <Button v-if="props.can.create" variant="primary" icon="plus" @click="showCreate = true">
+            <Button v-if="canCreate" variant="primary" icon="plus" @click="showCreate = true">
                 Nueva coordinación
             </Button>
         </div>
@@ -157,7 +128,7 @@ function levelLabel(level: string): string {
                         <td>
                             <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;">
                                 <Button
-                                    v-if="can('coordinations.edit')"
+                                    v-if="canEdit"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
@@ -166,7 +137,7 @@ function levelLabel(level: string): string {
                                     @click="editingCoordination = c"
                                 />
                                 <Button
-                                    v-if="can('coordinations.assign')"
+                                    v-if="canAssign"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
@@ -175,7 +146,7 @@ function levelLabel(level: string): string {
                                     @click="assigningCoordination = c"
                                 />
                                 <Button
-                                    v-if="can('coordinations.view_history')"
+                                    v-if="canViewHistory"
                                     variant="ghost"
                                     size="sm"
                                     icon-only
@@ -184,7 +155,7 @@ function levelLabel(level: string): string {
                                     @click="historyCoordination = c"
                                 />
                                 <Button
-                                    v-if="can('coordinations.delete')"
+                                    v-if="canDelete"
                                     variant="ghost"
                                     size="sm"
                                     icon-only

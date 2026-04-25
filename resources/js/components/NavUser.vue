@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import CacaoAvatar from '@/components/base/Avatar.vue';
+import CacaoAvatar from '@/components/UI/AppAvatar.vue';
 import { useInitials } from '@/composables/useInitials';
 import { logout } from '@/routes';
 import { edit } from '@/routes/profile';

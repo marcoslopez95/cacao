@@ -5,7 +5,7 @@ import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileCo
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
-import Button from '@/components/base/Button.vue';
+import Button from '@/components/UI/AppButton.vue';
 import Modal from '@/components/feedback/Modal.vue';
 
 const passwordInput = useTemplateRef<InstanceType<typeof PasswordInput>>('passwordInput');

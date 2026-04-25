@@ -83,7 +83,7 @@ test('index filters by search', function () {
     $this->actingAs(userWithCoordPerm('coordinations.view'))
         ->get('/security/coordinations?search=Sistemas')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->where('coordinations.total', 1));
+        ->assertInertia(fn ($page) => $page->where('coordinations.meta.total', 1));
 });
 
 test('index filters by type', function () {
@@ -93,7 +93,7 @@ test('index filters by type', function () {
     $this->actingAs(userWithCoordPerm('coordinations.view'))
         ->get('/security/coordinations?type=grade')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->where('coordinations.total', 1));
+        ->assertInertia(fn ($page) => $page->where('coordinations.meta.total', 1));
 });
 
 test('index filters by education level', function () {
@@ -103,7 +103,7 @@ test('index filters by education level', function () {
     $this->actingAs(userWithCoordPerm('coordinations.view'))
         ->get('/security/coordinations?education_level=secondary')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->where('coordinations.total', 1));
+        ->assertInertia(fn ($page) => $page->where('coordinations.meta.total', 1));
 });
 
 test('index filters by active status', function () {
@@ -113,7 +113,7 @@ test('index filters by active status', function () {
     $this->actingAs(userWithCoordPerm('coordinations.view'))
         ->get('/security/coordinations?status=inactive')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->where('coordinations.total', 1));
+        ->assertInertia(fn ($page) => $page->where('coordinations.meta.total', 1));
 });
 
 // ---------------------------------------------------------------------------

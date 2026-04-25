@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Link, router, usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
-import Avatar from '@/components/base/Avatar.vue'
-import Icon from '@/components/base/Icon.vue'
-import Isotipo from '@/components/base/Isotipo.vue'
+import Avatar from '@/components/UI/AppAvatar.vue'
+import Icon from '@/components/UI/AppIcon.vue'
+import Isotipo from '@/components/UI/AppIsotipo.vue'
 import { dashboard } from '@/routes'
 import { index as rolesIndex } from '@/routes/security/roles'
 import { index as usersIndex } from '@/routes/security/users'

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { usePage } from '@inertiajs/vue3'
-import StatCard from '@/components/base/StatCard.vue'
-import Badge from '@/components/base/Badge.vue'
-import Button from '@/components/base/Button.vue'
+import StatCard from '@/components/UI/AppStatCard.vue'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
 
 const page = usePage()
 const user = computed(() => page.props.auth?.user)

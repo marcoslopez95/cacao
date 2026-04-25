@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3'
 import { ref, watch } from 'vue'
-import Button from '@/components/base/Button.vue'
+import Button from '@/components/UI/AppButton.vue'
 import Modal from '@/components/feedback/Modal.vue'
 import InputError from '@/components/InputError.vue'
 import { update } from '@/routes/security/roles'

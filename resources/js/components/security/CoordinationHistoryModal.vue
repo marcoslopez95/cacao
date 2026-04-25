@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import Badge from '@/components/base/Badge.vue'
-import Button from '@/components/base/Button.vue'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
 import Modal from '@/components/feedback/Modal.vue'
 import type { CoordinationAssignment, CoordinationRow } from '@/types/security'
 import { index as assignmentsIndex } from '@/actions/App/Http/Controllers/Security/CoordinationAssignmentController'
