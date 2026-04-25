@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\CareerCategory;
 use App\Models\Coordination;
 use App\Models\User;
+use App\Policies\Academic\CareerCategoryPolicy;
 use App\Policies\CoordinationPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
@@ -44,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Coordination::class, CoordinationPolicy::class);
+        Gate::policy(CareerCategory::class, CareerCategoryPolicy::class);
     }
 
     /**
