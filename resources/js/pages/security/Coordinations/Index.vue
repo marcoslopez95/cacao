@@ -36,7 +36,7 @@ defineOptions({
 const { canCreate, canEdit, canDelete, canAssign, canViewHistory } = useCoordinationPermissions()
 
 const { search, typeFilter, levelFilter, statusFilter, applyFilters, onSearchInput, paginationFilters } =
-    useCoordinationFilters(props.filters, props.coordinations.per_page)
+    useCoordinationFilters(props.filters, props.coordinations.meta.per_page)
 
 const showCreate            = ref(false)
 const editingCoordination   = ref<CoordinationRow | null>(null)
@@ -175,7 +175,7 @@ function levelLabel(level: string): string {
             </table>
 
             <Pagination
-                :paginator="props.coordinations"
+                :paginator="props.coordinations.meta"
                 :route-url="index.url()"
                 :filters="paginationFilters"
             />

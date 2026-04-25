@@ -36,7 +36,7 @@ class RoleController extends Controller
             ->get();
 
         return Inertia::render('security/Roles/Index', [
-            'roles' => RoleResource::collection($roles),
+            'roles' => RoleResource::collection($roles)->resolve(),
             'permissions' => Permission::orderBy('name')->pluck('name')->values(),
             'can' => [
                 'create' => $user->can('roles.create'),

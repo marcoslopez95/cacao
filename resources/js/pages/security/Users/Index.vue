@@ -36,7 +36,7 @@ defineOptions({
 const { canUpdate, canDelete, canDeactivate, canResetPassword } = useUserPermissions()
 
 const { search, roleFilter, statusFilter, applyFilters, onSearchInput, paginationFilters } =
-    useUserFilters(props.filters, props.users.per_page)
+    useUserFilters(props.filters, props.users.meta.per_page)
 
 const editingUser    = ref<UserRow | null>(null)
 const resetUser      = ref<UserRow | null>(null)
@@ -187,7 +187,7 @@ const authId = (usePage().props as any).auth?.user?.id
 
             <!-- Pagination -->
             <Pagination
-                :paginator="props.users"
+                :paginator="props.users.meta"
                 :route-url="index.url()"
                 :filters="paginationFilters"
             />

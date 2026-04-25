@@ -27,10 +27,6 @@ export interface UserCollection {
     data: UserRow[];
     meta: PaginationMeta;
     links: PaginationLink[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
 }
 
 export type CoordinationRow = {
@@ -57,8 +53,4 @@ export interface CoordinationCollection {
     data: CoordinationRow[];
     meta: PaginationMeta;
     links: PaginationLink[];
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
 }
