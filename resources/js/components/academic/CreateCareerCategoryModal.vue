@@ -28,13 +28,13 @@ function close(v: boolean): void {
                     <label for="cc-name" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">
                         Nombre
                     </label>
-                    <input id="cc-name" name="name" class="input" required />
+                    <input id="cc-name" name="name" class="input" placeholder="Nombre de la categoría" required />
                     <InputError :message="errors.name" />
                 </div>
             </div>
 
             <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:24px;">
-                <Button type="button" variant="ghost" @click="close(false)">Cancelar</Button>
+                <Button type="button" variant="secondary" @click="close(false)">Cancelar</Button>
                 <Button type="submit" variant="primary" :loading="processing">Crear categoría</Button>
             </div>
         </Form>

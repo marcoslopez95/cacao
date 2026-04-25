@@ -43,7 +43,7 @@ function close(v: boolean): void {
             </div>
 
             <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:24px;">
-                <Button type="button" variant="ghost" @click="close(false)">Cancelar</Button>
+                <Button type="button" variant="secondary" @click="close(false)">Cancelar</Button>
                 <Button type="submit" variant="primary" :loading="processing">Guardar cambios</Button>
             </div>
         </Form>
