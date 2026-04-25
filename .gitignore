@@ -28,3 +28,4 @@ yarn-error.log
 /.zed
 .superpowers/
 .pnpm-store/
+.worktrees/
