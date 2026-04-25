@@ -35,3 +35,11 @@ permissions:
     guard: web
   - name: coordinations.view_history
     guard: web
+  - name: career-categories.view
+    guard: web
+  - name: career-categories.create
+    guard: web
+  - name: career-categories.update
+    guard: web
+  - name: career-categories.delete
+    guard: web

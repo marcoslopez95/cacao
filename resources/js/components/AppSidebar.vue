@@ -8,6 +8,7 @@ import { dashboard } from '@/routes'
 import { index as rolesIndex } from '@/routes/security/roles'
 import { index as usersIndex } from '@/routes/security/users'
 import { index as coordinationsIndex } from '@/routes/security/coordinations'
+import { index as careerCategoriesIndex } from '@/routes/academic/career-categories'
 
 const page = usePage()
 
@@ -59,6 +60,18 @@ const navGroups = computed(() => {
         if (securityItems.length) {
             groups.push({ label: 'Seguridad', items: securityItems })
         }
+    }
+
+    if (
+        page.props.auth?.permissions?.includes('career-categories.view') ||
+        page.props.auth?.roles?.includes('Admin')
+    ) {
+        groups.push({
+            label: 'Académico',
+            items: [
+                { icon: 'folder', label: 'Categorías', href: careerCategoriesIndex.url() },
+            ],
+        })
     }
 
     return groups
