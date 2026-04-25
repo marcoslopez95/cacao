@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Head, router, usePage } from '@inertiajs/vue3'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import Badge from '@/components/base/Badge.vue'
 import Button from '@/components/base/Button.vue'
+import Pagination from '@/components/base/Pagination.vue'
 import CreateUserModal from '@/components/security/CreateUserModal.vue'
 import DeactivateUserModal from '@/components/security/DeactivateUserModal.vue'
 import DeleteUserModal from '@/components/security/DeleteUserModal.vue'
@@ -41,9 +42,10 @@ let debounceTimer: ReturnType<typeof setTimeout>
 
 function applyFilters(): void {
     router.get(index.url(), {
-        search:  search.value || undefined,
-        role:    roleFilter.value || undefined,
-        status:  statusFilter.value || undefined,
+        search:   search.value || undefined,
+        role:     roleFilter.value || undefined,
+        status:   statusFilter.value || undefined,
+        per_page: props.users.per_page !== 20 ? props.users.per_page : undefined,
     }, { preserveState: true, replace: true })
 }
 
@@ -51,6 +53,12 @@ function onSearchInput(): void {
     clearTimeout(debounceTimer)
     debounceTimer = setTimeout(applyFilters, 350)
 }
+
+const paginationFilters = computed(() => ({
+    search:  search.value || undefined,
+    role:    roleFilter.value || undefined,
+    status:  statusFilter.value || undefined,
+}))
 
 const editingUser    = ref<UserRow | null>(null)
 const resetUser      = ref<UserRow | null>(null)
@@ -96,29 +104,30 @@ const authId = (usePage().props as any).auth?.user?.id
             </div>
         </div>
 
-        <!-- Filters -->
-        <div style="display:flex;gap:12px;flex-wrap:wrap;">
-            <input
-                v-model="search"
-                type="search"
-                placeholder="Buscar por nombre o correo..."
-                class="input"
-                style="flex:1;min-width:200px;max-width:320px;"
-                @input="onSearchInput"
-            />
-            <select v-model="roleFilter" class="input" style="width:160px;" @change="applyFilters">
-                <option value="">Todos los roles</option>
-                <option v-for="r in props.roles" :key="r" :value="r">{{ r }}</option>
-            </select>
-            <select v-model="statusFilter" class="input" style="width:160px;" @change="applyFilters">
-                <option value="">Todos los estados</option>
-                <option value="active">Activos</option>
-                <option value="inactive">Inactivos</option>
-            </select>
-        </div>
-
-        <!-- Table -->
+        <!-- Card: toolbar + table + pagination -->
         <div class="table-wrap">
+            <!-- Filters toolbar -->
+            <div style="display:flex;gap:12px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--border);">
+                <input
+                    v-model="search"
+                    type="search"
+                    placeholder="Buscar por nombre o correo..."
+                    class="input"
+                    style="flex:1;min-width:200px;max-width:320px;"
+                    @input="onSearchInput"
+                />
+                <select v-model="roleFilter" class="input" style="width:160px;" @change="applyFilters">
+                    <option value="">Todos los roles</option>
+                    <option v-for="r in props.roles" :key="r" :value="r">{{ r }}</option>
+                </select>
+                <select v-model="statusFilter" class="input" style="width:160px;" @change="applyFilters">
+                    <option value="">Todos los estados</option>
+                    <option value="active">Activos</option>
+                    <option value="inactive">Inactivos</option>
+                </select>
+            </div>
+
+            <!-- Table -->
             <table class="table">
                 <thead>
                     <tr>
@@ -133,27 +142,31 @@ const authId = (usePage().props as any).auth?.user?.id
                     <tr v-for="user in props.users.data" :key="user.id">
                         <td>
                             <div style="display:flex;align-items:center;gap:10px;">
-                                <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:grid;place-items:center;font-weight:600;font-size:13px;flex-shrink:0;">
+                                <div style="width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:1.5px solid color-mix(in srgb,var(--accent) 25%,transparent);display:grid;place-items:center;font-weight:600;font-size:13px;flex-shrink:0;">
                                     {{ user.name.charAt(0).toUpperCase() }}
                                 </div>
                                 <div>
                                     <div style="font-weight:500;color:var(--text-primary);">{{ user.name }}</div>
-                                    <div style="font-size:var(--text-xs);color:var(--text-muted);">{{ user.email }}</div>
+                                    <div style="font-size:11.5px;color:var(--text-muted);font-family:var(--font-mono);">{{ user.email }}</div>
                                 </div>
                             </div>
                         </td>
                         <td>
                             <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                                <Badge v-for="role in user.roles" :key="role" variant="default">{{ role }}</Badge>
+                                <Badge
+                                    v-for="role in user.roles"
+                                    :key="role"
+                                    :variant="role === 'Admin' ? 'accent' : 'neutral'"
+                                >{{ role }}</Badge>
                                 <span v-if="!user.roles.length" style="color:var(--text-muted);font-style:italic;font-size:var(--text-sm);">Sin rol</span>
                             </div>
                         </td>
                         <td>
-                            <Badge :variant="user.active ? 'success' : 'error'">
+                            <Badge :variant="user.active ? 'success' : 'neutral'" dot>
                                 {{ user.active ? 'Activo' : 'Inactivo' }}
                             </Badge>
                         </td>
-                        <td style="color:var(--text-muted);font-size:var(--text-sm);">
+                        <td style="color:var(--text-muted);font-size:var(--text-xs);font-family:var(--font-mono);">
                             {{ user.created_at }}
                         </td>
                         <td>
@@ -193,20 +206,13 @@ const authId = (usePage().props as any).auth?.user?.id
                     </tr>
                 </tbody>
             </table>
-        </div>
 
-        <!-- Pagination -->
-        <div v-if="props.users.last_page > 1" style="display:flex;justify-content:center;gap:4px;">
-            <template v-for="link in props.users.links" :key="link.label">
-                <button
-                    v-if="link.url"
-                    :disabled="link.active"
-                    style="padding:4px 10px;border-radius:4px;border:1px solid var(--border);background:var(--bg-soft);font-size:var(--text-sm);cursor:pointer;"
-                    :style="link.active ? 'background:var(--accent);color:#fff;border-color:var(--accent);' : ''"
-                    @click="router.get(link.url)"
-                    v-html="link.label"
-                />
-            </template>
+            <!-- Pagination -->
+            <Pagination
+                :paginator="props.users"
+                :route-url="index.url()"
+                :filters="paginationFilters"
+            />
         </div>
     </div>
 

@@ -53,7 +53,7 @@ const navGroups = computed(() => {
             page.props.auth?.permissions?.includes('coordinations.view') ||
             page.props.auth?.roles?.includes('Admin')
         ) {
-            securityItems.push({ icon: 'building-2', label: 'Coordinaciones', href: coordinationsIndex.url() })
+            securityItems.push({ icon: 'building', label: 'Coordinaciones', href: coordinationsIndex.url() })
         }
 
         if (securityItems.length) {

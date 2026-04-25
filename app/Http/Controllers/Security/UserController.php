@@ -49,7 +49,9 @@ class UserController extends Controller
             };
         }
 
-        $users = $query->orderBy('name')->paginate(20)->through(fn (User $user) => [
+        $perPage = min(100, max(10, (int) $request->input('per_page', 20)));
+
+        $users = $query->orderBy('name')->paginate($perPage)->through(fn (User $user) => [
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,

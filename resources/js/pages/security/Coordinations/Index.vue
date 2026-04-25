@@ -161,7 +161,7 @@ function levelLabel(level: string): string {
                                     variant="ghost"
                                     size="sm"
                                     icon-only
-                                    icon="pencil"
+                                    icon="edit"
                                     :aria-label="`Editar ${c.name}`"
                                     @click="editingCoordination = c"
                                 />

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <!-- CACAO OG Image — 1200x630 para Open Graph / Twitter Card -->
+  <rect width="1200" height="630" fill="#131110"/>
+
+  <!-- Acento terracota top -->
+  <rect width="1200" height="6" fill="#C8521A"/>
+
+  <!-- Isotipo grande centrado -->
+  <!-- Fila 0 -->
+  <rect x="410" y="160" width="80" height="80" rx="16" fill="#F4F2EF"/>
+  <rect x="510" y="160" width="80" height="80" rx="16" fill="#F4F2EF"/>
+  <rect x="610" y="160" width="80" height="80" rx="16" fill="#C8521A"/>
+  <!-- Fila 1 -->
+  <rect x="410" y="260" width="80" height="80" rx="16" fill="#F4F2EF"/>
+  <rect x="510" y="260" width="80" height="80" rx="16" fill="#F4F2EF"/>
+  <!-- [1,2] vacío -->
+  <!-- Fila 2 -->
+  <rect x="410" y="360" width="80" height="80" rx="16" fill="#F4F2EF"/>
+  <rect x="510" y="360" width="80" height="80" rx="16" fill="#F4F2EF"/>
+  <rect x="610" y="360" width="80" height="80" rx="16" fill="#F4F2EF"/>
+
+  <!-- Wordmark -->
+  <text
+    x="760" y="310"
+    font-family="'Space Grotesk', 'Arial', sans-serif"
+    font-size="110"
+    font-weight="700"
+    letter-spacing="16"
+    fill="#F4F2EF"
+  >CACAO</text>
+
+  <!-- Subtítulo -->
+  <text
+    x="762" y="365"
+    font-family="'Space Grotesk', 'Arial', sans-serif"
+    font-size="22"
+    font-weight="400"
+    letter-spacing="5"
+    fill="#888780"
+  >PLATAFORMA ACADÉMICA</text>
+
+  <!-- URL o tagline abajo -->
+  <text
+    x="600" y="580"
+    font-family="'Space Grotesk', 'Arial', sans-serif"
+    font-size="18"
+    font-weight="400"
+    letter-spacing="2"
+    fill="#3D3A36"
+    text-anchor="middle"
+  >Control Académico, Curricular y de Actividades Organizadas</text>
+</svg>
