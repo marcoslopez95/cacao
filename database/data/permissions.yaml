@@ -59,3 +59,13 @@ permissions:
     guard: web
   - name: pensums.delete
     guard: web
+  - name: subjects.view
+    guard: web
+  - name: subjects.create
+    guard: web
+  - name: subjects.update
+    guard: web
+  - name: subjects.delete
+    guard: web
+  - name: subjects.manage-prerequisites
+    guard: web

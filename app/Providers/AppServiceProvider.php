@@ -6,10 +6,12 @@ use App\Models\Career;
 use App\Models\CareerCategory;
 use App\Models\Coordination;
 use App\Models\Pensum;
+use App\Models\Subject;
 use App\Models\User;
 use App\Policies\Academic\CareerCategoryPolicy;
 use App\Policies\Academic\CareerPolicy;
 use App\Policies\Academic\PensumPolicy;
+use App\Policies\Academic\SubjectPolicy;
 use App\Policies\CoordinationPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
@@ -53,6 +55,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(CareerCategory::class, CareerCategoryPolicy::class);
         Gate::policy(Career::class, CareerPolicy::class);
         Gate::policy(Pensum::class, PensumPolicy::class);
+        Gate::policy(Subject::class, SubjectPolicy::class);
     }
 
     /**
