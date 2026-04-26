@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3'
+import { index as pensumsIndex } from '@/routes/academic/pensums'
 import { computed, ref } from 'vue'
 import Badge from '@/components/UI/AppBadge.vue'
 import Button from '@/components/UI/AppButton.vue'
@@ -105,10 +106,9 @@ const filteredCareers = computed(() => {
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    icon="book-open"
+                                    icon="book"
                                     :aria-label="`Ver pensums de ${career.name}`"
-                                    disabled
-                                    title="Disponible en la Parte 3"
+                                    @click="router.visit(pensumsIndex.url(career))"
                                 />
                                 <Button
                                     v-if="canUpdate"
