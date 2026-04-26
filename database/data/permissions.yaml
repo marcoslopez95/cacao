@@ -43,3 +43,11 @@ permissions:
     guard: web
   - name: career-categories.delete
     guard: web
+  - name: careers.view
+    guard: web
+  - name: careers.create
+    guard: web
+  - name: careers.update
+    guard: web
+  - name: careers.delete
+    guard: web
