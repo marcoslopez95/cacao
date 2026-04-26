@@ -32,16 +32,32 @@ class CreateCareerAction
 
     private function generateCode(string $name, int $id): string
     {
-        $words = preg_split('/\s+/', mb_strtolower(trim($name))) ?: [];
+        $words = array_values(array_filter(
+            preg_split('/\s+/', mb_strtolower(trim($name))) ?: [],
+            fn ($w) => $w !== ''
+        ));
+
+        if (empty($words)) {
+            $idPart = '-'.str_pad((string) $id, 2, '0', STR_PAD_LEFT);
+
+            return 'C'.$idPart;
+        }
+
         $significant = array_values(array_filter($words, fn ($w) => ! in_array($w, self::STOP_WORDS, true)));
 
         if (empty($significant)) {
             $significant = $words;
         }
 
-        $initials = implode('', array_map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)), $significant));
         $idPart = '-'.str_pad((string) $id, 2, '0', STR_PAD_LEFT);
+        $maxInitials = 10 - mb_strlen($idPart);
 
-        return mb_substr($initials.$idPart, 0, 10);
+        $initials = mb_substr(
+            implode('', array_map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)), $significant)),
+            0,
+            $maxInitials
+        );
+
+        return $initials.$idPart;
     }
 }

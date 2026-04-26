@@ -16,10 +16,10 @@ class CareerWrapper extends Collection
         return $this->get('name');
     }
 
-    /** Used exclusively by UpdateCareerAction. */
+    /** Used exclusively by UpdateCareerAction. Assumes key 'code' is present. */
     public function getCode(): string
     {
-        return $this->get('code');
+        return (string) $this->get('code');
     }
 
     public function isActive(): bool
