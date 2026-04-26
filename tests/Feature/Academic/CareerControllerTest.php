@@ -2,6 +2,7 @@
 
 use App\Models\Career;
 use App\Models\CareerCategory;
+use App\Models\Pensum;
 use App\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
@@ -247,4 +248,15 @@ test('user with careers.delete can destroy a career with no pensums', function (
         ->assertRedirect(route('academic.careers.index'));
 
     expect(Career::find($career->id))->toBeNull();
+});
+
+test('user with careers.delete cannot destroy a career that has pensums', function () {
+    $career = Career::factory()->create();
+    Pensum::factory()->create(['career_id' => $career->id]);
+
+    $this->actingAs(careerUserWith('careers.delete'))
+        ->delete("/academic/careers/{$career->id}")
+        ->assertRedirect(route('academic.careers.index'));
+
+    expect(Career::find($career->id))->not->toBeNull();
 });

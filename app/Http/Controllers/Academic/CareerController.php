@@ -29,7 +29,7 @@ class CareerController extends Controller
 
         return Inertia::render('academic/Careers/Index', [
             'careers' => CareerResource::collection(
-                Career::with('careerCategory')->orderBy('name')->get()
+                Career::with('careerCategory')->withCount('pensums')->orderBy('name')->get()
             )->resolve(),
             'categories' => CareerCategoryResource::collection(
                 CareerCategory::orderBy('name')->get()
