@@ -9,6 +9,8 @@ import { index as rolesIndex } from '@/routes/security/roles'
 import { index as usersIndex } from '@/routes/security/users'
 import { index as coordinationsIndex } from '@/routes/security/coordinations'
 import { index as careerCategoriesIndex } from '@/routes/academic/career-categories'
+import { index as careersIndex } from '@/routes/academic/careers'
+import { edit as profileEdit } from '@/routes/profile'
 
 const page = usePage()
 
@@ -64,15 +66,36 @@ const navGroups = computed(() => {
 
     if (
         page.props.auth?.permissions?.includes('career-categories.view') ||
+        page.props.auth?.permissions?.includes('careers.view') ||
         page.props.auth?.roles?.includes('Admin')
     ) {
-        groups.push({
-            label: 'Académico',
-            items: [
-                { icon: 'folder', label: 'Categorías', href: careerCategoriesIndex.url() },
-            ],
-        })
+        const academicItems: { icon: string; label: string; href: string }[] = []
+
+        if (
+            page.props.auth?.permissions?.includes('career-categories.view') ||
+            page.props.auth?.roles?.includes('Admin')
+        ) {
+            academicItems.push({ icon: 'folder', label: 'Categorías', href: careerCategoriesIndex.url() })
+        }
+
+        if (
+            page.props.auth?.permissions?.includes('careers.view') ||
+            page.props.auth?.roles?.includes('Admin')
+        ) {
+            academicItems.push({ icon: 'book', label: 'Carreras', href: careersIndex.url() })
+        }
+
+        if (academicItems.length) {
+            groups.push({ label: 'Académico', items: academicItems })
+        }
     }
+
+    groups.push({
+        label: 'Mi cuenta',
+        items: [
+            { icon: 'settings', label: 'Configuración', href: profileEdit.url() },
+        ],
+    })
 
     return groups
 })
@@ -85,6 +108,9 @@ const initials = computed(() => {
 })
 
 function isActive(href: string): boolean {
+    if (href === profileEdit.url()) {
+        return currentUrl.value.startsWith('/settings/')
+    }
     return currentUrl.value === href || currentUrl.value.startsWith(href + '/')
 }
 
