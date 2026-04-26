@@ -232,3 +232,30 @@ test('user with pensums.delete can destroy a pensum', function () {
 
     expect(Pensum::find($pensum->id))->toBeNull();
 });
+
+test('pensum belonging to another career returns 404 on update', function () {
+    $career = Career::factory()->create();
+    $otherCareer = Career::factory()->create();
+    $pensum = Pensum::factory()->create(['career_id' => $otherCareer->id]);
+
+    $this->actingAs(pensumUserWith('pensums.update'))
+        ->patch("/academic/careers/{$career->id}/pensums/{$pensum->id}", [
+            'name' => 'Plan Actualizado',
+            'period_type' => 'semester',
+            'total_periods' => 10,
+            'is_active' => true,
+        ])
+        ->assertNotFound();
+});
+
+test('pensum belonging to another career returns 404 on destroy', function () {
+    $career = Career::factory()->create();
+    $otherCareer = Career::factory()->create();
+    $pensum = Pensum::factory()->create(['career_id' => $otherCareer->id]);
+
+    $this->actingAs(pensumUserWith('pensums.delete'))
+        ->delete("/academic/careers/{$career->id}/pensums/{$pensum->id}")
+        ->assertNotFound();
+
+    expect(Pensum::find($pensum->id))->not->toBeNull();
+});

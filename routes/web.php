@@ -71,10 +71,12 @@ Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->
     Route::patch('careers/{career}', [CareerController::class, 'update'])->name('careers.update');
     Route::delete('careers/{career}', [CareerController::class, 'destroy'])->name('careers.destroy');
 
-    Route::get('careers/{career}/pensums', [PensumController::class, 'index'])->name('pensums.index');
-    Route::post('careers/{career}/pensums', [PensumController::class, 'store'])->name('pensums.store');
-    Route::patch('careers/{career}/pensums/{pensum}', [PensumController::class, 'update'])->name('pensums.update');
-    Route::delete('careers/{career}/pensums/{pensum}', [PensumController::class, 'destroy'])->name('pensums.destroy');
+    Route::scopeBindings()->group(function () {
+        Route::get('careers/{career}/pensums', [PensumController::class, 'index'])->name('pensums.index');
+        Route::post('careers/{career}/pensums', [PensumController::class, 'store'])->name('pensums.store');
+        Route::patch('careers/{career}/pensums/{pensum}', [PensumController::class, 'update'])->name('pensums.update');
+        Route::delete('careers/{career}/pensums/{pensum}', [PensumController::class, 'destroy'])->name('pensums.destroy');
+    });
 });
 
 require __DIR__.'/settings.php';
