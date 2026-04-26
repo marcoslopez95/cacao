@@ -1,0 +1,40 @@
+<script setup lang="ts">
+import { useForm } from '@inertiajs/vue3'
+import Button from '@/components/UI/AppButton.vue'
+import Modal from '@/components/feedback/Modal.vue'
+import { destroy } from '@/routes/academic/careers'
+import type { Career } from '@/types/academic'
+
+const props = defineProps<{
+    open: boolean
+    career: Career
+}>()
+
+const emit = defineEmits<{ 'update:open': [value: boolean] }>()
+
+const form = useForm({})
+
+function close(v: boolean): void {
+    emit('update:open', v)
+}
+
+function submit(): void {
+    form.delete(destroy.url(props.career), {
+        onSuccess: () => close(false),
+    })
+}
+</script>
+
+<template>
+    <Modal :open="open" title="Eliminar carrera" size="sm" @update:open="close">
+        <p style="color:var(--text-secondary);font-size:var(--text-sm);line-height:1.6;margin:0 0 24px;">
+            ¿Eliminar la carrera <strong>{{ career.name }} ({{ career.code }})</strong>?
+            Si tiene pensums asociados, la operación será rechazada automáticamente.
+        </p>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;">
+            <Button variant="ghost" @click="close(false)">Cancelar</Button>
+            <Button variant="danger" :loading="form.processing" @click="submit">Eliminar</Button>
+        </div>
+    </Modal>
+</template>
