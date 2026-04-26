@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Academic\CareerCategoryController;
 use App\Http\Controllers\Academic\CareerController;
+use App\Http\Controllers\Academic\PensumController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\Security\CoordinationAssignmentController;
 use App\Http\Controllers\Security\CoordinationController;
@@ -69,6 +70,11 @@ Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->
     Route::post('careers', [CareerController::class, 'store'])->name('careers.store');
     Route::patch('careers/{career}', [CareerController::class, 'update'])->name('careers.update');
     Route::delete('careers/{career}', [CareerController::class, 'destroy'])->name('careers.destroy');
+
+    Route::get('careers/{career}/pensums', [PensumController::class, 'index'])->name('pensums.index');
+    Route::post('careers/{career}/pensums', [PensumController::class, 'store'])->name('pensums.store');
+    Route::patch('careers/{career}/pensums/{pensum}', [PensumController::class, 'update'])->name('pensums.update');
+    Route::delete('careers/{career}/pensums/{pensum}', [PensumController::class, 'destroy'])->name('pensums.destroy');
 });
 
 require __DIR__.'/settings.php';
