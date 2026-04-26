@@ -2,6 +2,7 @@
 
 use App\Models\Career;
 use App\Models\Pensum;
+use App\Models\Subject;
 use App\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
@@ -256,6 +257,18 @@ test('pensum belonging to another career returns 404 on destroy', function () {
     $this->actingAs(pensumUserWith('pensums.delete'))
         ->delete("/academic/careers/{$career->id}/pensums/{$pensum->id}")
         ->assertNotFound();
+
+    expect(Pensum::find($pensum->id))->not->toBeNull();
+});
+
+test('deleting a pensum with subjects is blocked and pensum persists', function () {
+    $career = Career::factory()->create();
+    $pensum = Pensum::factory()->create(['career_id' => $career->id]);
+    Subject::factory()->create(['pensum_id' => $pensum->id, 'period_number' => 1]);
+
+    $this->actingAs(pensumUserWith('pensums.delete'))
+        ->delete("/academic/careers/{$career->id}/pensums/{$pensum->id}")
+        ->assertRedirect(route('academic.pensums.index', $career));
 
     expect(Pensum::find($pensum->id))->not->toBeNull();
 });
