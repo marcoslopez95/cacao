@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['career_id', 'name', 'period_type', 'total_periods', 'is_active'])]
 class Pensum extends Model
@@ -22,5 +23,8 @@ class Pensum extends Model
         return $this->belongsTo(Career::class);
     }
 
-    // subjects() relation will be added when the Subject model is implemented (Part 4)
+    public function subjects(): HasMany
+    {
+        return $this->hasMany(Subject::class);
+    }
 }
