@@ -7,7 +7,7 @@ export function useSubjectPermissions() {
     const canCreate               = computed(() => can('subjects.create'))
     const canUpdate               = computed(() => can('subjects.update'))
     const canDelete               = computed(() => can('subjects.delete'))
-    const canManagePrerequisites  = computed(() => can('subjects.managePrerequisites'))
+    const canManagePrerequisites  = computed(() => can('subjects.manage-prerequisites'))
 
     return { canCreate, canUpdate, canDelete, canManagePrerequisites }
 }
