@@ -3,6 +3,7 @@
 use App\Http\Controllers\Academic\CareerCategoryController;
 use App\Http\Controllers\Academic\CareerController;
 use App\Http\Controllers\Academic\PensumController;
+use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\Security\CoordinationAssignmentController;
 use App\Http\Controllers\Security\CoordinationController;
@@ -76,6 +77,14 @@ Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->
         Route::post('careers/{career}/pensums', [PensumController::class, 'store'])->name('pensums.store');
         Route::patch('careers/{career}/pensums/{pensum}', [PensumController::class, 'update'])->name('pensums.update');
         Route::delete('careers/{career}/pensums/{pensum}', [PensumController::class, 'destroy'])->name('pensums.destroy');
+
+        Route::prefix('/careers/{career}/pensums/{pensum}/subjects')->name('subjects.')->group(function () {
+            Route::get('/', [SubjectController::class, 'index'])->name('index');
+            Route::post('/', [SubjectController::class, 'store'])->name('store');
+            Route::patch('/{subject}', [SubjectController::class, 'update'])->name('update');
+            Route::delete('/{subject}', [SubjectController::class, 'destroy'])->name('destroy');
+            Route::post('/{subject}/prerequisites/sync', [SubjectController::class, 'syncPrerequisites'])->name('prerequisites.sync');
+        });
     });
 });
 
