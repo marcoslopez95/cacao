@@ -33,6 +33,8 @@ class SubjectWrapper extends Collection
 
     public function getDescription(): ?string
     {
-        return $this->get('description');
+        $value = $this->get('description');
+
+        return $value !== null ? (string) $value : null;
     }
 }

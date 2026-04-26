@@ -3,17 +3,22 @@
 namespace App\Actions\Academic;
 
 use App\Models\Subject;
+use Illuminate\Support\Facades\DB;
 
 class DeleteSubjectAction
 {
     public function handle(Subject $subject): bool
     {
-        if ($subject->dependents()->exists()) {
-            return false;
-        }
+        return DB::transaction(function () use ($subject): bool {
+            $hasDependents = $subject->dependents()->lockForUpdate()->exists();
 
-        $subject->delete();
+            if ($hasDependents) {
+                return false;
+            }
 
-        return true;
+            $subject->delete();
+
+            return true;
+        });
     }
 }
