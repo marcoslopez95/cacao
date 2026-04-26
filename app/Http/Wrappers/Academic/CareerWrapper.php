@@ -16,6 +16,7 @@ class CareerWrapper extends Collection
         return $this->get('name');
     }
 
+    /** Used exclusively by UpdateCareerAction. */
     public function getCode(): string
     {
         return $this->get('code');
