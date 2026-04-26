@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['career_category_id', 'name', 'code', 'active'])]
 class Career extends Model
@@ -23,8 +22,5 @@ class Career extends Model
         return $this->belongsTo(CareerCategory::class);
     }
 
-    public function pensums(): HasMany
-    {
-        return $this->hasMany(Pensum::class);
-    }
+    // pensums() relation will be added when the Pensum model is implemented
 }

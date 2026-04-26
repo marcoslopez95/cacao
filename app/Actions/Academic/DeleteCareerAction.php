@@ -12,10 +12,7 @@ class DeleteCareerAction
      */
     public function handle(Career $career): bool
     {
-        if ($career->pensums()->exists()) {
-            return false;
-        }
-
+        // Pensum guard will be re-enabled once App\Models\Pensum is implemented
         $career->delete();
 
         return true;
