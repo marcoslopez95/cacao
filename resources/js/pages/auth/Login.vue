@@ -10,7 +10,7 @@ import { request } from '@/routes/password'
 
 setLayoutProps({
     title: 'Iniciar sesión',
-    description: 'Accedé con tus credenciales institucionales.',
+    description: 'Accede con tus credenciales institucionales.',
     panelQuote: 'Cada período, cada sección, cada nota.',
     panelHighlight: 'Sin hojas de cálculo sueltas.',
     panelRole: 'Portal institucional',
@@ -133,9 +133,9 @@ const showPassword = ref(false)
 
         <!-- Footer -->
         <div v-if="canRegister" class="text-center text-[13px] text-gris dark:text-gris-light pt-2">
-            ¿No tenés cuenta?
+            ¿No tienes cuenta?
             <TextLink :href="register()" :tabindex="6" class="!text-terracota hover:!text-terra-hover !no-underline font-medium">
-                Solicitá acceso
+                Solicita acceso
             </TextLink>
         </div>
     </Form>

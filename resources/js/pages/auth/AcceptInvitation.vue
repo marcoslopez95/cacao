@@ -16,7 +16,7 @@ setLayoutProps({
     title:          props.expired ? 'Invitación expirada' : 'Aceptar invitación',
     description:    props.expired
         ? 'Este enlace ya fue utilizado o ha expirado.'
-        : 'Completá tus datos para activar tu acceso a CACAO.',
+        : 'Completa tus datos para activar tu acceso a CACAO.',
     panelQuote:     'Tu acceso a CACAO comienza con',
     panelHighlight: 'una invitación institucional.',
     panelRole:      'Invitación institucional',

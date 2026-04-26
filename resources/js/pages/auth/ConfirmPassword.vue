@@ -7,15 +7,15 @@ import { store } from '@/routes/password/confirm';
 
 defineOptions({
     layout: {
-        title: 'Confirm your password',
+        title: 'Confirma tu contraseña',
         description:
-            'This is a secure area of the application. Please confirm your password before continuing.',
+            'Estás en un área segura. Confirma tu contraseña para continuar.',
     },
 });
 </script>
 
 <template>
-    <Head title="Confirm password" />
+    <Head title="Confirmar contraseña" />
 
     <Form
         v-bind="store.form()"
@@ -24,13 +24,14 @@ defineOptions({
     >
         <div style="display:flex;flex-direction:column;gap:1.5rem;">
             <div style="display:grid;gap:0.5rem;">
-                <label for="password" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">Password</label>
+                <label for="password" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">Contraseña</label>
                 <PasswordInput
                     id="password"
                     name="password"
                     required
                     autocomplete="current-password"
                     autofocus
+                    placeholder="Tu contraseña"
                 />
                 <InputError :message="errors.password" />
             </div>
@@ -44,7 +45,7 @@ defineOptions({
                 :loading="processing"
                 data-test="confirm-password-button"
             >
-                Confirm password
+                Confirmar contraseña
             </Button>
         </div>
     </Form>

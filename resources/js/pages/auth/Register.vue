@@ -9,7 +9,7 @@ import { store } from '@/routes/register'
 
 setLayoutProps({
     title: 'Crear cuenta',
-    description: 'Completá tus datos para activar tu acceso a CACAO.',
+    description: 'Completa tus datos para activar tu acceso a CACAO.',
     panelQuote: 'Tu acceso a CACAO comienza con',
     panelHighlight: 'una invitación institucional.',
     panelRole: 'Registro por invitación',
@@ -158,7 +158,7 @@ function scorePassword(pw: string): number {
         </Button>
 
         <div class="text-center text-[13px] text-gris dark:text-gris-light pt-2">
-            ¿Ya tenés cuenta?
+            ¿Ya tienes cuenta?
             <TextLink :href="login()" :tabindex="6" class="!text-terracota hover:!text-terra-hover !no-underline font-medium">
                 Iniciar sesión
             </TextLink>

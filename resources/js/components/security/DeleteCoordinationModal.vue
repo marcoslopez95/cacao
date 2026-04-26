@@ -36,7 +36,7 @@ function submit(): void {
             style="color:var(--color-warning, #b45309);font-size:var(--text-sm);margin:0 0 24px;"
         >
             Advertencia: esta coordinación tiene un coordinador activo ({{ coordination.current_coordinator.name }}).
-            Deberás reasignarlo antes de eliminarla.
+            Debes reasignarlo antes de eliminarla.
         </p>
         <p v-else style="margin:0 0 24px;" />
 

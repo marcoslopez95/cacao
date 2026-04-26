@@ -14,7 +14,7 @@ defineExpose({
 </script>
 
 <template>
-    <div class="relative">
+    <div style="position:relative;">
         <input
             ref="inputRef"
             :type="showPassword ? 'text' : 'password'"
@@ -25,7 +25,7 @@ defineExpose({
         <button
             type="button"
             @click="showPassword = !showPassword"
-            style="position:absolute;inset-y:0;right:0;display:flex;align-items:center;padding:0 0.75rem;color:var(--text-muted);background:transparent;border:none;cursor:pointer;"
+            style="position:absolute;top:0;right:0;height:100%;display:flex;align-items:center;padding:0 0.75rem;color:var(--text-muted);background:transparent;border:none;cursor:pointer;"
             :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
             :tabindex="-1"
         >
