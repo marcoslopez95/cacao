@@ -30,7 +30,7 @@ class PensumController extends Controller
         return Inertia::render('academic/Pensums/Index', [
             'career' => (new CareerResource($career->load('careerCategory')))->resolve(),
             'pensums' => PensumResource::collection(
-                $career->pensums()->orderBy('name')->get()
+                $career->pensums()->withCount('subjects')->orderBy('name')->get()
             )->resolve(),
             'can' => [
                 'create' => $actor->can('create', Pensum::class),

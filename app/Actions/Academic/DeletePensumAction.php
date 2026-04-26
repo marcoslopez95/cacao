@@ -12,7 +12,10 @@ class DeletePensumAction
      */
     public function handle(Pensum $pensum): bool
     {
-        // Subject guard will be re-enabled once App\Models\Subject is implemented (Part 4)
+        if ($pensum->subjects()->exists()) {
+            return false;
+        }
+
         $pensum->delete();
 
         return true;
