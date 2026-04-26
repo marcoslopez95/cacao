@@ -19,10 +19,6 @@ class StoreCareerRequest extends FormRequest
         if (is_string($this->input('name'))) {
             $this->merge(['name' => trim($this->input('name'))]);
         }
-
-        if (is_string($this->input('code'))) {
-            $this->merge(['code' => strtoupper(trim($this->input('code')))]);
-        }
     }
 
     /**
@@ -33,7 +29,6 @@ class StoreCareerRequest extends FormRequest
         return [
             'career_category_id' => ['required', 'integer', Rule::exists('career_categories', 'id')],
             'name' => ['required', 'string', 'min:2', 'max:255'],
-            'code' => ['required', 'string', 'max:10', Rule::unique('careers', 'code')],
             'active' => ['sometimes', 'boolean'],
         ];
     }
@@ -48,8 +43,6 @@ class StoreCareerRequest extends FormRequest
             'career_category_id.exists' => 'La categoría seleccionada no existe.',
             'name.min' => 'El nombre debe tener al menos 2 caracteres.',
             'name.max' => 'El nombre no puede superar los 255 caracteres.',
-            'code.unique' => 'Ya existe una carrera con ese código.',
-            'code.max' => 'El código no puede superar los 10 caracteres.',
         ];
     }
 }

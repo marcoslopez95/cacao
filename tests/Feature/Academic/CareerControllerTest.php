@@ -82,7 +82,6 @@ test('user without careers.create cannot store a career', function () {
         ->post('/academic/careers', [
             'career_category_id' => $category->id,
             'name' => 'Sistemas',
-            'code' => 'SIS',
         ])
         ->assertForbidden();
 });
@@ -94,36 +93,8 @@ test('store fails validation when name is blank', function () {
         ->post('/academic/careers', [
             'career_category_id' => $category->id,
             'name' => '',
-            'code' => 'SIS',
         ])
         ->assertSessionHasErrors('name');
-});
-
-test('store fails validation when code is duplicate', function () {
-    $category = CareerCategory::factory()->create();
-    Career::factory()->create(['career_category_id' => $category->id, 'code' => 'INF']);
-
-    $this->actingAs(careerUserWith('careers.create'))
-        ->post('/academic/careers', [
-            'career_category_id' => $category->id,
-            'name' => 'Informática 2',
-            'code' => 'INF',
-        ])
-        ->assertSessionHasErrors('code');
-});
-
-test('store normalizes code to uppercase', function () {
-    $category = CareerCategory::factory()->create();
-
-    $this->actingAs(careerUserWith('careers.create'))
-        ->post('/academic/careers', [
-            'career_category_id' => $category->id,
-            'name' => 'Sistemas',
-            'code' => 'sis',
-        ])
-        ->assertRedirect(route('academic.careers.index'));
-
-    expect(Career::where('code', 'SIS')->exists())->toBeTrue();
 });
 
 test('store fails validation when category does not exist', function () {
@@ -131,7 +102,6 @@ test('store fails validation when category does not exist', function () {
         ->post('/academic/careers', [
             'career_category_id' => 9999,
             'name' => 'Sistemas',
-            'code' => 'SIS',
         ])
         ->assertSessionHasErrors('career_category_id');
 });
@@ -143,14 +113,43 @@ test('user with careers.create can store a new career', function () {
         ->post('/academic/careers', [
             'career_category_id' => $category->id,
             'name' => 'Informática',
-            'code' => 'INF',
         ])
         ->assertRedirect(route('academic.careers.index'));
 
-    $career = Career::where('code', 'INF')->first();
+    $career = Career::where('name', 'Informática')->first();
     expect($career)->not->toBeNull()
-        ->and($career->name)->toBe('Informática')
+        ->and($career->code)->not->toBeNull()
         ->and($career->active)->toBeTrue();
+});
+
+test('store auto-generates code from name skipping stop words', function () {
+    $category = CareerCategory::factory()->create();
+
+    $this->actingAs(careerUserWith('careers.create'))
+        ->post('/academic/careers', [
+            'career_category_id' => $category->id,
+            'name' => 'Ingeniería en Sistemas',
+        ])
+        ->assertRedirect(route('academic.careers.index'));
+
+    $career = Career::where('name', 'Ingeniería en Sistemas')->first();
+    expect($career)->not->toBeNull()
+        ->and($career->code)->toMatch('/^IS-\d{2,}$/');
+});
+
+test('store auto-generates code using only significant words', function () {
+    $category = CareerCategory::factory()->create();
+
+    $this->actingAs(careerUserWith('careers.create'))
+        ->post('/academic/careers', [
+            'career_category_id' => $category->id,
+            'name' => 'Diseño Gráfico y Comunicación Visual',
+        ])
+        ->assertRedirect(route('academic.careers.index'));
+
+    $career = Career::where('name', 'Diseño Gráfico y Comunicación Visual')->first();
+    expect($career)->not->toBeNull()
+        ->and($career->code)->toMatch('/^DGCV-\d{2,}$/');
 });
 
 // ---------------------------------------------------------------------------
