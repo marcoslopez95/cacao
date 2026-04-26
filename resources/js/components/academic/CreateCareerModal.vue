@@ -48,22 +48,6 @@ function close(v: boolean): void {
                     <input id="cc-name" name="name" class="input" placeholder="Ej: Ingeniería en Sistemas" required />
                     <InputError :message="errors.name" />
                 </div>
-
-                <div style="display:grid;gap:6px;">
-                    <label for="cc-code" style="font-size:var(--text-sm);font-weight:500;color:var(--text-primary);">
-                        Código
-                    </label>
-                    <input
-                        id="cc-code"
-                        name="code"
-                        class="input"
-                        placeholder="Ej: INF"
-                        maxlength="10"
-                        style="text-transform:uppercase;"
-                        required
-                    />
-                    <InputError :message="errors.code" />
-                </div>
             </div>
 
             <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:24px;">
