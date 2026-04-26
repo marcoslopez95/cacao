@@ -78,7 +78,7 @@ Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->
         Route::patch('careers/{career}/pensums/{pensum}', [PensumController::class, 'update'])->name('pensums.update');
         Route::delete('careers/{career}/pensums/{pensum}', [PensumController::class, 'destroy'])->name('pensums.destroy');
 
-        Route::prefix('/careers/{career}/pensums/{pensum}/subjects')->name('subjects.')->group(function () {
+        Route::prefix('careers/{career}/pensums/{pensum}/subjects')->name('subjects.')->group(function () {
             Route::get('/', [SubjectController::class, 'index'])->name('index');
             Route::post('/', [SubjectController::class, 'store'])->name('store');
             Route::patch('/{subject}', [SubjectController::class, 'update'])->name('update');

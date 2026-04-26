@@ -31,15 +31,17 @@ class SubjectController extends Controller
 
         $subjects = $pensum->subjects()->with('prerequisites')->get();
 
+        $actor = $request->user();
+
         return Inertia::render('academic/Subjects/Index', [
-            'career' => CareerResource::make($career->load('careerCategory')),
-            'pensum' => PensumResource::make($pensum),
-            'subjects' => SubjectResource::collection($subjects),
+            'career' => (new CareerResource($career->load('careerCategory')))->resolve(),
+            'pensum' => (new PensumResource($pensum))->resolve(),
+            'subjects' => SubjectResource::collection($subjects)->resolve(),
             'can' => [
-                'create' => $request->user()->can('create', Subject::class),
-                'update' => $request->user()->can('update', new Subject),
-                'delete' => $request->user()->can('delete', new Subject),
-                'managePrerequisites' => $request->user()->can('managePrerequisites', new Subject),
+                'create' => $actor->can('create', Subject::class),
+                'update' => $actor->can('update', new Subject),
+                'delete' => $actor->can('delete', new Subject),
+                'managePrerequisites' => $actor->can('managePrerequisites', new Subject),
             ],
         ]);
     }
