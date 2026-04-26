@@ -16,7 +16,7 @@ return new class extends Migration
                 ->nullable()
                 ->after('password')
                 ->constrained('teams')
-                ->nullOnDelete();
+                ->restrictOnDelete();
         });
     }
 

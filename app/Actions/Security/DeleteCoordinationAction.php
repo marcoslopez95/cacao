@@ -7,14 +7,14 @@ use App\Models\Coordination;
 class DeleteCoordinationAction
 {
     /**
-     * Delete the coordination if it has no active coordinator.
+     * Delete the coordination if it has no assignments at all.
      *
-     * Returns false when an active coordinator is assigned, so the controller
+     * Returns false when any assignment exists (active or historical), so the controller
      * can flash the appropriate error message without throwing an exception.
      */
     public function handle(Coordination $coordination): bool
     {
-        if ($coordination->currentAssignment()->exists()) {
+        if ($coordination->assignments()->exists()) {
             return false;
         }
 

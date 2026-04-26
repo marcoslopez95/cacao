@@ -13,9 +13,8 @@ class DeleteTeamAction
      */
     public function handle(Team $team, User $actor): void
     {
-        DB::transaction(function () use ($team, $actor): void {
+        DB::transaction(function () use ($team): void {
             User::where('current_team_id', $team->id)
-                ->where('id', '!=', $actor->id)
                 ->each(fn (User $affectedUser) => $affectedUser->switchTeam($affectedUser->personalTeam()));
 
             $team->invitations()->delete();

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('coordination_assignments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('coordination_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('coordination_id')->constrained()->restrictOnDelete();
             $table->foreignId('user_id')->constrained()->restrictOnDelete();
             $table->foreignId('assigned_by')->constrained('users')->restrictOnDelete();
             $table->timestamp('assigned_at');

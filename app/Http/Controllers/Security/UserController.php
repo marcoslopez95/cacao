@@ -98,7 +98,14 @@ class UserController extends Controller
     {
         Gate::authorize('delete', $user);
 
-        $action->handle($user);
+        if (! $action->handle($user)) {
+            Inertia::flash('toast', [
+                'type' => 'error',
+                'message' => 'No se puede eliminar: el usuario tiene asignaciones de coordinación.',
+            ]);
+
+            return to_route('security.users.index');
+        }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuario eliminado.']);
 

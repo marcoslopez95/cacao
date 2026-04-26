@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('pensums', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('career_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('career_id')->constrained()->restrictOnDelete();
             $table->string('name', 255);
             $table->enum('period_type', ['semester', 'year']);
             $table->tinyInteger('total_periods')->unsigned();

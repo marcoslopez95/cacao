@@ -89,7 +89,7 @@ class CoordinationController extends Controller
         if (! $action->handle($coordination)) {
             Inertia::flash('toast', [
                 'type' => 'error',
-                'message' => 'No se puede eliminar: la coordinación tiene un coordinador activo.',
+                'message' => 'No se puede eliminar: la coordinación tiene asignaciones registradas.',
             ]);
 
             return to_route('security.coordinations.index');

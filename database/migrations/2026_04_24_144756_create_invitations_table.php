@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('role');
             $table->uuid('token')->unique();
-            $table->foreignId('invited_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('invited_by')->nullable()->constrained('users')->restrictOnDelete();
             $table->timestamp('expires_at');
             $table->timestamp('used_at')->nullable();
             $table->timestamps();

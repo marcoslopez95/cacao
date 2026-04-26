@@ -18,6 +18,7 @@ class DeleteRoleAction
             return false;
         }
 
+        $role->syncPermissions([]);
         $role->delete();
 
         return true;
