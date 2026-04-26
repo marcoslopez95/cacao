@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, setLayoutProps } from '@inertiajs/vue3'
+import { Head, router, setLayoutProps } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import Badge from '@/components/UI/AppBadge.vue'
 import Button from '@/components/UI/AppButton.vue'
@@ -9,6 +9,7 @@ import EditPensumModal from '@/components/academic/EditPensumModal.vue'
 import { usePensumForm } from '@/composables/forms/usePensumForm'
 import { usePensumPermissions } from '@/composables/permissions/usePensumPermissions'
 import { index as careersIndex } from '@/routes/academic/careers'
+import { index as subjectsIndex } from '@/routes/academic/subjects'
 import type { Career, Pensum } from '@/types/academic'
 
 type Props = {
@@ -84,8 +85,7 @@ const deletingPensum = ref<Pensum | null>(null)
                                     icon="book"
                                     icon-only
                                     :aria-label="`Ver materias de ${pensum.name}`"
-                                    disabled
-                                    title="Disponible en la Parte 4"
+                                    @click="router.visit(subjectsIndex.url({ career, pensum }))"
                                 />
                                 <Button
                                     v-if="canUpdate"
