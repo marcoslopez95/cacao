@@ -20,3 +20,13 @@ export type Pensum = {
   isActive: boolean
   subjectsCount: number
 }
+
+export type Subject = {
+  id: number
+  name: string
+  code: string
+  creditsUc: number
+  periodNumber: number
+  description: string | null
+  prerequisites: { id: number; name: string; code: string }[]
+}
