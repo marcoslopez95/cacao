@@ -51,3 +51,11 @@ permissions:
     guard: web
   - name: careers.delete
     guard: web
+  - name: pensums.view
+    guard: web
+  - name: pensums.create
+    guard: web
+  - name: pensums.update
+    guard: web
+  - name: pensums.delete
+    guard: web
