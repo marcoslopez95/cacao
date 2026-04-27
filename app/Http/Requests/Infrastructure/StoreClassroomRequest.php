@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Infrastructure;
 
+use App\Enums\ClassroomType;
 use App\Models\Classroom;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -34,7 +35,7 @@ class StoreClassroomRequest extends FormRequest
                 'max:50',
                 Rule::unique('classrooms')->where('building_id', $this->input('building_id')),
             ],
-            'type'        => ['required', Rule::in(['theory', 'laboratory'])],
+            'type'        => ['required', Rule::enum(ClassroomType::class)],
             'capacity'    => ['required', 'integer', 'min:1', 'max:500'],
         ];
     }

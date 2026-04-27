@@ -17,10 +17,10 @@ class ClassroomResource extends JsonResource
             'identifier' => $this->identifier,
             'type'       => $this->type->value,
             'capacity'   => $this->capacity,
-            'building'   => [
+            'building'   => $this->whenLoaded('building', fn () => [
                 'id'   => $this->building->id,
                 'name' => $this->building->name,
-            ],
+            ]),
         ];
     }
 }
