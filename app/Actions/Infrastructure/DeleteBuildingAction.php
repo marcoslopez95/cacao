@@ -12,8 +12,6 @@ class DeleteBuildingAction
             return false;
         }
 
-        $building->delete();
-
-        return true;
+        return (bool) $building->delete();
     }
 }
