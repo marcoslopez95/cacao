@@ -69,3 +69,19 @@ permissions:
     guard: web
   - name: subjects.manage-prerequisites
     guard: web
+  - name: buildings.view
+    guard: web
+  - name: buildings.create
+    guard: web
+  - name: buildings.update
+    guard: web
+  - name: buildings.delete
+    guard: web
+  - name: classrooms.view
+    guard: web
+  - name: classrooms.create
+    guard: web
+  - name: classrooms.update
+    guard: web
+  - name: classrooms.delete
+    guard: web
