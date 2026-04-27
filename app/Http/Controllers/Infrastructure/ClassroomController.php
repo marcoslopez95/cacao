@@ -35,8 +35,8 @@ class ClassroomController extends Controller
 
         return Inertia::render('infrastructure/Classrooms/Index', [
             'classrooms' => ClassroomResource::collection($classrooms)->resolve(),
-            'buildings'  => BuildingResource::collection($buildings)->resolve(),
-            'filters'    => [
+            'buildings' => BuildingResource::collection($buildings)->resolve(),
+            'filters' => [
                 'buildingId' => $request->integer('building_id') ?: null,
             ],
             'can' => [
