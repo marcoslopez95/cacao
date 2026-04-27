@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         bootstrap="tests/bootstrap.php"
+         bootstrap="vendor/autoload.php"
          colors="true"
 >
     <testsuites>
@@ -18,19 +18,12 @@
         </include>
     </source>
     <php>
-        <env name="APP_BASE_PATH" value="/var/www/html/.worktrees/feat-infrastructure"/>
         <env name="APP_ENV" value="testing"/>
-        <env name="APP_KEY" value="base64:1JzmW4iceetYp3V/l8rEHtv2Oa2zhJok3PJzhH8bYyI="/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="pgsql"/>
-        <env name="DB_HOST" value="pgsql"/>
-        <env name="DB_PORT" value="5432"/>
         <env name="DB_DATABASE" value="testing"/>
-        <env name="DB_USERNAME" value="sail"/>
-        <env name="DB_PASSWORD" value="password"/>
         <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
