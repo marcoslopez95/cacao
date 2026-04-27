@@ -21,6 +21,14 @@ roles:
       - coordinations.delete
       - coordinations.assign
       - coordinations.view_history
+      - buildings.view
+      - buildings.create
+      - buildings.update
+      - buildings.delete
+      - classrooms.view
+      - classrooms.create
+      - classrooms.update
+      - classrooms.delete
 
   - name: Profesor
     description: Gestión de secciones, evaluaciones y recursos propios

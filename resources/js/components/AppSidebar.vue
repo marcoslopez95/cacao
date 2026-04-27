@@ -10,6 +10,8 @@ import { index as usersIndex } from '@/routes/security/users'
 import { index as coordinationsIndex } from '@/routes/security/coordinations'
 import { index as careerCategoriesIndex } from '@/routes/academic/career-categories'
 import { index as careersIndex } from '@/routes/academic/careers'
+import { index as buildingsIndex } from '@/routes/infrastructure/buildings'
+import { index as classroomsIndex } from '@/routes/infrastructure/classrooms'
 import { edit as profileEdit } from '@/routes/profile'
 
 const page = usePage()
@@ -87,6 +89,32 @@ const navGroups = computed(() => {
 
         if (academicItems.length) {
             groups.push({ label: 'Académico', items: academicItems })
+        }
+    }
+
+    if (
+        page.props.auth?.permissions?.includes('buildings.view') ||
+        page.props.auth?.permissions?.includes('classrooms.view') ||
+        page.props.auth?.roles?.includes('Admin')
+    ) {
+        const infraItems: { icon: string; label: string; href: string }[] = []
+
+        if (
+            page.props.auth?.permissions?.includes('buildings.view') ||
+            page.props.auth?.roles?.includes('Admin')
+        ) {
+            infraItems.push({ icon: 'building', label: 'Edificios', href: buildingsIndex.url() })
+        }
+
+        if (
+            page.props.auth?.permissions?.includes('classrooms.view') ||
+            page.props.auth?.roles?.includes('Admin')
+        ) {
+            infraItems.push({ icon: 'grid', label: 'Aulas', href: classroomsIndex.url() })
+        }
+
+        if (infraItems.length) {
+            groups.push({ label: 'Infraestructura', items: infraItems })
         }
     }
 

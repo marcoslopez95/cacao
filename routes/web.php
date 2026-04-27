@@ -5,6 +5,8 @@ use App\Http\Controllers\Academic\CareerController;
 use App\Http\Controllers\Academic\PensumController;
 use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
+use App\Http\Controllers\Infrastructure\BuildingController;
+use App\Http\Controllers\Infrastructure\ClassroomController;
 use App\Http\Controllers\Security\CoordinationAssignmentController;
 use App\Http\Controllers\Security\CoordinationController;
 use App\Http\Controllers\Security\InvitationController;
@@ -86,6 +88,18 @@ Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->
             Route::post('/{subject}/prerequisites/sync', [SubjectController::class, 'syncPrerequisites'])->name('prerequisites.sync');
         });
     });
+});
+
+Route::middleware(['auth', 'verified'])->prefix('infrastructure')->name('infrastructure.')->group(function () {
+    Route::get('buildings', [BuildingController::class, 'index'])->name('buildings.index');
+    Route::post('buildings', [BuildingController::class, 'store'])->name('buildings.store');
+    Route::patch('buildings/{building}', [BuildingController::class, 'update'])->name('buildings.update');
+    Route::delete('buildings/{building}', [BuildingController::class, 'destroy'])->name('buildings.destroy');
+
+    Route::get('classrooms', [ClassroomController::class, 'index'])->name('classrooms.index');
+    Route::post('classrooms', [ClassroomController::class, 'store'])->name('classrooms.store');
+    Route::patch('classrooms/{classroom}', [ClassroomController::class, 'update'])->name('classrooms.update');
+    Route::delete('classrooms/{classroom}', [ClassroomController::class, 'destroy'])->name('classrooms.destroy');
 });
 
 require __DIR__.'/settings.php';
