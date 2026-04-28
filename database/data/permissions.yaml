@@ -99,3 +99,11 @@ permissions:
     guard: web
   - name: lapses.delete
     guard: web
+  - name: professors.view
+    guard: web
+  - name: professors.create
+    guard: web
+  - name: professors.update
+    guard: web
+  - name: professors.delete
+    guard: web

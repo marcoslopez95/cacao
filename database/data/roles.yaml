@@ -36,6 +36,10 @@ roles:
       - lapses.create
       - lapses.update
       - lapses.delete
+      - professors.view
+      - professors.create
+      - professors.update
+      - professors.delete
 
   - name: Profesor
     description: Gestión de secciones, evaluaciones y recursos propios
