@@ -33,8 +33,14 @@ class UpdatePeriodRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.unique'    => 'Ya existe un período con ese nombre.',
-            'end_date.after' => 'La fecha de fin debe ser posterior a la de inicio.',
+            'name.required'       => 'El nombre del período es obligatorio.',
+            'name.max'            => 'El nombre no puede superar 20 caracteres.',
+            'name.unique'         => 'Ya existe un período con ese nombre.',
+            'type.required'       => 'El tipo de período es obligatorio.',
+            'type.enum'           => 'El tipo seleccionado no es válido.',
+            'start_date.required' => 'La fecha de inicio es obligatoria.',
+            'end_date.required'   => 'La fecha de fin es obligatoria.',
+            'end_date.after'      => 'La fecha de fin debe ser posterior a la de inicio.',
         ];
     }
 }
