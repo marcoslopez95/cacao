@@ -13,6 +13,7 @@ import { index as careersIndex } from '@/routes/academic/careers'
 import { index as buildingsIndex } from '@/routes/infrastructure/buildings'
 import { index as classroomsIndex } from '@/routes/infrastructure/classrooms'
 import { index as periodsIndex } from '@/routes/scheduling/periods'
+import { index as professorsIndex } from '@/routes/scheduling/professors'
 import { edit as profileEdit } from '@/routes/profile'
 
 const page = usePage()
@@ -127,6 +128,7 @@ const navGroups = computed(() => {
             label: 'Horarios',
             items: [
                 { icon: 'calendar', label: 'Períodos', href: periodsIndex.url() },
+                { icon: 'graduation-cap', label: 'Profesores', href: professorsIndex.url() },
             ],
         })
     }
