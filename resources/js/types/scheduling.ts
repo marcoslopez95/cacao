@@ -1,6 +1,9 @@
 export type Lapse = {
     id: number
     number: number
+    name: string
+    startDate: string
+    endDate: string
 }
 
 export type Period = {

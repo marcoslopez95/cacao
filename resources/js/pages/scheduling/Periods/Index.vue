@@ -5,6 +5,7 @@ import Button from '@/components/UI/AppButton.vue'
 import CreatePeriodModal from '@/components/scheduling/CreatePeriodModal.vue'
 import DeletePeriodModal from '@/components/scheduling/DeletePeriodModal.vue'
 import EditPeriodModal from '@/components/scheduling/EditPeriodModal.vue'
+import LapsesPanel from '@/components/scheduling/LapsesPanel.vue'
 import { usePeriodFilters } from '@/composables/filters/usePeriodFilters'
 import { usePeriodForm } from '@/composables/forms/usePeriodForm'
 import { usePeriodPermissions } from '@/composables/permissions/usePeriodPermissions'
@@ -74,8 +75,18 @@ const deletingPeriod = ref<Period | null>(null)
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="period in periods" :key="period.id">
-                        <td style="font-weight:500;">{{ period.name }}</td>
+                    <template v-for="period in periods" :key="period.id">
+                    <tr>
+                        <td style="font-weight:500;">
+                            {{ period.name }}
+                            <LapsesPanel
+                                v-if="period.type === 'year'"
+                                :period="period"
+                                :can-create="can.create"
+                                :can-update="can.update"
+                                :can-delete="can.delete"
+                            />
+                        </td>
                         <td style="color:var(--text-secondary);">{{ period.typeLabel }}</td>
                         <td style="color:var(--text-secondary);">{{ period.startDate }} — {{ period.endDate }}</td>
                         <td>
@@ -132,6 +143,7 @@ const deletingPeriod = ref<Period | null>(null)
                             </div>
                         </td>
                     </tr>
+                    </template>
                     <tr v-if="!periods.length">
                         <td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px 16px;">
                             No hay períodos registrados.
