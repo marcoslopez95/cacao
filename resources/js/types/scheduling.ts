@@ -19,3 +19,22 @@ export type Period = {
 }
 
 export type PeriodCollection = Period[]
+
+export type AvailableUser = {
+    id: number
+    name: string
+    email: string
+}
+
+export type Professor = {
+    id: number
+    weeklyHourLimit: number
+    active: boolean
+    user: {
+        id: number
+        name: string
+        email: string
+    }
+}
+
+export type ProfessorCollection = Professor[]
