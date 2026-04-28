@@ -12,11 +12,14 @@ class LapseFactory extends Factory
     public function definition(): array
     {
         return [
-            'period_id'  => Period::factory()->year(),
+            'period_id'  => Period::factory()->year()->state([
+                'start_date' => '2025-01-01',
+                'end_date'   => '2025-12-01',
+            ]),
             'number'     => 1,
             'name'       => 'Primer Lapso',
-            'start_date' => '2025-09-01',
-            'end_date'   => '2025-11-30',
+            'start_date' => '2025-01-01',
+            'end_date'   => '2025-03-31',
         ];
     }
 
