@@ -12,6 +12,7 @@ import { index as careerCategoriesIndex } from '@/routes/academic/career-categor
 import { index as careersIndex } from '@/routes/academic/careers'
 import { index as buildingsIndex } from '@/routes/infrastructure/buildings'
 import { index as classroomsIndex } from '@/routes/infrastructure/classrooms'
+import { index as periodsIndex } from '@/routes/scheduling/periods'
 import { edit as profileEdit } from '@/routes/profile'
 
 const page = usePage()
@@ -116,6 +117,18 @@ const navGroups = computed(() => {
         if (infraItems.length) {
             groups.push({ label: 'Infraestructura', items: infraItems })
         }
+    }
+
+    if (
+        page.props.auth?.permissions?.includes('periods.view') ||
+        page.props.auth?.roles?.includes('Admin')
+    ) {
+        groups.push({
+            label: 'Horarios',
+            items: [
+                { icon: 'calendar', label: 'Períodos', href: periodsIndex.url() },
+            ],
+        })
     }
 
     groups.push({
