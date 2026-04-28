@@ -85,3 +85,11 @@ permissions:
     guard: web
   - name: classrooms.delete
     guard: web
+  - name: periods.view
+    guard: web
+  - name: periods.create
+    guard: web
+  - name: periods.update
+    guard: web
+  - name: periods.delete
+    guard: web

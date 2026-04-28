@@ -29,6 +29,10 @@ roles:
       - classrooms.create
       - classrooms.update
       - classrooms.delete
+      - periods.view
+      - periods.create
+      - periods.update
+      - periods.delete
 
   - name: Profesor
     description: Gestión de secciones, evaluaciones y recursos propios
