@@ -25,18 +25,10 @@ class PeriodController extends Controller
     {
         Gate::authorize('viewAny', Period::class);
 
-        $periods = Period::when($request->input('type'), fn ($q, $t) => $q->where('type', $t))
-            ->orderByDesc('start_date')
-            ->get();
-
         return Inertia::render('scheduling/Periods/Index', [
-            'periods' => PeriodResource::collection($periods)->resolve(),
+            'periods' => PeriodResource::collection(Period::when($request->input('type'), fn ($q, $t) => $q->where('type', $t))->orderByDesc('id')->get())->resolve(),
             'filters' => ['type' => $request->input('type')],
-            'can'     => [
-                'create' => $request->user()->can('create', Period::class),
-                'update' => $request->user()->can('update', new Period),
-                'delete' => $request->user()->can('delete', new Period),
-            ],
+            'can'     => ['create' => $request->user()->can('create', Period::class), 'update' => $request->user()->can('update', new Period), 'delete' => $request->user()->can('delete', new Period)],
         ]);
     }
 

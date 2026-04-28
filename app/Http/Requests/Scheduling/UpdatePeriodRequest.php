@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Scheduling;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Enums\PeriodType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -24,7 +24,7 @@ class UpdatePeriodRequest extends FormRequest
     {
         return [
             'name'       => ['required', 'string', 'max:20', Rule::unique('periods', 'name')->ignore($this->route('period'))],
-            'type'       => ['required', Rule::in(['semester', 'year', 'trimester'])],
+            'type'       => ['required', Rule::enum(PeriodType::class)],
             'start_date' => ['required', 'date'],
             'end_date'   => ['required', 'date', 'after:start_date'],
         ];

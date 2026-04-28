@@ -2,6 +2,8 @@
 
 namespace App\Http\Wrappers\Scheduling;
 
+use App\Enums\PeriodType;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
 class PeriodWrapper extends Collection
@@ -11,18 +13,18 @@ class PeriodWrapper extends Collection
         return (string) $this->get('name');
     }
 
-    public function getType(): string
+    public function getType(): PeriodType
     {
-        return (string) $this->get('type');
+        return PeriodType::from($this->get('type'));
     }
 
-    public function getStartDate(): string
+    public function getStartDate(): Carbon
     {
-        return (string) $this->get('start_date');
+        return Carbon::parse($this->get('start_date'));
     }
 
-    public function getEndDate(): string
+    public function getEndDate(): Carbon
     {
-        return (string) $this->get('end_date');
+        return Carbon::parse($this->get('end_date'));
     }
 }

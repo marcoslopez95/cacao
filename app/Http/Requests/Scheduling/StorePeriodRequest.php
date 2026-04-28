@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Scheduling;
 
+use App\Enums\PeriodType;
 use App\Models\Period;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -25,7 +25,7 @@ class StorePeriodRequest extends FormRequest
     {
         return [
             'name'       => ['required', 'string', 'max:20', 'unique:periods,name'],
-            'type'       => ['required', Rule::in(['semester', 'year', 'trimester'])],
+            'type'       => ['required', Rule::enum(PeriodType::class)],
             'start_date' => ['required', 'date'],
             'end_date'   => ['required', 'date', 'after:start_date'],
         ];
@@ -38,7 +38,7 @@ class StorePeriodRequest extends FormRequest
             'name.max'            => 'El nombre no puede superar 20 caracteres.',
             'name.unique'         => 'Ya existe un período con ese nombre.',
             'type.required'       => 'El tipo de período es obligatorio.',
-            'type.in'             => 'El tipo seleccionado no es válido.',
+            'type.enum'           => 'El tipo seleccionado no es válido.',
             'start_date.required' => 'La fecha de inicio es obligatoria.',
             'end_date.required'   => 'La fecha de fin es obligatoria.',
             'end_date.after'      => 'La fecha de fin debe ser posterior a la de inicio.',
