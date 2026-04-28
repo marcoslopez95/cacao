@@ -54,7 +54,7 @@ const deletingPeriod = ref<Period | null>(null)
         </div>
 
         <div>
-            <select v-model="type" class="input" style="max-width:200px;" @change="applyFilter">
+            <select v-model="type" class="input" style="max-width:200px;" aria-label="Filtrar por tipo" @change="applyFilter">
                 <option :value="null">Todos los tipos</option>
                 <option value="semester">Semestral</option>
                 <option value="year">Anual</option>

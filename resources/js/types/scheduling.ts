@@ -1,3 +1,8 @@
+export type Lapse = {
+    id: number
+    number: number
+}
+
 export type Period = {
     id: number
     name: string
@@ -7,7 +12,7 @@ export type Period = {
     endDate: string
     status: 'upcoming' | 'active' | 'closed'
     statusLabel: string
-    lapses: unknown[]
+    lapses: Lapse[]
 }
 
 export type PeriodCollection = Period[]
