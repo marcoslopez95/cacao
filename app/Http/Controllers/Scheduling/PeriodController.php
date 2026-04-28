@@ -28,7 +28,7 @@ class PeriodController extends Controller
         return Inertia::render('scheduling/Periods/Index', [
             'periods' => PeriodResource::collection(Period::when($request->input('type'), fn ($q, $t) => $q->where('type', $t))->orderByDesc('id')->get())->resolve(),
             'filters' => ['type' => $request->input('type')],
-            'can'     => ['create' => $request->user()->can('create', Period::class), 'update' => $request->user()->can('periods.update'), 'delete' => $request->user()->can('periods.delete')],
+            'can'     => ['create' => $request->user()->can('periods.create'), 'update' => $request->user()->can('periods.update'), 'delete' => $request->user()->can('periods.delete')],
         ]);
     }
 
