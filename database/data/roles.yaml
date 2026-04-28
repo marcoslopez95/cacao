@@ -33,6 +33,9 @@ roles:
       - periods.create
       - periods.update
       - periods.delete
+      - lapses.create
+      - lapses.update
+      - lapses.delete
 
   - name: Profesor
     description: Gestión de secciones, evaluaciones y recursos propios

@@ -93,3 +93,9 @@ permissions:
     guard: web
   - name: periods.delete
     guard: web
+  - name: lapses.create
+    guard: web
+  - name: lapses.update
+    guard: web
+  - name: lapses.delete
+    guard: web
