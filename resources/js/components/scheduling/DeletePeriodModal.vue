@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import Button from '@/components/UI/AppButton.vue'
 import Modal from '@/components/feedback/Modal.vue'
@@ -9,23 +8,14 @@ import type { Period } from '@/types/scheduling'
 const props = defineProps<{ period: Period; open: boolean }>()
 const emit = defineEmits<{ 'update:open': [value: boolean] }>()
 
-const form = ref(useForm({}))
+const form = useForm({})
 
 function close(v: boolean): void {
     emit('update:open', v)
 }
 
-watch(
-    () => props.open,
-    (opened) => {
-        if (opened) {
-            form.value = useForm({})
-        }
-    },
-)
-
 function submit(): void {
-    form.value.delete(destroy.url({ period: props.period }), { onSuccess: () => close(false) })
+    form.delete(destroy.url({ period: props.period }), { onSuccess: () => close(false) })
 }
 </script>
 
@@ -38,7 +28,7 @@ function submit(): void {
             </p>
             <div style="display:flex;justify-content:flex-end;gap:8px;">
                 <Button type="button" variant="ghost" @click="close(false)">Cancelar</Button>
-                <Button type="submit" variant="danger" :loading="form.value.processing">Eliminar</Button>
+                <Button type="submit" variant="danger" :loading="form.processing">Eliminar</Button>
             </div>
         </form>
     </Modal>

@@ -7,7 +7,7 @@ export type Period = {
     endDate: string
     status: 'upcoming' | 'active' | 'closed'
     statusLabel: string
-    lapses: never[]
+    lapses: unknown[]
 }
 
 export type PeriodCollection = Period[]
