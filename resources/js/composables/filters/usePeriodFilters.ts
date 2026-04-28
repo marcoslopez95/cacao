@@ -1,9 +1,10 @@
 import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { index } from '@/routes/scheduling/periods'
+import type { Period } from '@/types/scheduling'
 
-export function usePeriodFilters(initialType: string | null = null) {
-    const type = ref<string | null>(initialType)
+export function usePeriodFilters(initialType: Period['type'] | null = null) {
+    const type = ref<Period['type'] | null>(initialType)
 
     function applyFilter(): void {
         router.get(
