@@ -20,10 +20,10 @@ class Period extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'type'       => PeriodType::class,
-        'status'     => PeriodStatus::class,
+        'type' => PeriodType::class,
+        'status' => PeriodStatus::class,
         'start_date' => 'date',
-        'end_date'   => 'date',
+        'end_date' => 'date',
     ];
 
     public function lapses(): HasMany

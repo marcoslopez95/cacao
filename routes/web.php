@@ -102,4 +102,15 @@ Route::middleware(['auth', 'verified'])->prefix('infrastructure')->name('infrast
     Route::delete('classrooms/{classroom}', [ClassroomController::class, 'destroy'])->name('classrooms.destroy');
 });
 
+use App\Http\Controllers\Scheduling\PeriodController;
+
+Route::middleware(['auth', 'verified'])->prefix('scheduling')->name('scheduling.')->group(function () {
+    Route::get('periods', [PeriodController::class, 'index'])->name('periods.index');
+    Route::post('periods', [PeriodController::class, 'store'])->name('periods.store');
+    Route::patch('periods/{period}', [PeriodController::class, 'update'])->name('periods.update');
+    Route::delete('periods/{period}', [PeriodController::class, 'destroy'])->name('periods.destroy');
+    Route::patch('periods/{period}/activate', [PeriodController::class, 'activate'])->name('periods.activate');
+    Route::patch('periods/{period}/close', [PeriodController::class, 'close'])->name('periods.close');
+});
+
 require __DIR__.'/settings.php';

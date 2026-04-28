@@ -19,7 +19,9 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        DB::statement('ALTER TABLE periods ADD CONSTRAINT periods_dates_check CHECK (end_date > start_date)');
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement('ALTER TABLE periods ADD CONSTRAINT periods_dates_check CHECK (end_date > start_date)');
+        }
     }
 
     public function down(): void

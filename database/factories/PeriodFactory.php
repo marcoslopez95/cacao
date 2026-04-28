@@ -17,11 +17,11 @@ class PeriodFactory extends Factory
         $start = fake()->dateTimeBetween('2025-01-01', '2026-06-01');
 
         return [
-            'name'       => fake()->unique()->numerify('20##-#'),
-            'type'       => PeriodType::Semester,
+            'name' => fake()->unique()->numerify('20##-#'),
+            'type' => PeriodType::Semester,
             'start_date' => $start->format('Y-m-d'),
-            'end_date'   => (clone $start)->modify('+6 months')->format('Y-m-d'),
-            'status'     => PeriodStatus::Upcoming,
+            'end_date' => (clone $start)->modify('+6 months')->format('Y-m-d'),
+            'status' => PeriodStatus::Upcoming,
         ];
     }
 
@@ -35,9 +35,9 @@ class PeriodFactory extends Factory
         $start = fake()->dateTimeBetween('2025-01-01', '2025-03-01');
 
         return $this->state([
-            'type'       => PeriodType::Year,
+            'type' => PeriodType::Year,
             'start_date' => $start->format('Y-m-d'),
-            'end_date'   => (clone $start)->modify('+11 months')->format('Y-m-d'),
+            'end_date' => (clone $start)->modify('+11 months')->format('Y-m-d'),
         ]);
     }
 
@@ -46,9 +46,9 @@ class PeriodFactory extends Factory
         $start = fake()->dateTimeBetween('2025-01-01', '2026-06-01');
 
         return $this->state([
-            'type'       => PeriodType::Trimester,
+            'type' => PeriodType::Trimester,
             'start_date' => $start->format('Y-m-d'),
-            'end_date'   => (clone $start)->modify('+3 months')->format('Y-m-d'),
+            'end_date' => (clone $start)->modify('+3 months')->format('Y-m-d'),
         ]);
     }
 
