@@ -102,6 +102,7 @@ Route::middleware(['auth', 'verified'])->prefix('infrastructure')->name('infrast
     Route::delete('classrooms/{classroom}', [ClassroomController::class, 'destroy'])->name('classrooms.destroy');
 });
 
+use App\Http\Controllers\Scheduling\LapseController;
 use App\Http\Controllers\Scheduling\PeriodController;
 
 Route::middleware(['auth', 'verified'])->prefix('scheduling')->name('scheduling.')->group(function () {
@@ -111,6 +112,10 @@ Route::middleware(['auth', 'verified'])->prefix('scheduling')->name('scheduling.
     Route::delete('periods/{period}', [PeriodController::class, 'destroy'])->name('periods.destroy');
     Route::patch('periods/{period}/activate', [PeriodController::class, 'activate'])->name('periods.activate');
     Route::patch('periods/{period}/close', [PeriodController::class, 'close'])->name('periods.close');
+
+    Route::post('periods/{period}/lapses', [LapseController::class, 'store'])->name('lapses.store');
+    Route::patch('periods/{period}/lapses/{lapse}', [LapseController::class, 'update'])->name('lapses.update');
+    Route::delete('periods/{period}/lapses/{lapse}', [LapseController::class, 'destroy'])->name('lapses.destroy');
 });
 
 require __DIR__.'/settings.php';

@@ -2,11 +2,15 @@
 
 namespace App\Http\Resources\Scheduling;
 
+use App\Enums\PeriodType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PeriodResource extends JsonResource
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [
@@ -18,7 +22,9 @@ class PeriodResource extends JsonResource
             'endDate'     => $this->end_date->toDateString(),
             'status'      => $this->status->value,
             'statusLabel' => $this->status->label(),
-            'lapses'      => [],
+            'lapses'      => $this->type === PeriodType::Year
+                ? LapseResource::collection($this->lapses)->resolve()
+                : [],
         ];
     }
 }
