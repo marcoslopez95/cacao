@@ -9,6 +9,7 @@ use App\Http\Controllers\Infrastructure\BuildingController;
 use App\Http\Controllers\Infrastructure\ClassroomController;
 use App\Http\Controllers\Scheduling\LapseController;
 use App\Http\Controllers\Scheduling\PeriodController;
+use App\Http\Controllers\Scheduling\ProfessorController;
 use App\Http\Controllers\Security\CoordinationAssignmentController;
 use App\Http\Controllers\Security\CoordinationController;
 use App\Http\Controllers\Security\InvitationController;
@@ -117,6 +118,11 @@ Route::middleware(['auth', 'verified'])->prefix('scheduling')->name('scheduling.
         Route::patch('periods/{period}/lapses/{lapse}', [LapseController::class, 'update'])->name('lapses.update');
         Route::delete('periods/{period}/lapses/{lapse}', [LapseController::class, 'destroy'])->name('lapses.destroy');
     });
+
+    Route::get('professors', [ProfessorController::class, 'index'])->name('professors.index');
+    Route::post('professors', [ProfessorController::class, 'store'])->name('professors.store');
+    Route::patch('professors/{professor}', [ProfessorController::class, 'update'])->name('professors.update');
+    Route::delete('professors/{professor}', [ProfessorController::class, 'destroy'])->name('professors.destroy');
 });
 
 require __DIR__.'/settings.php';
