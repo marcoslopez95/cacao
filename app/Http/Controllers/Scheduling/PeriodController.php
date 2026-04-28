@@ -26,7 +26,7 @@ class PeriodController extends Controller
         Gate::authorize('viewAny', Period::class);
 
         $periods = Period::when($request->input('type'), fn ($q, $t) => $q->where('type', $t))
-            ->with('lapses')
+            ->with(['lapses' => fn ($q) => $q->orderBy('number')])
             ->orderByDesc('id')
             ->get();
 
