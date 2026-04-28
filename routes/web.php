@@ -7,6 +7,8 @@ use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\Infrastructure\BuildingController;
 use App\Http\Controllers\Infrastructure\ClassroomController;
+use App\Http\Controllers\Scheduling\LapseController;
+use App\Http\Controllers\Scheduling\PeriodController;
 use App\Http\Controllers\Security\CoordinationAssignmentController;
 use App\Http\Controllers\Security\CoordinationController;
 use App\Http\Controllers\Security\InvitationController;
@@ -102,9 +104,6 @@ Route::middleware(['auth', 'verified'])->prefix('infrastructure')->name('infrast
     Route::delete('classrooms/{classroom}', [ClassroomController::class, 'destroy'])->name('classrooms.destroy');
 });
 
-use App\Http\Controllers\Scheduling\LapseController;
-use App\Http\Controllers\Scheduling\PeriodController;
-
 Route::middleware(['auth', 'verified'])->prefix('scheduling')->name('scheduling.')->group(function () {
     Route::get('periods', [PeriodController::class, 'index'])->name('periods.index');
     Route::post('periods', [PeriodController::class, 'store'])->name('periods.store');
@@ -113,9 +112,11 @@ Route::middleware(['auth', 'verified'])->prefix('scheduling')->name('scheduling.
     Route::patch('periods/{period}/activate', [PeriodController::class, 'activate'])->name('periods.activate');
     Route::patch('periods/{period}/close', [PeriodController::class, 'close'])->name('periods.close');
 
-    Route::post('periods/{period}/lapses', [LapseController::class, 'store'])->name('lapses.store');
-    Route::patch('periods/{period}/lapses/{lapse}', [LapseController::class, 'update'])->name('lapses.update');
-    Route::delete('periods/{period}/lapses/{lapse}', [LapseController::class, 'destroy'])->name('lapses.destroy');
+    Route::scopeBindings()->group(function () {
+        Route::post('periods/{period}/lapses', [LapseController::class, 'store'])->name('lapses.store');
+        Route::patch('periods/{period}/lapses/{lapse}', [LapseController::class, 'update'])->name('lapses.update');
+        Route::delete('periods/{period}/lapses/{lapse}', [LapseController::class, 'destroy'])->name('lapses.destroy');
+    });
 });
 
 require __DIR__.'/settings.php';
