@@ -107,3 +107,11 @@ permissions:
     guard: web
   - name: professors.delete
     guard: web
+  - name: sections.view
+    guard: web
+  - name: sections.create
+    guard: web
+  - name: sections.update
+    guard: web
+  - name: sections.delete
+    guard: web
