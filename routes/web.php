@@ -10,6 +10,7 @@ use App\Http\Controllers\Infrastructure\ClassroomController;
 use App\Http\Controllers\Scheduling\LapseController;
 use App\Http\Controllers\Scheduling\PeriodController;
 use App\Http\Controllers\Scheduling\ProfessorController;
+use App\Http\Controllers\Scheduling\UniversitySectionController;
 use App\Http\Controllers\Security\CoordinationAssignmentController;
 use App\Http\Controllers\Security\CoordinationController;
 use App\Http\Controllers\Security\InvitationController;
@@ -123,6 +124,11 @@ Route::middleware(['auth', 'verified'])->prefix('scheduling')->name('scheduling.
     Route::post('professors', [ProfessorController::class, 'store'])->name('professors.store');
     Route::patch('professors/{professor}', [ProfessorController::class, 'update'])->name('professors.update');
     Route::delete('professors/{professor}', [ProfessorController::class, 'destroy'])->name('professors.destroy');
+
+    Route::get('sections/university', [UniversitySectionController::class, 'index'])->name('sections.university.index');
+    Route::post('sections/university', [UniversitySectionController::class, 'store'])->name('sections.university.store');
+    Route::patch('sections/university/{section}', [UniversitySectionController::class, 'update'])->name('sections.university.update');
+    Route::delete('sections/university/{section}', [UniversitySectionController::class, 'destroy'])->name('sections.university.destroy');
 });
 
 require __DIR__.'/settings.php';
