@@ -73,7 +73,7 @@ export type UniversitySectionCollection = UniversitySection[]
 export type AvailablePeriod = {
     id: number
     name: string
-    type: 'semester' | 'trimester'
+    type: 'semester' | 'trimester' | 'year'
 }
 
 export type SubjectForSection = {
@@ -88,4 +88,67 @@ export type ClassroomForSection = {
     identifier: string
     type: 'theory' | 'laboratory'
     capacity: number
+}
+
+export type SchoolSectionSubject = {
+    id: number
+    name: string
+    code: string
+}
+
+export type SchoolSectionTeacher = {
+    id: number
+    user: {
+        id: number
+        name: string
+    }
+}
+
+export type SchoolSectionClassroom = {
+    id: number
+    identifier: string
+    capacity: number
+}
+
+export type SchoolSectionPensum = {
+    id: number
+    name: string
+    career: {
+        id: number
+        name: string
+    }
+}
+
+export type SchoolSection = {
+    id: number
+    type: 'school'
+    grade: number
+    letter: string
+    code: string
+    capacity: number
+    period: SectionPeriod
+    pensum: SchoolSectionPensum
+    mainTeacher: SchoolSectionTeacher | null
+    classroom: SchoolSectionClassroom | null
+    subjects: SchoolSectionSubject[]
+}
+
+export type SchoolSectionCollection = SchoolSection[]
+
+export type PensumForSection = {
+    id: number
+    name: string
+    totalPeriods: number
+    career: {
+        id: number
+        name: string
+    }
+}
+
+export type ProfessorForSection = {
+    id: number
+    user: {
+        id: number
+        name: string
+    }
 }
