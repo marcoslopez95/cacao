@@ -283,3 +283,62 @@ test('valid_from before period start is rejected', function () {
         ->assertStatus(422)
         ->assertJsonValidationErrorFor('valid_from');
 });
+
+test('valid_until after period end is rejected', function () {
+    $section   = Section::factory()->university()->create();
+    $professor = Professor::factory()->create();
+    $classroom = Classroom::factory()->create();
+
+    $data = [
+        'section_id'   => $section->id,
+        'professor_id' => $professor->id,
+        'classroom_id' => $classroom->id,
+        'subject_id'   => $section->subject_id,
+        'day_of_week'  => DayOfWeek::Monday->value,
+        'start_time'   => '08:00',
+        'end_time'     => '08:45',
+        'type'         => ScheduleSessionType::Theory->value,
+        'valid_from'   => $section->period->start_date->toDateString(),
+        'valid_until'  => '2099-12-31',
+    ];
+
+    $this->actingAs(userWithSchedulePerm('schedules.create'))
+        ->withHeader('Accept', 'application/json')
+        ->post('/scheduling/schedules', $data)
+        ->assertStatus(422)
+        ->assertJsonValidationErrorFor('valid_until');
+});
+
+test('school section rejects professor that is not main teacher', function () {
+    $section        = Section::factory()->school()->create();
+    $mainTeacher    = Professor::factory()->create();
+    $otherProfessor = Professor::factory()->create();
+    $classroom      = Classroom::factory()->create();
+
+    // Assign main teacher to section
+    $section->update(['main_teacher_id' => $mainTeacher->id]);
+    $section->refresh();
+
+    // Attach a subject to the school section so subject consistency passes
+    $subject = Subject::factory()->create();
+    $section->sectionSubjects()->attach($subject->id);
+
+    $data = [
+        'section_id'   => $section->id,
+        'professor_id' => $otherProfessor->id,  // NOT the main teacher
+        'classroom_id' => $classroom->id,
+        'subject_id'   => $subject->id,
+        'day_of_week'  => DayOfWeek::Monday->value,
+        'start_time'   => '08:00',
+        'end_time'     => '08:45',
+        'type'         => ScheduleSessionType::Theory->value,
+        'valid_from'   => $section->period->start_date->toDateString(),
+        'valid_until'  => null,
+    ];
+
+    $this->actingAs(userWithSchedulePerm('schedules.create'))
+        ->withHeader('Accept', 'application/json')
+        ->post('/scheduling/schedules', $data)
+        ->assertStatus(422)
+        ->assertJsonValidationErrorFor('professor_id');
+});
