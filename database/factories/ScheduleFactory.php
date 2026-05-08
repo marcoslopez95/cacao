@@ -39,7 +39,7 @@ class ScheduleFactory extends Factory
             'start_time'   => $start . ':00',
             'end_time'     => $end,
             'type'         => ScheduleSessionType::Theory,
-            'valid_from'   => '2026-01-15',
+            'valid_from'   => '2020-01-01',
             'valid_until'  => null,
         ];
     }

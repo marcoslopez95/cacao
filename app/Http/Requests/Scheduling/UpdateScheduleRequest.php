@@ -112,39 +112,40 @@ class UpdateScheduleRequest extends FormRequest
     {
         $service = app(ScheduleConflictService::class);
 
-        $classroomConflict = $service->classroomConflict(
-            classroomId: $this->integer('classroom_id'),
-            day: DayOfWeek::from($this->input('day_of_week')),
-            start: $this->input('start_time'),
-            end: $this->input('end_time'),
-            excludeScheduleId: $excludeScheduleId,
-        );
+        // Build a transient Schedule to pass into the service, setting its id so the service can exclude it
+        $candidate = new Schedule([
+            'section_id'   => $this->integer('section_id'),
+            'professor_id' => $this->integer('professor_id'),
+            'classroom_id' => $this->integer('classroom_id'),
+            'subject_id'   => $this->integer('subject_id'),
+            'day_of_week'  => DayOfWeek::from($this->input('day_of_week')),
+            'start_time'   => $this->input('start_time'),
+            'end_time'     => $this->input('end_time'),
+            'valid_from'   => $this->input('valid_from'),
+            'valid_until'  => $this->input('valid_until'),
+        ]);
+        // Force the id so classroomConflict / professorConflict exclude this schedule
+        $candidate->id = $excludeScheduleId;
+        $candidate->exists = true;
+        // Attach the section relation so the service can access section->period->end_date
+        $candidate->setRelation('section', Section::with('period')->find($this->integer('section_id')));
+
+        $classroomConflict = $service->classroomConflict($candidate);
         if ($classroomConflict) {
             $v->errors()->add('classroom_id', "El aula {$classroomConflict->classroom->identifier} ya tiene clase el {$classroomConflict->day_of_week->label()} de {$this->formatTime($classroomConflict->start_time)}–{$this->formatTime($classroomConflict->end_time)}.");
         }
 
-        $professorConflict = $service->professorConflict(
-            professorId: $this->integer('professor_id'),
-            day: DayOfWeek::from($this->input('day_of_week')),
-            start: $this->input('start_time'),
-            end: $this->input('end_time'),
-            excludeScheduleId: $excludeScheduleId,
-        );
+        $professorConflict = $service->professorConflict($candidate);
         if ($professorConflict) {
             $v->errors()->add('professor_id', "El profesor {$professorConflict->professor->user->name} ya tiene clase el {$professorConflict->day_of_week->label()} de {$this->formatTime($professorConflict->start_time)}–{$this->formatTime($professorConflict->end_time)}.");
         }
 
-        $weeklyExceeded = $service->professorWeeklyHoursExceeded(
-            professorId: $this->integer('professor_id'),
-            start: $this->input('start_time'),
-            end: $this->input('end_time'),
-            excludeScheduleId: $excludeScheduleId,
-        );
+        $weeklyExceeded = $service->professorWeeklyHoursExceeded($candidate);
         if ($weeklyExceeded) {
-            $current    = $service->professorCurrentWeeklyHours($this->integer('professor_id'), $excludeScheduleId);
+            $professor  = Professor::with('user')->find($this->integer('professor_id'));
+            $current    = $service->professorCurrentWeeklyHours($professor, $excludeScheduleId);
             $newMinutes = Carbon::parse($this->input('start_time'))->diffInMinutes(Carbon::parse($this->input('end_time')));
             $newHours   = round($newMinutes / 60, 1);
-            $professor  = Professor::find($this->integer('professor_id'));
             $v->errors()->add('professor_id', "El profesor {$professor->user->name} superaría su límite de {$professor->weekly_hour_limit}h/semana ({$current}h actuales + {$newHours}h nuevas).");
         }
     }
