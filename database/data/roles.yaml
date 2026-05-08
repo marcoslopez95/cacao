@@ -44,6 +44,10 @@ roles:
       - sections.create
       - sections.update
       - sections.delete
+      - schedules.view
+      - schedules.create
+      - schedules.update
+      - schedules.delete
 
   - name: Profesor
     description: Gestión de secciones, evaluaciones y recursos propios

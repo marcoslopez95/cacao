@@ -115,3 +115,11 @@ permissions:
     guard: web
   - name: sections.delete
     guard: web
+  - name: schedules.view
+    guard: web
+  - name: schedules.create
+    guard: web
+  - name: schedules.update
+    guard: web
+  - name: schedules.delete
+    guard: web
