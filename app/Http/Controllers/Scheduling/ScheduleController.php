@@ -43,11 +43,15 @@ class ScheduleController extends Controller
         $classrooms = Classroom::orderBy('identifier')->get(['id', 'identifier']);
         $subjects   = Subject::orderBy('name')->get(['id', 'name', 'code']);
 
+        $professorHours = Schedule::selectRaw('professor_id, SUM(EXTRACT(EPOCH FROM (end_time - start_time)) / 3600) as total_hours')
+            ->groupBy('professor_id')
+            ->pluck('total_hours', 'professor_id');
+
         return Inertia::render('scheduling/Schedules/Index', [
             'schedules'  => ScheduleResource::collection($schedules)->resolve(),
             'periods'    => $periods->map(fn ($p) => ['id' => $p->id, 'name' => $p->name]),
             'sections'   => $sections->map(fn ($s) => ['id' => $s->id, 'code' => $s->code, 'type' => $s->type->value, 'periodId' => $s->period_id, 'periodName' => $s->period?->name]),
-            'professors' => $professors->map(fn ($p) => ['id' => $p->id, 'name' => $p->user->name, 'weeklyHourLimit' => $p->weekly_hour_limit]),
+            'professors' => $professors->map(fn ($p) => ['id' => $p->id, 'name' => $p->user->name, 'weeklyHourLimit' => $p->weekly_hour_limit, 'currentWeeklyHours' => round($professorHours->get($p->id, 0), 1)]),
             'classrooms' => $classrooms->map(fn ($c) => ['id' => $c->id, 'identifier' => $c->identifier]),
             'subjects'   => $subjects->map(fn ($s) => ['id' => $s->id, 'name' => $s->name, 'code' => $s->code]),
             'filters'    => [

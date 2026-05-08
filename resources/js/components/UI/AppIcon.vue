@@ -62,6 +62,9 @@ const paths: Record<string, string> = {
     'toggle-right': '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="16" cy="12" r="2"/>',
     'toggle-left':  '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="8" cy="12" r="2"/>',
     'git-branch':   '<line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
+    'graduation-cap': '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+    'layout-list':    '<rect x="3" y="5" width="6" height="5" rx="1"/><rect x="3" y="14" width="6" height="5" rx="1"/><path d="M13 7h8M13 10h5M13 16h8M13 19h5"/>',
+    pencil:           '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
 }
 </script>
 

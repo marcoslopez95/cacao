@@ -210,6 +210,7 @@ export type ScheduleAvailableProfessor = {
     id: number
     name: string
     weeklyHourLimit: number
+    currentWeeklyHours: number
 }
 
 export type ScheduleAvailableClassroom = {

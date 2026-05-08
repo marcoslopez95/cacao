@@ -1,2 +1,5 @@
+allowBuilds:
+  unrs-resolver: true
+  vue-demi: true
 publicHoistPattern:
   - '@inertiajs/core'

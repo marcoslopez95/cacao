@@ -125,7 +125,7 @@ function submit(): void {
 
                 <ProfessorHoursBar
                     v-if="selectedProfessor"
-                    :current-hours="0"
+                    :current-hours="selectedProfessor.currentWeeklyHours"
                     :limit-hours="selectedProfessor.weeklyHourLimit"
                 />
 

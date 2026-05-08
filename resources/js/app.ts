@@ -35,11 +35,14 @@ createInertiaApp({
             ability.update(buildRules(updatedAuth.permissions ?? [], updatedAuth.roles ?? []));
         });
 
-        createApp({ render: () => h(App, props) })
+        const app = createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(i18n)
-            .use(abilitiesPlugin, ability, { useGlobalProperties: true })
-            .mount(el);
+            .use(abilitiesPlugin, ability, { useGlobalProperties: true });
+
+        if (el) app.mount(el);
+
+        return app;
     },
     progress: {
         color: '#C8521A',

@@ -61,6 +61,8 @@ const paths: Record<string, string> = {
     key:          '<circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>',
     'toggle-right': '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="16" cy="12" r="2"/>',
     'toggle-left':  '<rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="8" cy="12" r="2"/>',
+    'graduation-cap': '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+    'layout-list':  '<rect x="3" y="5" width="6" height="5" rx="1"/><rect x="3" y="14" width="6" height="5" rx="1"/><path d="M13 7h8M13 10h5M13 16h8M13 19h5"/>',
 }
 </script>
 
