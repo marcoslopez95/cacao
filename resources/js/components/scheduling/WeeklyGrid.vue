@@ -34,10 +34,19 @@ function schedulesForDay(day: string): Schedule[] {
     return props.schedules.filter((s) => s.dayOfWeek === day)
 }
 
-function handleCellClick(day: string): void {
-    if (props.canUpdate) {
-        emit('create', { dayOfWeek: day, startTime: '08:00' })
-    }
+function handleCellClick(day: string, event: MouseEvent): void {
+    if (!props.canUpdate) return
+
+    const target = event.currentTarget as HTMLElement
+    const rect = target.getBoundingClientRect()
+    const clickY = event.clientY - rect.top
+    const totalMinutes = Math.floor(clickY) + 7 * 60  // 07:00 = 420 min
+    const hours = Math.floor(totalMinutes / 60)
+    const minutes = Math.floor((totalMinutes % 60) / 15) * 15  // round to nearest 15min
+    const clampedHours = Math.min(Math.max(hours, 7), 17)
+    const startTime = `${String(clampedHours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`
+
+    emit('create', { dayOfWeek: day, startTime })
 }
 </script>
 
@@ -82,7 +91,7 @@ function handleCellClick(day: string): void {
                     borderLeft: '1px solid var(--border)',
                     cursor: canUpdate ? 'pointer' : 'default',
                 }"
-                @click.self="handleCellClick(day.key)"
+                @click.self="(e) => handleCellClick(day.key, e)"
             >
                 <!-- Hour lines -->
                 <div
