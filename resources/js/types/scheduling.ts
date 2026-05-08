@@ -152,3 +152,73 @@ export type ProfessorForSection = {
         name: string
     }
 }
+
+export type ScheduleSection = {
+    id: number
+    code: string
+    type: 'university' | 'school'
+}
+
+export type ScheduleProfessor = {
+    id: number
+    user: { name: string }
+}
+
+export type ScheduleClassroom = {
+    id: number
+    identifier: string
+}
+
+export type ScheduleSubject = {
+    id: number
+    name: string
+    code: string
+}
+
+export type Schedule = {
+    id: number
+    section: ScheduleSection
+    professor: ScheduleProfessor
+    classroom: ScheduleClassroom
+    subject: ScheduleSubject
+    dayOfWeek: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday'
+    dayLabel: string
+    startTime: string
+    endTime: string
+    type: 'theory' | 'lab'
+    typeLabel: string
+    validFrom: string
+    validUntil: string | null
+}
+
+export type ScheduleCollection = Schedule[]
+
+export type ScheduleAvailablePeriod = {
+    id: number
+    name: string
+}
+
+export type ScheduleAvailableSection = {
+    id: number
+    code: string
+    type: 'university' | 'school'
+    periodId: number
+    periodName: string
+}
+
+export type ScheduleAvailableProfessor = {
+    id: number
+    name: string
+    weeklyHourLimit: number
+}
+
+export type ScheduleAvailableClassroom = {
+    id: number
+    identifier: string
+}
+
+export type ScheduleAvailableSubject = {
+    id: number
+    name: string
+    code: string
+}
