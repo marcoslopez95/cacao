@@ -181,6 +181,7 @@ export type Schedule = {
     professor: ScheduleProfessor
     classroom: ScheduleClassroom
     subject: ScheduleSubject
+    career: { id: number; name: string } | null
     dayOfWeek: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday'
     dayLabel: string
     startTime: string
