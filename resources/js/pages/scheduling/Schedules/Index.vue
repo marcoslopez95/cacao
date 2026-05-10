@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Head, setLayoutProps } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
-import CreateScheduleModal from '@/components/scheduling/CreateScheduleModal.vue'
-import DeleteScheduleModal from '@/components/scheduling/DeleteScheduleModal.vue'
-import EditScheduleModal from '@/components/scheduling/EditScheduleModal.vue'
 import WeeklyGrid from '@/components/scheduling/WeeklyGrid.vue'
+import ScheduleListView from '@/components/scheduling/ScheduleListView.vue'
+import ScheduleClusterPopover from '@/components/scheduling/ScheduleClusterPopover.vue'
+import ScheduleStats from '@/components/scheduling/ScheduleStats.vue'
+import ScheduleLegend from '@/components/scheduling/ScheduleLegend.vue'
+import ScheduleConflictsBanner from '@/components/scheduling/ScheduleConflictsBanner.vue'
+import ScheduleToolbar from '@/components/scheduling/ScheduleToolbar.vue'
+import CreateScheduleModal from '@/components/scheduling/CreateScheduleModal.vue'
+import EditScheduleModal from '@/components/scheduling/EditScheduleModal.vue'
+import DeleteScheduleModal from '@/components/scheduling/DeleteScheduleModal.vue'
 import { useScheduleFilters } from '@/composables/filters/useScheduleFilters'
 import { useSchedulePermissions } from '@/composables/permissions/useSchedulePermissions'
+import { detectConflicts, todayKey, DAY_KEYS } from '@/composables/scheduling/useScheduleLayout'
 import { index } from '@/routes/scheduling/schedules'
 import type {
     Schedule,
@@ -18,6 +24,7 @@ import type {
     ScheduleAvailableSubject,
     ScheduleCollection,
 } from '@/types/scheduling'
+import type { PopoverData } from '@/components/scheduling/ScheduleClusterPopover.vue'
 
 type Props = {
     schedules: ScheduleCollection
@@ -40,77 +47,208 @@ setLayoutProps({
 })
 
 const { canCreate, canUpdate, canDelete } = useSchedulePermissions()
-
 const { periodId, sectionId, professorId, applyFilters } = useScheduleFilters(
     props.filters.period_id,
     props.filters.section_id,
     props.filters.professor_id,
 )
 
+// View state
+const view      = ref<'week' | 'day' | 'list'>('week')
+const mobileDay = ref(DAY_KEYS.indexOf(todayKey() ?? 'monday'))
+const searchQuery       = ref('')
+const activeCareerIds   = ref(new Set<number>())
+
+// Initialise activeCareerIds with all careers in the dataset
+const allCareerIds = computed(() => {
+    const ids = new Set<number>()
+    for (const s of props.schedules) {
+        if (s.career) ids.add(s.career.id)
+    }
+    return ids
+})
+
+// Toggle a career filter (if set not yet populated, first show all)
+function toggleCareer(id: number): void {
+    if (activeCareerIds.value.size === 0) {
+        // Populate with all then remove the clicked one
+        activeCareerIds.value = new Set(allCareerIds.value)
+    }
+    if (activeCareerIds.value.has(id)) {
+        activeCareerIds.value.delete(id)
+    } else {
+        activeCareerIds.value.add(id)
+    }
+    activeCareerIds.value = new Set(activeCareerIds.value) // trigger reactivity
+}
+
+// Client-side filtered schedules
+const filteredSchedules = computed(() => {
+    const q = searchQuery.value.toLowerCase().trim()
+    return props.schedules.filter((s) => {
+        // Career filter (empty set = show all)
+        if (activeCareerIds.value.size > 0 && s.career && !activeCareerIds.value.has(s.career.id)) {
+            return false
+        }
+        // Text search
+        if (q) {
+            return (
+                s.subject.name.toLowerCase().includes(q) ||
+                s.subject.code.toLowerCase().includes(q) ||
+                s.professor.user.name.toLowerCase().includes(q) ||
+                s.classroom.identifier.toLowerCase().includes(q) ||
+                s.section.code.toLowerCase().includes(q)
+            )
+        }
+        return true
+    })
+})
+
+const conflicts = computed(() => detectConflicts(filteredSchedules.value))
+
+// Modal state
 const showCreate       = ref(false)
 const createDefaults   = ref<{ dayOfWeek?: string; startTime?: string }>({})
 const editingSchedule  = ref<Schedule | null>(null)
 const deletingSchedule = ref<Schedule | null>(null)
+const popoverData      = ref<PopoverData | null>(null)
 
-const sectionsForPeriod = computed(() => {
-    if (!periodId.value) return props.sections
-    return props.sections.filter((s) => s.periodId === periodId.value)
-})
+const sectionsForPeriod = computed(() =>
+    periodId.value ? props.sections.filter((s) => s.periodId === periodId.value) : props.sections
+)
 
+// Grid event handlers
 function handleCreateFromGrid(defaults: { dayOfWeek: string; startTime: string }): void {
     createDefaults.value = defaults
     showCreate.value = true
 }
 
-function handleEditFromGrid(schedule: Schedule): void {
+function handleOpenEvent(schedule: Schedule): void {
+    popoverData.value = {
+        kind: 'event',
+        schedule,
+        conflict: conflicts.value.get(schedule.id),
+    }
+}
+
+function handleOpenCluster(data: { dayIndex: number; startMin: number; endMin: number; schedules: Schedule[] }): void {
+    popoverData.value = { kind: 'cluster', ...data }
+}
+
+function handleOpenConflicts(): void {
+    popoverData.value = {
+        kind: 'conflicts',
+        schedules: filteredSchedules.value.filter((s) => conflicts.value.has(s.id)),
+    }
+}
+
+// Popover → modal escalation
+function handleEditFromPopover(schedule: Schedule): void {
+    popoverData.value = null
     editingSchedule.value = schedule
+}
+
+function handleDeleteFromPopover(schedule: Schedule): void {
+    popoverData.value = null
+    deletingSchedule.value = schedule
 }
 </script>
 
 <template>
     <Head title="Horarios" />
 
-    <div style="display:flex;flex-direction:column;gap:24px;">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+    <div style="display:flex;flex-direction:column;gap:0;">
+
+        <!-- Page header -->
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:16px;">
             <div>
                 <h1 style="font-size:var(--text-xl);font-weight:700;color:var(--text-primary);margin:0 0 4px;">
                     Horarios
                 </h1>
                 <p style="font-size:var(--text-sm);color:var(--text-muted);margin:0;">
-                    Cuadrícula semanal de clases
+                    Cuadrícula semanal de clases · período activo
                 </p>
             </div>
-            <Button v-if="canCreate" variant="primary" icon="plus" @click="showCreate = true">
-                Nuevo horario
-            </Button>
         </div>
 
-        <div style="display:flex;gap:12px;flex-wrap:wrap;">
-            <select v-model="periodId" class="input" style="max-width:180px;" aria-label="Filtrar por período" @change="applyFilters">
-                <option :value="null">Todos los períodos</option>
-                <option v-for="p in periods" :key="p.id" :value="p.id">{{ p.name }}</option>
-            </select>
-            <select v-model="sectionId" class="input" style="max-width:180px;" aria-label="Filtrar por sección" @change="applyFilters">
-                <option :value="null">Todas las secciones</option>
-                <option v-for="s in sectionsForPeriod" :key="s.id" :value="s.id">{{ s.code }} ({{ s.periodName }})</option>
-            </select>
-            <select v-model="professorId" class="input" style="max-width:200px;" aria-label="Filtrar por profesor" @change="applyFilters">
-                <option :value="null">Todos los profesores</option>
-                <option v-for="p in professors" :key="p.id" :value="p.id">{{ p.name }}</option>
-            </select>
-        </div>
+        <!-- Toolbar + filter chips -->
+        <ScheduleToolbar
+            :view="view"
+            :query="searchQuery"
+            :period-id="periodId"
+            :section-id="sectionId"
+            :professor-id="professorId"
+            :periods="periods"
+            :sections="sectionsForPeriod"
+            :professors="professors"
+            :can-create="canCreate"
+            style="margin-bottom:16px;"
+            @update:view="view = $event"
+            @update:query="searchQuery = $event"
+            @update:period-id="periodId = $event"
+            @update:section-id="sectionId = $event"
+            @update:professor-id="professorId = $event"
+            @create="showCreate = true"
+            @apply-filters="applyFilters"
+        />
 
+        <!-- Stats -->
+        <ScheduleStats
+            :schedules="filteredSchedules"
+            :conflicts-count="conflicts.size"
+            @open-conflicts="handleOpenConflicts"
+        />
+
+        <!-- Career legend -->
+        <ScheduleLegend
+            :schedules="filteredSchedules"
+            :active-career-ids="activeCareerIds.size === 0 ? allCareerIds : activeCareerIds"
+            @toggle="toggleCareer"
+        />
+
+        <!-- Conflicts inline banner -->
+        <ScheduleConflictsBanner :schedules="filteredSchedules" :conflicts="conflicts" />
+
+        <!-- Calendar / List view -->
         <div class="card" style="padding:0;overflow:hidden;">
             <WeeklyGrid
-                :schedules="schedules"
+                v-if="view !== 'list'"
+                :schedules="filteredSchedules"
+                :conflicts="conflicts"
                 :can-update="canUpdate"
                 :can-delete="canDelete"
+                :mobile-day="mobileDay"
+                :day-mode="view === 'day'"
                 @create="handleCreateFromGrid"
-                @edit="handleEditFromGrid"
+                @open-event="handleOpenEvent"
+                @open-cluster="handleOpenCluster"
+                @edit-schedule="editingSchedule = $event"
+                @delete-schedule="deletingSchedule = $event"
+                @update:mobile-day="mobileDay = $event"
+            />
+            <ScheduleListView
+                v-else
+                :schedules="filteredSchedules"
+                :conflicts="conflicts"
+                :can-update="canUpdate"
+                :can-delete="canDelete"
+                @open-event="handleOpenEvent"
+                @edit-schedule="editingSchedule = $event"
+                @delete-schedule="deletingSchedule = $event"
             />
         </div>
     </div>
 
+    <!-- Cluster / event popover -->
+    <ScheduleClusterPopover
+        :data="popoverData"
+        :conflicts="conflicts"
+        @close="popoverData = null"
+        @edit-schedule="handleEditFromPopover"
+        @delete-schedule="handleDeleteFromPopover"
+    />
+
+    <!-- CRUD modals (existing, unchanged) -->
     <CreateScheduleModal
         :open="showCreate"
         :sections="sections"
