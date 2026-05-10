@@ -157,40 +157,41 @@ function handleDeleteFromPopover(schedule: Schedule): void {
 <template>
     <Head title="Horarios" />
 
-    <div style="display:flex;flex-direction:column;gap:0;">
+    <div class="flex flex-col">
 
         <!-- Page header -->
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:16px;">
+        <div class="flex items-start justify-between gap-4 flex-wrap pb-4">
             <div>
-                <h1 style="font-size:var(--text-xl);font-weight:700;color:var(--text-primary);margin:0 0 4px;">
+                <h1 class="text-xl font-bold text-[var(--text-primary)] mb-1">
                     Horarios
                 </h1>
-                <p style="font-size:var(--text-sm);color:var(--text-muted);margin:0;">
+                <p class="text-sm text-[var(--text-muted)]">
                     Cuadrícula semanal de clases · período activo
                 </p>
             </div>
         </div>
 
         <!-- Toolbar + filter chips -->
-        <ScheduleToolbar
-            :view="view"
-            :query="searchQuery"
-            :period-id="periodId"
-            :section-id="sectionId"
-            :professor-id="professorId"
-            :periods="periods"
-            :sections="sectionsForPeriod"
-            :professors="professors"
-            :can-create="canCreate"
-            style="margin-bottom:16px;"
-            @update:view="view = $event"
-            @update:query="searchQuery = $event"
-            @update:period-id="periodId = $event"
-            @update:section-id="sectionId = $event"
-            @update:professor-id="professorId = $event"
-            @create="showCreate = true"
-            @apply-filters="applyFilters"
-        />
+        <div class="mb-4">
+            <ScheduleToolbar
+                :view="view"
+                :query="searchQuery"
+                :period-id="periodId"
+                :section-id="sectionId"
+                :professor-id="professorId"
+                :periods="periods"
+                :sections="sectionsForPeriod"
+                :professors="professors"
+                :can-create="canCreate"
+                @update:view="view = $event"
+                @update:query="searchQuery = $event"
+                @update:period-id="periodId = $event"
+                @update:section-id="sectionId = $event"
+                @update:professor-id="professorId = $event"
+                @create="showCreate = true"
+                @apply-filters="applyFilters"
+            />
+        </div>
 
         <!-- Stats -->
         <ScheduleStats
@@ -210,7 +211,7 @@ function handleDeleteFromPopover(schedule: Schedule): void {
         <ScheduleConflictsBanner :schedules="filteredSchedules" :conflicts="conflicts" />
 
         <!-- Calendar / List view -->
-        <div class="card" style="padding:0;overflow:hidden;">
+        <div class="card p-0 overflow-hidden">
             <WeeklyGrid
                 v-if="view !== 'list'"
                 :schedules="filteredSchedules"
@@ -264,7 +265,7 @@ function handleDeleteFromPopover(schedule: Schedule): void {
     <EditScheduleModal
         v-if="editingSchedule"
         :schedule="editingSchedule"
-        :open="editingSchedule !== null"
+        :open="true"
         :sections="sections"
         :professors="professors"
         :classrooms="classrooms"
@@ -275,7 +276,7 @@ function handleDeleteFromPopover(schedule: Schedule): void {
     <DeleteScheduleModal
         v-if="deletingSchedule"
         :schedule="deletingSchedule"
-        :open="deletingSchedule !== null"
+        :open="true"
         @update:open="deletingSchedule = $event ? deletingSchedule : null"
     />
 </template>
