@@ -34,8 +34,8 @@ class ScheduleResource extends JsonResource
             ],
             'career' => $this->subject->pensum?->career
                 ? [
-                    'id' => $this->subject->pensum->career->id,
-                    'name' => $this->subject->pensum->career->name,
+                    'id' => $this->subject->pensum?->career?->id,
+                    'name' => $this->subject->pensum?->career?->name,
                 ]
                 : null,
             'dayOfWeek' => $this->day_of_week->value,
