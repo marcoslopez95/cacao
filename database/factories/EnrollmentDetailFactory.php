@@ -16,10 +16,13 @@ class EnrollmentDetailFactory extends Factory
 {
     public function definition(): array
     {
+        $subject = Subject::factory()->create();
+        $section = Section::factory()->create(['subject_id' => $subject->id]);
+
         return [
             'enrollment_id' => Enrollment::factory(),
-            'subject_id' => Subject::factory(),
-            'section_id' => Section::factory(),
+            'subject_id' => $subject->id,
+            'section_id' => $section->id,
             'status' => EnrollmentDetailStatus::Draft,
         ];
     }
