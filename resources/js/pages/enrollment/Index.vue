@@ -179,7 +179,7 @@ function handleConfirm(): void {
 /* Layout: split (desktop) */
 .enr-layout { display: flex; gap: 20px; align-items: flex-start; }
 .enr-layout--split .enr-main { flex: 1; min-width: 0; }
-.enr-layout--split .enr-aside { width: 300px; flex-shrink: 0; }
+.enr-layout--split .enr-aside { width: 600px; flex-shrink: 0; }
 
 /* Layout: mobile */
 .enr-layout--mobile { flex-direction: column; }
