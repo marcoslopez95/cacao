@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\EducationalLevel;
+use App\Models\Guardian;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -51,7 +52,7 @@ class StudentFactory extends Factory
     public function withGuardian(): static
     {
         return $this->state(fn () => [
-            'guardian_id' => GuardianFactory::new(),
+            'guardian_id' => Guardian::factory(),
         ]);
     }
 }

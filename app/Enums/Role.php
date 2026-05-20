@@ -7,6 +7,7 @@ enum Role: string
     case Admin = 'Admin';
     case Professor = 'Profesor';
     case Student = 'Estudiante';
+    case Guardian = 'Representante';
     case Coordinator = 'Coordinador de Area';
 
     /**
@@ -18,6 +19,7 @@ enum Role: string
             self::Admin => 'Administrador',
             self::Professor => 'Profesor',
             self::Student => 'Estudiante',
+            self::Guardian => 'Representante',
             self::Coordinator => 'Coordinador de Área',
         };
     }
