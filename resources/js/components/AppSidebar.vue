@@ -18,6 +18,7 @@ import { index as universitySectionsIndex } from '@/routes/scheduling/sections/u
 import { index as schoolSectionsIndex } from '@/routes/scheduling/sections/school'
 import { index as schedulesIndex } from '@/routes/scheduling/schedules'
 import { edit as profileEdit } from '@/routes/profile'
+import { index as enrollmentIndex } from '@/routes/enrollment'
 
 const page = usePage()
 
@@ -138,6 +139,13 @@ const navGroups = computed(() => {
             ],
         })
     }
+
+    groups.push({
+        label: 'Estudiante',
+        items: [
+            { icon: 'edit', label: 'Inscripción', href: enrollmentIndex.url() },
+        ],
+    })
 
     groups.push({
         label: 'Mi cuenta',
