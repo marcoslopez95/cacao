@@ -5,6 +5,8 @@ namespace App\Providers;
 use App\Models\Career;
 use App\Models\CareerCategory;
 use App\Models\Coordination;
+use App\Models\Enrollment;
+use App\Models\EnrollmentDetail;
 use App\Models\Pensum;
 use App\Models\Subject;
 use App\Models\User;
@@ -13,6 +15,8 @@ use App\Policies\Academic\CareerPolicy;
 use App\Policies\Academic\PensumPolicy;
 use App\Policies\Academic\SubjectPolicy;
 use App\Policies\CoordinationPolicy;
+use App\Policies\EnrollmentDetailPolicy;
+use App\Policies\EnrollmentPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use Carbon\CarbonImmutable;
@@ -56,6 +60,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Career::class, CareerPolicy::class);
         Gate::policy(Pensum::class, PensumPolicy::class);
         Gate::policy(Subject::class, SubjectPolicy::class);
+        Gate::policy(Enrollment::class, EnrollmentPolicy::class);
+        Gate::policy(EnrollmentDetail::class, EnrollmentDetailPolicy::class);
     }
 
     /**
