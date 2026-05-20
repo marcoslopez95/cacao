@@ -5,13 +5,14 @@ use App\Http\Controllers\Academic\CareerController;
 use App\Http\Controllers\Academic\PensumController;
 use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
+use App\Http\Controllers\Enrollment\EnrollmentController;
 use App\Http\Controllers\Infrastructure\BuildingController;
 use App\Http\Controllers\Infrastructure\ClassroomController;
 use App\Http\Controllers\Scheduling\LapseController;
 use App\Http\Controllers\Scheduling\PeriodController;
 use App\Http\Controllers\Scheduling\ProfessorController;
-use App\Http\Controllers\Scheduling\SchoolSectionController;
 use App\Http\Controllers\Scheduling\ScheduleController;
+use App\Http\Controllers\Scheduling\SchoolSectionController;
 use App\Http\Controllers\Scheduling\UniversitySectionController;
 use App\Http\Controllers\Security\CoordinationAssignmentController;
 use App\Http\Controllers\Security\CoordinationController;
@@ -141,6 +142,10 @@ Route::middleware(['auth', 'verified'])->prefix('scheduling')->name('scheduling.
     Route::post('schedules', [ScheduleController::class, 'store'])->name('schedules.store');
     Route::patch('schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
     Route::delete('schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+});
+
+Route::middleware(['auth', 'verified'])->prefix('enrollment')->name('enrollment.')->group(function () {
+    Route::get('/', [EnrollmentController::class, 'index'])->name('index');
 });
 
 require __DIR__.'/settings.php';
