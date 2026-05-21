@@ -4,10 +4,12 @@ use App\Models\Building;
 use App\Models\Career;
 use App\Models\CareerCategory;
 use App\Models\Classroom;
+use App\Models\Guardian;
 use App\Models\Lapse;
 use App\Models\Pensum;
 use App\Models\Period;
 use App\Models\Professor;
+use App\Models\Student;
 use App\Models\Subject;
 use App\Models\User;
 use Database\Seeders\DemoSeeder;
@@ -50,4 +52,20 @@ it('seeds professors', function () {
     $prof = User::where('email', 'prof01@utcacao.edu.ve')->first();
     expect($prof)->not->toBeNull();
     expect($prof->hasRole('Profesor'))->toBeTrue();
+});
+
+it('seeds students', function () {
+    (new DemoSeeder)->run();
+
+    expect(Student::count())->toBeGreaterThanOrEqual(140);
+    expect(Guardian::count())->toBeGreaterThanOrEqual(20);
+
+    $uni = User::where('email', 'est001@utcacao.edu.ve')->first();
+    expect($uni)->not->toBeNull();
+    expect($uni->hasRole('Estudiante'))->toBeTrue();
+    expect($uni->student->current_pensum_id)->not->toBeNull();
+
+    $sec = User::where('email', 'sec01@utcacao.edu.ve')->first();
+    expect($sec)->not->toBeNull();
+    expect($sec->student->guardian_id)->not->toBeNull();
 });

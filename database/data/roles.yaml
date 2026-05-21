@@ -63,3 +63,8 @@ roles:
     description: Supervisión académica de un área o departamento
     guard: web
     permissions: []
+
+  - name: Representante
+    description: Acceso de solo lectura a notas, asistencia e inscripciones del estudiante vinculado
+    guard: web
+    permissions: []
