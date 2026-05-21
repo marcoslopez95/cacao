@@ -1,3 +1,4 @@
+import { ref } from 'vue';
 import { vi } from 'vitest';
 
 // Mock @inertiajs/vue3
@@ -36,11 +37,11 @@ vi.mock('@inertiajs/vue3', () => ({
         version: '1',
     })),
     router: {
-        get: vi.fn(),
-        post: vi.fn(),
-        put: vi.fn(),
-        patch: vi.fn(),
-        delete: vi.fn(),
+        get: vi.fn(() => undefined),
+        post: vi.fn(() => undefined),
+        put: vi.fn(() => undefined),
+        patch: vi.fn(() => undefined),
+        delete: vi.fn(() => undefined),
         visit: vi.fn(),
         reload: vi.fn(),
         cancelAll: vi.fn(),
@@ -49,11 +50,17 @@ vi.mock('@inertiajs/vue3', () => ({
     Link: { template: '<a><slot /></a>' },
 }));
 
+// Mock @casl/vue
+vi.mock('@casl/vue', () => ({
+    abilitiesPlugin: { install: vi.fn() },
+    useAbility: vi.fn(() => ({ can: vi.fn(() => true) })),
+}));
+
 // Mock vue-i18n
 vi.mock('vue-i18n', () => ({
     useI18n: vi.fn(() => ({
         t: (key: string) => key,
-        locale: { value: 'es' },
+        locale: ref('es'),
         availableLocales: ['es', 'en'],
     })),
     createI18n: vi.fn(),
