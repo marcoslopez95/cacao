@@ -210,6 +210,7 @@ function logout(): void {
                     class="btn btn-ghost btn-icon btn-sm"
                     style="color:var(--sidebar-muted);"
                     aria-label="Cerrar sesión"
+                    data-test="logout-button"
                     @click="logout"
                 >
                     <Icon name="logout" :size="15" />
