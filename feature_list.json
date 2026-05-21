@@ -24,8 +24,8 @@
   {
     "id": "04-testing-vitest-dusk",
     "name": "Testing Infrastructure — Vitest (composables/utils) + Laravel Dusk E2E (Selenium)",
-    "status": "in_progress",
-    "current_task": 1,
+    "status": "completed",
+    "current_task": 8,
     "plan": "specs/testing-vitest-dusk/tasks.md"
   }
 ]
