@@ -28,4 +28,8 @@ yarn-error.log
 /.zed
 .superpowers/
 .pnpm-store/
+/coverage
 .worktrees/
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
