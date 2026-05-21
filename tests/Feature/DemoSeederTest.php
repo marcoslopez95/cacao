@@ -108,6 +108,7 @@ it('is idempotent — running twice yields the same counts', function () {
     expect(Period::count())->toBe(2);
     expect(Professor::count())->toBe(12);
     expect(Student::count())->toBe(140);
-    expect(Section::count())->toBeGreaterThanOrEqual(60);
-    expect(Enrollment::count())->toBeGreaterThanOrEqual(75);
+    expect(Section::count())->toBe(65);
+    expect(Enrollment::count())->toBe(90);
+    expect(EnrollmentDetail::count())->toBe(360);
 });
