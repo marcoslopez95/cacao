@@ -92,7 +92,7 @@ class DemoEnrollmentSeeder extends Seeder
                 continue;
             }
 
-            $enrollment = Enrollment::updateOrCreate(
+            $enrollment = Enrollment::firstOrCreate(
                 ['student_id' => $student->id, 'period_id' => $period->id],
                 [
                     'pensum_id' => $pensumId,
@@ -103,7 +103,7 @@ class DemoEnrollmentSeeder extends Seeder
             );
 
             foreach ($pairs as $pair) {
-                EnrollmentDetail::updateOrCreate(
+                EnrollmentDetail::firstOrCreate(
                     ['enrollment_id' => $enrollment->id, 'subject_id' => $pair['subject']->id],
                     ['section_id' => $pair['section']->id, 'status' => $detailStatus],
                 );
