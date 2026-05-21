@@ -105,7 +105,8 @@ describe('useEnrollmentForm', () => {
         expect(isLoading.value).toBe(false)
     })
 
-    it('initializes detailIds from draft details of the enrollment', () => {
+    it('indexes draft details on init so removeSubject can delete them', async () => {
+        // Only draft details should be indexed; confirmed ones must be ignored.
         const enrollmentWithDrafts = makeEnrollment({
             details: [
                 {
@@ -118,41 +119,83 @@ describe('useEnrollmentForm', () => {
                     id: 11,
                     subject: { id: 2, code: 'FIS101', name: 'Física I', credits_uc: 3 },
                     section: { id: 2, code: 'B', capacity: 25 },
-                    status: 'confirmed', // confirmed details should NOT be indexed
+                    status: 'confirmed', // confirmed → must NOT be indexed
                 },
             ],
         })
         enrollment = ref<BackendEnrollment | null>(enrollmentWithDrafts)
-        const { } = useEnrollmentForm(enrollment, selections)
-        // We can't directly inspect detailIds (not returned), but the internal state
-        // drives removeSubject behavior — tested in the removeSubject tests below.
-        // This test verifies the composable initializes without throwing.
-        expect(true).toBe(true)
+
+        const httpInstance = vi.mocked(useHttp)()
+        const deleteSpy = vi.fn()
+        httpInstance.delete = deleteSpy
+
+        const { removeSubject } = useEnrollmentForm(enrollment, selections)
+
+        // MAT101 is draft → detailId 10 was indexed → delete is called
+        await removeSubject('MAT101')
+        expect(deleteSpy).toHaveBeenCalledOnce()
+        expect(deleteSpy).toHaveBeenCalledWith(
+            '/enrollment/42/detail/10',
+            expect.objectContaining({ onSuccess: expect.any(Function), onError: expect.any(Function) }),
+        )
+
+        deleteSpy.mockClear()
+
+        // FIS101 is confirmed → NOT indexed → delete must NOT be called
+        await removeSubject('FIS101')
+        expect(deleteSpy).not.toHaveBeenCalled()
     })
 
-    it('clearError sets error back to null', async () => {
-        const { error, clearError } = useEnrollmentForm(enrollment, selections)
-
-        // Simulate an error by calling addSubject without enrollment
-        enrollment.value = null
-        // error stays null when enrollment is null, let's set it manually via the ref
-        // We need to trigger an error path — use addSubject with a valid enrollment
-        // but simulate an onError callback
-        enrollment.value = makeEnrollment()
-
-        // Get the mocked useHttp instance
-        const mockHttp = vi.mocked(useHttp)()
-        const postMock = vi.fn((url: string, options: { onError: (e: Record<string, string>) => void }) => {
-            options.onError({ error: 'Test error' })
+    it('addSubject indexes the returned detail id so a subsequent removeSubject can use it', async () => {
+        const httpInstance = vi.mocked(useHttp)()
+        const deleteSpy = vi.fn()
+        // First call: addSubject → post returns id 99
+        httpInstance.post = vi.fn((url: string, options: { onSuccess: (r: Record<string, unknown>) => void }) => {
+            options.onSuccess({ id: 99 })
         })
-        mockHttp.post = postMock
+        httpInstance.delete = deleteSpy
 
-        await (useEnrollmentForm(enrollment, selections).addSubject(1, 1, 'MAT101', 0))
+        const { addSubject, removeSubject } = useEnrollmentForm(enrollment, selections)
+        await addSubject(5, 3, 'MAT101', 2)
 
-        // clearError should reset it
-        const form = useEnrollmentForm(enrollment, selections)
-        form.clearError()
-        expect(form.error.value).toBeNull()
+        // Now removeSubject should use detailId 99 that was stored on onSuccess
+        await removeSubject('MAT101')
+        expect(deleteSpy).toHaveBeenCalledOnce()
+        expect(deleteSpy).toHaveBeenCalledWith(
+            '/enrollment/42/detail/99',
+            expect.objectContaining({ onSuccess: expect.any(Function), onError: expect.any(Function) }),
+        )
+    })
+
+    it('addSubject sets error on http failure', async () => {
+        const httpInstance = vi.mocked(useHttp)()
+        httpInstance.post = vi.fn((url: string, options: { onError: (e: Record<string, string>) => void }) => {
+            options.onError({ error: 'Fallo de red.' })
+        })
+
+        const { addSubject, error } = useEnrollmentForm(enrollment, selections)
+        expect(error.value).toBeNull()
+
+        await addSubject(1, 1, 'MAT101', 0)
+
+        expect(error.value).toBe('Fallo de red.')
+    })
+
+    it('clearError resets error to null after a failure', async () => {
+        const httpInstance = vi.mocked(useHttp)()
+        httpInstance.post = vi.fn((url: string, options: { onError: (e: Record<string, string>) => void }) => {
+            options.onError({ error: 'Fallo de red.' })
+        })
+
+        const { addSubject, error, clearError } = useEnrollmentForm(enrollment, selections)
+        await addSubject(1, 1, 'MAT101', 0)
+
+        // Precondition: error was set by the failure
+        expect(error.value).toBe('Fallo de red.')
+
+        clearError()
+
+        expect(error.value).toBeNull()
     })
 
     it('addSubject calls http.post with the correct URL for the enrollment', async () => {
