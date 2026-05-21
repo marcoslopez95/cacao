@@ -7,7 +7,9 @@ use App\Models\Classroom;
 use App\Models\Lapse;
 use App\Models\Pensum;
 use App\Models\Period;
+use App\Models\Professor;
 use App\Models\Subject;
+use App\Models\User;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -38,4 +40,14 @@ it('seeds periods', function () {
     $active = Period::where('status', 'active')->first();
     expect($active)->not->toBeNull();
     expect($active->name)->toBe('2026-I');
+});
+
+it('seeds professors', function () {
+    (new DemoSeeder)->run();
+
+    expect(Professor::count())->toBeGreaterThanOrEqual(12);
+
+    $prof = User::where('email', 'prof01@utcacao.edu.ve')->first();
+    expect($prof)->not->toBeNull();
+    expect($prof->hasRole('Profesor'))->toBeTrue();
 });
