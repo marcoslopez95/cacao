@@ -17,8 +17,8 @@
   {
     "id": "03-demo-seeder",
     "name": "Demo Seeder — datos realistas venezolanos para demo y desarrollo",
-    "status": "in_progress",
-    "current_task": 1,
+    "status": "completed",
+    "current_task": 9,
     "plan": "specs/demo-seeder/tasks.md"
   }
 ]

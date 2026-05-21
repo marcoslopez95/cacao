@@ -7,15 +7,15 @@
 
 ## Progreso general
 
-- [ ] Task 1 — Scaffold: DemoSeeder orquestador + stubs de sub-seeders
-- [ ] Task 2 — DemoAcademicSeeder: categorías, carreras, pensums, materias, prelaciones
-- [ ] Task 3 — DemoInfrastructureSeeder: edificios y aulas
-- [ ] Task 4 — DemoPeriodSeeder: períodos y lapsos
-- [ ] Task 5 — DemoProfessorsSeeder: 12 profesores con usuarios
-- [ ] Task 6 — DemoStudentsSeeder: 120 universitarios + 20 secundaria + 20 representantes
-- [ ] Task 7 — DemoSectionsSeeder: secciones 2026-I + horarios
-- [ ] Task 8 — DemoEnrollmentSeeder: inscripciones con estados variados
-- [ ] Task 9 — DemoSeederTest completo + idempotencia + feature completada
+- [x] Task 1 — Scaffold: DemoSeeder orquestador + stubs de sub-seeders
+- [x] Task 2 — DemoAcademicSeeder: categorías, carreras, pensums, materias, prelaciones
+- [x] Task 3 — DemoInfrastructureSeeder: edificios y aulas
+- [x] Task 4 — DemoPeriodSeeder: períodos y lapsos
+- [x] Task 5 — DemoProfessorsSeeder: 12 profesores con usuarios
+- [x] Task 6 — DemoStudentsSeeder: 120 universitarios + 20 secundaria + 20 representantes
+- [x] Task 7 — DemoSectionsSeeder: secciones 2026-I + horarios
+- [x] Task 8 — DemoEnrollmentSeeder: inscripciones con estados variados
+- [x] Task 9 — DemoSeederTest completo + idempotencia + feature completada
 
 ---
 

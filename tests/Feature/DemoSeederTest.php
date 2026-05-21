@@ -95,3 +95,19 @@ it('seeds enrollments', function () {
     expect($confirmed)->toBeGreaterThanOrEqual(25);
     expect($approved)->toBeGreaterThanOrEqual(25);
 });
+
+it('is idempotent — running twice yields the same counts', function () {
+    $seeder = new DemoSeeder;
+    $seeder->run();
+    $seeder->run();  // second run must not duplicate records
+
+    expect(Career::count())->toBe(5);
+    expect(Subject::count())->toBe(40);
+    expect(Building::count())->toBe(2);
+    expect(Classroom::count())->toBe(15);
+    expect(Period::count())->toBe(2);
+    expect(Professor::count())->toBe(12);
+    expect(Student::count())->toBe(140);
+    expect(Section::count())->toBeGreaterThanOrEqual(60);
+    expect(Enrollment::count())->toBeGreaterThanOrEqual(75);
+});
