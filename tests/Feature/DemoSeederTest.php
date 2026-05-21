@@ -4,7 +4,9 @@ use App\Models\Building;
 use App\Models\Career;
 use App\Models\CareerCategory;
 use App\Models\Classroom;
+use App\Models\Lapse;
 use App\Models\Pensum;
+use App\Models\Period;
 use App\Models\Subject;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,4 +27,15 @@ it('seeds infrastructure', function () {
 
     expect(Building::count())->toBeGreaterThanOrEqual(2);
     expect(Classroom::count())->toBeGreaterThanOrEqual(15);
+});
+
+it('seeds periods', function () {
+    (new DemoSeeder)->run();
+
+    expect(Period::count())->toBeGreaterThanOrEqual(2);
+    expect(Lapse::count())->toBeGreaterThanOrEqual(4);
+
+    $active = Period::where('status', 'active')->first();
+    expect($active)->not->toBeNull();
+    expect($active->name)->toBe('2026-I');
 });
