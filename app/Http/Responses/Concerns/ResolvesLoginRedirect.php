@@ -8,7 +8,7 @@ use Laravel\Fortify\Fortify;
 
 trait ResolvesLoginRedirect
 {
-    private function resolveRedirect(Request $request): string
+    protected function resolveRedirect(Request $request): string
     {
         $user = $request->user();
         $team = $user?->currentTeam ?? $user?->personalTeam();
