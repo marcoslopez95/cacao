@@ -9,6 +9,8 @@ use App\Models\Lapse;
 use App\Models\Pensum;
 use App\Models\Period;
 use App\Models\Professor;
+use App\Models\Schedule;
+use App\Models\Section;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\User;
@@ -68,4 +70,11 @@ it('seeds students', function () {
     $sec = User::where('email', 'sec01@utcacao.edu.ve')->first();
     expect($sec)->not->toBeNull();
     expect($sec->student->guardian_id)->not->toBeNull();
+});
+
+it('seeds sections and schedules', function () {
+    (new DemoSeeder)->run();
+
+    expect(Section::count())->toBeGreaterThanOrEqual(60);
+    expect(Schedule::count())->toBeGreaterThanOrEqual(120);
 });
