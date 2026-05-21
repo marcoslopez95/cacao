@@ -6,8 +6,10 @@ use App\Http\Controllers\Academic\PensumController;
 use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\Enrollment\EnrollmentController;
+use App\Http\Controllers\Guardian;
 use App\Http\Controllers\Infrastructure\BuildingController;
 use App\Http\Controllers\Infrastructure\ClassroomController;
+use App\Http\Controllers\Professor;
 use App\Http\Controllers\Scheduling\LapseController;
 use App\Http\Controllers\Scheduling\PeriodController;
 use App\Http\Controllers\Scheduling\ProfessorController;
@@ -19,6 +21,7 @@ use App\Http\Controllers\Security\CoordinationController;
 use App\Http\Controllers\Security\InvitationController;
 use App\Http\Controllers\Security\RoleController;
 use App\Http\Controllers\Security\UserController;
+use App\Http\Controllers\Student;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
@@ -146,6 +149,31 @@ Route::middleware(['auth', 'verified'])->prefix('scheduling')->name('scheduling.
 
 Route::middleware(['auth', 'verified'])->prefix('enrollment')->name('enrollment.')->group(function () {
     Route::get('/', [EnrollmentController::class, 'index'])->name('index');
+    Route::post('/', [EnrollmentController::class, 'store'])->name('store');
+    Route::post('{enrollment}/detail', [EnrollmentController::class, 'addDetail'])->name('detail.store');
+    Route::delete('{enrollment}/detail/{enrollmentDetail}', [EnrollmentController::class, 'removeDetail'])->name('detail.destroy');
+    Route::post('{enrollment}/confirm', [EnrollmentController::class, 'confirm'])->name('confirm');
 });
+
+Route::middleware(['auth', 'verified', 'role:Profesor,Coordinador de Area'])
+    ->prefix('professor')->name('professor.')
+    ->group(function () {
+        Route::get('dashboard', [Professor\DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
+Route::middleware(['auth', 'verified', 'role:Estudiante'])
+    ->prefix('student')->name('student.')
+    ->group(function () {
+        Route::get('dashboard', [Student\DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
+
+Route::middleware(['auth', 'verified', 'role:Representante'])
+    ->prefix('guardian')->name('guardian.')
+    ->group(function () {
+        Route::get('dashboard', [Guardian\DashboardController::class, 'index'])
+            ->name('dashboard');
+    });
 
 require __DIR__.'/settings.php';
