@@ -57,8 +57,10 @@ Sistema de gestión académica integral para instituciones educativas venezolana
 ### 3. Inscripciones
 - Validación automática de prelaciones antes de aprobar (`PrerequisiteValidator` service)
 - Control de cupos por sección
-- Estados: `pending` → `approved` / `rejected`
-- **`Enrollment` es la entidad pivote central** — notas, asistencia y entregas cuelgan de ella
+- **Modelo de dos capas**: cabecera + detalle
+  - `Enrollment` (cabecera): una por estudiante por período — tiene estado del proceso (`draft → confirmed → approved / rejected`) y totales de UC
+  - `EnrollmentDetail` (detalle): una por sección inscrita dentro de esa inscripción — **es el pivote central del historial académico**
+- **`EnrollmentDetail` es la entidad pivote central** — notas, asistencia y entregas cuelgan de `enrollment_details`, nunca directamente de students, sections ni enrollments
 
 ### 4. Infraestructura
 - Aulas: `type` enum (`theory` / `laboratory`), capacidad, edificio
@@ -93,10 +95,11 @@ students → socioeconomic_data (1:1)
 students → educational_data (1:1)
 students → guardians (1:N, para nivel no universitario)
 
-students + sections → enrollments  ← PIVOTE CENTRAL
-enrollments → grades
-enrollments → attendances
-enrollments → submissions
+students + periods → enrollments           (cabecera de inscripción: 1 por estudiante/período)
+enrollments → enrollment_details          ← PIVOTE CENTRAL (1 por sección inscrita)
+enrollment_details → grades
+enrollment_details → attendances
+enrollment_details → submissions
 
 sections → activities → quiz_questions → answer_options
 submissions → student_answers
@@ -237,12 +240,17 @@ colors: {
 
 ## Notas críticas para Claude Code
 
-1. **`Enrollment` es el pivote central** — todo historial académico (notas, asistencia, entregas) cuelga de enrollments, nunca directamente de students o sections.
+1. **`EnrollmentDetail` es el pivote central** — todo historial académico (notas, asistencia, entregas) cuelga de `enrollment_details`, nunca de `enrollments`, `students` ni `sections` directamente. `Enrollment` es la cabecera del proceso de inscripción (una por estudiante/período); `EnrollmentDetail` es la fila por sección.
 2. **Prelaciones siempre en `PrerequisiteValidator`** — nunca validar en controladores directamente.
 3. **Un aula es siempre una fila en `classrooms`** — el tipo (teórica/lab) es un campo enum, no tablas separadas. Una sección tiene `theory_classroom_id` y `lab_classroom_id` como FKs separadas.
 4. **Wayfinder para todas las rutas frontend** — nunca URLs hardcodeadas en Vue.
 5. **Pest para todos los tests** — feature tests primero, unit tests para lógica aislada (services, validators).
 6. **`pint --dirty` después de cada cambio PHP** — antes de dar por finalizado cualquier cambio.
+7. **Flujo de features: SIEMPRE el arnés AGENTS.md — nunca `writing-plans` ni plan mode.** Todo feature nuevo sigue este flujo sin excepción:
+   - Brainstorming → diseño aprobado → crear `specs/{feature}/requirements.md`, `design.md`, `tasks.md`
+   - Actualizar `feature_list.json` y `progress/current.md`
+   - Implementar task por task siguiendo `specs/{feature}/tasks.md`
+   - El skill `writing-plans` y los archivos en `docs/superpowers/plans/` NO se usan para features — son reemplazados por el arnés. Si el brainstorming termina sugiriendo `writing-plans`, ignorar esa sugerencia y crear los archivos del arnés en su lugar.
 
 ---
 
