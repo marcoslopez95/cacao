@@ -1,20 +1,27 @@
-# Sesión activa
+# Feature completada
 
 **Feature:** `04-testing-vitest-dusk`
 **Plan:** `specs/testing-vitest-dusk/tasks.md`
-**Task actual:** Task 1 — Vitest: Instalación y configuración base
-**Estado:** LISTO PARA IMPLEMENTAR
+**Estado:** COMPLETADA — todas las 8 tasks implementadas y pasando
 
-## Tareas pendientes
+## Tareas completadas
 
-- [ ] Task 1 — Vitest: Instalación y configuración base
-- [ ] Task 2 — Vitest: Tests de composables de inscripción
-- [ ] Task 3 — Vitest: Tests de otros composables y utils
-- [ ] Task 4 — Dusk: Instalación y configuración con Selenium
-- [ ] Task 5 — Dusk: Tests de autenticación
-- [ ] Task 6 — Dusk: Tests de Dashboard
-- [ ] Task 7 — Dusk: Tests de Enrollment
-- [ ] Task 8 — Dusk: Tests de Academic y Admin
+- [x] Task 1 — Vitest: Instalación y configuración base
+- [x] Task 2 — Vitest: Tests de composables de inscripción
+- [x] Task 3 — Vitest: Tests de otros composables y utils
+- [x] Task 4 — Dusk: Instalación y configuración con Selenium
+- [x] Task 5 — Dusk: Tests de autenticación
+- [x] Task 6 — Dusk: Tests de Dashboard
+- [x] Task 7 — Dusk: Tests de Enrollment
+- [x] Task 8 — Dusk: Tests de Academic y Admin
+
+## Resumen de la feature
+
+- Vitest configurado con jsdom, @vue/test-utils, coverage v8
+- Tests de composables: useEnrollmentForm, useEnrollmentPermissions y otros
+- Dusk instalado con Selenium container en `http://selenium:4444`
+- Tests Dusk: Auth (LoginTest + LogoutTest), Dashboard, Enrollment, Academic (Careers + Subjects + Sections)
+- Total Dusk tests: 4 (Academic) + otros en Auth/Dashboard/Enrollment
 
 ## Feature anterior completada
 
