@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['pensum_id', 'name', 'code', 'credits_uc', 'period_number', 'description'])]
 class Subject extends Model
@@ -38,5 +39,10 @@ class Subject extends Model
             'prerequisite_id',
             'subject_id',
         )->as('dependents');
+    }
+
+    public function sections(): HasMany
+    {
+        return $this->hasMany(Section::class);
     }
 }

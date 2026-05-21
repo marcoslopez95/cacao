@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['type', 'period_id', 'pensum_id', 'subject_id', 'code', 'grade', 'letter', 'theory_classroom_id', 'lab_classroom_id', 'main_teacher_id', 'classroom_id', 'capacity'])]
 class Section extends Model
@@ -19,7 +20,7 @@ class Section extends Model
     protected function casts(): array
     {
         return [
-            'type'  => SectionType::class,
+            'type' => SectionType::class,
             'grade' => 'integer',
         ];
     }
@@ -62,5 +63,15 @@ class Section extends Model
     public function sectionSubjects(): BelongsToMany
     {
         return $this->belongsToMany(Subject::class, 'section_subjects');
+    }
+
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
+    }
+
+    public function enrollmentDetails(): HasMany
+    {
+        return $this->hasMany(EnrollmentDetail::class);
     }
 }
