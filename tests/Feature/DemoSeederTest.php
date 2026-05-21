@@ -4,6 +4,8 @@ use App\Models\Building;
 use App\Models\Career;
 use App\Models\CareerCategory;
 use App\Models\Classroom;
+use App\Models\Enrollment;
+use App\Models\EnrollmentDetail;
 use App\Models\Guardian;
 use App\Models\Lapse;
 use App\Models\Pensum;
@@ -77,4 +79,19 @@ it('seeds sections and schedules', function () {
 
     expect(Section::count())->toBeGreaterThanOrEqual(60);
     expect(Schedule::count())->toBeGreaterThanOrEqual(120);
+});
+
+it('seeds enrollments', function () {
+    (new DemoSeeder)->run();
+
+    expect(Enrollment::count())->toBeGreaterThanOrEqual(75);
+    expect(EnrollmentDetail::count())->toBeGreaterThanOrEqual(270);
+
+    $draft = Enrollment::where('status', 'draft')->count();
+    $confirmed = Enrollment::where('status', 'confirmed')->count();
+    $approved = Enrollment::where('status', 'approved')->count();
+
+    expect($draft)->toBeGreaterThanOrEqual(25);
+    expect($confirmed)->toBeGreaterThanOrEqual(25);
+    expect($approved)->toBeGreaterThanOrEqual(25);
 });
