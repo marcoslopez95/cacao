@@ -8,6 +8,9 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
 import { dashboard } from '@/routes';
+import { index as professorDashboard } from '@/actions/App/Http/Controllers/Professor/DashboardController';
+import { index as studentDashboard } from '@/actions/App/Http/Controllers/Student/DashboardController';
+import { index as guardianDashboard } from '@/actions/App/Http/Controllers/Guardian/DashboardController';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
@@ -21,9 +24,16 @@ const props = withDefaults(defineProps<Props>(), {
 const page = usePage();
 const auth = computed(() => page.props.auth);
 
-const dashboardUrl = computed(() =>
-    page.props.currentTeam ? dashboard(page.props.currentTeam.slug).url : '/',
-);
+const dashboardUrl = computed(() => {
+    const roles = page.props.auth?.roles ?? []
+    if (roles.includes('Admin') && page.props.currentTeam) {
+        return dashboard(page.props.currentTeam.slug).url
+    }
+    if (roles.some((r: string) => ['Profesor', 'Coordinador de Area'].includes(r))) return professorDashboard.url()
+    if (roles.includes('Estudiante')) return studentDashboard.url()
+    if (roles.includes('Representante')) return guardianDashboard.url()
+    return '/'
+});
 
 const mainNavItems = computed<NavItem[]>(() => [
     {

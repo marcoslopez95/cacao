@@ -147,7 +147,7 @@ Route::middleware(['auth', 'verified'])->prefix('scheduling')->name('scheduling.
     Route::delete('schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
 });
 
-Route::middleware(['auth', 'verified'])->prefix('enrollment')->name('enrollment.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:Estudiante,Representante'])->prefix('enrollment')->name('enrollment.')->group(function () {
     Route::get('/', [EnrollmentController::class, 'index'])->name('index');
     Route::post('/', [EnrollmentController::class, 'store'])->name('store');
     Route::post('{enrollment}/detail', [EnrollmentController::class, 'addDetail'])->name('detail.store');

@@ -182,13 +182,6 @@ const navGroups = computed(() => {
     }
 
     groups.push({
-        label: 'Inscripciones',
-        items: [
-            { icon: 'edit', label: 'Inscripción', href: enrollmentIndex.url() },
-        ],
-    })
-
-    groups.push({
         label: 'Mi cuenta',
         items: [
             { icon: 'settings', label: 'Configuración', href: profileEdit.url() },
