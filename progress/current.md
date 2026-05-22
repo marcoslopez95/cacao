@@ -1,34 +1,34 @@
 # Feature completada
 
-**Feature:** `04-testing-vitest-dusk`
-**Plan:** `specs/testing-vitest-dusk/tasks.md`
-**Estado:** COMPLETADA — todas las 8 tasks implementadas y pasando
+**Feature:** `05-multi-role-login`
+**Plan:** `specs/multi-role-login/tasks.md`
+**Estado:** COMPLETADA — todas las 7 tasks implementadas y pasando
 
 ## Tareas completadas
 
-- [x] Task 1 — Vitest: Instalación y configuración base
-- [x] Task 2 — Vitest: Tests de composables de inscripción
-- [x] Task 3 — Vitest: Tests de otros composables y utils
-- [x] Task 4 — Dusk: Instalación y configuración con Selenium
-- [x] Task 5 — Dusk: Tests de autenticación
-- [x] Task 6 — Dusk: Tests de Dashboard
-- [x] Task 7 — Dusk: Tests de Enrollment
-- [x] Task 8 — Dusk: Tests de Academic y Admin
+- [x] Task 1 — Middleware `EnsureRole`
+- [x] Task 2 — Trait `ResolvesLoginRedirect` + fix `LoginResponse` y `TwoFactorLoginResponse`
+- [x] Task 3 — Rutas de portales por rol
+- [x] Task 4 — Controladores de dashboard por rol
+- [x] Task 5 — Feature tests de login multi-rol y acceso a portales (12/12)
+- [x] Task 6 — Páginas Vue de dashboard por rol
+- [x] Task 7 — `AppSidebar.vue` — navegación contextual por rol
 
 ## Resumen de la feature
 
-- Vitest configurado con jsdom, @vue/test-utils, coverage v8
-- Tests de composables: useEnrollmentForm, useEnrollmentPermissions y otros
-- Dusk instalado con Selenium container en `http://selenium:4444`
-- Tests Dusk: Auth (LoginTest + LogoutTest), Dashboard, Enrollment, Academic (Careers + Subjects + Sections)
-- Total Dusk tests: 4 (Academic) + otros en Auth/Dashboard/Enrollment
+- `EnsureRole` middleware con alias `role` — protege portales con Spatie `hasAnyRole()`
+- `ResolvesLoginRedirect` trait compartido entre `LoginResponse` y `TwoFactorLoginResponse`
+- Admin (con team) → `/{team}/dashboard`, Profesor → `/professor/dashboard`, Estudiante → `/student/dashboard`, Representante → `/guardian/dashboard`
+- 3 portal dashboards (controllers + Vue pages) con greeting básico
+- `AppSidebar.vue` refactorizado: navGroups por rol (`portalRole` computed)
+- `AppHeader.vue` actualizado con `dashboardUrl` por rol
+- Enrollment routes endurecidas: `role:Estudiante,Representante`
+- Suite: 12 tests nuevos + suite completa pasando
 
 ## Feature anterior completada
 
-**Feature:** `03-demo-seeder`
-Task 9 completada: DemoSeederTest idempotencia + suite completa (8 tests, 56 assertions).
-`migrate:fresh --seed --seeder=DemoSeeder` exitoso. Todos los sub-seeders funcionando.
-
-**Feature anterior:** enrollment-frontend
-Task 9 completada: Index.vue conectado a props reales — mock data eliminado.
-Suite: 419 tests pasando, 1 skipped (prereqs requiere tabla grades).
+**Feature:** `04-testing-vitest-dusk`
+Task 8 completada: Dusk academic tests + feature_list.json marcado como completado.
+- Vitest configurado con jsdom, @vue/test-utils, coverage v8
+- Dusk instalado con Selenium container en `http://selenium:4444`
+- Tests Dusk: Auth, Dashboard, Enrollment, Academic (Careers + Subjects + Sections)

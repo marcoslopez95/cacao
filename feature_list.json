@@ -27,5 +27,12 @@
     "status": "completed",
     "current_task": 8,
     "plan": "specs/testing-vitest-dusk/tasks.md"
+  },
+  {
+    "id": "05-multi-role-login",
+    "name": "Multi-Role Login — portales por rol (Profesor, Estudiante, Representante) + navegación contextual",
+    "status": "completed",
+    "current_task": 7,
+    "plan": "specs/multi-role-login/tasks.md"
   }
 ]
