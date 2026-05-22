@@ -46,8 +46,8 @@
   {
     "id": "07-role-dashboards",
     "name": "Role Dashboards — dashboards funcionales con datos reales para Profesor, Estudiante y Representante",
-    "status": "in_progress",
-    "current_task": 0,
+    "status": "completed",
+    "current_task": 8,
     "plan": "specs/role-dashboards/tasks.md"
   }
 ]
