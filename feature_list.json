@@ -34,5 +34,12 @@
     "status": "completed",
     "current_task": 7,
     "plan": "specs/multi-role-login/tasks.md"
+  },
+  {
+    "id": "06-error-pages",
+    "name": "Error Pages — páginas personalizadas CACAO para 404, 401/403 y 500 con animaciones SVG",
+    "status": "completed",
+    "current_task": 8,
+    "plan": "specs/error-pages/tasks.md"
   }
 ]

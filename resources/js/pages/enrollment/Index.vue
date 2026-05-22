@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, toRef } from 'vue'
 import { Head, setLayoutProps } from '@inertiajs/vue3'
 import { useMediaQuery } from '@vueuse/core'
 import AppIcon from '@/components/UI/AppIcon.vue'
@@ -8,13 +8,25 @@ import EnrollmentMateriaRow from '@/components/enrollment/EnrollmentMateriaRow.v
 import EnrollmentSummaryPanel from '@/components/enrollment/EnrollmentSummaryPanel.vue'
 import { useEnrollmentState } from '@/composables/enrollment/useEnrollmentState'
 import { useEnrollmentFilters } from '@/composables/enrollment/useEnrollmentFilters'
-import {
-    ENROLLMENT_SUBJECTS,
-    ENROLLMENT_RULES,
-    ENROLLMENT_INITIAL_SELECTIONS,
-} from '@/composables/enrollment/enrollmentMockData'
+import { useEnrollmentForm } from '@/composables/enrollment/useEnrollmentForm'
+import { useEnrollmentPermissions } from '@/composables/enrollment/useEnrollmentPermissions'
+import { backendToCatalog } from '@/types/enrollment'
 import { index as enrollmentIndex } from '@/routes/enrollment'
-import type { EnrollmentSelections, EnrollmentGhostCandidate } from '@/types/enrollment'
+import type {
+    BackendEnrollment,
+    BackendEnrollmentSubject,
+    BackendEnrollmentRules,
+    EnrollmentSelections,
+    EnrollmentRules,
+    EnrollmentGhostCandidate,
+} from '@/types/enrollment'
+
+const props = defineProps<{
+    enrollment: BackendEnrollment | null
+    catalog: BackendEnrollmentSubject[]
+    rules: BackendEnrollmentRules
+    can: { confirm: boolean }
+}>()
 
 setLayoutProps({
     breadcrumbs: [
@@ -25,19 +37,64 @@ setLayoutProps({
 
 const isMobile = useMediaQuery('(max-width: 820px)')
 
-// State
-const selections = ref<EnrollmentSelections>({ ...ENROLLMENT_INITIAL_SELECTIONS })
+// ---------------------------------------------------------------------------
+// Map backend data to UI types
+// ---------------------------------------------------------------------------
+
+const subjects = computed(() => backendToCatalog(props.catalog))
+
+const uiRules = computed<EnrollmentRules>(() => ({
+    creditsMin: props.rules.credits_min,
+    creditsMax: props.rules.credits_max,
+    period: props.rules.period ?? '—',
+    studentName: props.rules.student_name,
+    studentCode: props.rules.student_code,
+    career: props.rules.career,
+    trimester: props.rules.trimester,
+    deadline: props.rules.deadline ?? '—',
+    daysLeft: props.rules.days_left,
+}))
+
+// ---------------------------------------------------------------------------
+// Selections: initialized from existing draft details via catalog
+// ---------------------------------------------------------------------------
+
+const selections = ref<EnrollmentSelections>(
+    Object.fromEntries(
+        props.catalog
+            .filter(s => s.selected_section_id !== null)
+            .flatMap(s => {
+                const idx = s.sections.findIndex(sec => sec.id === s.selected_section_id)
+                return idx >= 0 ? [[s.code, idx]] : []
+            })
+    )
+)
+
+// ---------------------------------------------------------------------------
+// State: composables
+// ---------------------------------------------------------------------------
+
 const expanded = ref(new Set<string>())
 const ghost = ref<EnrollmentGhostCandidate | null>(null)
 
-// Composables
-const { search, filters, filteredSubjects } = useEnrollmentFilters(ENROLLMENT_SUBJECTS)
-const { summary, creditsPct, creditsStatus, findConflict, select, unselect } =
+const { search, filters, filteredSubjects } = useEnrollmentFilters(subjects.value)
+
+const { summary, creditsPct, creditsStatus, findConflict } =
     useEnrollmentState(
-        ENROLLMENT_SUBJECTS,
+        subjects.value,
         selections,
         fn => { selections.value = fn(selections.value) },
     )
+
+const enrollmentRef = toRef(props, 'enrollment')
+const { addSubject, removeSubject, confirmEnrollment, isLoading, error, clearError } =
+    useEnrollmentForm(enrollmentRef, selections)
+
+const { canConfirm, isReadOnly } = useEnrollmentPermissions(enrollmentRef, props.can)
+
+// ---------------------------------------------------------------------------
+// Handlers
+// ---------------------------------------------------------------------------
 
 function toggleExpanded(code: string): void {
     const next = new Set(expanded.value)
@@ -49,8 +106,22 @@ function toggleExpanded(code: string): void {
     expanded.value = next
 }
 
-function handleConfirm(): void {
-    alert('Inscripción confirmada (demo)')
+function handleSelect(code: string, sectionIdx: number): void {
+    const subject = subjects.value.find(s => s.code === code)
+    const section = subject?.sections[sectionIdx]
+    if (! subject?.id || ! section?.id) {
+        return
+    }
+    void addSubject(subject.id, section.id, code, sectionIdx)
+}
+
+function handleUnselect(code: string): void {
+    void removeSubject(code)
+}
+
+async function handleConfirm(): Promise<void> {
+    clearError()
+    await confirmEnrollment()
 }
 </script>
 
@@ -60,7 +131,7 @@ function handleConfirm(): void {
     <!-- Page header -->
     <div class="enr-page-head">
         <div class="enr-page-head-l">
-            <span class="enr-page-eyebrow">Período {{ ENROLLMENT_RULES.period }} · {{ ENROLLMENT_RULES.trimester }}</span>
+            <span class="enr-page-eyebrow">Período {{ uiRules.period }} · {{ uiRules.trimester }}</span>
             <h1 class="enr-page-title">Inscripción de materias</h1>
             <p class="enr-page-sub">
                 Selecciona las materias y secciones que cursarás este trimestre.
@@ -68,18 +139,34 @@ function handleConfirm(): void {
             </p>
         </div>
         <div class="enr-page-head-r">
-            <div class="enr-deadline">
+            <div v-if="uiRules.deadline !== '—'" class="enr-deadline">
                 <AppIcon name="clock" :size="13" />
                 <div>
-                    <div class="enr-deadline-t">Cierra el <strong>{{ ENROLLMENT_RULES.deadline }}</strong></div>
-                    <div class="enr-deadline-s">faltan {{ ENROLLMENT_RULES.daysLeft }} días</div>
+                    <div class="enr-deadline-t">Cierra el <strong>{{ uiRules.deadline }}</strong></div>
+                    <div class="enr-deadline-s">faltan {{ uiRules.daysLeft }} días</div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Error banner -->
+    <div v-if="error" class="enr-error-banner" role="alert">
+        <AppIcon name="alert-triangle" :size="14" />
+        <span>{{ error }}</span>
+        <button class="enr-error-close" @click="clearError">
+            <AppIcon name="x" :size="12" />
+        </button>
+    </div>
+
+    <!-- Empty state: no active period or no pensum -->
+    <div v-if="! enrollment" class="enr-empty-state">
+        <AppIcon name="calendar-x" :size="32" />
+        <div class="enr-empty-state-t">No hay período activo</div>
+        <div class="enr-empty-state-s">El proceso de inscripción no está disponible en este momento.</div>
+    </div>
+
     <!-- Layout -->
-    <div :class="['enr-layout', isMobile ? 'enr-layout--mobile' : 'enr-layout--split']">
+    <div v-else :class="['enr-layout', isMobile ? 'enr-layout--mobile' : 'enr-layout--split']">
         <!-- Main panel -->
         <div class="enr-main">
             <EnrollmentToolbar
@@ -105,8 +192,8 @@ function handleConfirm(): void {
                     :expanded="expanded.has(subject.code)"
                     :find-conflict="findConflict"
                     @toggle="toggleExpanded(subject.code)"
-                    @select="(code, idx) => select(code, idx)"
-                    @unselect="(code) => unselect(code)"
+                    @select="(code, idx) => handleSelect(code, idx)"
+                    @unselect="(code) => handleUnselect(code)"
                     @ghost-enter="g => ghost = g"
                     @ghost-leave="ghost = null"
                 />
@@ -117,10 +204,10 @@ function handleConfirm(): void {
         <aside class="enr-aside">
             <EnrollmentSummaryPanel
                 :summary="summary"
-                :rules="ENROLLMENT_RULES"
+                :rules="uiRules"
                 :credits-pct="creditsPct"
                 :credits-status="creditsStatus"
-                :subjects="ENROLLMENT_SUBJECTS"
+                :subjects="subjects"
                 :selections="selections"
                 :ghost="isMobile ? null : ghost"
                 :mobile="isMobile"
@@ -175,6 +262,43 @@ function handleConfirm(): void {
 }
 .enr-deadline-t { font-size: 13px; color: var(--text-primary); }
 .enr-deadline-s { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); }
+
+/* Error banner */
+.enr-error-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    background: color-mix(in srgb, var(--error, #dc2626) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--error, #dc2626) 30%, transparent);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    color: var(--error, #dc2626);
+}
+.enr-error-banner span { flex: 1; }
+.enr-error-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    color: inherit;
+    opacity: 0.6;
+}
+.enr-error-close:hover { opacity: 1; }
+
+/* Empty state */
+.enr-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 64px 20px;
+    color: var(--text-muted);
+    text-align: center;
+}
+.enr-empty-state-t { font-size: 16px; font-weight: 500; color: var(--text-secondary); }
+.enr-empty-state-s { font-size: 13px; max-width: 40ch; }
 
 /* Layout: split (desktop) */
 .enr-layout { display: flex; gap: 20px; align-items: flex-start; }

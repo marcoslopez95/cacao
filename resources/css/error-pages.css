@@ -1,0 +1,345 @@
+/* ============================================================
+   CACAO Error Pages — shared styles (ep-* namespace)
+   ============================================================ */
+
+/* --- Layout ------------------------------------------------- */
+
+.ep-root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: var(--bg-surface-2);
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+}
+
+.ep-shell {
+  display: grid;
+  place-items: center;
+  padding: clamp(20px, 5vw, 56px);
+}
+
+.ep-error {
+  width: 100%;
+  max-width: 1080px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(28px, 5vw, 64px);
+}
+
+@media (min-width: 820px) {
+  .ep-error {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(48px, 6vw, 96px);
+    align-items: center;
+  }
+}
+
+.ep-art {
+  aspect-ratio: 1 / 1;
+  max-width: 460px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (min-width: 820px) {
+  .ep-art {
+    max-width: none;
+    margin: 0;
+  }
+}
+
+.ep-art svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ep-paper {
+  fill: var(--bg-surface);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.ep-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: center;
+}
+
+@media (min-width: 820px) {
+  .ep-copy {
+    text-align: left;
+  }
+}
+
+/* --- Status pill -------------------------------------------- */
+
+.ep-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  width: fit-content;
+  margin: 0 auto;
+  animation: ep-fadeInUp 0.55s ease 0.08s both;
+}
+
+@media (min-width: 820px) {
+  .ep-status {
+    margin: 0;
+  }
+}
+
+.ep-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  animation: ep-pulse 2.4s ease-in-out infinite;
+}
+
+.ep-code {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.ep-sep {
+  width: 1px;
+  height: 12px;
+  background: var(--border-strong);
+  flex-shrink: 0;
+}
+
+/* --- Typography -------------------------------------------- */
+
+.ep-title {
+  margin: 0;
+  font-size: clamp(34px, 4.5vw, 56px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  animation: ep-fadeInUp 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) 0.20s both;
+}
+
+.ep-title em {
+  color: var(--accent);
+  font-style: normal;
+}
+
+.ep-lead {
+  margin: 0;
+  font-size: clamp(16px, 2vw, 19px);
+  line-height: 1.6;
+  color: var(--text-secondary);
+  animation: ep-fadeInUp 0.65s ease 0.34s both;
+}
+
+/* --- Actions ----------------------------------------------- */
+
+.ep-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  animation: ep-fadeInUp 0.65s ease 0.48s both;
+}
+
+@media (min-width: 820px) {
+  .ep-actions {
+    justify-content: flex-start;
+  }
+}
+
+.ep-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 20px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, opacity 0.15s;
+}
+
+.ep-btn--primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.ep-btn--primary:hover {
+  background: var(--accent-hover);
+}
+
+.ep-btn--ghost {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+}
+
+.ep-btn--ghost:hover {
+  background: var(--bg-sunken);
+}
+
+.ep-btn--link {
+  height: auto;
+  padding: 0 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.ep-btn--link:hover {
+  color: var(--text-primary);
+}
+
+/* --- Footer ------------------------------------------------ */
+
+.ep-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px clamp(20px, 5vw, 56px);
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+}
+
+.ep-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ep-mark {
+  display: inline-grid;
+  grid-template-columns: repeat(3, 4px);
+  grid-template-rows: repeat(3, 4px);
+  gap: 1px;
+}
+
+.ep-mark span {
+  border-radius: 1px;
+  background: var(--text-muted);
+}
+
+.ep-m-accent {
+  background: var(--accent) !important;
+}
+
+.ep-m-empty {
+  background: transparent !important;
+}
+
+.ep-service {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ep-live {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: ep-live 2s ease-in-out infinite;
+}
+
+/* --- Shared keyframes -------------------------------------- */
+
+@keyframes ep-fadeInUp {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ep-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--accent) 50%, transparent); }
+  50%      { box-shadow: 0 0 0 7px color-mix(in oklab, var(--accent) 0%, transparent); }
+}
+
+@keyframes ep-live {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 1; }
+}
+
+@keyframes ep-cellDrop {
+  0%   { opacity: 0; transform: translateY(-14px) scale(0.7); }
+  65%  { opacity: 1; transform: translateY(1px) scale(1.03); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* --- Incident block (500) ---------------------------------- */
+
+.ep-incident {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.ep-incident-id {
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.ep-copy-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.ep-copy-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-muted);
+}
+
+/* --- Reduced motion ---------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .ep-status,
+  .ep-title,
+  .ep-lead,
+  .ep-actions,
+  .ep-dot,
+  .ep-live {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .ep-status  { transform: none !important; }
+  .ep-title   { transform: none !important; }
+  .ep-lead    { transform: none !important; }
+  .ep-actions { transform: none !important; }
+}

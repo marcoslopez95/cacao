@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Enrollment;
+use App\Models\Student;
 use App\Models\User;
 
 class EnrollmentPolicy
@@ -35,9 +36,16 @@ class EnrollmentPolicy
 
     /**
      * Determine whether the user can create enrollments.
+     * When $student is provided, checks that the guardian owns that student.
      */
-    public function create(User $user): bool
+    public function create(User $user, ?Student $student = null): bool
     {
+        if ($student) {
+            return $user->guardian?->students()
+                ->where('id', $student->id)
+                ->exists() ?? false;
+        }
+
         return $user->student()->exists() || $user->guardian()->exists();
     }
 

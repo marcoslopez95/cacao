@@ -1,3 +1,78 @@
+# Orquestación de Agentes SDD — CACAO
+
+> Este archivo define los roles y el flujo del arnés Subagent-Driven Development (SDD) para el proyecto CACAO.
+> Las guías de Laravel Boost siguen a continuación — ambas secciones son activas.
+
+---
+
+## Roles
+
+| Rol | Archivo | Responsabilidad |
+|-----|---------|----------------|
+| `leader` | `.claude/agents/leader.md` | Orquesta el trabajo. Lee `feature_list.json` y `progress/current.md`. Delega al agente correcto. **Nunca toca código de la aplicación.** |
+| `spec_author` | `.claude/agents/spec_author.md` | Escribe/actualiza specs en `specs/{feature}/`. Genera `requirements.md`, `design.md`, `tasks.md`. Espera aprobación humana antes de que el implementer arranque. |
+| `implementer` | `.claude/agents/implementer.md` | Ejecuta `tasks.md` línea por línea. Crea código de la aplicación. Sigue la arquitectura de `CLAUDE.md` sin excepciones. |
+| `reviewer` | `.claude/agents/reviewer.md` | Verifica implementación contra `tasks.md` y `CHECKPOINTS.md`. Reporta pasa/falla con evidencia (archivo + línea). **Nunca arregla código.** |
+
+---
+
+## Flujo completo
+
+```
+feature_list.json
+    → leader lee estado → spec_author escribe specs
+    → aprobación humana ← PUNTO DE CONTROL OBLIGATORIO
+    → implementer ejecuta task a task
+    → reviewer verifica cada task
+    → si pasa: leader actualiza progress/, implementer continúa con siguiente task
+    → si falla: leader reporta hallazgos → implementer corrige → reviewer re-verifica
+    → todas las tasks [x] → leader marca feature como completed en feature_list.json
+```
+
+---
+
+## Reglas inamovibles
+
+### Arquitectura backend (OBLIGATORIA)
+
+```
+FormRequest → Controller → Wrapper → Action → Resource
+```
+
+- `FormRequest::authorize()` usa Policy — sin `if ($user->role === ...)` nunca
+- Controller máximo 8 líneas por método — crea Wrapper, inyecta Action, retorna Resource
+- Wrapper extiende `Illuminate\Support\Collection` con getters tipados
+- Action recibe Wrapper tipado — nunca `array $validated`
+- Action con método único `handle()` — solo lógica de negocio y DB writes
+
+### Arquitectura frontend (OBLIGATORIA)
+
+```
+Page (solo imports + template) → FormComposable + PermissionComposable → Types
+```
+
+- `router.post/.put/.delete` solo dentro de composables de form — nunca en páginas
+- `usePage().props.auth` solo en composables de permisos
+- Rutas siempre via Wayfinder — nunca strings hardcodeados
+
+### Herramientas obligatorias
+
+- **Tests:** Pest v4 — nunca PHPUnit directo
+- **Pint:** `vendor/bin/sail bin pint --dirty --format agent` después de CADA cambio PHP
+- **Wayfinder:** para todas las rutas frontend
+- **Comandos:** siempre con prefijo `vendor/bin/sail`
+
+---
+
+## Estado actual del arnés
+
+- **Feature activa:** `01-enrollment-backend` — ver `feature_list.json`
+- **Progreso:** ver `progress/current.md`
+- **Specs:** `specs/enrollment-backend/`
+- **Checkpoints:** `CHECKPOINTS.md`
+
+---
+
 <laravel-boost-guidelines>
 === foundation rules ===
 
@@ -16,6 +91,7 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/prompts (PROMPTS) - v0
 - laravel/wayfinder (WAYFINDER) - v0
 - laravel/boost (BOOST) - v2
+- laravel/dusk (DUSK) - v8
 - laravel/mcp (MCP) - v0
 - laravel/pail (PAIL) - v1
 - laravel/pint (PINT) - v1

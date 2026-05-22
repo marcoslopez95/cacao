@@ -1,34 +1,30 @@
 # Feature completada
 
-**Feature:** `05-multi-role-login`
-**Plan:** `specs/multi-role-login/tasks.md`
-**Estado:** COMPLETADA — todas las 7 tasks implementadas y pasando
+**Feature:** `06-error-pages`
+**Plan:** `specs/error-pages/tasks.md`
+**Estado:** COMPLETADA
 
-## Tareas completadas
+## Tareas
 
-- [x] Task 1 — Middleware `EnsureRole`
-- [x] Task 2 — Trait `ResolvesLoginRedirect` + fix `LoginResponse` y `TwoFactorLoginResponse`
-- [x] Task 3 — Rutas de portales por rol
-- [x] Task 4 — Controladores de dashboard por rol
-- [x] Task 5 — Feature tests de login multi-rol y acceso a portales (12/12)
-- [x] Task 6 — Páginas Vue de dashboard por rol
-- [x] Task 7 — `AppSidebar.vue` — navegación contextual por rol
+- [x] Task 1 — Wiring Laravel: exception handler + layout exclusion en `app.ts`
+- [x] Task 2 — CSS compartido `resources/css/error-pages.css`
+- [x] Task 3 — Vue page `errors/NotFound` (404)
+- [x] Task 4 — Vue page `errors/AccessDenied` (401/403)
+- [x] Task 5 — Vue page `errors/ServerError` (500)
+- [x] Task 6 — Pest feature tests
+- [x] Task 7 — Vitest component tests
+- [x] Task 8 — Dusk browser tests
 
-## Resumen de la feature
+## Resumen
 
-- `EnsureRole` middleware con alias `role` — protege portales con Spatie `hasAnyRole()`
-- `ResolvesLoginRedirect` trait compartido entre `LoginResponse` y `TwoFactorLoginResponse`
-- Admin (con team) → `/{team}/dashboard`, Profesor → `/professor/dashboard`, Estudiante → `/student/dashboard`, Representante → `/guardian/dashboard`
-- 3 portal dashboards (controllers + Vue pages) con greeting básico
-- `AppSidebar.vue` refactorizado: navGroups por rol (`portalRole` computed)
-- `AppHeader.vue` actualizado con `dashboardUrl` por rol
-- Enrollment routes endurecidas: `role:Estudiante,Representante`
-- Suite: 12 tests nuevos + suite completa pasando
+Páginas de error personalizadas para CACAO implementadas:
+- 404 Not Found: isotipo 3×3 animado con lupa orbital en celda [1,2] y celda terracota con glow en [0,2]
+- 401/403 Access Denied: misma página, prop `status`, candado terracota en [0,2] con animación shackleClick + lockJiggle
+- 500 Server Error: celdas torcidas al aterrizar, sigil rotatorio en [0,2], ID de incidente copiable
+- CSS compartido `resources/css/error-pages.css` con namespace `ep-*`, dark mode, reduced-motion, responsive
+- Suite completa: 6 Pest (HTTP status + props), 15 Vitest (lógica de componente), 5 Dusk (E2E visual)
 
 ## Feature anterior completada
 
-**Feature:** `04-testing-vitest-dusk`
-Task 8 completada: Dusk academic tests + feature_list.json marcado como completado.
-- Vitest configurado con jsdom, @vue/test-utils, coverage v8
-- Dusk instalado con Selenium container en `http://selenium:4444`
-- Tests Dusk: Auth, Dashboard, Enrollment, Academic (Careers + Subjects + Sections)
+**Feature:** `05-multi-role-login`
+Todas las 7 tasks implementadas y pasando.

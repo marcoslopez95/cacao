@@ -48,6 +48,7 @@ vi.mock('@inertiajs/vue3', () => ({
         on: vi.fn(),
     },
     Link: { template: '<a><slot /></a>' },
+    Head: { template: '<div></div>', props: ['title'] },
 }));
 
 // Mock @casl/vue

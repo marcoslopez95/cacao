@@ -254,7 +254,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('enrollment_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('enrollment_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('enrollment_id')->constrained()->restrictOnDelete();
             $table->foreignId('subject_id')->constrained()->restrictOnDelete();
             $table->foreignId('section_id')->constrained()->restrictOnDelete();
             $table->enum('status', ['draft', 'confirmed', 'rejected'])->default('draft');
@@ -460,6 +460,7 @@ namespace App\Services\Enrollment;
 
 use App\Models\Student;
 use App\Models\Subject;
+use Illuminate\Support\Facades\DB;
 
 class PrerequisiteValidator
 {
@@ -473,7 +474,7 @@ class PrerequisiteValidator
     public function canTake(Student $student, Subject $subject): bool {
         // Get prerequisites for the subject
         $prerequisites = $subject->prerequisites()
-            ->pluck('prerequisites.id')
+            ->pluck('id')
             ->toArray();
 
         // If no prerequisites, student can take it
@@ -486,7 +487,7 @@ class PrerequisiteValidator
         // Passing grade threshold: typically 10 or 60% depending on institution
         $passingGrade = 10; // Adjust based on your grading system
 
-        $passedSubjects = \DB::table('grades')
+        $passedSubjects = DB::table('grades')
             ->where('student_id', $student->id)
             ->whereIn('subject_id', $prerequisites)
             ->where('grade', '>=', $passingGrade)
@@ -506,7 +507,7 @@ class PrerequisiteValidator
      */
     public function getMissingPrerequisites(Student $student, Subject $subject): array {
         $prerequisites = $subject->prerequisites()
-            ->pluck('prerequisites.id')
+            ->pluck('id')
             ->toArray();
 
         if (empty($prerequisites)) {
@@ -514,7 +515,7 @@ class PrerequisiteValidator
         }
 
         $passingGrade = 10;
-        $passedSubjects = \DB::table('grades')
+        $passedSubjects = DB::table('grades')
             ->where('student_id', $student->id)
             ->whereIn('subject_id', $prerequisites)
             ->where('grade', '>=', $passingGrade)
@@ -625,7 +626,7 @@ class EnrollmentCacheManager
         
         return Cache::remember($key, 3600, function () use ($subject) {
             return $subject->prerequisites()
-                ->pluck('prerequisites.id')
+                ->pluck('id')
                 ->toArray();
         });
     }
@@ -644,7 +645,7 @@ class EnrollmentCacheManager
             
             return [
                 'id' => $pensum->id,
-                'uc' => $pensum->total_credits,
+                'uc' => $pensum->subjects()->sum('credits_uc'),
                 'subjects' => $pensum->subjects()
                     ->pluck('subjects.id')
                     ->toArray(),
@@ -707,7 +708,7 @@ class EnrollmentService
     public function calculateEnrolledCredits(Enrollment $enrollment): int {
         return $enrollment->confirmedDetails()
             ->join('subjects', 'enrollment_details.subject_id', '=', 'subjects.id')
-            ->sum('subjects.credits');
+            ->sum('subjects.credits_uc');
     }
 
     /**
@@ -826,17 +827,11 @@ class EnrollmentServiceTest extends TestCase
         $student = Student::factory()->create();
         $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
         
-        $subject1 = Subject::factory()->create(['credits' => 3]);
-        $subject2 = Subject::factory()->create(['credits' => 4]);
-        
-        $section1 = $subject1->sections()->first() ?? $subject1->sections()->create([
-            'code' => 'S1',
-            'capacity' => 30,
-        ]);
-        $section2 = $subject2->sections()->first() ?? $subject2->sections()->create([
-            'code' => 'S2',
-            'capacity' => 30,
-        ]);
+        $subject1 = Subject::factory()->create(['credits_uc' => 3]);
+        $subject2 = Subject::factory()->create(['credits_uc' => 4]);
+
+        $section1 = Section::factory()->create(['subject_id' => $subject1->id]);
+        $section2 = Section::factory()->create(['subject_id' => $subject2->id]);
 
         EnrollmentDetail::create([
             'enrollment_id' => $enrollment->id,
@@ -863,15 +858,13 @@ class EnrollmentServiceTest extends TestCase
     }
 
     public function test_has_quota_returns_false_when_exhausted(): void {
-        $section = Section::factory()->create(['capacity' => 1]);
         $enrollment = Enrollment::factory()->create();
-        
-        Subject::factory()->create()
-            ->sections()->save($section);
+        $subject = Subject::factory()->create();
+        $section = Section::factory()->create(['subject_id' => $subject->id, 'capacity' => 1]);
 
         EnrollmentDetail::create([
             'enrollment_id' => $enrollment->id,
-            'subject_id' => $section->subjects()->first()->id,
+            'subject_id' => $subject->id,
             'section_id' => $section->id,
             'status' => 'confirmed',
         ]);
@@ -905,7 +898,7 @@ git commit -m "feat: add EnrollmentCacheManager and EnrollmentService"
 **Files:**
 - Create: `app/Policies/EnrollmentPolicy.php`
 - Create: `app/Policies/EnrollmentDetailPolicy.php`
-- Modify: `app/Providers/AuthServiceProvider.php` — register policies
+- Modify: `app/Providers/AppServiceProvider.php` — register policies
 
 - [ ] **Step 1: Create EnrollmentPolicy**
 
@@ -1028,13 +1021,12 @@ class EnrollmentDetailPolicy
 }
 ```
 
-- [ ] **Step 3: Register policies in AuthServiceProvider**
+- [ ] **Step 3: Register policies in AppServiceProvider**
 
 ```php
-// app/Providers/AuthServiceProvider.php
-// Add to protected $policies array:
-\App\Models\Enrollment::class => \App\Policies\EnrollmentPolicy::class,
-\App\Models\EnrollmentDetail::class => \App\Policies\EnrollmentDetailPolicy::class,
+// app/Providers/AppServiceProvider.php — dentro de configureAuthorization()
+Gate::policy(\App\Models\Enrollment::class, \App\Policies\EnrollmentPolicy::class);
+Gate::policy(\App\Models\EnrollmentDetail::class, \App\Policies\EnrollmentDetailPolicy::class);
 ```
 
 - [ ] **Step 4: Commit**
@@ -1042,7 +1034,7 @@ class EnrollmentDetailPolicy
 ```bash
 git add app/Policies/EnrollmentPolicy.php \
          app/Policies/EnrollmentDetailPolicy.php \
-         app/Providers/AuthServiceProvider.php
+         app/Providers/AppServiceProvider.php
 git commit -m "feat: add Enrollment and EnrollmentDetail policies"
 ```
 
@@ -1188,7 +1180,7 @@ class EnrollmentDetailResource extends JsonResource
                 'id' => $this->subject->id,
                 'code' => $this->subject->code,
                 'name' => $this->subject->name,
-                'credits' => $this->subject->credits,
+                'credits_uc' => $this->subject->credits_uc,
             ],
             'section_id' => $this->section_id,
             'section' => [
@@ -1214,7 +1206,69 @@ git commit -m "feat: add Enrollment Form Requests and Resources"
 
 ---
 
-## Task 7: Actions
+## Task 7: Wrappers
+
+**Files:**
+- Create: `app/Http/Wrappers/Enrollment/EnrollmentWrapper.php`
+- Create: `app/Http/Wrappers/Enrollment/EnrollmentDetailWrapper.php`
+
+- [ ] **Step 1: Create EnrollmentWrapper**
+
+```php
+// app/Http/Wrappers/Enrollment/EnrollmentWrapper.php
+<?php
+
+namespace App\Http\Wrappers\Enrollment;
+
+use App\Models\Student;
+use Illuminate\Support\Collection;
+
+class EnrollmentWrapper extends Collection
+{
+    public function getStudent(): Student {
+        if ($this->get('student_id')) {
+            return Student::findOrFail($this->get('student_id'));
+        }
+
+        return request()->user()->student;
+    }
+}
+```
+
+- [ ] **Step 2: Create EnrollmentDetailWrapper**
+
+```php
+// app/Http/Wrappers/Enrollment/EnrollmentDetailWrapper.php
+<?php
+
+namespace App\Http\Wrappers\Enrollment;
+
+use App\Models\Section;
+use App\Models\Subject;
+use Illuminate\Support\Collection;
+
+class EnrollmentDetailWrapper extends Collection
+{
+    public function getSubject(): Subject {
+        return Subject::findOrFail($this->get('subject_id'));
+    }
+
+    public function getSection(): Section {
+        return Section::findOrFail($this->get('section_id'));
+    }
+}
+```
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add app/Http/Wrappers/Enrollment/*.php
+git commit -m "feat: add Enrollment Wrappers"
+```
+
+---
+
+## Task 8: Actions
 
 **Files:**
 - Create: `app/Actions/Enrollment/CreateEnrollmentAction.php`
@@ -1236,13 +1290,13 @@ use App\Models\Student;
 class CreateEnrollmentAction
 {
     public function handle(Student $student): Enrollment {
-        $currentPeriod = Period::where('is_active', true)->firstOrFail();
+        $currentPeriod = Period::where('status', \App\Enums\PeriodStatus::Active)->firstOrFail();
 
         return Enrollment::create([
             'student_id' => $student->id,
             'period_id' => $currentPeriod->id,
             'pensum_id' => $student->current_pensum_id,
-            'uc_disponibles' => $student->pensum->total_credits ?? 0,
+            'uc_disponibles' => $student->pensum ? $student->pensum->subjects()->sum('credits_uc') : 0,
             'uc_inscritas' => 0,
             'status' => 'draft',
         ]);
@@ -1361,7 +1415,7 @@ class ConfirmEnrollmentAction
             $totalCredits = $enrollment->details()
                 ->where('status', 'confirmed')
                 ->join('subjects', 'enrollment_details.subject_id', '=', 'subjects.id')
-                ->sum('subjects.credits');
+                ->sum('subjects.credits_uc');
 
             $enrollment->update([
                 'status' => 'confirmed',
@@ -1383,7 +1437,7 @@ git commit -m "feat: add Enrollment actions (create, add detail, confirm)"
 
 ---
 
-## Task 8: Controller & Endpoints
+## Task 9: Controller & Endpoints
 
 **Files:**
 - Create: `app/Http/Controllers/Enrollment/EnrollmentController.php`
@@ -1440,8 +1494,8 @@ class EnrollmentController extends Controller
      * POST /enrollment — Create enrollment
      */
     public function store(StoreEnrollmentRequest $request, CreateEnrollmentAction $action) {
-        $student = $request->getStudent();
-        $enrollment = $action->handle($student);
+        $wrapper = new \App\Http\Wrappers\Enrollment\EnrollmentWrapper($request->validated());
+        $enrollment = $action->handle($wrapper->getStudent());
 
         return response()->json(new EnrollmentResource($enrollment), 201);
     }
@@ -1456,8 +1510,9 @@ class EnrollmentController extends Controller
     ) {
         $this->authorize('update', $enrollment);
 
-        $subject = $request->getSubject();
-        $section = $request->getSection();
+        $wrapper = new \App\Http\Wrappers\Enrollment\EnrollmentDetailWrapper($request->validated());
+        $subject = $wrapper->getSubject();
+        $section = $wrapper->getSection();
 
         // Fast validation
         $validation = $this->service->validateAddSubject($enrollment, $subject, $section);
@@ -1546,7 +1601,7 @@ git commit -m "feat: add EnrollmentController with 5 endpoints"
 
 ---
 
-## Task 9: Feature Tests
+## Task 10: Feature Tests
 
 **Files:**
 - Create: `tests/Feature/Enrollment/EnrollmentControllerTest.php`
@@ -1557,8 +1612,7 @@ git commit -m "feat: add EnrollmentController with 5 endpoints"
 // tests/Feature/Enrollment/EnrollmentControllerTest.php
 <?php
 
-namespace Tests\Feature\Enrollment;
-
+use App\Enums\PeriodStatus;
 use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\Guardian;
@@ -1568,217 +1622,207 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class EnrollmentControllerTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class);
 
-    protected function setUp(): void {
-        parent::setUp();
-        Period::factory()->create(['is_active' => true]);
-    }
+beforeEach(function () {
+    Period::factory()->create(['status' => PeriodStatus::Active]);
+});
 
-    public function test_student_can_view_enrollments(): void {
-        $user = User::factory()->create();
-        $student = Student::factory()->create(['user_id' => $user->id]);
-        Enrollment::factory()->create(['student_id' => $student->id]);
+test('student can view enrollments', function () {
+    $user = User::factory()->create();
+    $student = Student::factory()->create(['user_id' => $user->id]);
+    Enrollment::factory()->create(['student_id' => $student->id]);
 
-        $response = $this->actingAs($user)->getJson(route('enrollment.index'));
+    $this->actingAs($user)
+        ->getJson(route('enrollment.index'))
+        ->assertOk()
+        ->assertJsonCount(1, 'enrollments');
+});
 
-        $response->assertOk();
-        $response->assertJsonCount(1, 'enrollments');
-    }
+test('guardian can view students enrollments', function () {
+    $guardianUser = User::factory()->create();
+    $guardian = Guardian::factory()->create(['user_id' => $guardianUser->id]);
 
-    public function test_guardian_can_view_students_enrollments(): void {
-        $guardianUser = User::factory()->create();
-        $guardian = Guardian::factory()->create(['user_id' => $guardianUser->id]);
-        
-        $studentUser = User::factory()->create();
-        $student = Student::factory()->create([
-            'user_id' => $studentUser->id,
-            'guardian_id' => $guardian->id,
-        ]);
-        
-        Enrollment::factory()->create(['student_id' => $student->id]);
+    $studentUser = User::factory()->create();
+    $student = Student::factory()->create([
+        'user_id' => $studentUser->id,
+        'guardian_id' => $guardian->id,
+    ]);
 
-        $response = $this->actingAs($guardianUser)->getJson(route('enrollment.index'));
+    Enrollment::factory()->create(['student_id' => $student->id]);
 
-        $response->assertOk();
-        $response->assertJsonCount(1, 'enrollments');
-    }
+    $this->actingAs($guardianUser)
+        ->getJson(route('enrollment.index'))
+        ->assertOk()
+        ->assertJsonCount(1, 'enrollments');
+});
 
-    public function test_student_cannot_view_other_student_enrollment(): void {
-        $user1 = User::factory()->create();
-        $student1 = Student::factory()->create(['user_id' => $user1->id]);
-        
-        $user2 = User::factory()->create();
-        $student2 = Student::factory()->create(['user_id' => $user2->id]);
-        
-        $enrollment = Enrollment::factory()->create(['student_id' => $student2->id]);
+test('student cannot view other student enrollment', function () {
+    $user1 = User::factory()->create();
+    Student::factory()->create(['user_id' => $user1->id]);
 
-        $response = $this->actingAs($user1)->getJson(route('enrollment.index'));
+    $user2 = User::factory()->create();
+    $student2 = Student::factory()->create(['user_id' => $user2->id]);
 
-        $response->assertOk();
-        $response->assertJsonCount(0, 'enrollments');
-    }
+    Enrollment::factory()->create(['student_id' => $student2->id]);
 
-    public function test_student_can_create_enrollment(): void {
-        $user = User::factory()->create();
-        $student = Student::factory()->create(['user_id' => $user->id]);
+    $this->actingAs($user1)
+        ->getJson(route('enrollment.index'))
+        ->assertOk()
+        ->assertJsonCount(0, 'enrollments');
+});
 
-        $response = $this->actingAs($user)->postJson(route('enrollment.store'));
+test('student can create enrollment', function () {
+    $user = User::factory()->create();
+    $student = Student::factory()->create(['user_id' => $user->id]);
 
-        $response->assertCreated();
-        $this->assertDatabaseHas('enrollments', [
-            'student_id' => $student->id,
-            'status' => 'draft',
-        ]);
-    }
+    $this->actingAs($user)
+        ->postJson(route('enrollment.store'))
+        ->assertCreated();
 
-    public function test_student_can_add_subject_to_enrollment(): void {
-        $user = User::factory()->create();
-        $student = Student::factory()->create(['user_id' => $user->id]);
-        $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
-        
-        $subject = Subject::factory()->create();
-        $section = Section::factory()->create();
-        $subject->sections()->attach($section);
+    $this->assertDatabaseHas('enrollments', [
+        'student_id' => $student->id,
+        'status' => 'draft',
+    ]);
+});
 
-        $response = $this->actingAs($user)
-            ->postJson(route('enrollment.detail.store', $enrollment), [
-                'subject_id' => $subject->id,
-                'section_id' => $section->id,
-            ]);
+test('student can add subject to enrollment', function () {
+    $user = User::factory()->create();
+    $student = Student::factory()->create(['user_id' => $user->id]);
+    $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
 
-        $response->assertCreated();
-        $this->assertDatabaseHas('enrollment_details', [
-            'enrollment_id' => $enrollment->id,
-            'subject_id' => $subject->id,
-            'status' => 'draft',
-        ]);
-    }
+    $subject = Subject::factory()->create();
+    $section = Section::factory()->create(['subject_id' => $subject->id]);
 
-    public function test_student_cannot_add_subject_twice(): void {
-        $user = User::factory()->create();
-        $student = Student::factory()->create(['user_id' => $user->id]);
-        $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
-        
-        $subject = Subject::factory()->create();
-        $section = Section::factory()->create();
-        $subject->sections()->attach($section);
-
-        // Add first time
-        $this->actingAs($user)
-            ->postJson(route('enrollment.detail.store', $enrollment), [
-                'subject_id' => $subject->id,
-                'section_id' => $section->id,
-            ])->assertCreated();
-
-        // Try to add again
-        $response = $this->actingAs($user)
-            ->postJson(route('enrollment.detail.store', $enrollment), [
-                'subject_id' => $subject->id,
-                'section_id' => $section->id,
-            ]);
-
-        $response->assertStatus(422);
-        $response->assertJsonFragment(['error' => 'Ya estás inscrito en esta materia.']);
-    }
-
-    public function test_student_can_remove_subject_from_draft_enrollment(): void {
-        $user = User::factory()->create();
-        $student = Student::factory()->create(['user_id' => $user->id]);
-        $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
-        
-        $detail = EnrollmentDetail::factory()->create([
-            'enrollment_id' => $enrollment->id,
-            'status' => 'draft',
-        ]);
-
-        $response = $this->actingAs($user)
-            ->deleteJson(route('enrollment.detail.destroy', [$enrollment, $detail]));
-
-        $response->assertOk();
-        $this->assertDatabaseHas('enrollment_details', [
-            'id' => $detail->id,
-            'status' => 'rejected',
-        ]);
-    }
-
-    public function test_student_can_confirm_enrollment(): void {
-        $user = User::factory()->create();
-        $student = Student::factory()->create(['user_id' => $user->id]);
-        $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
-        
-        $subject = Subject::factory()->create(['credits' => 3]);
-        $section = Section::factory()->create();
-        $subject->sections()->attach($section);
-
-        EnrollmentDetail::factory()->create([
-            'enrollment_id' => $enrollment->id,
+    $this->actingAs($user)
+        ->postJson(route('enrollment.detail.store', $enrollment), [
             'subject_id' => $subject->id,
             'section_id' => $section->id,
-            'status' => 'draft',
-        ]);
+        ])
+        ->assertCreated();
 
-        $response = $this->actingAs($user)
-            ->postJson(route('enrollment.confirm', $enrollment));
+    $this->assertDatabaseHas('enrollment_details', [
+        'enrollment_id' => $enrollment->id,
+        'subject_id' => $subject->id,
+        'status' => 'draft',
+    ]);
+});
 
-        $response->assertOk();
-        $this->assertDatabaseHas('enrollments', [
-            'id' => $enrollment->id,
-            'status' => 'confirmed',
-        ]);
-    }
+test('student cannot add subject twice', function () {
+    $user = User::factory()->create();
+    $student = Student::factory()->create(['user_id' => $user->id]);
+    $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
 
-    public function test_student_cannot_confirm_empty_enrollment(): void {
-        $user = User::factory()->create();
-        $student = Student::factory()->create(['user_id' => $user->id]);
-        $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
+    $subject = Subject::factory()->create();
+    $section = Section::factory()->create(['subject_id' => $subject->id]);
 
-        $response = $this->actingAs($user)
-            ->postJson(route('enrollment.confirm', $enrollment));
+    // Add first time
+    $this->actingAs($user)
+        ->postJson(route('enrollment.detail.store', $enrollment), [
+            'subject_id' => $subject->id,
+            'section_id' => $section->id,
+        ])->assertCreated();
 
-        $response->assertStatus(422);
-    }
+    // Try to add again
+    $this->actingAs($user)
+        ->postJson(route('enrollment.detail.store', $enrollment), [
+            'subject_id' => $subject->id,
+            'section_id' => $section->id,
+        ])
+        ->assertStatus(422)
+        ->assertJsonFragment(['error' => 'Ya estás inscrito en esta materia.']);
+});
 
-    public function test_guardian_can_enroll_assigned_student(): void {
-        $guardianUser = User::factory()->create();
-        $guardian = Guardian::factory()->create(['user_id' => $guardianUser->id]);
-        
-        $studentUser = User::factory()->create();
-        $student = Student::factory()->create([
-            'user_id' => $studentUser->id,
-            'guardian_id' => $guardian->id,
-        ]);
+test('student can remove subject from draft enrollment', function () {
+    $user = User::factory()->create();
+    $student = Student::factory()->create(['user_id' => $user->id]);
+    $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
 
-        $response = $this->actingAs($guardianUser)
-            ->postJson(route('enrollment.store'), [
-                'student_id' => $student->id,
-            ]);
+    $detail = EnrollmentDetail::factory()->create([
+        'enrollment_id' => $enrollment->id,
+        'status' => 'draft',
+    ]);
 
-        $response->assertCreated();
-        $this->assertDatabaseHas('enrollments', [
+    $this->actingAs($user)
+        ->deleteJson(route('enrollment.detail.destroy', [$enrollment, $detail]))
+        ->assertOk();
+
+    $this->assertDatabaseHas('enrollment_details', [
+        'id' => $detail->id,
+        'status' => 'rejected',
+    ]);
+});
+
+test('student can confirm enrollment', function () {
+    $user = User::factory()->create();
+    $student = Student::factory()->create(['user_id' => $user->id]);
+    $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
+
+    $subject = Subject::factory()->create(['credits_uc' => 3]);
+    $section = Section::factory()->create(['subject_id' => $subject->id]);
+
+    EnrollmentDetail::factory()->create([
+        'enrollment_id' => $enrollment->id,
+        'subject_id' => $subject->id,
+        'section_id' => $section->id,
+        'status' => 'draft',
+    ]);
+
+    $this->actingAs($user)
+        ->postJson(route('enrollment.confirm', $enrollment))
+        ->assertOk();
+
+    $this->assertDatabaseHas('enrollments', [
+        'id' => $enrollment->id,
+        'status' => 'confirmed',
+    ]);
+});
+
+test('student cannot confirm empty enrollment', function () {
+    $user = User::factory()->create();
+    $student = Student::factory()->create(['user_id' => $user->id]);
+    $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
+
+    $this->actingAs($user)
+        ->postJson(route('enrollment.confirm', $enrollment))
+        ->assertStatus(422);
+});
+
+test('guardian can enroll assigned student', function () {
+    $guardianUser = User::factory()->create();
+    $guardian = Guardian::factory()->create(['user_id' => $guardianUser->id]);
+
+    $studentUser = User::factory()->create();
+    $student = Student::factory()->create([
+        'user_id' => $studentUser->id,
+        'guardian_id' => $guardian->id,
+    ]);
+
+    $this->actingAs($guardianUser)
+        ->postJson(route('enrollment.store'), [
             'student_id' => $student->id,
-        ]);
-    }
+        ])
+        ->assertCreated();
 
-    public function test_guardian_cannot_enroll_unassigned_student(): void {
-        $guardianUser = User::factory()->create();
-        Guardian::factory()->create(['user_id' => $guardianUser->id]);
-        
-        $studentUser = User::factory()->create();
-        $student = Student::factory()->create(['user_id' => $studentUser->id]);
+    $this->assertDatabaseHas('enrollments', [
+        'student_id' => $student->id,
+    ]);
+});
 
-        $response = $this->actingAs($guardianUser)
-            ->postJson(route('enrollment.store'), [
-                'student_id' => $student->id,
-            ]);
+test('guardian cannot enroll unassigned student', function () {
+    $guardianUser = User::factory()->create();
+    Guardian::factory()->create(['user_id' => $guardianUser->id]);
 
-        $response->assertForbidden();
-    }
-}
+    $studentUser = User::factory()->create();
+    $student = Student::factory()->create(['user_id' => $studentUser->id]);
+
+    $this->actingAs($guardianUser)
+        ->postJson(route('enrollment.store'), [
+            'student_id' => $student->id,
+        ])
+        ->assertForbidden();
+});
 ```
 
 - [ ] **Step 2: Run feature tests**

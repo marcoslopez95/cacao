@@ -177,3 +177,8 @@ Route::middleware(['auth', 'verified', 'role:Representante'])
     });
 
 require __DIR__.'/settings.php';
+
+if (app()->environment(['testing', 'local'])) {
+    Route::get('/_test/trigger-401', fn () => abort(401))->name('test.trigger401');
+    Route::get('/_test/trigger-500', fn () => abort(500))->name('test.trigger500');
+}
