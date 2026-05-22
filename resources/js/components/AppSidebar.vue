@@ -19,17 +19,58 @@ import { index as schoolSectionsIndex } from '@/routes/scheduling/sections/schoo
 import { index as schedulesIndex } from '@/routes/scheduling/schedules'
 import { edit as profileEdit } from '@/routes/profile'
 import { index as enrollmentIndex } from '@/routes/enrollment'
+import { index as professorDashboard } from '@/actions/App/Http/Controllers/Professor/DashboardController'
+import { index as studentDashboard } from '@/actions/App/Http/Controllers/Student/DashboardController'
+import { index as guardianDashboard } from '@/actions/App/Http/Controllers/Guardian/DashboardController'
 
 const page = usePage()
 
 const currentUrl = computed(() => page.url)
 
-const dashboardUrl = computed(() =>
-    page.props.currentTeam ? dashboard(page.props.currentTeam.slug).url : '/',
-)
+const portalRole = computed(() => {
+    const roles = page.props.auth?.roles ?? []
+    if (roles.includes('Admin')) return 'admin'
+    if (roles.some((r: string) => ['Profesor', 'Coordinador de Area'].includes(r))) return 'professor'
+    if (roles.includes('Estudiante')) return 'student'
+    if (roles.includes('Representante')) return 'guardian'
+    return 'unknown'
+})
+
+const dashboardUrl = computed(() => {
+    if (portalRole.value === 'admin' && page.props.currentTeam) {
+        return dashboard(page.props.currentTeam.slug).url
+    }
+    if (portalRole.value === 'professor') return professorDashboard.url()
+    if (portalRole.value === 'student') return studentDashboard.url()
+    if (portalRole.value === 'guardian') return guardianDashboard.url()
+    return '/'
+})
 
 const navGroups = computed(() => {
-    const groups = [
+    if (portalRole.value === 'professor') {
+        return [
+            { label: 'General', items: [{ icon: 'grid', label: 'Dashboard', href: dashboardUrl.value }] },
+            { label: 'Mi cuenta', items: [{ icon: 'settings', label: 'Configuración', href: profileEdit.url() }] },
+        ]
+    }
+
+    if (portalRole.value === 'student') {
+        return [
+            { label: 'General', items: [{ icon: 'grid', label: 'Dashboard', href: dashboardUrl.value }] },
+            { label: 'Inscripciones', items: [{ icon: 'edit', label: 'Mi inscripción', href: enrollmentIndex.url() }] },
+            { label: 'Mi cuenta', items: [{ icon: 'settings', label: 'Configuración', href: profileEdit.url() }] },
+        ]
+    }
+
+    if (portalRole.value === 'guardian') {
+        return [
+            { label: 'General', items: [{ icon: 'grid', label: 'Dashboard', href: dashboardUrl.value }] },
+            { label: 'Mi cuenta', items: [{ icon: 'settings', label: 'Configuración', href: profileEdit.url() }] },
+        ]
+    }
+
+    // Admin (and unknown fallback) — full navigation
+    const groups: { label: string; items: { icon: string; label: string; href: string }[] }[] = [
         {
             label: 'General',
             items: [
@@ -141,7 +182,7 @@ const navGroups = computed(() => {
     }
 
     groups.push({
-        label: 'Estudiante',
+        label: 'Inscripciones',
         items: [
             { icon: 'edit', label: 'Inscripción', href: enrollmentIndex.url() },
         ],
