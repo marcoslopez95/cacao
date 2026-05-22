@@ -2,6 +2,7 @@
 
 use App\Models\Guardian;
 use App\Models\Period;
+use App\Models\Professor;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -90,4 +91,44 @@ test('returns 404 when user has no guardian profile', function () {
 
     $response = $this->actingAs($user)->get(route('guardian.dashboard'));
     $response->assertStatus(404);
+});
+
+test('guardian cannot access professor portal', function () {
+    $guardian = Guardian::factory()->create();
+    $user = $guardian->user;
+
+    $this->withoutVite()
+        ->actingAs($user)
+        ->get(route('professor.dashboard'))
+        ->assertForbidden();
+});
+
+test('guardian cannot access student portal', function () {
+    $guardian = Guardian::factory()->create();
+    $user = $guardian->user;
+
+    $this->withoutVite()
+        ->actingAs($user)
+        ->get(route('student.dashboard'))
+        ->assertForbidden();
+});
+
+test('professor cannot access guardian portal', function () {
+    $professor = Professor::factory()->create();
+    $user = $professor->user;
+
+    $this->withoutVite()
+        ->actingAs($user)
+        ->get(route('guardian.dashboard'))
+        ->assertForbidden();
+});
+
+test('student cannot access guardian portal', function () {
+    $student = Student::factory()->create();
+    $user = $student->user;
+
+    $this->withoutVite()
+        ->actingAs($user)
+        ->get(route('guardian.dashboard'))
+        ->assertForbidden();
 });
