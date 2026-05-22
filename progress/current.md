@@ -1,30 +1,29 @@
-# Feature completada
+# Feature en progreso
 
-**Feature:** `06-error-pages`
-**Plan:** `specs/error-pages/tasks.md`
-**Estado:** COMPLETADA
+**Feature:** `07-role-dashboards`
+**Plan:** `specs/role-dashboards/tasks.md`
+**Estado:** EN PROGRESO — 0/8 tasks implementadas
 
 ## Tareas
 
-- [x] Task 1 — Wiring Laravel: exception handler + layout exclusion en `app.ts`
-- [x] Task 2 — CSS compartido `resources/css/error-pages.css`
-- [x] Task 3 — Vue page `errors/NotFound` (404)
-- [x] Task 4 — Vue page `errors/AccessDenied` (401/403)
-- [x] Task 5 — Vue page `errors/ServerError` (500)
-- [x] Task 6 — Pest feature tests
-- [x] Task 7 — Vitest component tests
-- [x] Task 8 — Dusk browser tests
+- [ ] Task 1 — Relación `Professor::sections()` + `Professor\DashboardController`
+- [ ] Task 2 — `Student\DashboardController`
+- [ ] Task 3 — `Guardian\DashboardController`
+- [ ] Task 4 — TypeScript types para los tres dashboards
+- [ ] Task 5 — `professor/Dashboard.vue`
+- [ ] Task 6 — `student/Dashboard.vue`
+- [ ] Task 7 — `guardian/Dashboard.vue`
+- [ ] Task 8 — Pest feature tests
 
-## Resumen
+## Contexto de diseño
 
-Páginas de error personalizadas para CACAO implementadas:
-- 404 Not Found: isotipo 3×3 animado con lupa orbital en celda [1,2] y celda terracota con glow en [0,2]
-- 401/403 Access Denied: misma página, prop `status`, candado terracota en [0,2] con animación shackleClick + lockJiggle
-- 500 Server Error: celdas torcidas al aterrizar, sigil rotatorio en [0,2], ID de incidente copiable
-- CSS compartido `resources/css/error-pages.css` con namespace `ep-*`, dark mode, reduced-motion, responsive
-- Suite completa: 6 Pest (HTTP status + props), 15 Vitest (lógica de componente), 5 Dusk (E2E visual)
+- **Profesor**: métricas (secciones, estudiantes totales, horas/sem) + timeline de hoy con badge AHORA
+- **Estudiante**: métricas (materias, UC inscritas, progreso pensum) + mismo patrón timeline; banner CTA si sin inscripción
+- **Representante**: cards por representado con mini-stats (UC inscritas, nota `null`, inasistencias `null`, % pensum), barra de progreso, lista de materias inscritas
+- "AHORA" calculado en backend por hora actual vs `start_time`/`end_time` del schedule
+- "En clase" del representante → placeholder hasta módulo de asistencia
 
 ## Feature anterior completada
 
-**Feature:** `05-multi-role-login`
-Todas las 7 tasks implementadas y pasando.
+**Feature:** `06-error-pages`
+Todas las 8 tasks implementadas. Páginas 404, 401/403 y 500 con animaciones SVG y suite de tests completa.
