@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Professor;
 
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
-class DashboardController extends Controller
+class DashboardController
 {
-    public function index(): never
+    public function index(Request $request): Response
     {
-        abort(501);
+        return Inertia::render('professor/Dashboard');
     }
 }
