@@ -3,7 +3,9 @@
 use App\Models\Guardian;
 use App\Models\Period;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 uses(RefreshDatabase::class);
@@ -81,17 +83,11 @@ test('guardian dashboard student entry has nota_promedio and inasistencias as nu
         );
 });
 
-test('guardian without linked guardian record gets 404', function () {
-    // A user with Representante role but no Guardian model should get a 404
-    $guardian = Guardian::factory()->create();
-    $user = $guardian->user;
+test('returns 404 when user has no guardian profile', function () {
+    $role = Role::firstOrCreate(['name' => 'Representante', 'guard_name' => 'web']);
+    $user = User::factory()->create();
+    $user->assignRole($role);
 
-    // Delete the guardian record so the user has no guardian
-    $guardian->students()->delete();
-    $guardian->delete();
-
-    $this->withoutVite()
-        ->actingAs($user)
-        ->get(route('guardian.dashboard'))
-        ->assertNotFound();
+    $response = $this->actingAs($user)->get(route('guardian.dashboard'));
+    $response->assertStatus(404);
 });
