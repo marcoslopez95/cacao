@@ -20,6 +20,7 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         $professor = $user->professor;
+        abort_unless($professor !== null, 404);
         $period = Period::where('status', PeriodStatus::Active)->first();
 
         $now = now();
