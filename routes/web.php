@@ -3,6 +3,7 @@
 use App\Http\Controllers\Academic\CareerCategoryController;
 use App\Http\Controllers\Academic\CareerController;
 use App\Http\Controllers\Academic\PensumController;
+use App\Http\Controllers\Academic\StudentController;
 use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Admin\GradeConfigController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
@@ -84,6 +85,8 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
 });
 
 Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->group(function () {
+    Route::get('students', [StudentController::class, 'index'])->name('students.index');
+
     Route::get('career-categories', [CareerCategoryController::class, 'index'])->name('career-categories.index');
     Route::post('career-categories', [CareerCategoryController::class, 'store'])->name('career-categories.store');
     Route::patch('career-categories/{careerCategory}', [CareerCategoryController::class, 'update'])->name('career-categories.update');

@@ -2,9 +2,11 @@
 
 namespace App\Services\Enrollment;
 
+use App\Enums\EnrollmentDetailStatus;
+use App\Enums\EnrollmentStatus;
+use App\Models\EnrollmentDetail;
 use App\Models\Student;
 use App\Models\Subject;
-use Illuminate\Support\Facades\DB;
 
 class PrerequisiteValidator
 {
@@ -16,14 +18,9 @@ class PrerequisiteValidator
             return true;
         }
 
-        $passedSubjects = DB::table('grades')
-            ->where('student_id', $student->id)
-            ->whereIn('subject_id', $prerequisites)
-            ->where('grade', '>=', 10)
-            ->pluck('subject_id')
-            ->toArray();
+        $passedIds = $this->getPassedSubjectIds($student, $prerequisites);
 
-        return count($passedSubjects) === count($prerequisites);
+        return count($passedIds) === count($prerequisites);
     }
 
     public function getMissingPrerequisites(Student $student, Subject $subject): array
@@ -34,13 +31,25 @@ class PrerequisiteValidator
             return [];
         }
 
-        $passedSubjects = DB::table('grades')
-            ->where('student_id', $student->id)
-            ->whereIn('subject_id', $prerequisites)
-            ->where('grade', '>=', 10)
+        $passedIds = $this->getPassedSubjectIds($student, $prerequisites);
+
+        return array_diff($prerequisites, $passedIds);
+    }
+
+    /**
+     * @param  int[]  $subjectIds
+     * @return int[]
+     */
+    private function getPassedSubjectIds(Student $student, array $subjectIds): array
+    {
+        return EnrollmentDetail::whereHas(
+            'enrollment',
+            fn ($q) => $q->where('student_id', $student->id)
+                ->where('status', EnrollmentStatus::Approved->value)
+        )
+            ->whereIn('subject_id', $subjectIds)
+            ->where('status', EnrollmentDetailStatus::Confirmed->value)
             ->pluck('subject_id')
             ->toArray();
-
-        return array_diff($prerequisites, $passedSubjects);
     }
 }

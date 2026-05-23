@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3'
+import { Head, Link, setLayoutProps } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 import { sheet as sheetRoute } from '@/routes/professor/grades'
 import { useGradeEntryForm } from '@/composables/forms/useGradeEntryForm'
@@ -16,14 +16,12 @@ type Props = {
 
 const props = defineProps<Props>()
 
-defineOptions({
-    layout: {
-        breadcrumbs: [
-            { title: 'Profesor', href: '#' },
-            { title: props.sheet.subject_name },
-            { title: 'Notas' },
-        ],
-    },
+setLayoutProps({
+    breadcrumbs: [
+        { title: 'Profesor', href: '#' },
+        { title: props.sheet.subject_name },
+        { title: 'Notas' },
+    ],
 })
 
 const { saveStates, cellKey, upsertEntry, publishSlot, enableRemedial } = useGradeEntryForm(props.sheet.section_id)

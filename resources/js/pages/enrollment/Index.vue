@@ -87,10 +87,10 @@ const { summary, creditsPct, creditsStatus, findConflict } =
     )
 
 const enrollmentRef = toRef(props, 'enrollment')
-const { addSubject, removeSubject, confirmEnrollment, isLoading, error, clearError } =
-    useEnrollmentForm(enrollmentRef, selections)
-
 const { canConfirm, isReadOnly } = useEnrollmentPermissions(enrollmentRef, props.can)
+
+const { addSubject, removeSubject, confirmEnrollment, isLoading, error, clearError } =
+    useEnrollmentForm(enrollmentRef, selections, isReadOnly)
 
 // ---------------------------------------------------------------------------
 // Handlers
@@ -107,6 +107,7 @@ function toggleExpanded(code: string): void {
 }
 
 function handleSelect(code: string, sectionIdx: number): void {
+    if (isReadOnly.value) return
     const subject = subjects.value.find(s => s.code === code)
     const section = subject?.sections[sectionIdx]
     if (! subject?.id || ! section?.id) {
@@ -116,6 +117,7 @@ function handleSelect(code: string, sectionIdx: number): void {
 }
 
 function handleUnselect(code: string): void {
+    if (isReadOnly.value) return
     void removeSubject(code)
 }
 
@@ -211,8 +213,9 @@ async function handleConfirm(): Promise<void> {
                 :selections="selections"
                 :ghost="isMobile ? null : ghost"
                 :mobile="isMobile"
+                :is-read-only="isReadOnly"
+                :can-confirm="canConfirm"
                 @confirm="handleConfirm"
-                @draft="() => {}"
             />
         </aside>
     </div>

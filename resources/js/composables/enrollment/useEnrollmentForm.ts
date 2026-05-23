@@ -7,12 +7,13 @@ import type { BackendEnrollment, EnrollmentSelections } from '@/types/enrollment
 export function useEnrollmentForm(
     enrollment: Ref<BackendEnrollment | null>,
     selections: Ref<EnrollmentSelections>,
+    isReadOnly: Ref<boolean>,
 ) {
     const error = ref<string | null>(null)
     const detailIds = ref<Record<string, number>>(
         Object.fromEntries(
             (enrollment.value?.details ?? [])
-                .filter(d => d.status === 'draft')
+                .filter(d => d.status !== 'rejected')
                 .map(d => [d.subject.code, d.id])
         )
     )
@@ -35,7 +36,7 @@ export function useEnrollmentForm(
         subjectCode: string,
         sectionIdx: number,
     ): Promise<void> {
-        if (! enrollment.value) {
+        if (isReadOnly.value || ! enrollment.value?.id) {
             return
         }
 
@@ -57,7 +58,7 @@ export function useEnrollmentForm(
     }
 
     async function removeSubject(subjectCode: string): Promise<void> {
-        if (! enrollment.value) {
+        if (isReadOnly.value || ! enrollment.value?.id) {
             return
         }
 
@@ -90,7 +91,7 @@ export function useEnrollmentForm(
     }
 
     async function confirmEnrollment(): Promise<void> {
-        if (! enrollment.value) {
+        if (isReadOnly.value || ! enrollment.value?.id) {
             return
         }
 

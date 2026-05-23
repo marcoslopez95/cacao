@@ -23,7 +23,7 @@ trait ResolvesLoginRedirect
             $user?->hasAnyRole(['Profesor', 'Coordinador de Area']) => route('professor.dashboard'),
             $user?->hasRole('Estudiante') => route('student.dashboard'),
             $user?->hasRole('Representante') => route('guardian.dashboard'),
-            default => route('home'),
+            default => '/',
         };
     }
 }

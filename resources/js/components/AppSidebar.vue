@@ -10,6 +10,7 @@ import { index as usersIndex } from '@/routes/security/users'
 import { index as coordinationsIndex } from '@/routes/security/coordinations'
 import { index as careerCategoriesIndex } from '@/routes/academic/career-categories'
 import { index as careersIndex } from '@/routes/academic/careers'
+import { index as studentsIndex } from '@/routes/academic/students'
 import { index as buildingsIndex } from '@/routes/infrastructure/buildings'
 import { index as classroomsIndex } from '@/routes/infrastructure/classrooms'
 import { index as periodsIndex } from '@/routes/scheduling/periods'
@@ -132,6 +133,10 @@ const navGroups = computed(() => {
             page.props.auth?.roles?.includes('Admin')
         ) {
             academicItems.push({ icon: 'book', label: 'Carreras', href: careersIndex.url() })
+        }
+
+        if (page.props.auth?.roles?.includes('Admin')) {
+            academicItems.push({ icon: 'graduation-cap', label: 'Estudiantes', href: studentsIndex.url() })
         }
 
         if (academicItems.length) {

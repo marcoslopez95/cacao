@@ -1,6 +1,7 @@
 import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { upsertEntry, publishSlot } from '@/routes/professor/grades'
+import { upsert as upsertEntry } from '@/routes/professor/grades/entries'
+import { publish as publishSlot } from '@/routes/professor/grades'
 import { store as enableRemedialRoute } from '@/routes/professor/grades/remedial'
 import type { GradeEntry } from '@/types/grade-entry'
 

@@ -27,11 +27,11 @@ import { Head } from '@inertiajs/vue3'
             <rect class="ep-cell ep-c7" x="130" y="194" width="56" height="56" rx="11" fill="var(--text-primary)"/>
             <rect class="ep-cell ep-c8" x="194" y="194" width="56" height="56" rx="11" fill="var(--text-primary)"/>
 
-            <!-- Loupe: anchored to center of [1,2] = translate(222, 158) -->
-            <g class="ep-loupe" transform="translate(222, 158)">
-              <circle class="ep-loupe-ring" r="18" fill="none" stroke="var(--text-muted)" stroke-width="2.4"/>
-              <line class="ep-loupe-handle" x1="13" y1="13" x2="22" y2="22" stroke="var(--text-muted)" stroke-width="2.4" stroke-linecap="round"/>
-              <circle class="ep-ping" r="3" fill="var(--accent)"/>
+            <!-- Loupe: center of [1,2] = (222, 158). No SVG transform attr — position encoded in coords so CSS animations work correctly -->
+            <g class="ep-loupe">
+              <circle class="ep-loupe-ring" cx="222" cy="158" r="18" fill="none" stroke="var(--text-muted)" stroke-width="2.4"/>
+              <line class="ep-loupe-handle" x1="235" y1="171" x2="244" y2="180" stroke="var(--text-muted)" stroke-width="2.4" stroke-linecap="round"/>
+              <circle class="ep-ping" cx="222" cy="158" r="3" fill="var(--accent)"/>
             </g>
           </svg>
         </div>
@@ -94,13 +94,17 @@ import { Head } from '@inertiajs/vue3'
              ep-accentGlow 3s ease-in-out 1.2s infinite;
 }
 
-/* Loupe */
+/* Loupe — transform-box: fill-box fixes SVG transform-origin (scales from element center, not viewport) */
 .ep-loupe {
+  transform-box: fill-box;
+  transform-origin: center;
   animation: ep-loupeIn 0.5s cubic-bezier(.2,.8,.2,1) 0.55s both,
              ep-loupeOrbit 5s ease-in-out 1.1s infinite;
 }
 
 .ep-ping {
+  transform-box: fill-box;
+  transform-origin: center;
   animation: ep-ping 4s ease-in-out 1.5s infinite;
 }
 

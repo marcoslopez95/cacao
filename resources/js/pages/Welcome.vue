@@ -1,12 +1,30 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { Head, Link } from '@inertiajs/vue3'
-import { login, register } from '@/routes'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { Head, Link, usePage } from '@inertiajs/vue3'
+import { login, register, dashboard, logout as logoutRoute } from '@/routes'
+import { index as professorDashboard } from '@/actions/App/Http/Controllers/Professor/DashboardController'
+import { index as studentDashboard } from '@/actions/App/Http/Controllers/Student/DashboardController'
+import { index as guardianDashboard } from '@/actions/App/Http/Controllers/Guardian/DashboardController'
+import { router } from '@inertiajs/vue3'
 import { useAppearance } from '@/composables/useAppearance'
 
 withDefaults(defineProps<{
     canRegister?: boolean
 }>(), { canRegister: true })
+
+const page = usePage()
+const isAuthenticated = computed(() => !!page.props.auth?.user)
+
+const dashboardUrl = computed(() => {
+    const roles = page.props.auth?.roles ?? []
+    if (roles.includes('Admin') && page.props.currentTeam) {
+        return dashboard(page.props.currentTeam.slug).url
+    }
+    if (roles.some((r: string) => ['Profesor', 'Coordinador de Area'].includes(r))) return professorDashboard.url()
+    if (roles.includes('Estudiante')) return studentDashboard.url()
+    if (roles.includes('Representante')) return guardianDashboard.url()
+    return '/'
+})
 
 const scrolled = ref(false)
 
@@ -20,6 +38,10 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 const aulas = [65, 30, 88, 45, 92, 60, 78, 40, 55, 95, 70, 82]
 
 const { appearance, updateAppearance } = useAppearance()
+
+function logout(): void {
+    router.post(logoutRoute.url())
+}
 
 const cycleOrder = ['light', 'dark', 'system'] as const
 type AppearanceVal = typeof cycleOrder[number]
@@ -93,12 +115,22 @@ const appearanceLabel: Record<AppearanceVal, string> = {
                         </template>
                     </svg>
                 </button>
-                <Link :href="login()" class="px-4 py-2 text-[13px] font-medium text-gris hover:text-tinta dark:hover:text-papel transition-colors" style="text-decoration:none;">
-                    Iniciar sesión
-                </Link>
-                <Link v-if="canRegister" :href="register()" class="px-4 py-2 text-[13px] font-semibold bg-terracota hover:bg-terra-hover text-white rounded-md transition-colors" style="text-decoration:none;">
-                    Solicitar acceso
-                </Link>
+                <template v-if="isAuthenticated">
+                    <Link :href="dashboardUrl" class="px-4 py-2 text-[13px] font-semibold bg-terracota hover:bg-terra-hover text-white rounded-md transition-colors" style="text-decoration:none;">
+                        Ir a mi portal
+                    </Link>
+                    <button type="button" @click="logout" class="px-4 py-2 text-[13px] font-medium text-gris hover:text-tinta dark:hover:text-papel transition-colors" style="background:none;border:none;cursor:pointer;">
+                        Cerrar sesión
+                    </button>
+                </template>
+                <template v-else>
+                    <Link :href="login()" class="px-4 py-2 text-[13px] font-medium text-gris hover:text-tinta dark:hover:text-papel transition-colors" style="text-decoration:none;">
+                        Iniciar sesión
+                    </Link>
+                    <Link v-if="canRegister" :href="register()" class="px-4 py-2 text-[13px] font-semibold bg-terracota hover:bg-terra-hover text-white rounded-md transition-colors" style="text-decoration:none;">
+                        Solicitar acceso
+                    </Link>
+                </template>
             </div>
         </nav>
 
@@ -115,7 +147,10 @@ const appearanceLabel: Record<AppearanceVal, string> = {
                 CACAO gestiona carreras, pensums, períodos, secciones e inscripciones con las reglas reales del mundo académico — prelaciones, capacidades, evaluaciones — todo en un solo sistema.
             </p>
             <div class="flex gap-3 flex-wrap">
-                <Link v-if="canRegister" :href="register()" class="px-6 py-3.5 text-[15px] font-semibold bg-terracota hover:bg-terra-hover text-white rounded-md transition-colors" style="text-decoration:none;">
+                <Link v-if="isAuthenticated" :href="dashboardUrl" class="px-6 py-3.5 text-[15px] font-semibold bg-terracota hover:bg-terra-hover text-white rounded-md transition-colors" style="text-decoration:none;">
+                    Ir a mi portal
+                </Link>
+                <Link v-else-if="canRegister" :href="register()" class="px-6 py-3.5 text-[15px] font-semibold bg-terracota hover:bg-terra-hover text-white rounded-md transition-colors" style="text-decoration:none;">
                     Solicitar acceso
                 </Link>
                 <a href="#como" class="px-6 py-3.5 text-[15px] font-medium border border-gris-borde dark:border-pizarra hover:border-tinta dark:hover:border-papel rounded-md transition-colors" style="text-decoration:none;">
@@ -373,7 +408,10 @@ const appearanceLabel: Record<AppearanceVal, string> = {
                     Agendá una demo de 30 minutos con el equipo. Te mostramos el sistema con datos reales de tu institución.
                 </p>
                 <div class="flex gap-3 justify-center flex-wrap">
-                    <Link v-if="canRegister" :href="register()" class="px-6 py-3.5 text-[15px] font-semibold bg-terracota hover:bg-terra-hover text-white rounded-md transition-colors" style="text-decoration:none;">
+                    <Link v-if="isAuthenticated" :href="dashboardUrl" class="px-6 py-3.5 text-[15px] font-semibold bg-terracota hover:bg-terra-hover text-white rounded-md transition-colors" style="text-decoration:none;">
+                        Ir a mi portal
+                    </Link>
+                    <Link v-else-if="canRegister" :href="register()" class="px-6 py-3.5 text-[15px] font-semibold bg-terracota hover:bg-terra-hover text-white rounded-md transition-colors" style="text-decoration:none;">
                         Solicitar acceso
                     </Link>
                     <a href="#como" class="px-6 py-3.5 text-[15px] font-medium rounded-md transition-colors" style="text-decoration:none;border:1px solid color-mix(in srgb,var(--bg-page) 30%,transparent);color:var(--bg-page);">

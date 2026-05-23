@@ -10,6 +10,8 @@ use PHPUnit\Framework\Attributes\BeforeClass;
 
 abstract class DuskTestCase extends BaseTestCase
 {
+    protected ?string $hotFileBackup = null;
+
     /**
      * Prepare for Dusk test execution.
      */
@@ -19,6 +21,27 @@ abstract class DuskTestCase extends BaseTestCase
         if (! static::runningInSail()) {
             static::startChromeDriver(['--port=9515']);
         }
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $hot = public_path('hot');
+        if (file_exists($hot)) {
+            $this->hotFileBackup = file_get_contents($hot);
+            unlink($hot);
+        }
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->hotFileBackup !== null) {
+            file_put_contents(public_path('hot'), $this->hotFileBackup);
+            $this->hotFileBackup = null;
+        }
+
+        parent::tearDown();
     }
 
     /**

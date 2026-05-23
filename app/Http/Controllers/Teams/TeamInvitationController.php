@@ -51,8 +51,13 @@ class TeamInvitationController extends Controller
      */
     public function accept(AcceptTeamInvitationRequest $request, TeamInvitation $invitation, AcceptTeamInvitationAction $action): RedirectResponse
     {
-        $action->handle($request->user(), $invitation);
+        $user = $request->user();
+        $action->handle($user, $invitation);
 
-        return to_route('dashboard');
+        $team = $user->currentTeam ?? $user->personalTeam();
+
+        return $team
+            ? redirect("/{$team->slug}/dashboard")
+            : redirect('/');
     }
 }

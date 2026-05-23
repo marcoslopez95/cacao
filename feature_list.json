@@ -56,5 +56,12 @@
     "status": "completed",
     "current_task": 9,
     "plan": "specs/grades-module/tasks.md"
+  },
+  {
+    "id": "09-admin-students",
+    "name": "Admin Students Index — listado paginado con quick views, filtros y tabla basado en diseño CACAO Estudiantes.html",
+    "status": "completed",
+    "current_task": 3,
+    "plan": "specs/admin-students/tasks.md"
   }
 ]

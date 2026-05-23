@@ -19,11 +19,12 @@ const props = defineProps<{
     selections: EnrollmentSelections
     ghost: EnrollmentGhostCandidate | null
     mobile?: boolean
+    isReadOnly?: boolean
+    canConfirm?: boolean
 }>()
 
 const emit = defineEmits<{
     confirm: []
-    draft: []
 }>()
 
 const minPct = (props.rules.creditsMin / props.rules.creditsMax) * 100
@@ -97,17 +98,18 @@ const minPct = (props.rules.creditsMin / props.rules.creditsMax) * 100
         </div>
 
         <!-- Actions -->
-        <div class="enr-side-actions">
-            <button class="btn btn-ghost btn-sm" @click="emit('draft')">
-                Guardar borrador
-            </button>
+        <div v-if="! isReadOnly" class="enr-side-actions">
             <button
                 class="btn btn-primary"
-                :disabled="summary.credits < rules.creditsMin || summary.credits > rules.creditsMax"
+                :disabled="! canConfirm || summary.credits < rules.creditsMin || summary.credits > rules.creditsMax"
                 @click="emit('confirm')"
             >
                 <AppIcon name="check" :size="14" /> Confirmar inscripción
             </button>
+        </div>
+        <div v-else class="enr-side-readonly">
+            <AppIcon name="lock" :size="13" />
+            <span>Inscripción {{ summary.credits > 0 ? 'confirmada' : 'cerrada' }}</span>
         </div>
         <p v-if="summary.credits < rules.creditsMin" class="enr-side-note">
             Te faltan <strong>{{ rules.creditsMin - summary.credits }} UC</strong> para alcanzar el mínimo.
@@ -237,6 +239,18 @@ const minPct = (props.rules.creditsMin / props.rules.creditsMax) * 100
 
 .enr-side-actions { display: flex; gap: 8px; }
 .enr-side-actions .btn-primary { flex: 1; justify-content: center; }
+
+.enr-side-readonly {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: var(--bg-sunken);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: var(--text-muted);
+}
 
 .enr-side-note {
     font-size: 12px;

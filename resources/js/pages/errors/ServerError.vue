@@ -50,18 +50,19 @@ async function handleCopy(): Promise<void> {
             <rect class="ep-d6" x="130" y="194" width="56" height="56" rx="11" fill="var(--text-primary)"/>
             <rect class="ep-d7" x="194" y="194" width="56" height="56" rx="11" fill="var(--text-primary)"/>
 
-            <!-- Sigil at [0,2] -->
-            <g class="ep-sigil-wrap" transform="translate(194, 66)">
-              <rect x="0" y="0" width="56" height="56" rx="11" fill="var(--text-primary)"/>
-              <g class="ep-sigil-rotor" transform="translate(28, 28)">
-                <circle r="22" fill="none" stroke="var(--text-muted)" stroke-width="2.2"
+            <!-- Sigil at [0,2]: no SVG transform attrs — all coords absolute so CSS animations work correctly -->
+            <!-- [0,2] origin=(194,66), cell center=(222,94) -->
+            <g class="ep-sigil-wrap">
+              <rect x="194" y="66" width="56" height="56" rx="11" fill="var(--text-primary)"/>
+              <g class="ep-sigil-rotor">
+                <circle cx="222" cy="94" r="22" fill="none" stroke="var(--text-muted)" stroke-width="2.2"
                         stroke-dasharray="120" stroke-dashoffset="120" class="ep-sigil-stroke"/>
-                <path d="M0,-22 A22,22 0 0 1 22,0" fill="none" stroke="var(--text-muted)"
+                <path d="M222,72 A22,22 0 0 1 244,94" fill="none" stroke="var(--text-muted)"
                       stroke-width="2.2" stroke-linecap="round" class="ep-sigil-stroke"/>
-                <line x1="-22" y1="0" x2="22" y2="0" stroke="var(--text-muted)" stroke-width="1.5" class="ep-sigil-stroke"/>
-                <line x1="0" y1="-22" x2="0" y2="22" stroke="var(--text-muted)" stroke-width="1.5" class="ep-sigil-stroke"/>
+                <line x1="200" y1="94" x2="244" y2="94" stroke="var(--text-muted)" stroke-width="1.5" class="ep-sigil-stroke"/>
+                <line x1="222" y1="72" x2="222" y2="116" stroke="var(--text-muted)" stroke-width="1.5" class="ep-sigil-stroke"/>
               </g>
-              <circle class="ep-sigil-dot" cx="28" cy="28" r="4.2" fill="var(--accent)"/>
+              <circle class="ep-sigil-dot" cx="222" cy="94" r="4.2" fill="var(--accent)"/>
             </g>
           </svg>
         </div>
@@ -165,12 +166,16 @@ async function handleCopy(): Promise<void> {
   100% { opacity: 1; transform: translate(-1px,-1px) rotate(-7deg); }
 }
 
-/* Sigil */
+/* Sigil — transform-box: fill-box fixes SVG transform-origin */
 .ep-sigil-wrap {
+  transform-box: fill-box;
+  transform-origin: center;
   animation: ep-sigilIn 0.6s cubic-bezier(.2,.8,.2,1) 0.5s both;
 }
 
 .ep-sigil-rotor {
+  transform-box: fill-box;
+  transform-origin: center;
   animation: ep-rotorSpin 8s linear 1.2s infinite;
 }
 
@@ -179,6 +184,8 @@ async function handleCopy(): Promise<void> {
 }
 
 .ep-sigil-dot {
+  transform-box: fill-box;
+  transform-origin: center;
   animation: ep-dotBreath 2.5s ease-in-out 1.5s infinite;
 }
 

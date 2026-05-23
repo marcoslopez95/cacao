@@ -1,32 +1,25 @@
 # Feature completada
 
-**Feature:** `08-grades-module`
-**Plan:** `specs/grades-module/tasks.md`
-**Estado:** COMPLETADA — 9/9 tasks implementadas
+**Feature:** `09-admin-students`
+**Plan:** `specs/admin-students/tasks.md`
+**Estado:** COMPLETADA — 3/3 tasks implementadas
 
 ## Tareas
 
-- [x] Task 1 — Migraciones, modelos, enums y factories
-- [x] Task 2 — CRUD configuración de notas (Admin backend)
-- [x] Task 3 — Configuración de notas (Admin frontend)
-- [x] Task 4 — Entrada de notas del profesor (backend)
-- [x] Task 5 — Planilla de notas del profesor (frontend)
-- [x] Task 6 — Vista de notas estudiante/representante (backend)
-- [x] Task 7 — Vista de notas estudiante/representante (frontend)
-- [x] Task 8 — Reparación (backend + frontend)
-- [x] Task 9 — Pest feature tests
+- [x] Task 1 — Backend: StudentController, StudentListResource, ruta, wayfinder
+- [x] Task 2 — Frontend: types, useStudentFilters, Students/Index.vue
+- [x] Task 3 — Pest feature tests (11 tests, 132 assertions)
 
-## Contexto de diseño
+## Contexto de implementación
 
-- **Modelo auto-referencial**: `grade_entries` con `parent_id` — null = entrada de slot, not-null = sub-nota del profesor
-- **Dos modos**: lapso (primaria/secundaria) y período (universitario) — determinado por nivel educativo en `grade_config.level`
-- **Escala configurable**: numérica con rango (ambos niveles) o letras A-F (solo primaria/secundaria) con equivalencias numéricas
-- **Sub-notas del profesor**: dentro de cada slot institucional, el profesor puede subdividir en N sub-notas con pesos libres (suman 100%)
-- **Reparación**: slot especial `is_remedial = true`; habilitado por admin para enrollment_detail específico; nota final = max(definitiva, reparación)
-- **Visibilidad**: `Team.grade_visibility` = `real_time` (default) o `manual`; en manual el profesor publica por slot+sección
-- **Override por período**: la config global aplica siempre; si cambia para un período, se crea fila nueva `grade_configs` con `period_id`
+- **Ruta:** `GET /academic/students` → `academic.students.index`
+- **Query:** JOIN en users (para ordenar por nombre) + LEFT JOINs en pensums/careers/enrollments (período activo)
+- **Filtros server-side:** search (ilike nombre/email), career_id[], academic_year[], enrollment_status[] (incluye 'none' para sin inscribir)
+- **Quick views:** all, pending (draft+none), newcomers (year=1); top/risk retornan 0 (sin GPA)
+- **Datos ausentes:** cédula, student_code, GPA → muestran — en la tabla
+- **Vue:** checkbox-dropdowns para carrera/año/estado, debounced search, pagination con URL sync
 
 ## Feature anterior completada
 
-**Feature:** `07-role-dashboards`
-Todas las 8 tasks implementadas. Dashboards para Profesor (métricas + timeline), Estudiante (métricas + timeline + banner CTA) y Representante (cards por representado con mini-stats).
+**Feature:** `08-grades-module`
+Todas las 9 tasks implementadas. Configuración institucional de notas, entrada por profesor, vista por estudiante y representante.

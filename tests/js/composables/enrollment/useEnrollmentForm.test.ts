@@ -88,26 +88,27 @@ function makeEnrollment(overrides: Partial<BackendEnrollment> = {}): BackendEnro
 describe('useEnrollmentForm', () => {
     let enrollment: Ref<BackendEnrollment | null>
     let selections: Ref<EnrollmentSelections>
+    let isReadOnly: Ref<boolean>
 
     beforeEach(() => {
         vi.clearAllMocks()
         enrollment = ref<BackendEnrollment | null>(makeEnrollment())
         selections = ref<EnrollmentSelections>({})
+        isReadOnly = ref(false)
     })
 
     it('initializes error as null', () => {
-        const { error } = useEnrollmentForm(enrollment, selections)
+        const { error } = useEnrollmentForm(enrollment, selections, isReadOnly)
         expect(error.value).toBeNull()
     })
 
     it('initializes isLoading as false when no http calls are in flight', () => {
-        const { isLoading } = useEnrollmentForm(enrollment, selections)
+        const { isLoading } = useEnrollmentForm(enrollment, selections, isReadOnly)
         expect(isLoading.value).toBe(false)
     })
 
-    it('indexes draft details on init so removeSubject can delete them', async () => {
-        // Only draft details should be indexed; confirmed ones must be ignored.
-        const enrollmentWithDrafts = makeEnrollment({
+    it('indexes draft and confirmed details on init; excludes rejected so removeSubject cannot delete them', async () => {
+        const enrollmentWithDetails = makeEnrollment({
             details: [
                 {
                     id: 10,
@@ -119,17 +120,23 @@ describe('useEnrollmentForm', () => {
                     id: 11,
                     subject: { id: 2, code: 'FIS101', name: 'Física I', credits_uc: 3 },
                     section: { id: 2, code: 'B', capacity: 25 },
-                    status: 'confirmed', // confirmed → must NOT be indexed
+                    status: 'confirmed', // confirmed → still indexed so it can be managed
+                },
+                {
+                    id: 12,
+                    subject: { id: 3, code: 'QUI101', name: 'Química I', credits_uc: 3 },
+                    section: { id: 3, code: 'C', capacity: 20 },
+                    status: 'rejected', // rejected → must NOT be indexed
                 },
             ],
         })
-        enrollment = ref<BackendEnrollment | null>(enrollmentWithDrafts)
+        enrollment = ref<BackendEnrollment | null>(enrollmentWithDetails)
 
         const httpInstance = vi.mocked(useHttp)()
         const deleteSpy = vi.fn()
         httpInstance.delete = deleteSpy
 
-        const { removeSubject } = useEnrollmentForm(enrollment, selections)
+        const { removeSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
 
         // MAT101 is draft → detailId 10 was indexed → delete is called
         await removeSubject('MAT101')
@@ -141,8 +148,18 @@ describe('useEnrollmentForm', () => {
 
         deleteSpy.mockClear()
 
-        // FIS101 is confirmed → NOT indexed → delete must NOT be called
+        // FIS101 is confirmed → also indexed → delete is called
         await removeSubject('FIS101')
+        expect(deleteSpy).toHaveBeenCalledOnce()
+        expect(deleteSpy).toHaveBeenCalledWith(
+            '/enrollment/42/detail/11',
+            expect.objectContaining({ onSuccess: expect.any(Function), onError: expect.any(Function) }),
+        )
+
+        deleteSpy.mockClear()
+
+        // QUI101 is rejected → NOT indexed → delete must NOT be called
+        await removeSubject('QUI101')
         expect(deleteSpy).not.toHaveBeenCalled()
     })
 
@@ -155,7 +172,7 @@ describe('useEnrollmentForm', () => {
         })
         httpInstance.delete = deleteSpy
 
-        const { addSubject, removeSubject } = useEnrollmentForm(enrollment, selections)
+        const { addSubject, removeSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await addSubject(5, 3, 'MAT101', 2)
 
         // Now removeSubject should use detailId 99 that was stored on onSuccess
@@ -173,7 +190,7 @@ describe('useEnrollmentForm', () => {
             options.onError({ error: 'Fallo de red.' })
         })
 
-        const { addSubject, error } = useEnrollmentForm(enrollment, selections)
+        const { addSubject, error } = useEnrollmentForm(enrollment, selections, isReadOnly)
         expect(error.value).toBeNull()
 
         await addSubject(1, 1, 'MAT101', 0)
@@ -187,7 +204,7 @@ describe('useEnrollmentForm', () => {
             options.onError({ error: 'Fallo de red.' })
         })
 
-        const { addSubject, error, clearError } = useEnrollmentForm(enrollment, selections)
+        const { addSubject, error, clearError } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await addSubject(1, 1, 'MAT101', 0)
 
         // Precondition: error was set by the failure
@@ -203,7 +220,7 @@ describe('useEnrollmentForm', () => {
         const postSpy = vi.fn()
         httpInstance.post = postSpy
 
-        const { addSubject } = useEnrollmentForm(enrollment, selections)
+        const { addSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await addSubject(5, 3, 'MAT101', 1)
 
         expect(postSpy).toHaveBeenCalledOnce()
@@ -222,7 +239,19 @@ describe('useEnrollmentForm', () => {
         const postSpy = vi.fn()
         httpInstance.post = postSpy
 
-        const { addSubject } = useEnrollmentForm(enrollment, selections)
+        const { addSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
+        await addSubject(5, 3, 'MAT101', 1)
+
+        expect(postSpy).not.toHaveBeenCalled()
+    })
+
+    it('addSubject does nothing when isReadOnly is true', async () => {
+        isReadOnly.value = true
+        const httpInstance = vi.mocked(useHttp)()
+        const postSpy = vi.fn()
+        httpInstance.post = postSpy
+
+        const { addSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await addSubject(5, 3, 'MAT101', 1)
 
         expect(postSpy).not.toHaveBeenCalled()
@@ -234,7 +263,7 @@ describe('useEnrollmentForm', () => {
             options.onSuccess({ id: 99 })
         })
 
-        const { addSubject } = useEnrollmentForm(enrollment, selections)
+        const { addSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await addSubject(5, 3, 'MAT101', 2)
 
         expect(selections.value['MAT101']).toBe(2)
@@ -246,7 +275,7 @@ describe('useEnrollmentForm', () => {
             options.onError({ error: 'Cupo insuficiente.' })
         })
 
-        const { addSubject, error } = useEnrollmentForm(enrollment, selections)
+        const { addSubject, error } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await addSubject(5, 3, 'MAT101', 0)
 
         expect(error.value).toBe('Cupo insuficiente.')
@@ -258,7 +287,7 @@ describe('useEnrollmentForm', () => {
             options.onError({})
         })
 
-        const { addSubject, error } = useEnrollmentForm(enrollment, selections)
+        const { addSubject, error } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await addSubject(5, 3, 'MAT101', 0)
 
         expect(error.value).toBe('Error al agregar la materia.')
@@ -284,7 +313,7 @@ describe('useEnrollmentForm', () => {
         const deleteSpy = vi.fn()
         httpInstance.delete = deleteSpy
 
-        const { removeSubject } = useEnrollmentForm(enrollment, selections)
+        const { removeSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await removeSubject('MAT101')
 
         expect(deleteSpy).toHaveBeenCalledOnce()
@@ -303,7 +332,31 @@ describe('useEnrollmentForm', () => {
         const deleteSpy = vi.fn()
         httpInstance.delete = deleteSpy
 
-        const { removeSubject } = useEnrollmentForm(enrollment, selections)
+        const { removeSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
+        await removeSubject('MAT101')
+
+        expect(deleteSpy).not.toHaveBeenCalled()
+    })
+
+    it('removeSubject does nothing when isReadOnly is true', async () => {
+        isReadOnly.value = true
+        const enrollmentWithDraft = makeEnrollment({
+            details: [
+                {
+                    id: 77,
+                    subject: { id: 1, code: 'MAT101', name: 'Cálculo I', credits_uc: 4 },
+                    section: { id: 1, code: 'A', capacity: 30 },
+                    status: 'draft',
+                },
+            ],
+        })
+        enrollment = ref<BackendEnrollment | null>(enrollmentWithDraft)
+
+        const httpInstance = vi.mocked(useHttp)()
+        const deleteSpy = vi.fn()
+        httpInstance.delete = deleteSpy
+
+        const { removeSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await removeSubject('MAT101')
 
         expect(deleteSpy).not.toHaveBeenCalled()
@@ -314,7 +367,7 @@ describe('useEnrollmentForm', () => {
         const deleteSpy = vi.fn()
         httpInstance.delete = deleteSpy
 
-        const { removeSubject } = useEnrollmentForm(enrollment, selections)
+        const { removeSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await removeSubject('UNKNOWN_CODE')
 
         expect(deleteSpy).not.toHaveBeenCalled()
@@ -339,7 +392,7 @@ describe('useEnrollmentForm', () => {
             options.onSuccess()
         })
 
-        const { removeSubject } = useEnrollmentForm(enrollment, selections)
+        const { removeSubject } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await removeSubject('FIS101')
 
         expect(selections.value['FIS101']).toBeUndefined()
@@ -350,7 +403,7 @@ describe('useEnrollmentForm', () => {
         const postSpy = vi.fn()
         httpInstance.post = postSpy
 
-        const { confirmEnrollment } = useEnrollmentForm(enrollment, selections)
+        const { confirmEnrollment } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await confirmEnrollment()
 
         expect(postSpy).toHaveBeenCalledOnce()
@@ -369,7 +422,19 @@ describe('useEnrollmentForm', () => {
         const postSpy = vi.fn()
         httpInstance.post = postSpy
 
-        const { confirmEnrollment } = useEnrollmentForm(enrollment, selections)
+        const { confirmEnrollment } = useEnrollmentForm(enrollment, selections, isReadOnly)
+        await confirmEnrollment()
+
+        expect(postSpy).not.toHaveBeenCalled()
+    })
+
+    it('confirmEnrollment does nothing when isReadOnly is true', async () => {
+        isReadOnly.value = true
+        const httpInstance = vi.mocked(useHttp)()
+        const postSpy = vi.fn()
+        httpInstance.post = postSpy
+
+        const { confirmEnrollment } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await confirmEnrollment()
 
         expect(postSpy).not.toHaveBeenCalled()
@@ -381,7 +446,7 @@ describe('useEnrollmentForm', () => {
             options.onSuccess()
         })
 
-        const { confirmEnrollment } = useEnrollmentForm(enrollment, selections)
+        const { confirmEnrollment } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await confirmEnrollment()
 
         expect(vi.mocked(router).reload).toHaveBeenCalledOnce()
@@ -393,7 +458,7 @@ describe('useEnrollmentForm', () => {
             options.onError({ error: 'Período cerrado.' })
         })
 
-        const { confirmEnrollment, error } = useEnrollmentForm(enrollment, selections)
+        const { confirmEnrollment, error } = useEnrollmentForm(enrollment, selections, isReadOnly)
         await confirmEnrollment()
 
         expect(error.value).toBe('Período cerrado.')

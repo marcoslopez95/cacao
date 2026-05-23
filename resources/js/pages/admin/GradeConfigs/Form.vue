@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3'
+import { Head, Link, setLayoutProps } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import { index } from '@/routes/security/grade-configs'
 import { useGradeConfigForm } from '@/composables/forms/useGradeConfigForm'
@@ -20,14 +20,12 @@ const { form, addSlot, removeSlot, addLetterValue, removeLetterValue, nonRemedia
 const weightTotal = computed(() => nonRemedialWeightTotal())
 const weightOk = computed(() => Math.abs(weightTotal.value - 100) < 0.01)
 
-defineOptions({
-    layout: {
-        breadcrumbs: [
-            { title: 'Seguridad', href: '#' },
-            { title: 'Configuración de notas', href: index.url() },
-            { title: isEditing.value ? 'Editar' : 'Nueva' },
-        ],
-    },
+setLayoutProps({
+    breadcrumbs: [
+        { title: 'Seguridad', href: '#' },
+        { title: 'Configuración de notas', href: index.url() },
+        { title: isEditing.value ? 'Editar' : 'Nueva' },
+    ],
 })
 </script>
 
