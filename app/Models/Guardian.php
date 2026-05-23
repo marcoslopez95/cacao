@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['user_id'])]
+#[Fillable(['user_id', 'name', 'relation'])]
 class Guardian extends Model
 {
     /** @use HasFactory<GuardianFactory> */
