@@ -2,6 +2,8 @@ import type { PaginationMeta } from './pagination'
 
 export type EnrollmentDisplayStatus = 'confirmed' | 'draft' | 'approved' | 'rejected' | null
 
+export type StudentLevel = 'all' | 'primary' | 'secondary' | 'university'
+
 export interface StudentListItem {
     id: number
     name: string
@@ -15,6 +17,10 @@ export interface StudentListItem {
     gpa: null
     cedula: null
     code: null
+    guardian_name: string | null
+    guardian_relation: string | null
+    section_grade: number | null
+    section_letter: string | null
 }
 
 export interface StudentCollection {
@@ -27,4 +33,6 @@ export interface StudentFilters {
     career_id?: number[]
     academic_year?: number[]
     enrollment_status?: string[]
+    level?: StudentLevel
+    section_letter?: string[]
 }
