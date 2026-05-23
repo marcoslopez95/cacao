@@ -81,7 +81,8 @@ class StudentController extends Controller
                     }
                 });
             })
-            ->orderBy('users.name');
+            ->orderBy('users.name')
+            ->distinct();
 
         $students = $query->paginate($perPage)->withQueryString();
 
