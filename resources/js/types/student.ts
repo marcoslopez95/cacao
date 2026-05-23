@@ -14,9 +14,9 @@ export interface StudentListItem {
     educational_level: 'university' | 'primary' | 'secondary'
     enrollment_status: EnrollmentDisplayStatus
     uc_inscritas: number
-    gpa: null
-    cedula: null
-    code: null
+    gpa: number | null
+    cedula: string | null
+    code: string | null
     guardian_name: string | null
     guardian_relation: string | null
     section_grade: number | null
