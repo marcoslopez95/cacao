@@ -301,10 +301,10 @@ function toggleSectionLetter(l: string): void {
                 >
                     <summary
                         class="input"
-                        style="height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;"
+                        :style="careerIds.length ? 'height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;border-color:var(--color-terracota,#C8521A);background:color-mix(in srgb,#C8521A 8%,transparent);' : 'height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;'"
                     >
                         <span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;">Carrera</span>
-                        <span style="font-size:13px;font-weight:500;color:var(--text-primary);">
+                        <span :style="careerIds.length ? 'font-size:13px;font-weight:600;color:var(--color-terracota,#C8521A);' : 'font-size:13px;font-weight:500;color:var(--text-primary);'">
                             {{ careerIds.length === 0 ? 'Todas' : careerIds.length === 1 ? (props.careers.find(c => c.id === careerIds[0])?.name ?? '1 sel.') : `${careerIds.length} seleccionadas` }}
                         </span>
                     </summary>
@@ -332,10 +332,10 @@ function toggleSectionLetter(l: string): void {
                 >
                     <summary
                         class="input"
-                        style="height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;"
+                        :style="academicYears.length ? 'height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;border-color:var(--color-terracota,#C8521A);background:color-mix(in srgb,#C8521A 8%,transparent);' : 'height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;'"
                     >
                         <span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;">{{ yearLabel }}</span>
-                        <span style="font-size:13px;font-weight:500;color:var(--text-primary);">
+                        <span :style="academicYears.length ? 'font-size:13px;font-weight:600;color:var(--color-terracota,#C8521A);' : 'font-size:13px;font-weight:500;color:var(--text-primary);'">
                             {{ academicYears.length ? `${academicYears.length} sel.` : 'Todos' }}
                         </span>
                     </summary>
@@ -363,10 +363,10 @@ function toggleSectionLetter(l: string): void {
                 >
                     <summary
                         class="input"
-                        style="height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;"
+                        :style="sectionLetters.length ? 'height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;border-color:var(--color-terracota,#C8521A);background:color-mix(in srgb,#C8521A 8%,transparent);' : 'height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;'"
                     >
                         <span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;">Sección</span>
-                        <span style="font-size:13px;font-weight:500;color:var(--text-primary);">
+                        <span :style="sectionLetters.length ? 'font-size:13px;font-weight:600;color:var(--color-terracota,#C8521A);' : 'font-size:13px;font-weight:500;color:var(--text-primary);'">
                             {{ sectionLetters.length ? sectionLetters.join(', ') : 'Todas' }}
                         </span>
                     </summary>
@@ -391,10 +391,10 @@ function toggleSectionLetter(l: string): void {
                 <details style="position:relative;">
                     <summary
                         class="input"
-                        style="height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;"
+                        :style="enrollStatuses.length ? 'height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;border-color:var(--color-terracota,#C8521A);background:color-mix(in srgb,#C8521A 8%,transparent);' : 'height:38px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;list-style:none;padding:0 10px;white-space:nowrap;'"
                     >
                         <span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600;">Inscripción</span>
-                        <span style="font-size:13px;font-weight:500;color:var(--text-primary);">
+                        <span :style="enrollStatuses.length ? 'font-size:13px;font-weight:600;color:var(--color-terracota,#C8521A);' : 'font-size:13px;font-weight:500;color:var(--text-primary);'">
                             {{ enrollStatuses.length ? `${enrollStatuses.length} sel.` : 'Todos' }}
                         </span>
                     </summary>
