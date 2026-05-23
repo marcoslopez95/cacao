@@ -31,7 +31,7 @@ const {
     applyFilters, onSearchInput, applyLevel, applyQuickView, paginationFilters,
 } = useStudentFilters(props.filters, props.students.meta.per_page)
 
-const activeQuickView = ref<string>(props.filters.level === level.value ? (props.filters.search || props.filters.career_id?.length || props.filters.academic_year?.length || props.filters.enrollment_status?.length ? 'all' : 'all') : 'all')
+const activeQuickView = ref<string>('all')
 
 // ── Level tabs ────────────────────────────────────────────
 
@@ -157,18 +157,16 @@ function enrollClass(s: StudentListItem): string {
     return 'enroll-none'
 }
 
-function levelPillColor(lvl: string): string {
+function levelPillColor(lvl: 'university' | 'primary' | 'secondary'): string {
     if (lvl === 'primary')    return '#2E7D5C'
     if (lvl === 'secondary')  return '#7C5A3A'
-    if (lvl === 'university') return '#C8521A'
-    return '#888'
+    return '#C8521A'
 }
 
-function levelLabel(lvl: string): string {
-    if (lvl === 'primary')    return 'Primaria'
-    if (lvl === 'secondary')  return 'Bachillerato'
-    if (lvl === 'university') return 'Universitario'
-    return lvl
+function levelLabel(lvl: 'university' | 'primary' | 'secondary'): string {
+    if (lvl === 'primary')   return 'Primaria'
+    if (lvl === 'secondary') return 'Bachillerato'
+    return 'Universitario'
 }
 
 // ── Filter toggles ────────────────────────────────────────
@@ -264,7 +262,7 @@ function toggleSectionLetter(l: string): void {
                     qv.disabled
                         ? 'opacity:.45;cursor:not-allowed;'
                         : 'cursor:pointer;',
-                    !qv.disabled && activeQuickView === qv.key
+                    !qv.disabled && activeQuickView.value === qv.key
                         ? 'border-color:var(--color-terracota,#C8521A);background:color-mix(in srgb,#C8521A 10%,transparent);color:var(--color-terracota,#C8521A);font-weight:600;'
                         : '',
                 ]"
