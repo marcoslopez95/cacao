@@ -49,5 +49,12 @@
     "status": "completed",
     "current_task": 8,
     "plan": "specs/role-dashboards/tasks.md"
+  },
+  {
+    "id": "08-grades-module",
+    "name": "Grades Module — configuración institucional de notas, entrada por profesor, vista por estudiante y representante",
+    "status": "completed",
+    "current_task": 9,
+    "plan": "specs/grades-module/tasks.md"
   }
 ]

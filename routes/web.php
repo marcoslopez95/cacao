@@ -4,6 +4,7 @@ use App\Http\Controllers\Academic\CareerCategoryController;
 use App\Http\Controllers\Academic\CareerController;
 use App\Http\Controllers\Academic\PensumController;
 use App\Http\Controllers\Academic\SubjectController;
+use App\Http\Controllers\Admin\GradeConfigController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\Enrollment\EnrollmentController;
 use App\Http\Controllers\Guardian;
@@ -34,8 +35,10 @@ Route::inertia('/', 'Welcome', [
 Route::get('invitations/{token}', [AcceptInvitationController::class, 'show'])->name('invitation.show')->whereUuid('token');
 Route::post('invitations/{token}', [AcceptInvitationController::class, 'store'])->name('invitation.store')->whereUuid('token');
 
+// Reserved prefixes must not be captured by {current_team}.
 Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
+    ->where(['current_team' => '^(?!security|academic|infrastructure|scheduling|enrollment|professor|student|guardian|settings|profile|invitations|_test)[^/]+$'])
     ->group(function () {
         Route::inertia('dashboard', 'Dashboard')->name('dashboard');
     });
@@ -71,6 +74,13 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     // Coordination Assignments
     Route::get('coordinations/{coordination}/assignments', [CoordinationAssignmentController::class, 'index'])->name('coordinations.assignments.index');
     Route::post('coordinations/{coordination}/assignments', [CoordinationAssignmentController::class, 'store'])->name('coordinations.assignments.store');
+
+    // Grade Configs
+    Route::get('grade-configs', [GradeConfigController::class, 'index'])->name('grade-configs.index');
+    Route::get('grade-configs/create', [GradeConfigController::class, 'create'])->name('grade-configs.create');
+    Route::post('grade-configs', [GradeConfigController::class, 'store'])->name('grade-configs.store');
+    Route::get('grade-configs/{gradeConfig}/edit', [GradeConfigController::class, 'edit'])->name('grade-configs.edit');
+    Route::patch('grade-configs/{gradeConfig}', [GradeConfigController::class, 'update'])->name('grade-configs.update');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->group(function () {
@@ -160,6 +170,14 @@ Route::middleware(['auth', 'verified', 'role:Profesor,Coordinador de Area'])
     ->group(function () {
         Route::get('dashboard', [Professor\DashboardController::class, 'index'])
             ->name('dashboard');
+        Route::get('sections/{section}/grades', [Professor\GradeController::class, 'sheet'])
+            ->name('grades.sheet');
+        Route::put('sections/{section}/grades/entries', [Professor\GradeController::class, 'upsertEntry'])
+            ->name('grades.entries.upsert');
+        Route::post('sections/{section}/grades/publish', [Professor\GradeController::class, 'publishSlot'])
+            ->name('grades.publish');
+        Route::post('sections/{section}/enrollment-details/{enrollmentDetail}/remedial', [Professor\RemedialController::class, 'store'])
+            ->name('grades.remedial.store');
     });
 
 Route::middleware(['auth', 'verified', 'role:Estudiante'])
@@ -167,6 +185,8 @@ Route::middleware(['auth', 'verified', 'role:Estudiante'])
     ->group(function () {
         Route::get('dashboard', [Student\DashboardController::class, 'index'])
             ->name('dashboard');
+        Route::get('grades', [Student\GradeController::class, 'index'])
+            ->name('grades.index');
     });
 
 Route::middleware(['auth', 'verified', 'role:Representante'])
@@ -174,6 +194,8 @@ Route::middleware(['auth', 'verified', 'role:Representante'])
     ->group(function () {
         Route::get('dashboard', [Guardian\DashboardController::class, 'index'])
             ->name('dashboard');
+        Route::get('grades', [Guardian\GradeController::class, 'index'])
+            ->name('grades.index');
     });
 
 require __DIR__.'/settings.php';

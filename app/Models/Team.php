@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Concerns\GeneratesUniqueTeamSlugs;
+use App\Enums\GradeVisibility;
 use App\Enums\TeamRole;
 use Database\Factories\TeamFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['name', 'slug', 'is_personal'])]
+#[Fillable(['name', 'slug', 'is_personal', 'grade_visibility'])]
 class Team extends Model
 {
     /** @use HasFactory<TeamFactory> */
@@ -90,6 +91,7 @@ class Team extends Model
     {
         return [
             'is_personal' => 'boolean',
+            'grade_visibility' => GradeVisibility::class,
         ];
     }
 

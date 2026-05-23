@@ -20,11 +20,15 @@ use App\Policies\EnrollmentPolicy;
 use App\Policies\RolePolicy;
 use App\Policies\UserPolicy;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Fortify\Fortify;
 use Spatie\Permission\Models\Role;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureAuthorization();
+        $this->configureRedirects();
     }
 
     /**
@@ -62,6 +67,32 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Subject::class, SubjectPolicy::class);
         Gate::policy(Enrollment::class, EnrollmentPolicy::class);
         Gate::policy(EnrollmentDetail::class, EnrollmentDetailPolicy::class);
+    }
+
+    /**
+     * Override the default guest-middleware redirect so authenticated users
+     * are sent to their role-specific dashboard instead of route('dashboard'),
+     * which requires a {current_team} parameter that non-admin users don't have.
+     */
+    protected function configureRedirects(): void
+    {
+        RedirectIfAuthenticated::redirectUsing(function (Request $request): string {
+            $user = $request->user();
+            $team = $user?->currentTeam ?? $user?->personalTeam();
+
+            if ($team) {
+                URL::defaults(['current_team' => $team->slug]);
+
+                return "/{$team->slug}".Fortify::redirects('login');
+            }
+
+            return match (true) {
+                $user?->hasAnyRole(['Profesor', 'Coordinador de Area']) => route('professor.dashboard'),
+                $user?->hasRole('Estudiante') => route('student.dashboard'),
+                $user?->hasRole('Representante') => route('guardian.dashboard'),
+                default => '/',
+            };
+        });
     }
 
     /**

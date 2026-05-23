@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['enrollment_id', 'subject_id', 'section_id', 'status'])]
 class EnrollmentDetail extends Model
@@ -35,5 +36,10 @@ class EnrollmentDetail extends Model
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);
+    }
+
+    public function gradeEntries(): HasMany
+    {
+        return $this->hasMany(GradeEntry::class);
     }
 }
