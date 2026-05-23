@@ -1,12 +1,18 @@
 <?php
 
+use App\Enums\EducationalLevel;
 use App\Enums\EnrollmentStatus;
 use App\Enums\PeriodStatus;
+use App\Enums\SectionType;
 use App\Models\Career;
 use App\Models\Enrollment;
+use App\Models\EnrollmentDetail;
+use App\Models\Guardian;
 use App\Models\Pensum;
 use App\Models\Period;
+use App\Models\Section;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -223,5 +229,137 @@ test('per_page parameter controls page size', function () {
             ->where('students.meta.per_page', 10)
             ->where('students.meta.total', 30)
             ->has('students.data', 10)
+        );
+});
+
+// ---------------------------------------------------------------------------
+// Level filter
+// ---------------------------------------------------------------------------
+
+it('filters by educational level primary', function () {
+    Student::factory()->primary()->create();
+    Student::factory()->secondary()->create();
+    Student::factory()->create(['educational_level' => EducationalLevel::University]);
+
+    $this->actingAs(User::factory()->create())
+        ->get('/academic/students?level=primary')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('students.data', 1)
+            ->where('students.data.0.educational_level', 'primary')
+        );
+});
+
+it('filters by educational level secondary', function () {
+    Student::factory()->primary()->create();
+    Student::factory()->secondary()->create();
+    Student::factory()->create(['educational_level' => EducationalLevel::University]);
+
+    $this->actingAs(User::factory()->create())
+        ->get('/academic/students?level=secondary')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('students.data', 1)
+            ->where('students.data.0.educational_level', 'secondary')
+        );
+});
+
+it('filters by educational level university', function () {
+    Student::factory()->primary()->create();
+    Student::factory()->secondary()->create();
+    Student::factory()->create(['educational_level' => EducationalLevel::University]);
+
+    $this->actingAs(User::factory()->create())
+        ->get('/academic/students?level=university')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('students.data', 1)
+            ->where('students.data.0.educational_level', 'university')
+        );
+});
+
+// ---------------------------------------------------------------------------
+// Guardian and section data
+// ---------------------------------------------------------------------------
+
+it('includes guardian name and relation for primary student', function () {
+    $guardian = Guardian::factory()->create([
+        'name' => 'María Rodríguez',
+        'relation' => 'madre',
+    ]);
+
+    Student::factory()->primary()->create(['guardian_id' => $guardian->id]);
+
+    $this->actingAs(User::factory()->create())
+        ->get('/academic/students?level=primary')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('students.data', 1, fn ($row) => $row
+                ->where('guardian_name', 'María Rodríguez')
+                ->where('guardian_relation', 'madre')
+                ->etc()
+            )
+        );
+});
+
+it('includes section grade and letter when student has school enrollment', function () {
+    $period = Period::factory()->year()->create(['status' => PeriodStatus::Active]);
+
+    $pensum = Pensum::factory()->create([
+        'period_type' => 'year',
+        'total_periods' => 6,
+    ]);
+
+    $section = Section::factory()->create([
+        'type' => SectionType::School,
+        'period_id' => $period->id,
+        'pensum_id' => $pensum->id,
+        'subject_id' => null,
+        'grade' => 3,
+        'letter' => 'B',
+        'code' => '3B',
+        'main_teacher_id' => null,
+        'classroom_id' => null,
+    ]);
+
+    $guardian = Guardian::factory()->create();
+    $student = Student::factory()->primary()->create(['guardian_id' => $guardian->id]);
+
+    $enrollment = Enrollment::factory()->create([
+        'student_id' => $student->id,
+        'period_id' => $period->id,
+        'pensum_id' => $pensum->id,
+        'status' => EnrollmentStatus::Confirmed,
+    ]);
+
+    $subject = Subject::factory()->create(['pensum_id' => $pensum->id]);
+
+    EnrollmentDetail::factory()->create([
+        'enrollment_id' => $enrollment->id,
+        'section_id' => $section->id,
+        'subject_id' => $subject->id,
+    ]);
+
+    $this->actingAs(User::factory()->create())
+        ->get('/academic/students?level=primary')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('students.data', 1, fn ($row) => $row
+                ->where('section_grade', 3)
+                ->where('section_letter', 'B')
+                ->etc()
+            )
+        );
+});
+
+it('includes no_guardian in quick counts', function () {
+    Student::factory()->count(2)->withGuardian()->create();
+    Student::factory()->count(3)->create(); // no guardian
+
+    $this->actingAs(User::factory()->create())
+        ->get('/academic/students')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('quickCounts.no_guardian', 3)
         );
 });
