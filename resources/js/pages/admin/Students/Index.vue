@@ -296,9 +296,9 @@ function toggleSectionLetter(l: string): void {
                     />
                 </div>
 
-                <!-- Career multi-select — only for Universitario or Todos -->
+                <!-- Career multi-select — only for Universitario -->
                 <details
-                    v-if="level === 'university' || level === 'all'"
+                    v-if="level === 'university'"
                     style="position:relative;"
                 >
                     <summary
