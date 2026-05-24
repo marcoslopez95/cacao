@@ -1,0 +1,5227 @@
+{
+  "1101": [
+    {
+      "code": "110101",
+      "name": "Capadare"
+    },
+    {
+      "code": "110102",
+      "name": "La Pastora"
+    },
+    {
+      "code": "110103",
+      "name": "Libertador"
+    },
+    {
+      "code": "110104",
+      "name": "San Juan de los Cayos"
+    }
+  ],
+  "1102": [
+    {
+      "code": "110201",
+      "name": "Aracua"
+    },
+    {
+      "code": "110202",
+      "name": "La Peña"
+    },
+    {
+      "code": "110203",
+      "name": "San Luis"
+    }
+  ],
+  "1103": [
+    {
+      "code": "110301",
+      "name": "Bariro"
+    },
+    {
+      "code": "110302",
+      "name": "Borojó"
+    },
+    {
+      "code": "110303",
+      "name": "Capatárida"
+    },
+    {
+      "code": "110304",
+      "name": "Guajiro"
+    },
+    {
+      "code": "110305",
+      "name": "Seque"
+    },
+    {
+      "code": "110306",
+      "name": "Zazárida"
+    },
+    {
+      "code": "110307",
+      "name": "Valle de Eroa"
+    }
+  ],
+  "1104": [
+    {
+      "code": "110401",
+      "name": "Norte"
+    },
+    {
+      "code": "110402",
+      "name": "Carirubana"
+    },
+    {
+      "code": "110403",
+      "name": "Santa Ana"
+    },
+    {
+      "code": "110404",
+      "name": "Urbana Punta Cardón"
+    }
+  ],
+  "1105": [
+    {
+      "code": "110501",
+      "name": "La Vela de Coro"
+    },
+    {
+      "code": "110502",
+      "name": "Acurigua"
+    },
+    {
+      "code": "110503",
+      "name": "Guaibacoa"
+    },
+    {
+      "code": "110504",
+      "name": "Las Calderas"
+    },
+    {
+      "code": "110505",
+      "name": "Macoruca"
+    }
+  ],
+  "1106": [
+    {
+      "code": "110601",
+      "name": "Dabajuro"
+    }
+  ],
+  "1107": [
+    {
+      "code": "110701",
+      "name": "Agua Clara"
+    },
+    {
+      "code": "110702",
+      "name": "Avaria"
+    },
+    {
+      "code": "110703",
+      "name": "Pedregal"
+    },
+    {
+      "code": "110704",
+      "name": "Piedra Grande"
+    },
+    {
+      "code": "110705",
+      "name": "Purureche"
+    }
+  ],
+  "1108": [
+    {
+      "code": "110801",
+      "name": "Adaure"
+    },
+    {
+      "code": "110802",
+      "name": "Adícora"
+    },
+    {
+      "code": "110803",
+      "name": "Baraived"
+    },
+    {
+      "code": "110804",
+      "name": "Buena Vista"
+    },
+    {
+      "code": "110805",
+      "name": "Jadacaquiva"
+    },
+    {
+      "code": "110806",
+      "name": "El Vínculo"
+    },
+    {
+      "code": "110807",
+      "name": "El Hato"
+    },
+    {
+      "code": "110808",
+      "name": "Moruy"
+    },
+    {
+      "code": "110809",
+      "name": "Pueblo Nuevo"
+    }
+  ],
+  "1109": [
+    {
+      "code": "110901",
+      "name": "Agua Larga"
+    },
+    {
+      "code": "110902",
+      "name": "Churuguara"
+    },
+    {
+      "code": "110903",
+      "name": "El Paují"
+    },
+    {
+      "code": "110904",
+      "name": "Independencia"
+    },
+    {
+      "code": "110905",
+      "name": "Mapararí"
+    }
+  ],
+  "1110": [
+    {
+      "code": "111001",
+      "name": "Agua Linda"
+    },
+    {
+      "code": "111002",
+      "name": "Araurima"
+    },
+    {
+      "code": "111003",
+      "name": "Jacura"
+    }
+  ],
+  "1111": [
+    {
+      "code": "111101",
+      "name": "Los Taques"
+    },
+    {
+      "code": "111102",
+      "name": "Judibana"
+    }
+  ],
+  "1112": [
+    {
+      "code": "111201",
+      "name": "Cacique Manaure"
+    }
+  ],
+  "1113": [
+    {
+      "code": "111301",
+      "name": "Mene de Mauroa"
+    },
+    {
+      "code": "111302",
+      "name": "San Félix"
+    },
+    {
+      "code": "111303",
+      "name": "Casigua"
+    }
+  ],
+  "1114": [
+    {
+      "code": "111401",
+      "name": "Guzmán Guillermo"
+    },
+    {
+      "code": "111402",
+      "name": "Mitare"
+    },
+    {
+      "code": "111403",
+      "name": "Río Seco"
+    },
+    {
+      "code": "111404",
+      "name": "Sabaneta"
+    },
+    {
+      "code": "111405",
+      "name": "San Antonio"
+    },
+    {
+      "code": "111406",
+      "name": "San Gabriel"
+    },
+    {
+      "code": "111407",
+      "name": "Santa Ana"
+    }
+  ],
+  "1115": [
+    {
+      "code": "111501",
+      "name": "Boca del Tocuyo"
+    },
+    {
+      "code": "111502",
+      "name": "Chichiriviche"
+    },
+    {
+      "code": "111503",
+      "name": "Tocuyo de la Costa"
+    }
+  ],
+  "1116": [
+    {
+      "code": "111601",
+      "name": "Palmasola"
+    }
+  ],
+  "1117": [
+    {
+      "code": "111701",
+      "name": "Cabure"
+    },
+    {
+      "code": "111702",
+      "name": "Colina"
+    },
+    {
+      "code": "111703",
+      "name": "Curimagua"
+    }
+  ],
+  "1118": [
+    {
+      "code": "111801",
+      "name": "San José de la Costa"
+    },
+    {
+      "code": "111802",
+      "name": "Píritu"
+    }
+  ],
+  "1119": [
+    {
+      "code": "111901",
+      "name": "Capital San Francisco"
+    }
+  ],
+  "1120": [
+    {
+      "code": "112001",
+      "name": "Sucre"
+    },
+    {
+      "code": "112002",
+      "name": "Pecaya"
+    }
+  ],
+  "1121": [
+    {
+      "code": "112101",
+      "name": "Tucacas"
+    },
+    {
+      "code": "112102",
+      "name": "Boca de Aroa"
+    }
+  ],
+  "1122": [
+    {
+      "code": "112201",
+      "name": "Tocópero"
+    }
+  ],
+  "1123": [
+    {
+      "code": "112301",
+      "name": "El Charal"
+    },
+    {
+      "code": "112302",
+      "name": "Las Vegas del Tuy"
+    },
+    {
+      "code": "112303",
+      "name": "Santa Cruz de Bucaral"
+    }
+  ],
+  "1124": [
+    {
+      "code": "112401",
+      "name": "Bruzual"
+    },
+    {
+      "code": "112402",
+      "name": "Urumaco"
+    }
+  ],
+  "1125": [
+    {
+      "code": "112501",
+      "name": "Puerto Cumarebo"
+    },
+    {
+      "code": "112502",
+      "name": "La Ciénaga"
+    },
+    {
+      "code": "112503",
+      "name": "La Soledad"
+    },
+    {
+      "code": "112504",
+      "name": "Pueblo Cumarebo"
+    },
+    {
+      "code": "112505",
+      "name": "Zazárida"
+    }
+  ],
+  "1501": [
+    {
+      "code": "150101",
+      "name": "Camaguán"
+    },
+    {
+      "code": "150102",
+      "name": "Puerto Miranda"
+    },
+    {
+      "code": "150103",
+      "name": "Uverito"
+    }
+  ],
+  "1502": [
+    {
+      "code": "150201",
+      "name": "Chaguaramas"
+    }
+  ],
+  "1503": [
+    {
+      "code": "150301",
+      "name": "El Socorro"
+    }
+  ],
+  "1504": [
+    {
+      "code": "150401",
+      "name": "Valle de la Pascua"
+    },
+    {
+      "code": "150402",
+      "name": "Espino"
+    }
+  ],
+  "1505": [
+    {
+      "code": "150501",
+      "name": "Las Mercedes"
+    },
+    {
+      "code": "150502",
+      "name": "Cabruta"
+    },
+    {
+      "code": "150503",
+      "name": "Santa Rita de Manapire"
+    }
+  ],
+  "1506": [
+    {
+      "code": "150601",
+      "name": "El Sombrero"
+    },
+    {
+      "code": "150602",
+      "name": "Sosa"
+    }
+  ],
+  "1507": [
+    {
+      "code": "150701",
+      "name": "El Calvario"
+    },
+    {
+      "code": "150702",
+      "name": "El Rastro"
+    },
+    {
+      "code": "150703",
+      "name": "Guardatinajas"
+    },
+    {
+      "code": "150704",
+      "name": "Capital Urbana Calabozo"
+    }
+  ],
+  "1508": [
+    {
+      "code": "150801",
+      "name": "Altagracia de Orituco"
+    },
+    {
+      "code": "150802",
+      "name": "San Rafael de Orituco"
+    },
+    {
+      "code": "150803",
+      "name": "San Francisco Javier de Lezama"
+    },
+    {
+      "code": "150804",
+      "name": "Paso Real de Macaira"
+    },
+    {
+      "code": "150805",
+      "name": "Carlos Soublette"
+    },
+    {
+      "code": "150806",
+      "name": "San Francisco de Macaira"
+    },
+    {
+      "code": "150807",
+      "name": "Libertad de Orituco"
+    }
+  ],
+  "1509": [
+    {
+      "code": "150901",
+      "name": "San José de Tiznados"
+    },
+    {
+      "code": "150902",
+      "name": "San Francisco de Tiznados"
+    },
+    {
+      "code": "150903",
+      "name": "San Lorenzo de Tiznados"
+    },
+    {
+      "code": "150904",
+      "name": "Ortiz"
+    }
+  ],
+  "1510": [
+    {
+      "code": "151001",
+      "name": "Tucupido"
+    },
+    {
+      "code": "151002",
+      "name": "San Rafael de Laya"
+    }
+  ],
+  "1511": [
+    {
+      "code": "151101",
+      "name": "Cantagallo"
+    },
+    {
+      "code": "151102",
+      "name": "San Juan de los Morros"
+    },
+    {
+      "code": "151103",
+      "name": "Parapara"
+    }
+  ],
+  "1512": [
+    {
+      "code": "151201",
+      "name": "Guayabal"
+    },
+    {
+      "code": "151202",
+      "name": "Cazorla"
+    }
+  ],
+  "1513": [
+    {
+      "code": "151301",
+      "name": "San José de Guaribe"
+    },
+    {
+      "code": "151302",
+      "name": "Uveral"
+    }
+  ],
+  "1514": [
+    {
+      "code": "151401",
+      "name": "Santa María de Ipire"
+    },
+    {
+      "code": "151402",
+      "name": "Altamira"
+    }
+  ],
+  "1515": [
+    {
+      "code": "151501",
+      "name": "Unare"
+    },
+    {
+      "code": "151502",
+      "name": "Zaraza"
+    }
+  ],
+  "1601": [
+    {
+      "code": "160101",
+      "name": "Quebrada Honda de Guache"
+    },
+    {
+      "code": "160102",
+      "name": "Pío Tamayo"
+    },
+    {
+      "code": "160103",
+      "name": "Yacambú"
+    }
+  ],
+  "1602": [
+    {
+      "code": "160201",
+      "name": "Freitez"
+    },
+    {
+      "code": "160202",
+      "name": "José María Blanco"
+    }
+  ],
+  "1603": [
+    {
+      "code": "160301",
+      "name": "Catedral"
+    },
+    {
+      "code": "160302",
+      "name": "Concepción"
+    },
+    {
+      "code": "160303",
+      "name": "El Cují"
+    },
+    {
+      "code": "160304",
+      "name": "Juan de Villegas"
+    },
+    {
+      "code": "160305",
+      "name": "Santa Rosa"
+    },
+    {
+      "code": "160306",
+      "name": "Tamaca"
+    },
+    {
+      "code": "160307",
+      "name": "Unión"
+    },
+    {
+      "code": "160308",
+      "name": "Aguedo Felipe Alvarado"
+    },
+    {
+      "code": "160309",
+      "name": "Buena Vista"
+    },
+    {
+      "code": "160310",
+      "name": "Juárez"
+    }
+  ],
+  "1604": [
+    {
+      "code": "160401",
+      "name": "Juan Bautista Rodríguez"
+    },
+    {
+      "code": "160402",
+      "name": "Cuara"
+    },
+    {
+      "code": "160403",
+      "name": "Diego de Lozada"
+    },
+    {
+      "code": "160404",
+      "name": "Paraíso de San José"
+    },
+    {
+      "code": "160405",
+      "name": "San Miguel"
+    },
+    {
+      "code": "160406",
+      "name": "Tintorero"
+    },
+    {
+      "code": "160407",
+      "name": "José Bernardo Dorante"
+    },
+    {
+      "code": "160408",
+      "name": "Coronel Mariano Peraza"
+    }
+  ],
+  "1605": [
+    {
+      "code": "160501",
+      "name": "Anzoátegui"
+    },
+    {
+      "code": "160502",
+      "name": "Bolívar"
+    },
+    {
+      "code": "160503",
+      "name": "Guárico"
+    },
+    {
+      "code": "160504",
+      "name": "Hilario Luna y Luna"
+    },
+    {
+      "code": "160505",
+      "name": "Humocaro Bajo"
+    },
+    {
+      "code": "160506",
+      "name": "Humocaro Alto"
+    },
+    {
+      "code": "160507",
+      "name": "La Candelaria"
+    },
+    {
+      "code": "160508",
+      "name": "Morán"
+    }
+  ],
+  "1606": [
+    {
+      "code": "160601",
+      "name": "Cabudare"
+    },
+    {
+      "code": "160602",
+      "name": "José Gregorio Bastidas"
+    },
+    {
+      "code": "160603",
+      "name": "Agua Viva"
+    }
+  ],
+  "1607": [
+    {
+      "code": "160701",
+      "name": "Buría"
+    },
+    {
+      "code": "160702",
+      "name": "Gustavo Vega"
+    },
+    {
+      "code": "160703",
+      "name": "Sarare"
+    }
+  ],
+  "1608": [
+    {
+      "code": "160801",
+      "name": "Altagracia"
+    },
+    {
+      "code": "160802",
+      "name": "Antonio Díaz"
+    },
+    {
+      "code": "160803",
+      "name": "Camacaro"
+    },
+    {
+      "code": "160804",
+      "name": "Castañeda"
+    },
+    {
+      "code": "160805",
+      "name": "Cecilio Zubillaga"
+    },
+    {
+      "code": "160806",
+      "name": "Chiquinquira"
+    },
+    {
+      "code": "160807",
+      "name": "El Blanco"
+    },
+    {
+      "code": "160808",
+      "name": "Espinoza de los Monteros"
+    },
+    {
+      "code": "160809",
+      "name": "Heriberto Arrollo"
+    },
+    {
+      "code": "160810",
+      "name": "Lara"
+    },
+    {
+      "code": "160811",
+      "name": "Las Mercedes"
+    },
+    {
+      "code": "160812",
+      "name": "Manuel Morillo"
+    },
+    {
+      "code": "160813",
+      "name": "Montaña Verde"
+    },
+    {
+      "code": "160814",
+      "name": "Montes de Oca"
+    },
+    {
+      "code": "160815",
+      "name": "Reyes de Vargas"
+    },
+    {
+      "code": "160816",
+      "name": "Torres"
+    },
+    {
+      "code": "160817",
+      "name": "Trinidad Samuel"
+    }
+  ],
+  "1609": [
+    {
+      "code": "160901",
+      "name": "Siquisique"
+    },
+    {
+      "code": "160902",
+      "name": "San Miguel"
+    },
+    {
+      "code": "160903",
+      "name": "Moroturo"
+    },
+    {
+      "code": "160904",
+      "name": "Xaguas"
+    }
+  ],
+  "1801": [
+    {
+      "code": "180101",
+      "name": "Presidente Betancourt"
+    },
+    {
+      "code": "180102",
+      "name": "Presidente Páez"
+    },
+    {
+      "code": "180103",
+      "name": "Presidente Rómulo Gallegos"
+    },
+    {
+      "code": "180104",
+      "name": "Gabriel Picón González"
+    },
+    {
+      "code": "180105",
+      "name": "Héctor Amable Mora"
+    },
+    {
+      "code": "180106",
+      "name": "José Nucete Sardi"
+    },
+    {
+      "code": "180107",
+      "name": "Pulido Méndez"
+    }
+  ],
+  "1802": [
+    {
+      "code": "180201",
+      "name": "La Azulita"
+    }
+  ],
+  "1803": [
+    {
+      "code": "180301",
+      "name": "Santa Cruz de Mora"
+    },
+    {
+      "code": "180302",
+      "name": "Mesa Bolívar"
+    },
+    {
+      "code": "180303",
+      "name": "Mesa de Las Palmas"
+    }
+  ],
+  "1804": [
+    {
+      "code": "180401",
+      "name": "Aricagua"
+    },
+    {
+      "code": "180402",
+      "name": "San Antonio"
+    }
+  ],
+  "1805": [
+    {
+      "code": "180501",
+      "name": "Canagua"
+    },
+    {
+      "code": "180502",
+      "name": "Capurí"
+    },
+    {
+      "code": "180503",
+      "name": "Chacantá"
+    },
+    {
+      "code": "180504",
+      "name": "El Molino"
+    },
+    {
+      "code": "180505",
+      "name": "Guaimaral"
+    },
+    {
+      "code": "180506",
+      "name": "Mucutuy"
+    },
+    {
+      "code": "180507",
+      "name": "Mucuchachí"
+    }
+  ],
+  "1806": [
+    {
+      "code": "180601",
+      "name": "Fernández Peña"
+    },
+    {
+      "code": "180602",
+      "name": "Matriz"
+    },
+    {
+      "code": "180603",
+      "name": "Montalbán"
+    },
+    {
+      "code": "180604",
+      "name": "Acequias"
+    },
+    {
+      "code": "180605",
+      "name": "Jají"
+    },
+    {
+      "code": "180606",
+      "name": "La Mesa"
+    },
+    {
+      "code": "180607",
+      "name": "San José del Sur"
+    }
+  ],
+  "1807": [
+    {
+      "code": "180701",
+      "name": "Tucaní"
+    },
+    {
+      "code": "180702",
+      "name": "Florencio Ramírez"
+    }
+  ],
+  "1808": [
+    {
+      "code": "180801",
+      "name": "Santo Domingo"
+    },
+    {
+      "code": "180802",
+      "name": "Las Piedras"
+    }
+  ],
+  "1809": [
+    {
+      "code": "180901",
+      "name": "Guaraque"
+    },
+    {
+      "code": "180902",
+      "name": "Mesa de Quintero"
+    },
+    {
+      "code": "180903",
+      "name": "Río Negro"
+    }
+  ],
+  "1810": [
+    {
+      "code": "181001",
+      "name": "Arapuey"
+    },
+    {
+      "code": "181002",
+      "name": "Palmira"
+    }
+  ],
+  "1811": [
+    {
+      "code": "181101",
+      "name": "San Cristóbal de Torondoy"
+    },
+    {
+      "code": "181102",
+      "name": "Torondoy"
+    }
+  ],
+  "1812": [
+    {
+      "code": "181201",
+      "name": "Antonio Spinetti Dini"
+    },
+    {
+      "code": "181202",
+      "name": "Arias"
+    },
+    {
+      "code": "181203",
+      "name": "Caracciolo Parra Pérez"
+    },
+    {
+      "code": "181204",
+      "name": "Domingo Peña"
+    },
+    {
+      "code": "181205",
+      "name": "El Llano"
+    },
+    {
+      "code": "181206",
+      "name": "Gonzalo Picón Febres"
+    },
+    {
+      "code": "181207",
+      "name": "Jacinto Plaza"
+    },
+    {
+      "code": "181208",
+      "name": "Juan Rodríguez Suárez"
+    },
+    {
+      "code": "181209",
+      "name": "Lasso de la Vega"
+    },
+    {
+      "code": "181210",
+      "name": "Mariano Picón Salas"
+    },
+    {
+      "code": "181211",
+      "name": "Milla"
+    },
+    {
+      "code": "181212",
+      "name": "Osuna Rodríguez"
+    },
+    {
+      "code": "181213",
+      "name": "Sagrario"
+    },
+    {
+      "code": "181214",
+      "name": "El Morro"
+    },
+    {
+      "code": "181215",
+      "name": "Los Nevados"
+    }
+  ],
+  "1813": [
+    {
+      "code": "181301",
+      "name": "Andrés Eloy Blanco"
+    },
+    {
+      "code": "181302",
+      "name": "La Venta"
+    },
+    {
+      "code": "181303",
+      "name": "Piñango"
+    },
+    {
+      "code": "181304",
+      "name": "Timotes"
+    }
+  ],
+  "1814": [
+    {
+      "code": "181401",
+      "name": "Eloy Paredes"
+    },
+    {
+      "code": "181402",
+      "name": "San Rafael de Alcázar"
+    },
+    {
+      "code": "181403",
+      "name": "Santa Elena de Arenales"
+    }
+  ],
+  "1815": [
+    {
+      "code": "181501",
+      "name": "Santa María de Caparo"
+    }
+  ],
+  "1816": [
+    {
+      "code": "181601",
+      "name": "Pueblo Llano"
+    }
+  ],
+  "1817": [
+    {
+      "code": "181701",
+      "name": "Cacute"
+    },
+    {
+      "code": "181702",
+      "name": "La Toma"
+    },
+    {
+      "code": "181703",
+      "name": "Mucuchíes"
+    },
+    {
+      "code": "181704",
+      "name": "Mucurubá"
+    },
+    {
+      "code": "181705",
+      "name": "San Rafael"
+    }
+  ],
+  "1818": [
+    {
+      "code": "181801",
+      "name": "Gerónimo Maldonado"
+    },
+    {
+      "code": "181802",
+      "name": "Bailadores"
+    }
+  ],
+  "1819": [
+    {
+      "code": "181901",
+      "name": "Tabay"
+    }
+  ],
+  "1820": [
+    {
+      "code": "182001",
+      "name": "Chiguará"
+    },
+    {
+      "code": "182002",
+      "name": "Estánquez"
+    },
+    {
+      "code": "182003",
+      "name": "Lagunillas"
+    },
+    {
+      "code": "182004",
+      "name": "La Trampa"
+    },
+    {
+      "code": "182005",
+      "name": "Pueblo Nuevo del Sur"
+    },
+    {
+      "code": "182006",
+      "name": "San Juan"
+    }
+  ],
+  "1821": [
+    {
+      "code": "182101",
+      "name": "El Amparo"
+    },
+    {
+      "code": "182102",
+      "name": "El Llano"
+    },
+    {
+      "code": "182103",
+      "name": "San Francisco"
+    },
+    {
+      "code": "182104",
+      "name": "Tovar"
+    }
+  ],
+  "1822": [
+    {
+      "code": "182201",
+      "name": "Independencia"
+    },
+    {
+      "code": "182202",
+      "name": "María de la Concepción Palacios Blanco"
+    },
+    {
+      "code": "182203",
+      "name": "Nueva Bolivia"
+    },
+    {
+      "code": "182204",
+      "name": "Santa Apolonia"
+    }
+  ],
+  "1823": [
+    {
+      "code": "182301",
+      "name": "Caño El Tigre"
+    },
+    {
+      "code": "182302",
+      "name": "Zea"
+    }
+  ],
+  "1901": [
+    {
+      "code": "190101",
+      "name": "Aragüita"
+    },
+    {
+      "code": "190102",
+      "name": "Arévalo González"
+    },
+    {
+      "code": "190103",
+      "name": "Capaya"
+    },
+    {
+      "code": "190104",
+      "name": "Caucagua"
+    },
+    {
+      "code": "190105",
+      "name": "Panaquire"
+    },
+    {
+      "code": "190106",
+      "name": "Ribas"
+    },
+    {
+      "code": "190107",
+      "name": "El Café"
+    },
+    {
+      "code": "190108",
+      "name": "Marizapa"
+    }
+  ],
+  "1902": [
+    {
+      "code": "190201",
+      "name": "Cumbo"
+    },
+    {
+      "code": "190202",
+      "name": "San José de Barlovento"
+    }
+  ],
+  "1903": [
+    {
+      "code": "190301",
+      "name": "El Cafetal"
+    },
+    {
+      "code": "190302",
+      "name": "Las Minas"
+    },
+    {
+      "code": "190303",
+      "name": "Nuestra Señora del Rosario"
+    }
+  ],
+  "1904": [
+    {
+      "code": "190401",
+      "name": "Higuerote"
+    },
+    {
+      "code": "190402",
+      "name": "Curiepe"
+    },
+    {
+      "code": "190403",
+      "name": "Tacarigua de Brión"
+    }
+  ],
+  "1905": [
+    {
+      "code": "190501",
+      "name": "Mamporal"
+    }
+  ],
+  "1906": [
+    {
+      "code": "190601",
+      "name": "Carrizal"
+    }
+  ],
+  "1907": [
+    {
+      "code": "190701",
+      "name": "Chacao"
+    }
+  ],
+  "1908": [
+    {
+      "code": "190801",
+      "name": "Charallave"
+    },
+    {
+      "code": "190802",
+      "name": "Las Brisas"
+    }
+  ],
+  "1909": [
+    {
+      "code": "190901",
+      "name": "El Hatillo"
+    }
+  ],
+  "1910": [
+    {
+      "code": "191001",
+      "name": "Altagracia de la Montaña"
+    },
+    {
+      "code": "191002",
+      "name": "Cecilio Acosta"
+    },
+    {
+      "code": "191003",
+      "name": "Los Teques"
+    },
+    {
+      "code": "191004",
+      "name": "El Jarillo"
+    },
+    {
+      "code": "191005",
+      "name": "San Pedro."
+    },
+    {
+      "code": "191006",
+      "name": "Tácata"
+    },
+    {
+      "code": "191007",
+      "name": "Paracotos"
+    }
+  ],
+  "1911": [
+    {
+      "code": "191101",
+      "name": "Cartanal"
+    },
+    {
+      "code": "191102",
+      "name": "Santa Teresa del Tuy"
+    }
+  ],
+  "1912": [
+    {
+      "code": "191201",
+      "name": "La Democracia"
+    },
+    {
+      "code": "191202",
+      "name": "Ocumare del Tuy"
+    },
+    {
+      "code": "191203",
+      "name": "Santa Bárbara"
+    }
+  ],
+  "1913": [
+    {
+      "code": "191301",
+      "name": "San Antonio de los Altos"
+    }
+  ],
+  "1914": [
+    {
+      "code": "191401",
+      "name": "Río Chico"
+    },
+    {
+      "code": "191402",
+      "name": "El Guapo"
+    },
+    {
+      "code": "191403",
+      "name": "Tacarigua de la Laguna"
+    },
+    {
+      "code": "191404",
+      "name": "Paparo"
+    },
+    {
+      "code": "191405",
+      "name": "San Fernando del Guapo"
+    }
+  ],
+  "1915": [
+    {
+      "code": "191501",
+      "name": "Santa Lucía del Tuy"
+    }
+  ],
+  "1916": [
+    {
+      "code": "191601",
+      "name": "Cúpira"
+    },
+    {
+      "code": "191602",
+      "name": "Machurucuto"
+    }
+  ],
+  "1917": [
+    {
+      "code": "191701",
+      "name": "Guarenas"
+    }
+  ],
+  "1918": [
+    {
+      "code": "191801",
+      "name": "San Antonio de Yare"
+    },
+    {
+      "code": "191802",
+      "name": "San Francisco de Yare"
+    }
+  ],
+  "1919": [
+    {
+      "code": "191901",
+      "name": "Leoncio Martínez"
+    },
+    {
+      "code": "191902",
+      "name": "Petare"
+    },
+    {
+      "code": "191903",
+      "name": "Caucagüita"
+    },
+    {
+      "code": "191904",
+      "name": "Filas de Mariche"
+    },
+    {
+      "code": "191905",
+      "name": "La Dolorita"
+    }
+  ],
+  "1920": [
+    {
+      "code": "192001",
+      "name": "Cúa"
+    },
+    {
+      "code": "192002",
+      "name": "Nueva Cúa"
+    }
+  ],
+  "1921": [
+    {
+      "code": "192101",
+      "name": "Guatire"
+    },
+    {
+      "code": "192102",
+      "name": "Bolívar"
+    }
+  ],
+  "2101": [
+    {
+      "code": "210101",
+      "name": "San Antonio de Maturín"
+    },
+    {
+      "code": "210102",
+      "name": "San Francisco de Maturín"
+    }
+  ],
+  "2102": [
+    {
+      "code": "210201",
+      "name": "Aguasay"
+    }
+  ],
+  "2103": [
+    {
+      "code": "210301",
+      "name": "Caripito"
+    }
+  ],
+  "2104": [
+    {
+      "code": "210401",
+      "name": "El Guácharo"
+    },
+    {
+      "code": "210402",
+      "name": "La Guanota"
+    },
+    {
+      "code": "210403",
+      "name": "Sabana de Piedra"
+    },
+    {
+      "code": "210404",
+      "name": "San Agustín"
+    },
+    {
+      "code": "210405",
+      "name": "Teresen"
+    },
+    {
+      "code": "210406",
+      "name": "Caripe"
+    }
+  ],
+  "2105": [
+    {
+      "code": "210501",
+      "name": "Areo"
+    },
+    {
+      "code": "210502",
+      "name": "Capital Cedeño"
+    },
+    {
+      "code": "210503",
+      "name": "San Félix de Cantalicio"
+    },
+    {
+      "code": "210504",
+      "name": "Viento Fresco"
+    }
+  ],
+  "2106": [
+    {
+      "code": "210601",
+      "name": "El Tejero"
+    },
+    {
+      "code": "210602",
+      "name": "Punta de Mata"
+    }
+  ],
+  "2107": [
+    {
+      "code": "210701",
+      "name": "Chaguaramas"
+    },
+    {
+      "code": "210702",
+      "name": "Las Alhuacas"
+    },
+    {
+      "code": "210703",
+      "name": "Tabasca"
+    },
+    {
+      "code": "210704",
+      "name": "Temblador"
+    }
+  ],
+  "2108": [
+    {
+      "code": "210801",
+      "name": "Alto de los Godos"
+    },
+    {
+      "code": "210802",
+      "name": "Boquerón"
+    },
+    {
+      "code": "210803",
+      "name": "Las Cocuizas"
+    },
+    {
+      "code": "210804",
+      "name": "La Cruz"
+    },
+    {
+      "code": "210805",
+      "name": "San Simón"
+    },
+    {
+      "code": "210806",
+      "name": "El Corozo"
+    },
+    {
+      "code": "210807",
+      "name": "El Furrial"
+    },
+    {
+      "code": "210808",
+      "name": "Jusepín"
+    },
+    {
+      "code": "210809",
+      "name": "La Pica"
+    },
+    {
+      "code": "210810",
+      "name": "San Vicente"
+    }
+  ],
+  "2109": [
+    {
+      "code": "210901",
+      "name": "Aparicio"
+    },
+    {
+      "code": "210902",
+      "name": "Aragua de Maturín"
+    },
+    {
+      "code": "210903",
+      "name": "Chaguamal"
+    },
+    {
+      "code": "210904",
+      "name": "El Pinto"
+    },
+    {
+      "code": "210905",
+      "name": "Guanaguana"
+    },
+    {
+      "code": "210906",
+      "name": "La Toscana"
+    },
+    {
+      "code": "210907",
+      "name": "Taguaya"
+    }
+  ],
+  "2110": [
+    {
+      "code": "211001",
+      "name": "Cachipo"
+    },
+    {
+      "code": "211002",
+      "name": "Quiriquire"
+    }
+  ],
+  "2111": [
+    {
+      "code": "211101",
+      "name": "Santa Bárbara"
+    }
+  ],
+  "2112": [
+    {
+      "code": "211201",
+      "name": "Barrancas"
+    },
+    {
+      "code": "211202",
+      "name": "Los Barrancos de Fajardo"
+    }
+  ],
+  "2113": [
+    {
+      "code": "211301",
+      "name": "Uracoa"
+    }
+  ],
+  "2201": [
+    {
+      "code": "220101",
+      "name": "Antolín del Campo"
+    }
+  ],
+  "2202": [
+    {
+      "code": "220201",
+      "name": "Arismendi"
+    }
+  ],
+  "2203": [
+    {
+      "code": "220301",
+      "name": "San Juan Bautista"
+    },
+    {
+      "code": "220302",
+      "name": "Zabala"
+    }
+  ],
+  "2204": [
+    {
+      "code": "220401",
+      "name": "García"
+    },
+    {
+      "code": "220402",
+      "name": "Francisco Fajardo"
+    }
+  ],
+  "2205": [
+    {
+      "code": "220501",
+      "name": "Bolívar"
+    },
+    {
+      "code": "220502",
+      "name": "Guevara"
+    },
+    {
+      "code": "220503",
+      "name": "Cerro de Matasiete"
+    },
+    {
+      "code": "220504",
+      "name": "Santa Ana"
+    },
+    {
+      "code": "220505",
+      "name": "Sucre"
+    }
+  ],
+  "2206": [
+    {
+      "code": "220601",
+      "name": "Aguirre"
+    },
+    {
+      "code": "220602",
+      "name": "Maneiro"
+    }
+  ],
+  "2207": [
+    {
+      "code": "220701",
+      "name": "Adrián"
+    },
+    {
+      "code": "220702",
+      "name": "Juan Griego"
+    },
+    {
+      "code": "220703",
+      "name": "Yaguaraparo"
+    }
+  ],
+  "2208": [
+    {
+      "code": "220801",
+      "name": "Porlamar"
+    }
+  ],
+  "2209": [
+    {
+      "code": "220901",
+      "name": "San Francisco de Macanao"
+    },
+    {
+      "code": "220902",
+      "name": "Boca de Río"
+    }
+  ],
+  "2210": [
+    {
+      "code": "221001",
+      "name": "Tubores"
+    },
+    {
+      "code": "221002",
+      "name": "Los Barales"
+    }
+  ],
+  "2211": [
+    {
+      "code": "221101",
+      "name": "Vicente Fuentes"
+    },
+    {
+      "code": "221102",
+      "name": "Villalba"
+    }
+  ],
+  "2301": [
+    {
+      "code": "230101",
+      "name": "Agua Blanca"
+    }
+  ],
+  "2302": [
+    {
+      "code": "230201",
+      "name": "Araure"
+    },
+    {
+      "code": "230202",
+      "name": "Río Acarigua"
+    }
+  ],
+  "2303": [
+    {
+      "code": "230301",
+      "name": "Píritu"
+    },
+    {
+      "code": "230302",
+      "name": "Uveral"
+    }
+  ],
+  "2304": [
+    {
+      "code": "230401",
+      "name": "Cordova"
+    },
+    {
+      "code": "230402",
+      "name": "Guanare"
+    },
+    {
+      "code": "230403",
+      "name": "San José de la Montaña"
+    },
+    {
+      "code": "230404",
+      "name": "San Juan de Guanaguanare"
+    },
+    {
+      "code": "230405",
+      "name": "Virgen de Coromoto"
+    }
+  ],
+  "2305": [
+    {
+      "code": "230501",
+      "name": "Guanarito"
+    },
+    {
+      "code": "230502",
+      "name": "Trinidad de la Capilla"
+    },
+    {
+      "code": "230503",
+      "name": "Divina Pastora"
+    }
+  ],
+  "2306": [
+    {
+      "code": "230601",
+      "name": "Peña Blanca"
+    }
+  ],
+  "2307": [
+    {
+      "code": "230701",
+      "name": "Aparición"
+    },
+    {
+      "code": "230702",
+      "name": "La Estación"
+    },
+    {
+      "code": "230703",
+      "name": "Ospino"
+    }
+  ],
+  "2308": [
+    {
+      "code": "230801",
+      "name": "Acarigua"
+    },
+    {
+      "code": "230802",
+      "name": "Payara"
+    },
+    {
+      "code": "230803",
+      "name": "Pimpinela"
+    },
+    {
+      "code": "230804",
+      "name": "Ramón Peraza"
+    }
+  ],
+  "2309": [
+    {
+      "code": "230901",
+      "name": "Caño Delgadito"
+    },
+    {
+      "code": "230902",
+      "name": "Papelón"
+    }
+  ],
+  "2310": [
+    {
+      "code": "231001",
+      "name": "Antolín Tovar Anquino"
+    },
+    {
+      "code": "231002",
+      "name": "Boconoíto"
+    }
+  ],
+  "2311": [
+    {
+      "code": "231101",
+      "name": "Santa Fé"
+    },
+    {
+      "code": "231102",
+      "name": "San Rafael de Onoto"
+    },
+    {
+      "code": "231103",
+      "name": "Thermo Morales"
+    }
+  ],
+  "2312": [
+    {
+      "code": "231201",
+      "name": "Florida"
+    },
+    {
+      "code": "231202",
+      "name": "El Playón"
+    }
+  ],
+  "2313": [
+    {
+      "code": "231301",
+      "name": "Biscucuy"
+    },
+    {
+      "code": "231302",
+      "name": "Concepción"
+    },
+    {
+      "code": "231303",
+      "name": "San José de Saguaz"
+    },
+    {
+      "code": "231304",
+      "name": "San Rafael de Palo Alzado"
+    },
+    {
+      "code": "231305",
+      "name": "Uvencio Antonio Velásquez"
+    },
+    {
+      "code": "231306",
+      "name": "Villa Rosa"
+    }
+  ],
+  "2314": [
+    {
+      "code": "231401",
+      "name": "Canelones"
+    },
+    {
+      "code": "231402",
+      "name": "Santa Cruz"
+    },
+    {
+      "code": "231403",
+      "name": "San Isidro Labrador"
+    }
+  ],
+  "2401": [
+    {
+      "code": "240101",
+      "name": "Mariño"
+    },
+    {
+      "code": "240102",
+      "name": "Rómulo Gallegos"
+    }
+  ],
+  "2402": [
+    {
+      "code": "240201",
+      "name": "San José de Aerocuar"
+    },
+    {
+      "code": "240202",
+      "name": "Tavera Acosta"
+    }
+  ],
+  "2403": [
+    {
+      "code": "240301",
+      "name": "Río Caribe"
+    },
+    {
+      "code": "240302",
+      "name": "Antonio José de Sucre"
+    },
+    {
+      "code": "240303",
+      "name": "El Morro de Puerto Santo"
+    },
+    {
+      "code": "240304",
+      "name": "Puerto Santo"
+    },
+    {
+      "code": "240305",
+      "name": "San Juan de las Galdonas"
+    }
+  ],
+  "2404": [
+    {
+      "code": "240401",
+      "name": "El Pilar"
+    },
+    {
+      "code": "240402",
+      "name": "El Rincón"
+    },
+    {
+      "code": "240403",
+      "name": "General Francisco Antonio Váquez"
+    },
+    {
+      "code": "240404",
+      "name": "Guaraúnos"
+    },
+    {
+      "code": "240405",
+      "name": "Tunapuicito"
+    },
+    {
+      "code": "240406",
+      "name": "Unión"
+    }
+  ],
+  "2405": [
+    {
+      "code": "240501",
+      "name": "Santa Catalina"
+    },
+    {
+      "code": "240502",
+      "name": "Santa Rosa"
+    },
+    {
+      "code": "240503",
+      "name": "Santa Teresa"
+    },
+    {
+      "code": "240504",
+      "name": "Bolívar"
+    },
+    {
+      "code": "240505",
+      "name": "Maracapana"
+    }
+  ],
+  "2406": [],
+  "2407": [
+    {
+      "code": "240701",
+      "name": "Libertad"
+    },
+    {
+      "code": "240702",
+      "name": "El Paujil"
+    },
+    {
+      "code": "240703",
+      "name": "Yaguaraparo"
+    }
+  ],
+  "2408": [
+    {
+      "code": "240801",
+      "name": "Cruz Salmerón Acosta"
+    },
+    {
+      "code": "240802",
+      "name": "Chacopata"
+    },
+    {
+      "code": "240803",
+      "name": "Manicuare"
+    }
+  ],
+  "2409": [
+    {
+      "code": "240901",
+      "name": "Tunapuy"
+    },
+    {
+      "code": "240902",
+      "name": "Campo Elías"
+    }
+  ],
+  "2410": [
+    {
+      "code": "241001",
+      "name": "Irapa"
+    },
+    {
+      "code": "241002",
+      "name": "Campo Claro"
+    },
+    {
+      "code": "241003",
+      "name": "Maraval"
+    },
+    {
+      "code": "241004",
+      "name": "San Antonio de Irapa"
+    },
+    {
+      "code": "241005",
+      "name": "Soro"
+    }
+  ],
+  "2411": [
+    {
+      "code": "241101",
+      "name": "Mejía"
+    }
+  ],
+  "2412": [
+    {
+      "code": "241201",
+      "name": "Cumanacoa"
+    },
+    {
+      "code": "241202",
+      "name": "Arenas"
+    },
+    {
+      "code": "241203",
+      "name": "Aricagua"
+    },
+    {
+      "code": "241204",
+      "name": "Cocollar"
+    },
+    {
+      "code": "241205",
+      "name": "San Fernando"
+    },
+    {
+      "code": "241206",
+      "name": "San Lorenzo"
+    }
+  ],
+  "2413": [
+    {
+      "code": "241301",
+      "name": "Villa Frontado (Muelle de Cariaco)"
+    },
+    {
+      "code": "241302",
+      "name": "Catuaro"
+    },
+    {
+      "code": "241303",
+      "name": "Rendón"
+    },
+    {
+      "code": "241304",
+      "name": "San Cruz"
+    },
+    {
+      "code": "241305",
+      "name": "Santa María"
+    }
+  ],
+  "2414": [
+    {
+      "code": "241401",
+      "name": "Altagracia Cumaná"
+    },
+    {
+      "code": "241402",
+      "name": "Santa Inés Cumaná"
+    },
+    {
+      "code": "241403",
+      "name": "Valentín Valiente Cumaná"
+    },
+    {
+      "code": "241404",
+      "name": "Ayacucho Cumaná"
+    },
+    {
+      "code": "241405",
+      "name": "San Juan"
+    },
+    {
+      "code": "241406",
+      "name": "Raúl Leoni"
+    },
+    {
+      "code": "241407",
+      "name": "Gran Mariscal"
+    }
+  ],
+  "2415": [
+    {
+      "code": "241501",
+      "name": "Cristóbal Colón"
+    },
+    {
+      "code": "241502",
+      "name": "Bideau"
+    },
+    {
+      "code": "241503",
+      "name": "Punta de Piedras"
+    },
+    {
+      "code": "241504",
+      "name": "Güiria"
+    }
+  ],
+  "2501": [
+    {
+      "code": "250101",
+      "name": "Andrés Bello"
+    }
+  ],
+  "2502": [
+    {
+      "code": "250201",
+      "name": "Antonio Rómulo Costa"
+    }
+  ],
+  "2503": [
+    {
+      "code": "250301",
+      "name": "Ayacucho"
+    },
+    {
+      "code": "250302",
+      "name": "Rivas Berti"
+    },
+    {
+      "code": "250303",
+      "name": "San Pedro del Río"
+    }
+  ],
+  "2504": [
+    {
+      "code": "250401",
+      "name": "Bolívar"
+    },
+    {
+      "code": "250402",
+      "name": "Palotal"
+    },
+    {
+      "code": "250403",
+      "name": "General Juan Vicente Gómez"
+    },
+    {
+      "code": "250404",
+      "name": "Isaías Medina Angarita"
+    }
+  ],
+  "2505": [
+    {
+      "code": "250501",
+      "name": "Cárdenas"
+    },
+    {
+      "code": "250502",
+      "name": "Amenodoro Rangel Lamus"
+    },
+    {
+      "code": "250503",
+      "name": "La Florida"
+    }
+  ],
+  "2506": [
+    {
+      "code": "250601",
+      "name": "Córdoba"
+    }
+  ],
+  "2507": [
+    {
+      "code": "250701",
+      "name": "Fernández Feo"
+    },
+    {
+      "code": "250702",
+      "name": "Alberto Adriani"
+    },
+    {
+      "code": "250703",
+      "name": "Santo Domingo"
+    }
+  ],
+  "2508": [
+    {
+      "code": "250801",
+      "name": "Francisco de Miranda"
+    }
+  ],
+  "2509": [
+    {
+      "code": "250901",
+      "name": "García de Hevia"
+    },
+    {
+      "code": "250902",
+      "name": "Boca de Grita"
+    },
+    {
+      "code": "250903",
+      "name": "José Antonio Páez"
+    }
+  ],
+  "2510": [
+    {
+      "code": "251001",
+      "name": "Guásimos"
+    }
+  ],
+  "2511": [
+    {
+      "code": "251101",
+      "name": "Independencia"
+    },
+    {
+      "code": "251102",
+      "name": "Juan Germán Roscio"
+    },
+    {
+      "code": "251103",
+      "name": "Román Cárdenas"
+    }
+  ],
+  "2512": [
+    {
+      "code": "251201",
+      "name": "Jáuregui"
+    },
+    {
+      "code": "251202",
+      "name": "Emilio Constantino Guerrero"
+    },
+    {
+      "code": "251203",
+      "name": "Monseñor Miguel Antonio Salas"
+    }
+  ],
+  "2513": [
+    {
+      "code": "251301",
+      "name": "José María Vargas"
+    }
+  ],
+  "2514": [
+    {
+      "code": "251401",
+      "name": "Junín"
+    },
+    {
+      "code": "251402",
+      "name": "La Petrólea"
+    },
+    {
+      "code": "251403",
+      "name": "Quinimarí"
+    },
+    {
+      "code": "251404",
+      "name": "Bramón"
+    }
+  ],
+  "2515": [
+    {
+      "code": "251501",
+      "name": "Libertad"
+    },
+    {
+      "code": "251502",
+      "name": "Cipriano Castro"
+    },
+    {
+      "code": "251503",
+      "name": "Manuel Felipe Rugeles"
+    }
+  ],
+  "2516": [
+    {
+      "code": "251601",
+      "name": "Capital Libertador"
+    },
+    {
+      "code": "251602",
+      "name": "Doradas"
+    },
+    {
+      "code": "251603",
+      "name": "Emeterio Ochoa"
+    },
+    {
+      "code": "251604",
+      "name": "San Joaquín de Navay"
+    }
+  ],
+  "2517": [
+    {
+      "code": "251701",
+      "name": "Lobatera"
+    },
+    {
+      "code": "251702",
+      "name": "Constitución"
+    }
+  ],
+  "2518": [
+    {
+      "code": "251801",
+      "name": "Michelena"
+    }
+  ],
+  "2519": [
+    {
+      "code": "251901",
+      "name": "Panamericano"
+    },
+    {
+      "code": "251902",
+      "name": "La Palmita"
+    }
+  ],
+  "2520": [
+    {
+      "code": "252001",
+      "name": "Pedro María Ureña"
+    },
+    {
+      "code": "252002",
+      "name": "Nueva Arcadia"
+    }
+  ],
+  "2521": [
+    {
+      "code": "252101",
+      "name": "Delicias"
+    },
+    {
+      "code": "252102",
+      "name": "Pecaya"
+    }
+  ],
+  "2522": [
+    {
+      "code": "252201",
+      "name": "Samuel Darío Maldonado"
+    },
+    {
+      "code": "252202",
+      "name": "Boconó"
+    },
+    {
+      "code": "252203",
+      "name": "Hernández"
+    }
+  ],
+  "2523": [
+    {
+      "code": "252301",
+      "name": "La Concordia"
+    },
+    {
+      "code": "252302",
+      "name": "San Juan Bautista"
+    },
+    {
+      "code": "252303",
+      "name": "Pedro María Morantes"
+    },
+    {
+      "code": "252304",
+      "name": "San Sebastián"
+    },
+    {
+      "code": "252305",
+      "name": "Dr. Francisco Romero Lobo"
+    }
+  ],
+  "2524": [
+    {
+      "code": "252401",
+      "name": "Seboruco"
+    }
+  ],
+  "2525": [
+    {
+      "code": "252501",
+      "name": "Simón Rodríguez"
+    }
+  ],
+  "2526": [
+    {
+      "code": "252601",
+      "name": "Sucre"
+    },
+    {
+      "code": "252602",
+      "name": "Eleazar López Contreras"
+    },
+    {
+      "code": "252603",
+      "name": "San Pablo"
+    }
+  ],
+  "2527": [
+    {
+      "code": "252701",
+      "name": "San José Obrero"
+    },
+    {
+      "code": "252702",
+      "name": "San Juan Eudes"
+    }
+  ],
+  "2528": [
+    {
+      "code": "252801",
+      "name": "Uribante"
+    },
+    {
+      "code": "252802",
+      "name": "Cárdenas"
+    },
+    {
+      "code": "252803",
+      "name": "Juan Pablo Peñalosa"
+    },
+    {
+      "code": "252804",
+      "name": "Potosí"
+    }
+  ],
+  "2529": [
+    {
+      "code": "252901",
+      "name": "San Judas Tadeo"
+    }
+  ],
+  "2601": [
+    {
+      "code": "260101",
+      "name": "Araguaney"
+    },
+    {
+      "code": "260102",
+      "name": "El Jaguito"
+    },
+    {
+      "code": "260103",
+      "name": "La Esperanza"
+    },
+    {
+      "code": "260104",
+      "name": "Santa Isabel"
+    }
+  ],
+  "2602": [
+    {
+      "code": "260201",
+      "name": "Boconó"
+    },
+    {
+      "code": "260202",
+      "name": "El Carmen"
+    },
+    {
+      "code": "260203",
+      "name": "Mosquey"
+    },
+    {
+      "code": "260204",
+      "name": "Ayacucho"
+    },
+    {
+      "code": "260205",
+      "name": "Burbusay"
+    },
+    {
+      "code": "260206",
+      "name": "General Ribas"
+    },
+    {
+      "code": "260207",
+      "name": "Guaramacal"
+    },
+    {
+      "code": "260208",
+      "name": "Vega de Guaramacal"
+    },
+    {
+      "code": "260209",
+      "name": "Monseñor Jáuregui"
+    },
+    {
+      "code": "260210",
+      "name": "Rafael Rangel"
+    },
+    {
+      "code": "260211",
+      "name": "San Miguel"
+    },
+    {
+      "code": "260212",
+      "name": "San José"
+    }
+  ],
+  "2603": [
+    {
+      "code": "260301",
+      "name": "Sabana Grande"
+    },
+    {
+      "code": "260302",
+      "name": "Cheregüé"
+    },
+    {
+      "code": "260303",
+      "name": "Granados"
+    }
+  ],
+  "2604": [
+    {
+      "code": "260401",
+      "name": "Arnoldo Gabaldón"
+    },
+    {
+      "code": "260402",
+      "name": "Bolivia"
+    },
+    {
+      "code": "260403",
+      "name": "Carrillo"
+    },
+    {
+      "code": "260404",
+      "name": "Cegarra"
+    },
+    {
+      "code": "260405",
+      "name": "Chejendé"
+    },
+    {
+      "code": "260406",
+      "name": "Manuel Salvador Ulloa"
+    },
+    {
+      "code": "260407",
+      "name": "San José"
+    }
+  ],
+  "2605": [
+    {
+      "code": "260501",
+      "name": "Carache"
+    },
+    {
+      "code": "260502",
+      "name": "La Concepción"
+    },
+    {
+      "code": "260503",
+      "name": "Cuicas"
+    },
+    {
+      "code": "260504",
+      "name": "Panamericana"
+    },
+    {
+      "code": "260505",
+      "name": "Santa Cruz"
+    }
+  ],
+  "2606": [
+    {
+      "code": "260601",
+      "name": "Escuque"
+    },
+    {
+      "code": "260602",
+      "name": "La Unión (El Alto Escuque)"
+    },
+    {
+      "code": "260603",
+      "name": "Santa Rita"
+    },
+    {
+      "code": "260604",
+      "name": "Sabana Libre"
+    }
+  ],
+  "2607": [
+    {
+      "code": "260701",
+      "name": "El Socorro"
+    },
+    {
+      "code": "260702",
+      "name": "Los Caprichos"
+    },
+    {
+      "code": "260703",
+      "name": "Antonio José de Sucre"
+    }
+  ],
+  "2608": [
+    {
+      "code": "260801",
+      "name": "Campo Elías"
+    },
+    {
+      "code": "260802",
+      "name": "Arnoldo Gabaldón"
+    }
+  ],
+  "2609": [
+    {
+      "code": "260901",
+      "name": "Santa Apolonia"
+    },
+    {
+      "code": "260902",
+      "name": "El Progreso"
+    },
+    {
+      "code": "260903",
+      "name": "La Ceiba"
+    },
+    {
+      "code": "260904",
+      "name": "Tres de Febrero"
+    }
+  ],
+  "2610": [
+    {
+      "code": "261001",
+      "name": "El Dividive"
+    },
+    {
+      "code": "261002",
+      "name": "Agua Santa"
+    },
+    {
+      "code": "261003",
+      "name": "Agua Caliente"
+    },
+    {
+      "code": "261004",
+      "name": "El Cenizo"
+    },
+    {
+      "code": "261005",
+      "name": "Valerita"
+    }
+  ],
+  "2611": [
+    {
+      "code": "261101",
+      "name": "Monte Carmelo"
+    },
+    {
+      "code": "261102",
+      "name": "Buena Vista"
+    },
+    {
+      "code": "261103",
+      "name": "Santa María del Horcón"
+    }
+  ],
+  "2612": [
+    {
+      "code": "261201",
+      "name": "Motatán"
+    },
+    {
+      "code": "261202",
+      "name": "El Baño"
+    },
+    {
+      "code": "261203",
+      "name": "Jalisco"
+    }
+  ],
+  "2613": [
+    {
+      "code": "261301",
+      "name": "Pampán"
+    },
+    {
+      "code": "261302",
+      "name": "Flor de Patria"
+    },
+    {
+      "code": "261303",
+      "name": "La Paz"
+    },
+    {
+      "code": "261304",
+      "name": "Santa Ana"
+    }
+  ],
+  "2614": [
+    {
+      "code": "261401",
+      "name": "Pampanito"
+    },
+    {
+      "code": "261402",
+      "name": "La Concepción"
+    },
+    {
+      "code": "261403",
+      "name": "Pampanito II"
+    }
+  ],
+  "2615": [
+    {
+      "code": "261501",
+      "name": "Betijoque"
+    },
+    {
+      "code": "261502",
+      "name": "José Gregorio Hernández"
+    },
+    {
+      "code": "261503",
+      "name": "La Pueblita"
+    },
+    {
+      "code": "261504",
+      "name": "Los Cedros"
+    }
+  ],
+  "2616": [
+    {
+      "code": "261601",
+      "name": "Carvajal"
+    },
+    {
+      "code": "261602",
+      "name": "Campo Alegre"
+    },
+    {
+      "code": "261603",
+      "name": "Antonio Nicolás Briceño"
+    },
+    {
+      "code": "261604",
+      "name": "José Leonardo Suárez"
+    }
+  ],
+  "2617": [
+    {
+      "code": "261701",
+      "name": "Sabana de Mendoza"
+    },
+    {
+      "code": "261702",
+      "name": "Junín"
+    },
+    {
+      "code": "261703",
+      "name": "Valmore Rodríguez"
+    },
+    {
+      "code": "261704",
+      "name": "El Paraíso"
+    }
+  ],
+  "2618": [
+    {
+      "code": "261801",
+      "name": "Andrés Linares"
+    },
+    {
+      "code": "261802",
+      "name": "Chiquinquirá"
+    },
+    {
+      "code": "261803",
+      "name": "Cristóbal Mendoza"
+    },
+    {
+      "code": "261804",
+      "name": "Cruz Carrillo"
+    },
+    {
+      "code": "261805",
+      "name": "Matriz"
+    },
+    {
+      "code": "261806",
+      "name": "Monseñor Carrillo"
+    },
+    {
+      "code": "261807",
+      "name": "Tres Esquinas"
+    }
+  ],
+  "2619": [
+    {
+      "code": "261901",
+      "name": "Cabimbú"
+    },
+    {
+      "code": "261902",
+      "name": "Jajó"
+    },
+    {
+      "code": "261903",
+      "name": "La Mesa de Esnujaque"
+    },
+    {
+      "code": "261904",
+      "name": "Santiago"
+    },
+    {
+      "code": "261905",
+      "name": "Tuñame"
+    },
+    {
+      "code": "261906",
+      "name": "La Quebrada"
+    }
+  ],
+  "2620": [
+    {
+      "code": "262001",
+      "name": "Juan Ignacio Montilla"
+    },
+    {
+      "code": "262002",
+      "name": "La Beatriz"
+    },
+    {
+      "code": "262003",
+      "name": "La Puerta"
+    },
+    {
+      "code": "262004",
+      "name": "Mendoza del Valle de Momboy"
+    },
+    {
+      "code": "262005",
+      "name": "Mercedes Díaz"
+    },
+    {
+      "code": "262006",
+      "name": "San Luis"
+    }
+  ],
+  "2801": [
+    {
+      "code": "280101",
+      "name": "Caraballeda"
+    },
+    {
+      "code": "280102",
+      "name": "Carayaca"
+    },
+    {
+      "code": "280103",
+      "name": "Carlos Soublette"
+    },
+    {
+      "code": "280104",
+      "name": "Caruao Chuspa"
+    },
+    {
+      "code": "280105",
+      "name": "Catia La Mar"
+    },
+    {
+      "code": "280106",
+      "name": "El Junko"
+    },
+    {
+      "code": "280107",
+      "name": "La Guaira"
+    },
+    {
+      "code": "280108",
+      "name": "Macuto"
+    },
+    {
+      "code": "280109",
+      "name": "Maiquetía"
+    },
+    {
+      "code": "280110",
+      "name": "Naiguatá"
+    },
+    {
+      "code": "280111",
+      "name": "Urimare"
+    }
+  ],
+  "2901": [
+    {
+      "code": "290101",
+      "name": "Arístides Bastidas"
+    }
+  ],
+  "2902": [
+    {
+      "code": "290201",
+      "name": "Bolívar"
+    }
+  ],
+  "2903": [
+    {
+      "code": "290301",
+      "name": "Chivacoa"
+    },
+    {
+      "code": "290302",
+      "name": "Campo Elías"
+    }
+  ],
+  "2904": [
+    {
+      "code": "290401",
+      "name": "Cocorote"
+    }
+  ],
+  "2905": [
+    {
+      "code": "290501",
+      "name": "Independencia"
+    }
+  ],
+  "2906": [
+    {
+      "code": "290601",
+      "name": "José Antonio Páez"
+    }
+  ],
+  "2907": [
+    {
+      "code": "290701",
+      "name": "La Trinidad"
+    }
+  ],
+  "2908": [
+    {
+      "code": "290801",
+      "name": "Manuel Monge"
+    }
+  ],
+  "2909": [
+    {
+      "code": "290901",
+      "name": "Salóm"
+    },
+    {
+      "code": "290902",
+      "name": "Temerla"
+    },
+    {
+      "code": "290903",
+      "name": "Nirgua"
+    }
+  ],
+  "2910": [
+    {
+      "code": "291001",
+      "name": "San Andrés"
+    },
+    {
+      "code": "291002",
+      "name": "Yaritagua"
+    }
+  ],
+  "2911": [
+    {
+      "code": "291101",
+      "name": "San Javier"
+    },
+    {
+      "code": "291102",
+      "name": "Albarico"
+    },
+    {
+      "code": "291103",
+      "name": "San Felipe"
+    }
+  ],
+  "2912": [
+    {
+      "code": "291201",
+      "name": "Sucre"
+    }
+  ],
+  "2913": [
+    {
+      "code": "291301",
+      "name": "Urachiche"
+    }
+  ],
+  "2914": [
+    {
+      "code": "291401",
+      "name": "El Guayabo"
+    },
+    {
+      "code": "291402",
+      "name": "Farriar"
+    }
+  ],
+  "3001": [
+    {
+      "code": "300101",
+      "name": "Isla de Toas"
+    },
+    {
+      "code": "300102",
+      "name": "Monagas"
+    }
+  ],
+  "3002": [
+    {
+      "code": "300201",
+      "name": "General Urdaneta"
+    },
+    {
+      "code": "300202",
+      "name": "Libertador"
+    },
+    {
+      "code": "300203",
+      "name": "Marcelino Briceño"
+    },
+    {
+      "code": "300204",
+      "name": "Pueblo Nuevo"
+    },
+    {
+      "code": "300205",
+      "name": "Manuel Guanipa Matos"
+    }
+  ],
+  "3003": [
+    {
+      "code": "300301",
+      "name": "Ambrosio"
+    },
+    {
+      "code": "300302",
+      "name": "Carmen Herrera"
+    },
+    {
+      "code": "300303",
+      "name": "La Rosa"
+    },
+    {
+      "code": "300304",
+      "name": "Germán Ríos Linares"
+    },
+    {
+      "code": "300305",
+      "name": "San Benito"
+    },
+    {
+      "code": "300306",
+      "name": "Rómulo Betancourt"
+    },
+    {
+      "code": "300307",
+      "name": "Jorge Hernández"
+    },
+    {
+      "code": "300308",
+      "name": "Punta Gorda"
+    },
+    {
+      "code": "300309",
+      "name": "Arístides Calvani"
+    }
+  ],
+  "3004": [
+    {
+      "code": "300401",
+      "name": "Encontrados"
+    },
+    {
+      "code": "300402",
+      "name": "Udón Pérez"
+    }
+  ],
+  "3005": [
+    {
+      "code": "300501",
+      "name": "Moralito"
+    },
+    {
+      "code": "300502",
+      "name": "San Carlos del Zulia"
+    },
+    {
+      "code": "300503",
+      "name": "Santa Cruz del Zulia"
+    },
+    {
+      "code": "300504",
+      "name": "Santa Bárbara"
+    },
+    {
+      "code": "300505",
+      "name": "Urribarrí"
+    }
+  ],
+  "3006": [
+    {
+      "code": "300601",
+      "name": "Carlos Quevedo"
+    },
+    {
+      "code": "300602",
+      "name": "Francisco Javier Pulgar"
+    },
+    {
+      "code": "300603",
+      "name": "Simón Rodríguez"
+    },
+    {
+      "code": "300604",
+      "name": "Guamo-Gavilanes"
+    }
+  ],
+  "3007": [
+    {
+      "code": "300701",
+      "name": "Sinamaica"
+    },
+    {
+      "code": "300702",
+      "name": "Alta Guajira"
+    },
+    {
+      "code": "300703",
+      "name": "Elías Sánchez Rubio"
+    },
+    {
+      "code": "300704",
+      "name": "Guajira"
+    }
+  ],
+  "3008": [
+    {
+      "code": "300801",
+      "name": "La Concepción"
+    },
+    {
+      "code": "300802",
+      "name": "San José"
+    },
+    {
+      "code": "300803",
+      "name": "Mariano Parra León"
+    },
+    {
+      "code": "300804",
+      "name": "José Ramón Yépez"
+    }
+  ],
+  "3009": [
+    {
+      "code": "300901",
+      "name": "Jesús María Semprún"
+    },
+    {
+      "code": "300902",
+      "name": "Barí"
+    }
+  ],
+  "3010": [
+    {
+      "code": "301001",
+      "name": "Concepción"
+    },
+    {
+      "code": "301002",
+      "name": "Andrés Bello"
+    },
+    {
+      "code": "301003",
+      "name": "Chiquinquirá"
+    },
+    {
+      "code": "301004",
+      "name": "El Carmelo"
+    },
+    {
+      "code": "301005",
+      "name": "Potreritos"
+    }
+  ],
+  "3011": [
+    {
+      "code": "301101",
+      "name": "Libertad"
+    },
+    {
+      "code": "301102",
+      "name": "Alonso de Ojeda"
+    },
+    {
+      "code": "301103",
+      "name": "Venezuela"
+    },
+    {
+      "code": "301104",
+      "name": "Eleazar López Contreras"
+    },
+    {
+      "code": "301105",
+      "name": "Campo Lara"
+    }
+  ],
+  "3012": [
+    {
+      "code": "301201",
+      "name": "Bartolomé de las Casas"
+    },
+    {
+      "code": "301202",
+      "name": "Libertad"
+    },
+    {
+      "code": "301203",
+      "name": "Río Negro"
+    },
+    {
+      "code": "301204",
+      "name": "San José de Perijá"
+    }
+  ],
+  "3013": [
+    {
+      "code": "301301",
+      "name": "San Rafael"
+    },
+    {
+      "code": "301302",
+      "name": "La Sierrita"
+    },
+    {
+      "code": "301303",
+      "name": "Las Parcelas"
+    },
+    {
+      "code": "301304",
+      "name": "Luis de Vicente"
+    },
+    {
+      "code": "301305",
+      "name": "Monseñor Marcos Sergio Godoy"
+    },
+    {
+      "code": "301306",
+      "name": "Ricaurte"
+    },
+    {
+      "code": "301307",
+      "name": "Tamare"
+    }
+  ],
+  "3014": [
+    {
+      "code": "301401",
+      "name": "Antonio Borjas Romero"
+    },
+    {
+      "code": "301402",
+      "name": "Bolívar"
+    },
+    {
+      "code": "301403",
+      "name": "Cacique Mara"
+    },
+    {
+      "code": "301404",
+      "name": "Carracciolo Parra Pérez"
+    },
+    {
+      "code": "301405",
+      "name": "Cecilio Acosta"
+    },
+    {
+      "code": "301406",
+      "name": "Cristo de Aranza"
+    },
+    {
+      "code": "301407",
+      "name": "Coquivacoa"
+    },
+    {
+      "code": "301408",
+      "name": "Chiquinquirá"
+    },
+    {
+      "code": "301409",
+      "name": "Francisco Eugenio Bustamante"
+    },
+    {
+      "code": "301410",
+      "name": "Idelfonzo Vásquez"
+    },
+    {
+      "code": "301411",
+      "name": "Juana de Ávila"
+    },
+    {
+      "code": "301412",
+      "name": "Luis Hurtado Higuera"
+    },
+    {
+      "code": "301413",
+      "name": "Manuel Dagnino"
+    },
+    {
+      "code": "301414",
+      "name": "Olegario Villalobos."
+    },
+    {
+      "code": "301415",
+      "name": "Raúl Leoni"
+    },
+    {
+      "code": "301416",
+      "name": "Santa Lucía"
+    },
+    {
+      "code": "301417",
+      "name": "Venancio Pulgar"
+    },
+    {
+      "code": "301418",
+      "name": "San Isidro"
+    }
+  ],
+  "3015": [
+    {
+      "code": "301501",
+      "name": "Altagracia"
+    },
+    {
+      "code": "301502",
+      "name": "Faría"
+    },
+    {
+      "code": "301503",
+      "name": "Ana María Campos"
+    },
+    {
+      "code": "301504",
+      "name": "San Antonio"
+    },
+    {
+      "code": "301505",
+      "name": "San José"
+    }
+  ],
+  "3016": [
+    {
+      "code": "301601",
+      "name": "Donaldo García"
+    },
+    {
+      "code": "301602",
+      "name": "El Rosario"
+    },
+    {
+      "code": "301603",
+      "name": "Sixto Zambrano"
+    }
+  ],
+  "3017": [
+    {
+      "code": "301701",
+      "name": "San Francisco"
+    },
+    {
+      "code": "301702",
+      "name": "El Bajo"
+    },
+    {
+      "code": "301703",
+      "name": "Domitila Flores"
+    },
+    {
+      "code": "301704",
+      "name": "Francisco Ochoa"
+    },
+    {
+      "code": "301705",
+      "name": "Los Cortijos"
+    },
+    {
+      "code": "301706",
+      "name": "Marcial Hernández"
+    }
+  ],
+  "3018": [
+    {
+      "code": "301801",
+      "name": "Santa Rita"
+    },
+    {
+      "code": "301802",
+      "name": "El Mene"
+    },
+    {
+      "code": "301803",
+      "name": "Pedro Lucas Urribarrí"
+    },
+    {
+      "code": "301804",
+      "name": "José Cenobio Urribarrí"
+    }
+  ],
+  "3019": [
+    {
+      "code": "301901",
+      "name": "Rafael Maria Baralt"
+    },
+    {
+      "code": "301902",
+      "name": "Manuel Manrique"
+    },
+    {
+      "code": "301903",
+      "name": "Rafael Urdaneta"
+    }
+  ],
+  "3020": [
+    {
+      "code": "302001",
+      "name": "Bobures"
+    },
+    {
+      "code": "302002",
+      "name": "Gibraltar"
+    },
+    {
+      "code": "302003",
+      "name": "Heras"
+    },
+    {
+      "code": "302004",
+      "name": "Monseñor Arturo Álvarez"
+    },
+    {
+      "code": "302005",
+      "name": "Rómulo Gallegos"
+    },
+    {
+      "code": "302006",
+      "name": "El Batey"
+    }
+  ],
+  "3021": [
+    {
+      "code": "302101",
+      "name": "Rafael Urdaneta"
+    },
+    {
+      "code": "302102",
+      "name": "La Victoria"
+    },
+    {
+      "code": "302103",
+      "name": "Raúl Cuenca"
+    }
+  ],
+  "3101": [
+    {
+      "code": "310101",
+      "name": "23 de enero"
+    },
+    {
+      "code": "310102",
+      "name": "Altagracia"
+    },
+    {
+      "code": "310103",
+      "name": "Antímano"
+    },
+    {
+      "code": "310104",
+      "name": "Caricuao"
+    },
+    {
+      "code": "310105",
+      "name": "Catedral"
+    },
+    {
+      "code": "310106",
+      "name": "Coche"
+    },
+    {
+      "code": "310107",
+      "name": "El Junquito"
+    },
+    {
+      "code": "310108",
+      "name": "El Paraíso"
+    },
+    {
+      "code": "310109",
+      "name": "El Recreo"
+    },
+    {
+      "code": "310110",
+      "name": "El Valle"
+    },
+    {
+      "code": "310111",
+      "name": "Candelaria"
+    },
+    {
+      "code": "310112",
+      "name": "La Pastora"
+    },
+    {
+      "code": "310113",
+      "name": "La Vega"
+    },
+    {
+      "code": "310114",
+      "name": "Macarao"
+    },
+    {
+      "code": "310115",
+      "name": "San Agustín"
+    },
+    {
+      "code": "310116",
+      "name": "San Bernardino"
+    },
+    {
+      "code": "310117",
+      "name": "San José"
+    },
+    {
+      "code": "310118",
+      "name": "San Juan"
+    },
+    {
+      "code": "310119",
+      "name": "San Pedro"
+    },
+    {
+      "code": "310120",
+      "name": "Santa Rosalía"
+    },
+    {
+      "code": "310121",
+      "name": "Santa Teresa"
+    },
+    {
+      "code": "310122",
+      "name": "Sucre (Catia)"
+    }
+  ],
+  "0101": [
+    {
+      "code": "010101",
+      "name": "Alto Orinoco La Esmeralda"
+    },
+    {
+      "code": "010102",
+      "name": "Huachamacare Acanaña"
+    },
+    {
+      "code": "010103",
+      "name": "Marawaka Toky Shamanaña"
+    },
+    {
+      "code": "010104",
+      "name": "Mavaka Mavaka"
+    },
+    {
+      "code": "010105",
+      "name": "Sierra Parima Parimabé"
+    }
+  ],
+  "0102": [
+    {
+      "code": "010201",
+      "name": "Ucata Laja Lisa"
+    },
+    {
+      "code": "010202",
+      "name": "Yapacana Macuruco"
+    },
+    {
+      "code": "010203",
+      "name": "Caname Guarinuma"
+    }
+  ],
+  "0103": [
+    {
+      "code": "010301",
+      "name": "Fernando Girón Tovar"
+    },
+    {
+      "code": "010302",
+      "name": "Luis Alberto Gómez"
+    },
+    {
+      "code": "010303",
+      "name": "Pahueña Limón de Parhueña"
+    },
+    {
+      "code": "010304",
+      "name": "Platanillal Platanillal"
+    }
+  ],
+  "0104": [
+    {
+      "code": "010401",
+      "name": "Samariapo Samariapo"
+    },
+    {
+      "code": "010402",
+      "name": "Sipapo Pendare"
+    },
+    {
+      "code": "010403",
+      "name": "Munduapo Munduapo"
+    },
+    {
+      "code": "010404",
+      "name": "Guayapo San Pedro del Orinoco"
+    }
+  ],
+  "0105": [
+    {
+      "code": "010501",
+      "name": "Alto Ventuari Cacurí"
+    },
+    {
+      "code": "010502",
+      "name": "Medio Ventuari Manami"
+    },
+    {
+      "code": "010503",
+      "name": "Bajo Ventuari Marueta"
+    }
+  ],
+  "0106": [
+    {
+      "code": "010601",
+      "name": "Victorino"
+    },
+    {
+      "code": "010602",
+      "name": "Comunidad"
+    }
+  ],
+  "0107": [
+    {
+      "code": "010701",
+      "name": "Casiquiare Curimacare"
+    },
+    {
+      "code": "010702",
+      "name": "Cocuy"
+    },
+    {
+      "code": "010703",
+      "name": "San Carlos de Río Negro"
+    },
+    {
+      "code": "010704",
+      "name": "Solano Solano"
+    }
+  ],
+  "0201": [
+    {
+      "code": "020101",
+      "name": "Anaco"
+    },
+    {
+      "code": "020102",
+      "name": "San Joaquín"
+    }
+  ],
+  "0202": [
+    {
+      "code": "020201",
+      "name": "Cachipo"
+    },
+    {
+      "code": "020202",
+      "name": "Aragua de Barcelona"
+    }
+  ],
+  "0203": [
+    {
+      "code": "020301",
+      "name": "Bergatín"
+    },
+    {
+      "code": "020302",
+      "name": "Caigua"
+    },
+    {
+      "code": "020303",
+      "name": "El Carmen."
+    },
+    {
+      "code": "020304",
+      "name": "El Pilar"
+    },
+    {
+      "code": "020305",
+      "name": "Naricual."
+    },
+    {
+      "code": "020306",
+      "name": "San Cristóbal"
+    }
+  ],
+  "0204": [
+    {
+      "code": "020401",
+      "name": "Clarines"
+    },
+    {
+      "code": "020402",
+      "name": "Guanape"
+    },
+    {
+      "code": "020403",
+      "name": "Sabana de Uchire"
+    }
+  ],
+  "0205": [
+    {
+      "code": "020501",
+      "name": "Onoto"
+    },
+    {
+      "code": "020502",
+      "name": "San Pablo"
+    }
+  ],
+  "0206": [
+    {
+      "code": "020601",
+      "name": "Valle de Guanape"
+    },
+    {
+      "code": "020602",
+      "name": "Santa Bárbara"
+    }
+  ],
+  "0207": [
+    {
+      "code": "020701",
+      "name": "Lechería"
+    },
+    {
+      "code": "020702",
+      "name": "El Morro"
+    }
+  ],
+  "0208": [
+    {
+      "code": "020801",
+      "name": "Cantaura"
+    },
+    {
+      "code": "020802",
+      "name": "Libertador"
+    },
+    {
+      "code": "020803",
+      "name": "Santa Rosa"
+    },
+    {
+      "code": "020804",
+      "name": "Urica"
+    }
+  ],
+  "0209": [
+    {
+      "code": "020901",
+      "name": "San José de Guanipa"
+    }
+  ],
+  "0210": [
+    {
+      "code": "021001",
+      "name": "Guanta"
+    },
+    {
+      "code": "021002",
+      "name": "Chorrerón"
+    }
+  ],
+  "0211": [
+    {
+      "code": "021101",
+      "name": "Mamo"
+    },
+    {
+      "code": "021102",
+      "name": "Soledad"
+    }
+  ],
+  "0212": [
+    {
+      "code": "021201",
+      "name": "San Mateo"
+    },
+    {
+      "code": "021202",
+      "name": "El Carito"
+    },
+    {
+      "code": "021203",
+      "name": "Santa Inés"
+    },
+    {
+      "code": "021204",
+      "name": "La Romereña"
+    }
+  ],
+  "0213": [
+    {
+      "code": "021301",
+      "name": "El Chaparro"
+    },
+    {
+      "code": "021302",
+      "name": "Tomás Alfaro"
+    },
+    {
+      "code": "021303",
+      "name": "Calatrava"
+    }
+  ],
+  "0214": [
+    {
+      "code": "021401",
+      "name": "Atapirire"
+    },
+    {
+      "code": "021402",
+      "name": "Boca del Pao"
+    },
+    {
+      "code": "021403",
+      "name": "El Pao"
+    },
+    {
+      "code": "021404",
+      "name": "Pariaguán"
+    }
+  ],
+  "0215": [
+    {
+      "code": "021501",
+      "name": "Mapire"
+    },
+    {
+      "code": "021502",
+      "name": "Piar"
+    },
+    {
+      "code": "021503",
+      "name": "Santa Clara"
+    },
+    {
+      "code": "021504",
+      "name": "San Diego de Cabrutica"
+    },
+    {
+      "code": "021505",
+      "name": "Uverito"
+    },
+    {
+      "code": "021506",
+      "name": "Zuata"
+    }
+  ],
+  "0216": [
+    {
+      "code": "021601",
+      "name": "Puerto Píritu"
+    },
+    {
+      "code": "021602",
+      "name": "San Miguel"
+    },
+    {
+      "code": "021603",
+      "name": "Sucre"
+    }
+  ],
+  "0217": [
+    {
+      "code": "021701",
+      "name": "Píritu"
+    },
+    {
+      "code": "021702",
+      "name": "San Francisco"
+    }
+  ],
+  "0218": [
+    {
+      "code": "021801",
+      "name": "Boca de Uchire"
+    },
+    {
+      "code": "021802",
+      "name": "Boca de Chávez"
+    }
+  ],
+  "0219": [
+    {
+      "code": "021901",
+      "name": "Pueblo Nuevo"
+    },
+    {
+      "code": "021902",
+      "name": "Santa Ana"
+    }
+  ],
+  "0220": [
+    {
+      "code": "022001",
+      "name": "Edmundo Barrios"
+    },
+    {
+      "code": "022002",
+      "name": "Miguel Otero Silva"
+    }
+  ],
+  "0221": [
+    {
+      "code": "022101",
+      "name": "Puerto La Cruz"
+    },
+    {
+      "code": "022102",
+      "name": "Pozuelos"
+    }
+  ],
+  "0301": [
+    {
+      "code": "030101",
+      "name": "Achaguas"
+    },
+    {
+      "code": "030102",
+      "name": "Apurito"
+    },
+    {
+      "code": "030103",
+      "name": "El Yagual"
+    },
+    {
+      "code": "030104",
+      "name": "Guachara"
+    },
+    {
+      "code": "030105",
+      "name": "Mucuritas"
+    },
+    {
+      "code": "030106",
+      "name": "Queseras del medio"
+    }
+  ],
+  "0302": [
+    {
+      "code": "030201",
+      "name": "Biruaca"
+    }
+  ],
+  "0303": [
+    {
+      "code": "030301",
+      "name": "Bruzual"
+    },
+    {
+      "code": "030302",
+      "name": "Mantecal"
+    },
+    {
+      "code": "030303",
+      "name": "Quintero"
+    },
+    {
+      "code": "030304",
+      "name": "Rincón Hondo"
+    },
+    {
+      "code": "030305",
+      "name": "San Vicente"
+    }
+  ],
+  "0304": [
+    {
+      "code": "030401",
+      "name": "Guasdualito"
+    },
+    {
+      "code": "030402",
+      "name": "Aramendi"
+    },
+    {
+      "code": "030403",
+      "name": "El Amparo"
+    },
+    {
+      "code": "030404",
+      "name": "San Camilo"
+    },
+    {
+      "code": "030405",
+      "name": "Urdaneta"
+    }
+  ],
+  "0305": [
+    {
+      "code": "030501",
+      "name": "San Juan de Payara"
+    },
+    {
+      "code": "030502",
+      "name": "Codazzi"
+    },
+    {
+      "code": "030503",
+      "name": "Cunaviche"
+    }
+  ],
+  "0306": [
+    {
+      "code": "030601",
+      "name": "Elorza"
+    },
+    {
+      "code": "030602",
+      "name": "La Trinidad"
+    }
+  ],
+  "0307": [
+    {
+      "code": "030701",
+      "name": "San Fernando"
+    },
+    {
+      "code": "030702",
+      "name": "El Recreo"
+    },
+    {
+      "code": "030703",
+      "name": "Peñalver"
+    },
+    {
+      "code": "030704",
+      "name": "San Rafael de Atamaica"
+    }
+  ],
+  "0401": [
+    {
+      "code": "040101",
+      "name": "Bolívar"
+    }
+  ],
+  "0402": [
+    {
+      "code": "040201",
+      "name": "Camatagua"
+    },
+    {
+      "code": "040202",
+      "name": "Carmen de Cura"
+    }
+  ],
+  "0403": [
+    {
+      "code": "040301",
+      "name": "Santa Rita"
+    },
+    {
+      "code": "040302",
+      "name": "Francisco de Miranda"
+    },
+    {
+      "code": "040303",
+      "name": "Moseñor Feliciano González"
+    }
+  ],
+  "0404": [
+    {
+      "code": "040401",
+      "name": "Pedro José Ovalles"
+    },
+    {
+      "code": "040402",
+      "name": "Joaquín Crespo"
+    },
+    {
+      "code": "040403",
+      "name": "José Casanova Godoy"
+    },
+    {
+      "code": "040404",
+      "name": "Madre María de San José"
+    },
+    {
+      "code": "040405",
+      "name": "Andrés Eloy Blanco"
+    },
+    {
+      "code": "040406",
+      "name": "Los Tacarigua"
+    },
+    {
+      "code": "040407",
+      "name": "Las Delicias"
+    },
+    {
+      "code": "040408",
+      "name": "Choroní"
+    }
+  ],
+  "0405": [
+    {
+      "code": "040501",
+      "name": "Santa Cruz"
+    }
+  ],
+  "0406": [
+    {
+      "code": "040601",
+      "name": "José Félix Ribas"
+    },
+    {
+      "code": "040602",
+      "name": "Castor Nieves Ríos"
+    },
+    {
+      "code": "040603",
+      "name": "Las Guacamayas"
+    },
+    {
+      "code": "040604",
+      "name": "Pao de Zárate"
+    },
+    {
+      "code": "040605",
+      "name": "Zuata"
+    }
+  ],
+  "0407": [
+    {
+      "code": "040701",
+      "name": "José Rafael Revenga"
+    }
+  ],
+  "0408": [
+    {
+      "code": "040801",
+      "name": "Palo Negro"
+    },
+    {
+      "code": "040802",
+      "name": "San Martín de Porres"
+    }
+  ],
+  "0409": [
+    {
+      "code": "040901",
+      "name": "El Limón"
+    },
+    {
+      "code": "040902",
+      "name": "Caña de Azúcar"
+    }
+  ],
+  "0410": [
+    {
+      "code": "041001",
+      "name": "Ocumare de la Costa"
+    }
+  ],
+  "0411": [
+    {
+      "code": "041101",
+      "name": "San Casimiro"
+    },
+    {
+      "code": "041102",
+      "name": "Güiripa"
+    },
+    {
+      "code": "041103",
+      "name": "Ollas de Caramacate"
+    },
+    {
+      "code": "041104",
+      "name": "Valle Morín"
+    }
+  ],
+  "0412": [
+    {
+      "code": "041201",
+      "name": "San Sebastián"
+    }
+  ],
+  "0413": [
+    {
+      "code": "041301",
+      "name": "Turmero"
+    },
+    {
+      "code": "041302",
+      "name": "Arevalo Aponte"
+    },
+    {
+      "code": "041303",
+      "name": "Chuao"
+    },
+    {
+      "code": "041304",
+      "name": "Samán de Güere"
+    },
+    {
+      "code": "041305",
+      "name": "Alfredo Pacheco Miranda"
+    }
+  ],
+  "0414": [
+    {
+      "code": "041401",
+      "name": "Santos Michelena"
+    },
+    {
+      "code": "041402",
+      "name": "Tiara"
+    }
+  ],
+  "0415": [
+    {
+      "code": "041501",
+      "name": "Cagua"
+    },
+    {
+      "code": "041502",
+      "name": "Bella Vista"
+    }
+  ],
+  "0416": [
+    {
+      "code": "041601",
+      "name": "Tovar"
+    }
+  ],
+  "0417": [
+    {
+      "code": "041701",
+      "name": "Urdaneta"
+    },
+    {
+      "code": "041702",
+      "name": "Las Peñitas"
+    },
+    {
+      "code": "041703",
+      "name": "San Francisco de Cara"
+    },
+    {
+      "code": "041704",
+      "name": "Taguay"
+    }
+  ],
+  "0418": [
+    {
+      "code": "041801",
+      "name": "Zamora"
+    },
+    {
+      "code": "041802",
+      "name": "Magdaleno"
+    },
+    {
+      "code": "041803",
+      "name": "San Francisco de Asís"
+    },
+    {
+      "code": "041804",
+      "name": "Valles de Tucutunemo"
+    },
+    {
+      "code": "041805",
+      "name": "Augusto Mijares"
+    }
+  ],
+  "0501": [
+    {
+      "code": "050101",
+      "name": "Sabaneta"
+    },
+    {
+      "code": "050102",
+      "name": "Juan Antonio Rodríguez Domínguez"
+    }
+  ],
+  "0502": [
+    {
+      "code": "050201",
+      "name": "El Cantón"
+    },
+    {
+      "code": "050202",
+      "name": "Santa Cruz de Guacas"
+    },
+    {
+      "code": "050203",
+      "name": "Puerto Vivas"
+    }
+  ],
+  "0503": [
+    {
+      "code": "050301",
+      "name": "Ticoporo"
+    },
+    {
+      "code": "050302",
+      "name": "Nicolás Pulido"
+    },
+    {
+      "code": "050303",
+      "name": "Andrés Bello"
+    }
+  ],
+  "0504": [
+    {
+      "code": "050401",
+      "name": "Arismendi"
+    },
+    {
+      "code": "050402",
+      "name": "Guadarrama"
+    },
+    {
+      "code": "050403",
+      "name": "La Unión"
+    },
+    {
+      "code": "050404",
+      "name": "San Antonio"
+    }
+  ],
+  "0505": [
+    {
+      "code": "050501",
+      "name": "Barinas"
+    },
+    {
+      "code": "050502",
+      "name": "Alberto Arvelo Larriva"
+    },
+    {
+      "code": "050503",
+      "name": "San Silvestre"
+    },
+    {
+      "code": "050504",
+      "name": "Santa Inés"
+    },
+    {
+      "code": "050505",
+      "name": "Santa Lucía"
+    },
+    {
+      "code": "050506",
+      "name": "Torunos"
+    },
+    {
+      "code": "050507",
+      "name": "El Carmen"
+    },
+    {
+      "code": "050508",
+      "name": "Rómulo Betancourt"
+    },
+    {
+      "code": "050509",
+      "name": "Corazón de Jesús"
+    },
+    {
+      "code": "050510",
+      "name": "Ramón Ignacio Méndez"
+    },
+    {
+      "code": "050511",
+      "name": "Alto Barinas"
+    },
+    {
+      "code": "050512",
+      "name": "Manuel Palacio Fajardo"
+    },
+    {
+      "code": "050513",
+      "name": "Juan Antonio Rodríguez Domínguez"
+    },
+    {
+      "code": "050514",
+      "name": "Dominga Ortiz de Páez"
+    }
+  ],
+  "0506": [
+    {
+      "code": "050601",
+      "name": "Barinitas"
+    },
+    {
+      "code": "050602",
+      "name": "Altamira de Cáceres"
+    },
+    {
+      "code": "050603",
+      "name": "Calderas"
+    }
+  ],
+  "0507": [
+    {
+      "code": "050701",
+      "name": "Barrancas"
+    },
+    {
+      "code": "050702",
+      "name": "El Socorro"
+    },
+    {
+      "code": "050703",
+      "name": "Mazparrito"
+    }
+  ],
+  "0508": [
+    {
+      "code": "050801",
+      "name": "Santa Bárbara"
+    },
+    {
+      "code": "050802",
+      "name": "Pedro Briceño Méndez"
+    },
+    {
+      "code": "050803",
+      "name": "Ramón Ignacio Méndez"
+    },
+    {
+      "code": "050804",
+      "name": "José Ignacio del Pumar"
+    }
+  ],
+  "0509": [
+    {
+      "code": "050901",
+      "name": "Obispos"
+    },
+    {
+      "code": "050902",
+      "name": "Los Guasimitos"
+    },
+    {
+      "code": "050903",
+      "name": "El Real"
+    },
+    {
+      "code": "050904",
+      "name": "La Luz"
+    }
+  ],
+  "0510": [
+    {
+      "code": "051001",
+      "name": "Ciudad Bolívia"
+    },
+    {
+      "code": "051002",
+      "name": "José Ignacio Briceño"
+    },
+    {
+      "code": "051003",
+      "name": "José Félix Ribas"
+    },
+    {
+      "code": "051004",
+      "name": "Páez"
+    }
+  ],
+  "0511": [
+    {
+      "code": "051101",
+      "name": "Libertad"
+    },
+    {
+      "code": "051102",
+      "name": "Dolores"
+    },
+    {
+      "code": "051103",
+      "name": "Santa Rosa"
+    },
+    {
+      "code": "051104",
+      "name": "Palacio Fajardo"
+    },
+    {
+      "code": "051105",
+      "name": "Simón Rodríguez"
+    }
+  ],
+  "0512": [
+    {
+      "code": "051201",
+      "name": "Ciudad de Nutrias"
+    },
+    {
+      "code": "051202",
+      "name": "El Regalo"
+    },
+    {
+      "code": "051203",
+      "name": "Puerto Nutrias"
+    },
+    {
+      "code": "051204",
+      "name": "Santa Catalina"
+    },
+    {
+      "code": "051205",
+      "name": "Simón Bolívar"
+    }
+  ],
+  "0601": [
+    {
+      "code": "060101",
+      "name": "Raúl Leoni"
+    },
+    {
+      "code": "060102",
+      "name": "Barceloneta"
+    },
+    {
+      "code": "060103",
+      "name": "Santa Bárbara"
+    },
+    {
+      "code": "060104",
+      "name": "San Francisco"
+    }
+  ],
+  "0602": [
+    {
+      "code": "060201",
+      "name": "Cachamay"
+    },
+    {
+      "code": "060202",
+      "name": "Chirica"
+    },
+    {
+      "code": "060203",
+      "name": "Dalla Costa"
+    },
+    {
+      "code": "060204",
+      "name": "Once de Abril"
+    },
+    {
+      "code": "060205",
+      "name": "Simón Bolívar"
+    },
+    {
+      "code": "060206",
+      "name": "Unare"
+    },
+    {
+      "code": "060207",
+      "name": "Universidad"
+    },
+    {
+      "code": "060208",
+      "name": "Vista al Sol"
+    },
+    {
+      "code": "060209",
+      "name": "Pozo Verde"
+    },
+    {
+      "code": "060210",
+      "name": "Yocoima"
+    },
+    {
+      "code": "060211",
+      "name": "5 de Julio"
+    }
+  ],
+  "0603": [
+    {
+      "code": "060301",
+      "name": "Cedeño"
+    },
+    {
+      "code": "060302",
+      "name": "Altagracia"
+    },
+    {
+      "code": "060303",
+      "name": "Ascensión Farreras"
+    },
+    {
+      "code": "060304",
+      "name": "Guaniamo"
+    },
+    {
+      "code": "060305",
+      "name": "La Urbana"
+    },
+    {
+      "code": "060306",
+      "name": "Pijiguaos"
+    }
+  ],
+  "0604": [
+    {
+      "code": "060401",
+      "name": "El Callao"
+    }
+  ],
+  "0605": [
+    {
+      "code": "060501",
+      "name": "Gran Sabana"
+    },
+    {
+      "code": "060502",
+      "name": "Ikabarú"
+    }
+  ],
+  "0606": [
+    {
+      "code": "060601",
+      "name": "Catedral"
+    },
+    {
+      "code": "060602",
+      "name": "Zea"
+    },
+    {
+      "code": "060603",
+      "name": "Orinoco"
+    },
+    {
+      "code": "060604",
+      "name": "José Antonio Páez"
+    },
+    {
+      "code": "060605",
+      "name": "Marhuanta"
+    },
+    {
+      "code": "060606",
+      "name": "Agua Salada"
+    },
+    {
+      "code": "060607",
+      "name": "Vista Hermosa"
+    },
+    {
+      "code": "060608",
+      "name": "La Sabanita"
+    },
+    {
+      "code": "060609",
+      "name": "Panapana"
+    }
+  ],
+  "0607": [
+    {
+      "code": "060701",
+      "name": "Andrés Eloy Blanco"
+    },
+    {
+      "code": "060702",
+      "name": "Pedro Cova"
+    }
+  ],
+  "0608": [
+    {
+      "code": "060801",
+      "name": "Roscio"
+    },
+    {
+      "code": "060802",
+      "name": "Salóm"
+    }
+  ],
+  "0609": [
+    {
+      "code": "060901",
+      "name": "Sifontes"
+    },
+    {
+      "code": "060902",
+      "name": "Dalla Costa"
+    },
+    {
+      "code": "060903",
+      "name": "San Isidro"
+    }
+  ],
+  "0610": [
+    {
+      "code": "061001",
+      "name": "Sucre"
+    },
+    {
+      "code": "061002",
+      "name": "Aripao"
+    },
+    {
+      "code": "061003",
+      "name": "Guarataro"
+    },
+    {
+      "code": "061004",
+      "name": "Las Majadas"
+    },
+    {
+      "code": "061005",
+      "name": "Moitaco"
+    }
+  ],
+  "0611": [
+    {
+      "code": "061101",
+      "name": "Padre Pedro Chien"
+    },
+    {
+      "code": "061102",
+      "name": "Río Grande"
+    }
+  ],
+  "0701": [
+    {
+      "code": "070101",
+      "name": "Bejuma"
+    },
+    {
+      "code": "070102",
+      "name": "Canoabo"
+    },
+    {
+      "code": "070103",
+      "name": "Simón Bolívar"
+    }
+  ],
+  "0702": [
+    {
+      "code": "070201",
+      "name": "Güigüe"
+    },
+    {
+      "code": "070202",
+      "name": "Carabobo"
+    },
+    {
+      "code": "070203",
+      "name": "Tacarigua"
+    }
+  ],
+  "0703": [
+    {
+      "code": "070301",
+      "name": "Mariara"
+    },
+    {
+      "code": "070302",
+      "name": "Aguas Calientes"
+    }
+  ],
+  "0704": [
+    {
+      "code": "070401",
+      "name": "Ciudad Alianza"
+    },
+    {
+      "code": "070402",
+      "name": "Guacara"
+    },
+    {
+      "code": "070403",
+      "name": "Yagua"
+    }
+  ],
+  "0705": [
+    {
+      "code": "070501",
+      "name": "Morón"
+    },
+    {
+      "code": "070502",
+      "name": "Urama"
+    }
+  ],
+  "0706": [
+    {
+      "code": "070601",
+      "name": "Valencia"
+    },
+    {
+      "code": "070602",
+      "name": "Campo Carabobo"
+    }
+  ],
+  "0707": [
+    {
+      "code": "070701",
+      "name": "Los Guayos"
+    }
+  ],
+  "0708": [
+    {
+      "code": "070801",
+      "name": "Miranda"
+    }
+  ],
+  "0709": [
+    {
+      "code": "070901",
+      "name": "Montalbán"
+    }
+  ],
+  "0710": [
+    {
+      "code": "071001",
+      "name": "Naguanagua"
+    }
+  ],
+  "0711": [
+    {
+      "code": "071101",
+      "name": "Bartolomé Salóm"
+    },
+    {
+      "code": "071102",
+      "name": "Democracia"
+    },
+    {
+      "code": "071103",
+      "name": "Fraternidad"
+    },
+    {
+      "code": "071104",
+      "name": "Goaigoaza"
+    },
+    {
+      "code": "071105",
+      "name": "Juan José Flores"
+    },
+    {
+      "code": "071106",
+      "name": "Unión"
+    },
+    {
+      "code": "071107",
+      "name": "Borburata"
+    },
+    {
+      "code": "071108",
+      "name": "Patanemo"
+    }
+  ],
+  "0712": [
+    {
+      "code": "071201",
+      "name": "San Diego"
+    }
+  ],
+  "0713": [
+    {
+      "code": "071301",
+      "name": "San Joaquín"
+    }
+  ],
+  "0714": [
+    {
+      "code": "071401",
+      "name": "Urbana Candelaria"
+    },
+    {
+      "code": "071402",
+      "name": "Urbana Catedral"
+    },
+    {
+      "code": "071403",
+      "name": "Urbana El Socorro"
+    },
+    {
+      "code": "071404",
+      "name": "Urbana Miguel Peña"
+    },
+    {
+      "code": "071405",
+      "name": "Urbana Rafael Urdaneta"
+    },
+    {
+      "code": "071406",
+      "name": "Urbana San Blas"
+    },
+    {
+      "code": "071407",
+      "name": "Urbana San José"
+    },
+    {
+      "code": "071408",
+      "name": "Urbana Santa Rosa"
+    },
+    {
+      "code": "071409",
+      "name": "No Urbana Negro Primero"
+    }
+  ],
+  "0801": [
+    {
+      "code": "080101",
+      "name": "Cojedes"
+    },
+    {
+      "code": "080102",
+      "name": "Juan de Mata Suárez"
+    }
+  ],
+  "0802": [
+    {
+      "code": "080201",
+      "name": "Tinaquillo"
+    }
+  ],
+  "0803": [
+    {
+      "code": "080301",
+      "name": "El Baúl"
+    },
+    {
+      "code": "080302",
+      "name": "Sucre"
+    }
+  ],
+  "0804": [
+    {
+      "code": "080401",
+      "name": "La Aguadita"
+    },
+    {
+      "code": "080402",
+      "name": "Macapo"
+    }
+  ],
+  "0805": [
+    {
+      "code": "080501",
+      "name": "El Pao"
+    }
+  ],
+  "0806": [
+    {
+      "code": "080601",
+      "name": "El Amparo"
+    },
+    {
+      "code": "080602",
+      "name": "Libertad de Cojedes"
+    }
+  ],
+  "0807": [
+    {
+      "code": "080701",
+      "name": "Rómulo Gallegos"
+    }
+  ],
+  "0808": [
+    {
+      "code": "080801",
+      "name": "San Carlos de Austria"
+    },
+    {
+      "code": "080802",
+      "name": "Juan Ángel Bravo"
+    },
+    {
+      "code": "080803",
+      "name": "Manuel Manrique"
+    }
+  ],
+  "0809": [
+    {
+      "code": "080901",
+      "name": "General en Jefe José Laurencio Silva"
+    }
+  ],
+  "0901": [
+    {
+      "code": "090101",
+      "name": "Curiapo"
+    },
+    {
+      "code": "090102",
+      "name": "Almirante Luis Brión"
+    },
+    {
+      "code": "090103",
+      "name": "Francisco Aniceto Lugo Boca de Cuyubini"
+    },
+    {
+      "code": "090104",
+      "name": "Manuel Renaud"
+    },
+    {
+      "code": "090105",
+      "name": "Padre Barral"
+    },
+    {
+      "code": "090106",
+      "name": "Santos de Abelgas"
+    }
+  ],
+  "0902": [
+    {
+      "code": "090201",
+      "name": "Imataca Moruca"
+    },
+    {
+      "code": "090202",
+      "name": "Cinco de Julio Piacoa"
+    },
+    {
+      "code": "090203",
+      "name": "Juan Bautista Arismendi"
+    },
+    {
+      "code": "090204",
+      "name": "Manuel Piar Santa Catalina"
+    },
+    {
+      "code": "090205",
+      "name": "Rómulo Gallegos"
+    }
+  ],
+  "0903": [
+    {
+      "code": "090301",
+      "name": "Pedernales"
+    },
+    {
+      "code": "090302",
+      "name": "Luis Beltrán Prieto Figueroa"
+    }
+  ],
+  "0904": [
+    {
+      "code": "090401",
+      "name": "San José"
+    },
+    {
+      "code": "090402",
+      "name": "José Vidal Marcano Caparal de Guara"
+    },
+    {
+      "code": "090403",
+      "name": "Juan Millán"
+    },
+    {
+      "code": "090404",
+      "name": "Leonardo Ruíz Pineda Paloma"
+    },
+    {
+      "code": "090405",
+      "name": "Mariscal Antonio José de Sucre"
+    },
+    {
+      "code": "090406",
+      "name": "Monseñor Argimiro García San Rafael"
+    },
+    {
+      "code": "090407",
+      "name": "San Rafael"
+    },
+    {
+      "code": "090408",
+      "name": "Virgen del Valle"
+    }
+  ]
+}
