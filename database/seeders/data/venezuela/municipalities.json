@@ -1,0 +1,1390 @@
+{
+  "11": [
+    {
+      "code": "1101",
+      "name": "Acosta"
+    },
+    {
+      "code": "1102",
+      "name": "Bolívar"
+    },
+    {
+      "code": "1103",
+      "name": "Buchivacoa"
+    },
+    {
+      "code": "1104",
+      "name": "Carirubana"
+    },
+    {
+      "code": "1105",
+      "name": "Colina"
+    },
+    {
+      "code": "1106",
+      "name": "Dabajuro"
+    },
+    {
+      "code": "1107",
+      "name": "Democracia"
+    },
+    {
+      "code": "1108",
+      "name": "Falcón"
+    },
+    {
+      "code": "1109",
+      "name": "Federación"
+    },
+    {
+      "code": "1110",
+      "name": "Jacura"
+    },
+    {
+      "code": "1111",
+      "name": "Los Taques"
+    },
+    {
+      "code": "1112",
+      "name": "Manaure"
+    },
+    {
+      "code": "1113",
+      "name": "Mauroa"
+    },
+    {
+      "code": "1114",
+      "name": "Miranda"
+    },
+    {
+      "code": "1115",
+      "name": "Monseñor Iturriza"
+    },
+    {
+      "code": "1116",
+      "name": "Palmasola"
+    },
+    {
+      "code": "1117",
+      "name": "Petit"
+    },
+    {
+      "code": "1118",
+      "name": "Píritu"
+    },
+    {
+      "code": "1119",
+      "name": "San Francisco"
+    },
+    {
+      "code": "1120",
+      "name": "Sucre"
+    },
+    {
+      "code": "1121",
+      "name": "Silva"
+    },
+    {
+      "code": "1122",
+      "name": "Tocópero"
+    },
+    {
+      "code": "1123",
+      "name": "Unión"
+    },
+    {
+      "code": "1124",
+      "name": "Urumaco"
+    },
+    {
+      "code": "1125",
+      "name": "Zamora"
+    }
+  ],
+  "15": [
+    {
+      "code": "1501",
+      "name": "Camaguán"
+    },
+    {
+      "code": "1502",
+      "name": "Chaguaramas"
+    },
+    {
+      "code": "1503",
+      "name": "El Socorro"
+    },
+    {
+      "code": "1504",
+      "name": "Infante"
+    },
+    {
+      "code": "1505",
+      "name": "Las Mercedes"
+    },
+    {
+      "code": "1506",
+      "name": "Mellado"
+    },
+    {
+      "code": "1507",
+      "name": "Miranda"
+    },
+    {
+      "code": "1508",
+      "name": "Monagas"
+    },
+    {
+      "code": "1509",
+      "name": "Ortiz"
+    },
+    {
+      "code": "1510",
+      "name": "Ribas"
+    },
+    {
+      "code": "1511",
+      "name": "Roscio"
+    },
+    {
+      "code": "1512",
+      "name": "San Gerónimo de Guayabal"
+    },
+    {
+      "code": "1513",
+      "name": "San José de Guaribe"
+    },
+    {
+      "code": "1514",
+      "name": "Santa María de Ipire"
+    },
+    {
+      "code": "1515",
+      "name": "Zaraza"
+    }
+  ],
+  "16": [
+    {
+      "code": "1601",
+      "name": "Andrés Eloy Blanco"
+    },
+    {
+      "code": "1602",
+      "name": "Crespo"
+    },
+    {
+      "code": "1603",
+      "name": "Iribarren"
+    },
+    {
+      "code": "1604",
+      "name": "Jiménez"
+    },
+    {
+      "code": "1605",
+      "name": "Morán"
+    },
+    {
+      "code": "1606",
+      "name": "Palavecino"
+    },
+    {
+      "code": "1607",
+      "name": "Simón Planas"
+    },
+    {
+      "code": "1608",
+      "name": "Torres"
+    },
+    {
+      "code": "1609",
+      "name": "Urdaneta"
+    }
+  ],
+  "18": [
+    {
+      "code": "1801",
+      "name": "Alberto Adriani"
+    },
+    {
+      "code": "1802",
+      "name": "Andrés Bello"
+    },
+    {
+      "code": "1803",
+      "name": "Antonio Pinto Salinas"
+    },
+    {
+      "code": "1804",
+      "name": "Aricagua"
+    },
+    {
+      "code": "1805",
+      "name": "Arzobispo Chacón"
+    },
+    {
+      "code": "1806",
+      "name": "Campo Elías"
+    },
+    {
+      "code": "1807",
+      "name": "Caracciolo Parra Olmedo"
+    },
+    {
+      "code": "1808",
+      "name": "Cardenal Quintero"
+    },
+    {
+      "code": "1809",
+      "name": "Guaraque"
+    },
+    {
+      "code": "1810",
+      "name": "Julio César Salas"
+    },
+    {
+      "code": "1811",
+      "name": "Justo Briceño"
+    },
+    {
+      "code": "1812",
+      "name": "Libertador"
+    },
+    {
+      "code": "1813",
+      "name": "Miranda"
+    },
+    {
+      "code": "1814",
+      "name": "Obispo Ramos de Lora"
+    },
+    {
+      "code": "1815",
+      "name": "Padre Noguera"
+    },
+    {
+      "code": "1816",
+      "name": "Pueblo Llano"
+    },
+    {
+      "code": "1817",
+      "name": "Rangel"
+    },
+    {
+      "code": "1818",
+      "name": "Rivas Dávila"
+    },
+    {
+      "code": "1819",
+      "name": "Santos Marquina"
+    },
+    {
+      "code": "1820",
+      "name": "Sucre"
+    },
+    {
+      "code": "1821",
+      "name": "Tovar"
+    },
+    {
+      "code": "1822",
+      "name": "Tulio Febres Cordero"
+    },
+    {
+      "code": "1823",
+      "name": "Zea"
+    }
+  ],
+  "19": [
+    {
+      "code": "1901",
+      "name": "Acevedo"
+    },
+    {
+      "code": "1902",
+      "name": "Andrés Bello"
+    },
+    {
+      "code": "1903",
+      "name": "Baruta"
+    },
+    {
+      "code": "1904",
+      "name": "Brión"
+    },
+    {
+      "code": "1905",
+      "name": "Buroz"
+    },
+    {
+      "code": "1906",
+      "name": "Carrizal"
+    },
+    {
+      "code": "1907",
+      "name": "Chacao"
+    },
+    {
+      "code": "1908",
+      "name": "Cristóbal Rojas"
+    },
+    {
+      "code": "1909",
+      "name": "El Hatillo"
+    },
+    {
+      "code": "1910",
+      "name": "Guaicaipuro"
+    },
+    {
+      "code": "1911",
+      "name": "Independencia"
+    },
+    {
+      "code": "1912",
+      "name": "Lander"
+    },
+    {
+      "code": "1913",
+      "name": "Los Salias"
+    },
+    {
+      "code": "1914",
+      "name": "Páez"
+    },
+    {
+      "code": "1915",
+      "name": "Paz Castillo"
+    },
+    {
+      "code": "1916",
+      "name": "Pedro Gual"
+    },
+    {
+      "code": "1917",
+      "name": "Plaza"
+    },
+    {
+      "code": "1918",
+      "name": "Simón Bolívar"
+    },
+    {
+      "code": "1919",
+      "name": "Sucre"
+    },
+    {
+      "code": "1920",
+      "name": "Urdaneta"
+    },
+    {
+      "code": "1921",
+      "name": "Zamora"
+    }
+  ],
+  "21": [
+    {
+      "code": "2101",
+      "name": "Acosta"
+    },
+    {
+      "code": "2102",
+      "name": "Aguasay"
+    },
+    {
+      "code": "2103",
+      "name": "Bolívar"
+    },
+    {
+      "code": "2104",
+      "name": "Caripe"
+    },
+    {
+      "code": "2105",
+      "name": "Cedeño"
+    },
+    {
+      "code": "2106",
+      "name": "Ezequiel Zamora"
+    },
+    {
+      "code": "2107",
+      "name": "Libertador"
+    },
+    {
+      "code": "2108",
+      "name": "Maturín"
+    },
+    {
+      "code": "2109",
+      "name": "Piar"
+    },
+    {
+      "code": "2110",
+      "name": "Punceres"
+    },
+    {
+      "code": "2111",
+      "name": "Santa Bárbara"
+    },
+    {
+      "code": "2112",
+      "name": "Sotillo"
+    },
+    {
+      "code": "2113",
+      "name": "Uracoa"
+    }
+  ],
+  "22": [
+    {
+      "code": "2201",
+      "name": "Antolín del Campo"
+    },
+    {
+      "code": "2202",
+      "name": "Arismendi"
+    },
+    {
+      "code": "2203",
+      "name": "Díaz"
+    },
+    {
+      "code": "2204",
+      "name": "García"
+    },
+    {
+      "code": "2205",
+      "name": "Gómez"
+    },
+    {
+      "code": "2206",
+      "name": "Maneiro"
+    },
+    {
+      "code": "2207",
+      "name": "Marcano"
+    },
+    {
+      "code": "2208",
+      "name": "Mariño"
+    },
+    {
+      "code": "2209",
+      "name": "Península de Macanao"
+    },
+    {
+      "code": "2210",
+      "name": "Tubores"
+    },
+    {
+      "code": "2211",
+      "name": "Villalba"
+    }
+  ],
+  "23": [
+    {
+      "code": "2301",
+      "name": "Agua Blanca"
+    },
+    {
+      "code": "2302",
+      "name": "Araure"
+    },
+    {
+      "code": "2303",
+      "name": "Esteller"
+    },
+    {
+      "code": "2304",
+      "name": "Guanare"
+    },
+    {
+      "code": "2305",
+      "name": "Guanarito"
+    },
+    {
+      "code": "2306",
+      "name": "Monseñor José Vicente de Unda"
+    },
+    {
+      "code": "2307",
+      "name": "Ospino"
+    },
+    {
+      "code": "2308",
+      "name": "Páez"
+    },
+    {
+      "code": "2309",
+      "name": "Papelón"
+    },
+    {
+      "code": "2310",
+      "name": "San Genaro de Boconoíto"
+    },
+    {
+      "code": "2311",
+      "name": "San Rafael de Onoto"
+    },
+    {
+      "code": "2312",
+      "name": "Santa Rosalía"
+    },
+    {
+      "code": "2313",
+      "name": "Sucre"
+    },
+    {
+      "code": "2314",
+      "name": "Turén"
+    }
+  ],
+  "24": [
+    {
+      "code": "2401",
+      "name": "Andrés Eloy Blanco"
+    },
+    {
+      "code": "2402",
+      "name": "Andrés Mata"
+    },
+    {
+      "code": "2403",
+      "name": "Arismendi"
+    },
+    {
+      "code": "2404",
+      "name": "Benítez"
+    },
+    {
+      "code": "2405",
+      "name": "Bermúdez"
+    },
+    {
+      "code": "2406",
+      "name": "Bolívar"
+    },
+    {
+      "code": "2407",
+      "name": "Cajigal"
+    },
+    {
+      "code": "2408",
+      "name": "Cruz Salmerón Acosta"
+    },
+    {
+      "code": "2409",
+      "name": "Libertador"
+    },
+    {
+      "code": "2410",
+      "name": "Mariño"
+    },
+    {
+      "code": "2411",
+      "name": "Mejía"
+    },
+    {
+      "code": "2412",
+      "name": "Montes"
+    },
+    {
+      "code": "2413",
+      "name": "Ribero"
+    },
+    {
+      "code": "2414",
+      "name": "Sucre"
+    },
+    {
+      "code": "2415",
+      "name": "Valdez"
+    }
+  ],
+  "25": [
+    {
+      "code": "2501",
+      "name": "Andrés Bello"
+    },
+    {
+      "code": "2502",
+      "name": "Antonio Rómulo Costa"
+    },
+    {
+      "code": "2503",
+      "name": "Ayacucho"
+    },
+    {
+      "code": "2504",
+      "name": "Bolívar"
+    },
+    {
+      "code": "2505",
+      "name": "Cárdenas"
+    },
+    {
+      "code": "2506",
+      "name": "Córdoba"
+    },
+    {
+      "code": "2507",
+      "name": "Fernández Feo"
+    },
+    {
+      "code": "2508",
+      "name": "Francisco de Miranda"
+    },
+    {
+      "code": "2509",
+      "name": "García de Hevia"
+    },
+    {
+      "code": "2510",
+      "name": "Guásimos"
+    },
+    {
+      "code": "2511",
+      "name": "Independencia"
+    },
+    {
+      "code": "2512",
+      "name": "Jáuregui"
+    },
+    {
+      "code": "2513",
+      "name": "José María Vargas"
+    },
+    {
+      "code": "2514",
+      "name": "Junín"
+    },
+    {
+      "code": "2515",
+      "name": "Libertad"
+    },
+    {
+      "code": "2516",
+      "name": "Libertador"
+    },
+    {
+      "code": "2517",
+      "name": "Lobatera"
+    },
+    {
+      "code": "2518",
+      "name": "Michelena"
+    },
+    {
+      "code": "2519",
+      "name": "Panamericano"
+    },
+    {
+      "code": "2520",
+      "name": "Pedro María Ureña"
+    },
+    {
+      "code": "2521",
+      "name": "Rafael Urdaneta"
+    },
+    {
+      "code": "2522",
+      "name": "Samuel Darío Maldonado"
+    },
+    {
+      "code": "2523",
+      "name": "San Cristóbal"
+    },
+    {
+      "code": "2524",
+      "name": "Seboruco"
+    },
+    {
+      "code": "2525",
+      "name": "Simón Rodríguez"
+    },
+    {
+      "code": "2526",
+      "name": "Sucre"
+    },
+    {
+      "code": "2527",
+      "name": "Torbes"
+    },
+    {
+      "code": "2528",
+      "name": "Uribante"
+    },
+    {
+      "code": "2529",
+      "name": "San Judas Tadeo"
+    }
+  ],
+  "26": [
+    {
+      "code": "2601",
+      "name": "Andrés Bello"
+    },
+    {
+      "code": "2602",
+      "name": "Boconó"
+    },
+    {
+      "code": "2603",
+      "name": "Bolívar"
+    },
+    {
+      "code": "2604",
+      "name": "Candelaria"
+    },
+    {
+      "code": "2605",
+      "name": "Carache"
+    },
+    {
+      "code": "2606",
+      "name": "Escuque"
+    },
+    {
+      "code": "2607",
+      "name": "José Felipe Márquez Cañizalez"
+    },
+    {
+      "code": "2608",
+      "name": "Juan Vicente Campos Elías"
+    },
+    {
+      "code": "2609",
+      "name": "La Ceiba"
+    },
+    {
+      "code": "2610",
+      "name": "Miranda"
+    },
+    {
+      "code": "2611",
+      "name": "Monte Carmelo"
+    },
+    {
+      "code": "2612",
+      "name": "Motatán"
+    },
+    {
+      "code": "2613",
+      "name": "Pampán"
+    },
+    {
+      "code": "2614",
+      "name": "Pampanito"
+    },
+    {
+      "code": "2615",
+      "name": "Rafael Rangel"
+    },
+    {
+      "code": "2616",
+      "name": "San Rafael de Carvajal"
+    },
+    {
+      "code": "2617",
+      "name": "Sucre"
+    },
+    {
+      "code": "2618",
+      "name": "Trujillo"
+    },
+    {
+      "code": "2619",
+      "name": "Urdaneta"
+    },
+    {
+      "code": "2620",
+      "name": "Valera"
+    }
+  ],
+  "28": [
+    {
+      "code": "2801",
+      "name": "Vargas"
+    }
+  ],
+  "29": [
+    {
+      "code": "2901",
+      "name": "Arístides Bastidas"
+    },
+    {
+      "code": "2902",
+      "name": "Bolívar"
+    },
+    {
+      "code": "2903",
+      "name": "Bruzual"
+    },
+    {
+      "code": "2904",
+      "name": "Cocorote"
+    },
+    {
+      "code": "2905",
+      "name": "Independencia"
+    },
+    {
+      "code": "2906",
+      "name": "José Antonio Páez"
+    },
+    {
+      "code": "2907",
+      "name": "La Trinidad"
+    },
+    {
+      "code": "2908",
+      "name": "Manuel Monge"
+    },
+    {
+      "code": "2909",
+      "name": "Nirgua"
+    },
+    {
+      "code": "2910",
+      "name": "Peña"
+    },
+    {
+      "code": "2911",
+      "name": "San Felipe"
+    },
+    {
+      "code": "2912",
+      "name": "Sucre"
+    },
+    {
+      "code": "2913",
+      "name": "Urachiche"
+    },
+    {
+      "code": "2914",
+      "name": "Veroes"
+    }
+  ],
+  "30": [
+    {
+      "code": "3001",
+      "name": "Almirante Padilla"
+    },
+    {
+      "code": "3002",
+      "name": "Baralt"
+    },
+    {
+      "code": "3003",
+      "name": "Cabimas"
+    },
+    {
+      "code": "3004",
+      "name": "Catatumbo"
+    },
+    {
+      "code": "3005",
+      "name": "Colón"
+    },
+    {
+      "code": "3006",
+      "name": "Francisco Javier Pulgar"
+    },
+    {
+      "code": "3007",
+      "name": "Páez"
+    },
+    {
+      "code": "3008",
+      "name": "Jesús Enrique Lossada"
+    },
+    {
+      "code": "3009",
+      "name": "Jesús María Semprún"
+    },
+    {
+      "code": "3010",
+      "name": "La Cañada de Urdaneta"
+    },
+    {
+      "code": "3011",
+      "name": "Lagunillas"
+    },
+    {
+      "code": "3012",
+      "name": "Machiques de Perijá"
+    },
+    {
+      "code": "3013",
+      "name": "Mara"
+    },
+    {
+      "code": "3014",
+      "name": "Maracaibo"
+    },
+    {
+      "code": "3015",
+      "name": "Miranda"
+    },
+    {
+      "code": "3016",
+      "name": "Rosario de Perijá"
+    },
+    {
+      "code": "3017",
+      "name": "San Francisco"
+    },
+    {
+      "code": "3018",
+      "name": "Santa Rita"
+    },
+    {
+      "code": "3019",
+      "name": "Simón Bolívar"
+    },
+    {
+      "code": "3020",
+      "name": "Sucre"
+    },
+    {
+      "code": "3021",
+      "name": "Valmore Rodríguez"
+    }
+  ],
+  "31": [
+    {
+      "code": "3101",
+      "name": "Libertador"
+    }
+  ],
+  "01": [
+    {
+      "code": "0101",
+      "name": "Alto Orinoco"
+    },
+    {
+      "code": "0102",
+      "name": "Atabapo"
+    },
+    {
+      "code": "0103",
+      "name": "Atures"
+    },
+    {
+      "code": "0104",
+      "name": "Autana"
+    },
+    {
+      "code": "0105",
+      "name": "Manapiare"
+    },
+    {
+      "code": "0106",
+      "name": "Maroa"
+    },
+    {
+      "code": "0107",
+      "name": "Río Negro"
+    }
+  ],
+  "02": [
+    {
+      "code": "0201",
+      "name": "Anaco"
+    },
+    {
+      "code": "0202",
+      "name": "Aragua"
+    },
+    {
+      "code": "0203",
+      "name": "Bolívar"
+    },
+    {
+      "code": "0204",
+      "name": "Bruzual"
+    },
+    {
+      "code": "0205",
+      "name": "Cajigal"
+    },
+    {
+      "code": "0206",
+      "name": "Carvajal"
+    },
+    {
+      "code": "0207",
+      "name": "Diego Bautista Urbaneja"
+    },
+    {
+      "code": "0208",
+      "name": "Freites"
+    },
+    {
+      "code": "0209",
+      "name": "Guanipa"
+    },
+    {
+      "code": "0210",
+      "name": "Guanta"
+    },
+    {
+      "code": "0211",
+      "name": "Independencia"
+    },
+    {
+      "code": "0212",
+      "name": "Libertad"
+    },
+    {
+      "code": "0213",
+      "name": "McGregor"
+    },
+    {
+      "code": "0214",
+      "name": "Miranda"
+    },
+    {
+      "code": "0215",
+      "name": "Monagas"
+    },
+    {
+      "code": "0216",
+      "name": "Peñalver"
+    },
+    {
+      "code": "0217",
+      "name": "Píritu"
+    },
+    {
+      "code": "0218",
+      "name": "San Juan de Capistrano"
+    },
+    {
+      "code": "0219",
+      "name": "Santa Ana"
+    },
+    {
+      "code": "0220",
+      "name": "Simón Rodríguez"
+    },
+    {
+      "code": "0221",
+      "name": "Sotillo"
+    }
+  ],
+  "03": [
+    {
+      "code": "0301",
+      "name": "Achaguas"
+    },
+    {
+      "code": "0302",
+      "name": "Biruaca"
+    },
+    {
+      "code": "0303",
+      "name": "Muñoz"
+    },
+    {
+      "code": "0304",
+      "name": "Páez"
+    },
+    {
+      "code": "0305",
+      "name": "Pedro Camejo"
+    },
+    {
+      "code": "0306",
+      "name": "Rómulo Gallegos"
+    },
+    {
+      "code": "0307",
+      "name": "San Fernando"
+    }
+  ],
+  "04": [
+    {
+      "code": "0401",
+      "name": "Bolívar"
+    },
+    {
+      "code": "0402",
+      "name": "Camatagua"
+    },
+    {
+      "code": "0403",
+      "name": "Francisco Linares Alcántara"
+    },
+    {
+      "code": "0404",
+      "name": "Girardot"
+    },
+    {
+      "code": "0405",
+      "name": "José Ángel Lamas"
+    },
+    {
+      "code": "0406",
+      "name": "José Félix Ribas"
+    },
+    {
+      "code": "0407",
+      "name": "José Rafael Revenga"
+    },
+    {
+      "code": "0408",
+      "name": "Libertador"
+    },
+    {
+      "code": "0409",
+      "name": "Mario Briceño Iragorry"
+    },
+    {
+      "code": "0410",
+      "name": "Ocumare de la Costa de Oro"
+    },
+    {
+      "code": "0411",
+      "name": "San Casimiro"
+    },
+    {
+      "code": "0412",
+      "name": "San Sebastián"
+    },
+    {
+      "code": "0413",
+      "name": "Santiago Mariño"
+    },
+    {
+      "code": "0414",
+      "name": "Santos Michelena"
+    },
+    {
+      "code": "0415",
+      "name": "Sucre"
+    },
+    {
+      "code": "0416",
+      "name": "Tovar"
+    },
+    {
+      "code": "0417",
+      "name": "Urdaneta"
+    },
+    {
+      "code": "0418",
+      "name": "Zamora"
+    }
+  ],
+  "05": [
+    {
+      "code": "0501",
+      "name": "Alberto Arvelo Torrealba"
+    },
+    {
+      "code": "0502",
+      "name": "Andrés Eloy Blanco"
+    },
+    {
+      "code": "0503",
+      "name": "Antonio José de Sucre"
+    },
+    {
+      "code": "0504",
+      "name": "Arismendi"
+    },
+    {
+      "code": "0505",
+      "name": "Barinas"
+    },
+    {
+      "code": "0506",
+      "name": "Bolívar"
+    },
+    {
+      "code": "0507",
+      "name": "Cruz Paredes"
+    },
+    {
+      "code": "0508",
+      "name": "Ezequiel Zamora"
+    },
+    {
+      "code": "0509",
+      "name": "Obispos"
+    },
+    {
+      "code": "0510",
+      "name": "Pedraza"
+    },
+    {
+      "code": "0511",
+      "name": "Rojas"
+    },
+    {
+      "code": "0512",
+      "name": "Sosa"
+    }
+  ],
+  "06": [
+    {
+      "code": "0601",
+      "name": "Angostura"
+    },
+    {
+      "code": "0602",
+      "name": "Caroní"
+    },
+    {
+      "code": "0603",
+      "name": "Cedeño"
+    },
+    {
+      "code": "0604",
+      "name": "El Callao"
+    },
+    {
+      "code": "0605",
+      "name": "Gran Sabana"
+    },
+    {
+      "code": "0606",
+      "name": "Heres"
+    },
+    {
+      "code": "0607",
+      "name": "Píar"
+    },
+    {
+      "code": "0608",
+      "name": "Roscio"
+    },
+    {
+      "code": "0609",
+      "name": "Sifontes"
+    },
+    {
+      "code": "0610",
+      "name": "Sucre"
+    },
+    {
+      "code": "0611",
+      "name": "Padre Pedro Chien"
+    }
+  ],
+  "07": [
+    {
+      "code": "0701",
+      "name": "Bejuma"
+    },
+    {
+      "code": "0702",
+      "name": "Carlos Arvelo"
+    },
+    {
+      "code": "0703",
+      "name": "Diego Ibarra"
+    },
+    {
+      "code": "0704",
+      "name": "Guacara"
+    },
+    {
+      "code": "0705",
+      "name": "Mora"
+    },
+    {
+      "code": "0706",
+      "name": "Libertador"
+    },
+    {
+      "code": "0707",
+      "name": "Los Guayos"
+    },
+    {
+      "code": "0708",
+      "name": "Miranda"
+    },
+    {
+      "code": "0709",
+      "name": "Montalbán"
+    },
+    {
+      "code": "0710",
+      "name": "Naguanagua"
+    },
+    {
+      "code": "0711",
+      "name": "Puerto Cabello"
+    },
+    {
+      "code": "0712",
+      "name": "San Diego"
+    },
+    {
+      "code": "0713",
+      "name": "San Joaquín"
+    },
+    {
+      "code": "0714",
+      "name": "Valencia"
+    }
+  ],
+  "08": [
+    {
+      "code": "0801",
+      "name": "Anzoátegui"
+    },
+    {
+      "code": "0802",
+      "name": "Tinaquillo"
+    },
+    {
+      "code": "0803",
+      "name": "Girardot"
+    },
+    {
+      "code": "0804",
+      "name": "Lima Blanco"
+    },
+    {
+      "code": "0805",
+      "name": "Pao de San Juan Bautista"
+    },
+    {
+      "code": "0806",
+      "name": "Ricaurte"
+    },
+    {
+      "code": "0807",
+      "name": "Rómulo Gallegos"
+    },
+    {
+      "code": "0808",
+      "name": "San Carlos"
+    },
+    {
+      "code": "0809",
+      "name": "Tinaco"
+    }
+  ],
+  "09": [
+    {
+      "code": "0901",
+      "name": "Antonio Díaz"
+    },
+    {
+      "code": "0902",
+      "name": "Casacoima"
+    },
+    {
+      "code": "0903",
+      "name": "Pedernales"
+    },
+    {
+      "code": "0904",
+      "name": "Tucupita"
+    }
+  ]
+}

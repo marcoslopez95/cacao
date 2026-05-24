@@ -4,12 +4,50 @@ namespace App\Providers;
 
 use App\Models\Career;
 use App\Models\CareerCategory;
+use App\Models\Catalog;
+use App\Models\Catalogs\AcademicShift;
+use App\Models\Catalogs\AcademicStatus;
+use App\Models\Catalogs\AdmissionType;
+use App\Models\Catalogs\AttachmentDocumentType;
+use App\Models\Catalogs\BasicService;
+use App\Models\Catalogs\BloodType;
+use App\Models\Catalogs\CommuteTime;
+use App\Models\Catalogs\ConstructionMaterial;
+use App\Models\Catalogs\ContractType;
+use App\Models\Catalogs\DedicationType;
+use App\Models\Catalogs\DigitalLevel;
+use App\Models\Catalogs\DisabilityType;
+use App\Models\Catalogs\DocumentType;
+use App\Models\Catalogs\EducationLevel;
+use App\Models\Catalogs\EmploymentStatus;
+use App\Models\Catalogs\EmploymentType;
+use App\Models\Catalogs\Gender;
+use App\Models\Catalogs\GeographicZone;
+use App\Models\Catalogs\HouseholdHeadType;
+use App\Models\Catalogs\HousingType;
+use App\Models\Catalogs\IncomeRange;
+use App\Models\Catalogs\IncomeSource;
+use App\Models\Catalogs\InstitutionalBenefit;
+use App\Models\Catalogs\InstitutionType;
+use App\Models\Catalogs\InsuranceType;
+use App\Models\Catalogs\KinshipType;
+use App\Models\Catalogs\Language;
+use App\Models\Catalogs\LanguageLevel;
+use App\Models\Catalogs\LivingArrangement;
+use App\Models\Catalogs\MaritalStatus;
+use App\Models\Catalogs\Religion;
+use App\Models\Catalogs\SchoolGrade;
+use App\Models\Catalogs\StudyModality;
+use App\Models\Catalogs\TenureType;
+use App\Models\Catalogs\TransferReason;
+use App\Models\Catalogs\TransportType;
 use App\Models\Coordination;
 use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\Pensum;
 use App\Models\Subject;
 use App\Models\User;
+use App\Observers\CatalogObserver;
 use App\Policies\Academic\CareerCategoryPolicy;
 use App\Policies\Academic\CareerPolicy;
 use App\Policies\Academic\PensumPolicy;
@@ -49,6 +87,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         $this->configureAuthorization();
         $this->configureRedirects();
+        $this->configureCatalogObservers();
     }
 
     /**
@@ -93,6 +132,61 @@ class AppServiceProvider extends ServiceProvider
                 default => '/',
             };
         });
+    }
+
+    /**
+     * Register CatalogObserver for all catalog models.
+     */
+    protected function configureCatalogObservers(): void
+    {
+        foreach ($this->catalogModels() as $model) {
+            $model::observe(CatalogObserver::class);
+        }
+    }
+
+    /**
+     * @return list<class-string<Catalog>>
+     */
+    private function catalogModels(): array
+    {
+        return [
+            AcademicShift::class,
+            AcademicStatus::class,
+            AdmissionType::class,
+            AttachmentDocumentType::class,
+            BasicService::class,
+            BloodType::class,
+            CommuteTime::class,
+            ConstructionMaterial::class,
+            ContractType::class,
+            DedicationType::class,
+            DigitalLevel::class,
+            DisabilityType::class,
+            DocumentType::class,
+            EducationLevel::class,
+            EmploymentStatus::class,
+            EmploymentType::class,
+            Gender::class,
+            GeographicZone::class,
+            HouseholdHeadType::class,
+            HousingType::class,
+            IncomeRange::class,
+            IncomeSource::class,
+            InstitutionalBenefit::class,
+            InstitutionType::class,
+            InsuranceType::class,
+            KinshipType::class,
+            Language::class,
+            LanguageLevel::class,
+            LivingArrangement::class,
+            MaritalStatus::class,
+            Religion::class,
+            SchoolGrade::class,
+            StudyModality::class,
+            TenureType::class,
+            TransferReason::class,
+            TransportType::class,
+        ];
     }
 
     /**
