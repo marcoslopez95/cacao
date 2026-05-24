@@ -10,9 +10,27 @@ class UserWrapper extends Collection
 {
     private ?string $resolvedPlainPassword = null;
 
-    public function getName(): string
+    public function getFirstName(): string
     {
-        return $this->get('name');
+        // Support both the split fields and the legacy single 'name' field.
+        if ($this->has('first_name')) {
+            return $this->get('first_name');
+        }
+
+        $parts = explode(' ', (string) $this->get('name', ''), 2);
+
+        return $parts[0] ?? '';
+    }
+
+    public function getLastName(): string
+    {
+        if ($this->has('last_name')) {
+            return $this->get('last_name');
+        }
+
+        $parts = explode(' ', (string) $this->get('name', ''), 2);
+
+        return $parts[1] ?? '';
     }
 
     public function getEmail(): string
@@ -73,7 +91,8 @@ class UserWrapper extends Collection
     public function getStoreData(): array
     {
         return [
-            'name' => $this->getName(),
+            'first_name' => $this->getFirstName(),
+            'last_name' => $this->getLastName(),
             'email' => $this->getEmail(),
             'password' => $this->getHashedPassword(),
             'active' => true,
@@ -86,7 +105,8 @@ class UserWrapper extends Collection
     public function getUpdateData(): array
     {
         return [
-            'name' => $this->getName(),
+            'first_name' => $this->getFirstName(),
+            'last_name' => $this->getLastName(),
             'email' => $this->getEmail(),
         ];
     }

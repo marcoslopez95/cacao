@@ -22,8 +22,11 @@ class UserSeeder extends Seeder
                 continue;
             }
 
+            $nameParts = explode(' ', (string) $userData['name'], 2);
+
             $user = User::factory()->create([
-                'name' => $userData['name'],
+                'first_name' => $nameParts[0] ?? $userData['name'],
+                'last_name' => $nameParts[1] ?? '',
                 'email' => $userData['email'],
                 'password' => Hash::make($userData['password']),
                 'email_verified_at' => now(),

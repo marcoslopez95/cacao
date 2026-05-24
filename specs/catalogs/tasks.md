@@ -60,11 +60,11 @@
 - `app/Models/Catalogs/GeographicZone.php`
 - `app/Models/Catalogs/AttachmentDocumentType.php`
 
-**Seed values:**
-- `genders`: male, female, non_binary, prefer_not_to_say
-- `document_types`: V (Venezolano), E (Extranjero), P (Pasaporte), J (Jurídico)
-- `geographic_zones`: urban, periurban, rural
-- `attachment_document_types`: id_card, birth_certificate, academic_title, transcript, passport, other
+**Seed values** (`code` → `name` en español):
+- `genders`: `male` → Masculino · `female` → Femenino · `non_binary` → No binario · `prefer_not_to_say` → Prefiero no indicar
+- `document_types`: `V` → Venezolano · `E` → Extranjero · `P` → Pasaporte · `J` → Jurídico
+- `geographic_zones`: `urban` → Urbano · `periurban` → Periurbano · `rural` → Rural
+- `attachment_document_types`: `id_card` → Cédula de identidad · `birth_certificate` → Acta de nacimiento · `academic_title` → Título académico · `transcript` → Notas certificadas · `passport` → Pasaporte · `other` → Otro
 
 **Done criteria:**
 - All 4 tables exist and are seeded with values above
@@ -86,13 +86,13 @@
 - `app/Models/Catalogs/AdmissionType.php`
 - `app/Models/Catalogs/SchoolGrade.php`
 
-**Seed values:**
-- `education_levels`: preschool, primary, secondary, technical_tsu, undergraduate, postgraduate
-- `academic_statuses`: active, withdrawn, graduated, suspended, exchange, graduated_no_title
-- `study_modalities`: in_person, online, hybrid
-- `academic_shifts`: morning, afternoon, night
-- `admission_types`: regular, transfer, equivalence
-- `school_grades`: 1st–6th primary (primary_1 … primary_6), 1st–5th secondary (secondary_1 … secondary_5)
+**Seed values** (`code` → `name` en español):
+- `education_levels`: `preschool` → Preescolar · `primary` → Primaria · `secondary` → Secundaria · `technical_tsu` → Técnico Superior Universitario · `undergraduate` → Pregrado · `postgraduate` → Posgrado
+- `academic_statuses`: `active` → Activo · `withdrawn` → Retirado · `graduated` → Egresado · `suspended` → Suspendido · `exchange` → Intercambio · `graduated_no_title` → Egresado sin título
+- `study_modalities`: `in_person` → Presencial · `online` → En línea · `hybrid` → Híbrida
+- `academic_shifts`: `morning` → Matutino · `afternoon` → Vespertino · `night` → Nocturno
+- `admission_types`: `regular` → Regular · `transfer` → Traslado · `equivalence` → Equivalencia
+- `school_grades`: `primary_1` → 1er grado · `primary_2` → 2do grado · `primary_3` → 3er grado · `primary_4` → 4to grado · `primary_5` → 5to grado · `primary_6` → 6to grado · `secondary_1` → 1er año · `secondary_2` → 2do año · `secondary_3` → 3er año · `secondary_4` → 4to año · `secondary_5` → 5to año
 
 **Done criteria:**
 - All 6 tables seeded correctly
@@ -112,10 +112,10 @@
 - `app/Models/Catalogs/DedicationType.php`
 - `app/Models/Catalogs/EmploymentStatus.php`
 
-**Seed values:**
-- `contract_types`: permanent, contracted, hourly, honoraria
-- `dedication_types`: full_time, half_time, per_subject
-- `employment_statuses`: active, on_leave, retired, suspended
+**Seed values** (`code` → `name` en español):
+- `contract_types`: `permanent` → Fijo · `contracted` → Contratado · `hourly` → Por horas · `honoraria` → Honorarios profesionales
+- `dedication_types`: `full_time` → Dedicación exclusiva · `half_time` → Medio tiempo · `per_subject` → Por asignatura
+- `employment_statuses`: `active` → Activo · `on_leave` → En licencia · `retired` → Jubilado · `suspended` → Suspendido
 
 **Done criteria:**
 - All 3 tables seeded
@@ -141,17 +141,17 @@
 - `app/Models/Catalogs/HouseholdHeadType.php`
 - `app/Models/Catalogs/Religion.php`
 
-**Seed values:**
-- `kinship_types`: father, mother, legal_guardian, grandparent, uncle, sibling, other
-- `marital_statuses`: single, married, divorced, widowed, civil_union
-- `institution_types`: public, private, fe_y_alegria, other
-- `transfer_reasons`: relocation, economic, academic_performance, other
-- `digital_levels`: none, basic, intermediate, advanced
-- `language_levels`: a1, a2, b1, b2, c1, c2, native
-- `languages`: Spanish (es), English (en), French (fr), Portuguese (pt), German (de), Italian (it), Chinese (zh), Arabic (ar), Other (other)
-- `living_arrangements`: both_parents, mother_only, father_only, relative, independent, student_residence
-- `household_head_types`: father, mother, student, other_relative
-- `religions`: catholic, evangelical, protestant, jewish, muslim, agnostic, atheist, other (mark as optional/sensitive in description)
+**Seed values** (`code` → `name` en español):
+- `kinship_types`: `father` → Padre · `mother` → Madre · `legal_guardian` → Tutor legal · `grandparent` → Abuelo/a · `uncle` → Tío/a · `sibling` → Hermano/a · `other` → Otro
+- `marital_statuses`: `single` → Soltero/a · `married` → Casado/a · `divorced` → Divorciado/a · `widowed` → Viudo/a · `civil_union` → Unión libre
+- `institution_types`: `public` → Pública · `private` → Privada · `fe_y_alegria` → Fe y Alegría · `other` → Otra
+- `transfer_reasons`: `relocation` → Cambio de residencia · `economic` → Razones económicas · `academic_performance` → Rendimiento académico · `other` → Otro
+- `digital_levels`: `none` → Sin conocimiento · `basic` → Básico · `intermediate` → Intermedio · `advanced` → Avanzado
+- `language_levels`: `a1` → A1 · `a2` → A2 · `b1` → B1 · `b2` → B2 · `c1` → C1 · `c2` → C2 · `native` → Nativo/a
+- `languages`: `es` → Español · `en` → Inglés · `fr` → Francés · `pt` → Portugués · `de` → Alemán · `it` → Italiano · `zh` → Chino · `ar` → Árabe · `other` → Otro
+- `living_arrangements`: `both_parents` → Ambos padres · `mother_only` → Solo con la madre · `father_only` → Solo con el padre · `relative` → Con un familiar · `independent` → Independiente · `student_residence` → Residencia estudiantil
+- `household_head_types`: `father` → Padre · `mother` → Madre · `student` → El/la estudiante · `other_relative` → Otro familiar
+- `religions`: `catholic` → Católico · `evangelical` → Evangélico · `protestant` → Protestante · `jewish` → Judío · `muslim` → Musulmán · `agnostic` → Agnóstico · `atheist` → Ateo · `other` → Otro (campo opcional/sensible — solo estadísticas institucionales)
 
 **Done criteria:**
 - All 10 tables seeded
@@ -181,20 +181,20 @@
 - `app/Models/Catalogs/InsuranceType.php`
 - `app/Models/Catalogs/BloodType.php`
 
-**Seed values:**
-- `income_ranges`: under_50_usd, 50_to_150_usd, 150_to_300_usd, 300_to_500_usd, over_500_usd
-- `income_sources`: formal_employment, informal_employment, own_business, remittances, pension, other
-- `employment_types` (student work): formal, informal, freelance, family_business
-- `institutional_benefits`: cafeteria, transport, supplies, partial_scholarship, full_scholarship, other
-- `housing_types`: house, apartment, rented_room, rancho, quinta, other
-- `tenure_types`: owned, rented, borrowed, mortgaged
-- `construction_materials`: reinforced_concrete, wood, zinc, mixed, other
-- `basic_services`: potable_water, electricity, gas, internet, sewer, garbage_collection, landline
-- `commute_times`: under_15min, 15_to_30min, 30_to_60min, over_1hour
-- `transport_types`: own_vehicle, public_transport, on_foot, motorcycle, other
-- `disability_types`: visual, hearing, motor, cognitive, speech, multiple, other
-- `insurance_types`: ivss, private_hcm, private_other, none
-- `blood_types`: a_pos, a_neg, b_pos, b_neg, ab_pos, ab_neg, o_pos, o_neg
+**Seed values** (`code` → `name` en español):
+- `income_ranges`: `under_50_usd` → Menos de $50 · `50_to_150_usd` → $50 – $150 · `150_to_300_usd` → $150 – $300 · `300_to_500_usd` → $300 – $500 · `over_500_usd` → Más de $500
+- `income_sources`: `formal_employment` → Empleo formal · `informal_employment` → Empleo informal · `own_business` → Negocio propio · `remittances` → Remesas · `pension` → Pensión o jubilación · `other` → Otro
+- `employment_types` (trabajo del estudiante): `formal` → Formal · `informal` → Informal · `freelance` → Independiente/freelance · `family_business` → Negocio familiar
+- `institutional_benefits`: `cafeteria` → Comedor · `transport` → Transporte · `supplies` → Útiles y materiales · `partial_scholarship` → Beca parcial · `full_scholarship` → Beca completa · `other` → Otro
+- `housing_types`: `house` → Casa · `apartment` → Apartamento · `rented_room` → Habitación alquilada · `rancho` → Rancho · `quinta` → Quinta · `other` → Otro
+- `tenure_types`: `owned` → Propia · `rented` → Alquilada · `borrowed` → Cedida/prestada · `mortgaged` → Hipotecada
+- `construction_materials`: `reinforced_concrete` → Concreto/bloque · `wood` → Madera · `zinc` → Zinc · `mixed` → Mixto · `other` → Otro
+- `basic_services`: `potable_water` → Agua potable · `electricity` → Electricidad · `gas` → Gas · `internet` → Internet · `sewer` → Cloacas · `garbage_collection` → Recolección de basura · `landline` → Teléfono fijo
+- `commute_times`: `under_15min` → Menos de 15 min · `15_to_30min` → 15 – 30 min · `30_to_60min` → 30 – 60 min · `over_1hour` → Más de 1 hora
+- `transport_types`: `own_vehicle` → Vehículo propio · `public_transport` → Transporte público · `on_foot` → A pie · `motorcycle` → Moto · `other` → Otro
+- `disability_types`: `visual` → Visual · `hearing` → Auditiva · `motor` → Motora · `cognitive` → Cognitiva · `speech` → Del habla · `multiple` → Múltiple · `other` → Otra
+- `insurance_types`: `ivss` → IVSS · `private_hcm` → Póliza HCM privada · `private_other` → Seguro privado (otro) · `none` → Sin seguro
+- `blood_types`: `a_pos` → A+ · `a_neg` → A− · `b_pos` → B+ · `b_neg` → B− · `ab_pos` → AB+ · `ab_neg` → AB− · `o_pos` → O+ · `o_neg` → O−
 
 **Done criteria:**
 - All 13 tables seeded with values above

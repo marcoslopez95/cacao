@@ -58,11 +58,11 @@ test('user with users.view sees users index', function () {
 });
 
 test('index filters by search', function () {
-    $actor = User::factory()->create(['name' => 'Test Actor', 'email' => 'actor@test.com']);
+    $actor = User::factory()->create(['first_name' => 'Test', 'last_name' => 'Actor', 'email' => 'actor@test.com']);
     $actor->givePermissionTo('users.view');
 
-    User::factory()->create(['name' => 'Ana García', 'email' => 'ana@test.com']);
-    User::factory()->create(['name' => 'Pedro López', 'email' => 'pedro@test.com']);
+    User::factory()->create(['first_name' => 'Ana', 'last_name' => 'García', 'email' => 'ana@test.com']);
+    User::factory()->create(['first_name' => 'Pedro', 'last_name' => 'López', 'email' => 'pedro@test.com']);
 
     $this->actingAs($actor)
         ->get('/security/users?search=Ana')

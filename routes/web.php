@@ -6,6 +6,8 @@ use App\Http\Controllers\Academic\PensumController;
 use App\Http\Controllers\Academic\StudentController;
 use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Admin\GradeConfigController;
+use App\Http\Controllers\Admin\UserAddressController;
+use App\Http\Controllers\Admin\UserDocumentController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
 use App\Http\Controllers\Enrollment\EnrollmentController;
 use App\Http\Controllers\Guardian;
@@ -75,6 +77,22 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     // Coordination Assignments
     Route::get('coordinations/{coordination}/assignments', [CoordinationAssignmentController::class, 'index'])->name('coordinations.assignments.index');
     Route::post('coordinations/{coordination}/assignments', [CoordinationAssignmentController::class, 'store'])->name('coordinations.assignments.store');
+
+    // User Addresses
+    Route::prefix('users/{user}/addresses')->name('users.addresses.')->group(function () {
+        Route::get('/', [UserAddressController::class, 'index'])->name('index');
+        Route::post('/', [UserAddressController::class, 'store'])->name('store');
+        Route::put('/{address}', [UserAddressController::class, 'update'])->name('update');
+        Route::delete('/{address}', [UserAddressController::class, 'destroy'])->name('destroy');
+    });
+
+    // User Documents
+    Route::prefix('users/{user}/documents')->name('users.documents.')->group(function () {
+        Route::get('/', [UserDocumentController::class, 'index'])->name('index');
+        Route::post('/', [UserDocumentController::class, 'store'])->name('store');
+        Route::delete('/{document}', [UserDocumentController::class, 'destroy'])->name('destroy');
+        Route::patch('/{document}/verify', [UserDocumentController::class, 'verify'])->name('verify');
+    });
 
     // Grade Configs
     Route::get('grade-configs', [GradeConfigController::class, 'index'])->name('grade-configs.index');

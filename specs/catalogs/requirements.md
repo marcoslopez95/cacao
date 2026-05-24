@@ -26,41 +26,41 @@ Create all lookup/catalog tables that the rest of the CACAO data dictionary depe
 
 | Table | Description |
 |-------|-------------|
-| `genders` | Male, female, non-binary, prefer not to say |
-| `document_types` | V (Venezuelan), E (foreign), P (passport), J (corporate) |
-| `geographic_zones` | urban, periurban, rural |
-| `attachment_document_types` | id card, birth certificate, title, transcript, etc. |
-| `education_levels` | preescolar → posgrado (7 levels, used for students AND parents) |
-| `academic_statuses` | active, withdrawn, graduated, suspended, exchange |
-| `study_modalities` | in-person, online, hybrid |
-| `academic_shifts` | morning, afternoon, night |
-| `admission_types` | regular, transfer, equivalence (university only) |
-| `school_grades` | 1st–6th primary, 1st–5th secondary |
-| `contract_types` | permanent, contracted, hourly, honoraria |
-| `dedication_types` | full-time, half-time, per-subject |
-| `employment_statuses` | active, on leave, retired, suspended |
-| `kinship_types` | father, mother, legal guardian, grandparent, uncle, other |
-| `marital_statuses` | single, married, divorced, widowed, civil union |
-| `institution_types` | public, private, Fe y Alegría, other |
-| `transfer_reasons` | relocation, economic, academic performance, other |
-| `digital_levels` | none, basic, intermediate, advanced |
-| `language_levels` | A1, A2, B1, B2, C1, C2, native |
-| `languages` | Spanish, English, French, Portuguese, German, etc. |
-| `living_arrangements` | both parents, mother only, father only, relative, independent, student residence |
-| `household_head_types` | father, mother, student, other relative |
-| `religions` | optional/sensitive — used only for institutional statistics |
-| `income_ranges` | USD-referenced brackets (< $50, $50–$150, … , > $500) |
-| `income_sources` | formal employment, informal, remittances, business, pension |
-| `employment_types` | formal, informal, freelance, unpaid family business |
-| `institutional_benefits` | cafeteria, transport, supplies, partial scholarship, other |
-| `housing_types` | house, apartment, rented room, rancho, quinta, other |
-| `tenure_types` | owned, rented, borrowed, mortgaged |
-| `construction_materials` | reinforced concrete, wood, zinc, mixed, other |
-| `basic_services` | potable water, electricity, gas, internet, sewer, garbage, landline |
-| `commute_times` | < 15 min, 15–30 min, 30–60 min, > 1 hour |
-| `transport_types` | own vehicle, public, on foot, motorcycle, other |
-| `disability_types` | visual, hearing, motor, cognitive, speech, multiple, other |
-| `insurance_types` | IVSS, private, HCM, none |
+| `genders` | Masculino, Femenino, No binario, Prefiero no indicar |
+| `document_types` | V (Venezolano), E (Extranjero), P (Pasaporte), J (Jurídico) |
+| `geographic_zones` | Urbano, Periurbano, Rural |
+| `attachment_document_types` | Cédula de identidad, Acta de nacimiento, Título académico, Notas certificadas, etc. |
+| `education_levels` | Preescolar → Posgrado (6 niveles, usado para estudiantes Y representantes) |
+| `academic_statuses` | Activo, Retirado, Egresado, Suspendido, Intercambio |
+| `study_modalities` | Presencial, En línea, Híbrida |
+| `academic_shifts` | Matutino, Vespertino, Nocturno |
+| `admission_types` | Regular, Traslado, Equivalencia (solo universitario) |
+| `school_grades` | 1er–6to grado (primaria), 1er–5to año (secundaria) |
+| `contract_types` | Fijo, Contratado, Por horas, Honorarios profesionales |
+| `dedication_types` | Dedicación exclusiva, Medio tiempo, Por asignatura |
+| `employment_statuses` | Activo, En licencia, Jubilado, Suspendido |
+| `kinship_types` | Padre, Madre, Tutor legal, Abuelo/a, Tío/a, Hermano/a, Otro |
+| `marital_statuses` | Soltero/a, Casado/a, Divorciado/a, Viudo/a, Unión libre |
+| `institution_types` | Pública, Privada, Fe y Alegría, Otra |
+| `transfer_reasons` | Cambio de residencia, Razones económicas, Rendimiento académico, Otro |
+| `digital_levels` | Sin conocimiento, Básico, Intermedio, Avanzado |
+| `language_levels` | A1, A2, B1, B2, C1, C2, Nativo/a |
+| `languages` | Español, Inglés, Francés, Portugués, Alemán, Italiano, Chino, Árabe, Otro |
+| `living_arrangements` | Ambos padres, Solo con la madre, Solo con el padre, Con un familiar, Independiente, Residencia estudiantil |
+| `household_head_types` | Padre, Madre, El/la estudiante, Otro familiar |
+| `religions` | opcional/sensible — solo para estadísticas institucionales |
+| `income_ranges` | Menos de $50, $50–$150, $150–$300, $300–$500, Más de $500 |
+| `income_sources` | Empleo formal, Empleo informal, Negocio propio, Remesas, Pensión o jubilación, Otro |
+| `employment_types` | Formal, Informal, Independiente/freelance, Negocio familiar |
+| `institutional_benefits` | Comedor, Transporte, Útiles y materiales, Beca parcial, Beca completa, Otro |
+| `housing_types` | Casa, Apartamento, Habitación alquilada, Rancho, Quinta, Otro |
+| `tenure_types` | Propia, Alquilada, Cedida/prestada, Hipotecada |
+| `construction_materials` | Concreto/bloque, Madera, Zinc, Mixto, Otro |
+| `basic_services` | Agua potable, Electricidad, Gas, Internet, Cloacas, Recolección de basura, Teléfono fijo |
+| `commute_times` | Menos de 15 min, 15–30 min, 30–60 min, Más de 1 hora |
+| `transport_types` | Vehículo propio, Transporte público, A pie, Moto, Otro |
+| `disability_types` | Visual, Auditiva, Motora, Cognitiva, Del habla, Múltiple, Otra |
+| `insurance_types` | IVSS, Póliza HCM privada, Seguro privado (otro), Sin seguro |
 | `blood_types` | A+, A−, B+, B−, AB+, AB−, O+, O− |
 
 ---

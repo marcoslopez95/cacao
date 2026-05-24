@@ -59,7 +59,7 @@ test('user with coordinations.view sees index', function () {
 
 test('index includes current coordinator in row', function () {
     $actor = userWithCoordPerm('coordinations.view');
-    $coordinator = User::factory()->create(['name' => 'Ana López']);
+    $coordinator = User::factory()->create(['first_name' => 'Ana', 'last_name' => 'López']);
     $coordination = Coordination::factory()->create(['name' => 'Coord Test']);
     CoordinationAssignment::factory()->active()->create([
         'coordination_id' => $coordination->id,

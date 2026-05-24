@@ -62,21 +62,37 @@ function scorePassword(pw: string): number {
             </div>
         </div>
 
-        <!-- Name -->
-        <div class="grid gap-1.5">
-            <label for="name" class="text-[13px] font-medium text-tinta dark:text-papel">Nombre completo</label>
-            <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                autofocus
-                :tabindex="1"
-                autocomplete="name"
-                placeholder="María González"
-                class="h-11 px-3.5 text-[14px] rounded-md border border-gris-borde dark:border-pizarra bg-hueso dark:bg-tinta-soft text-tinta dark:text-papel placeholder:text-gris focus:border-terracota focus:ring-2 focus:ring-terracota/20 focus:outline-none transition-colors"
-            />
-            <InputError :message="errors.name" />
+        <!-- First name + Last name -->
+        <div class="grid sm:grid-cols-2 gap-3.5">
+            <div class="grid gap-1.5">
+                <label for="first_name" class="text-[13px] font-medium text-tinta dark:text-papel">Nombre(s)</label>
+                <input
+                    id="first_name"
+                    name="first_name"
+                    type="text"
+                    required
+                    autofocus
+                    :tabindex="1"
+                    autocomplete="given-name"
+                    placeholder="María"
+                    class="h-11 px-3.5 text-[14px] rounded-md border border-gris-borde dark:border-pizarra bg-hueso dark:bg-tinta-soft text-tinta dark:text-papel placeholder:text-gris focus:border-terracota focus:ring-2 focus:ring-terracota/20 focus:outline-none transition-colors"
+                />
+                <InputError :message="errors.first_name" />
+            </div>
+            <div class="grid gap-1.5">
+                <label for="last_name" class="text-[13px] font-medium text-tinta dark:text-papel">Apellido(s)</label>
+                <input
+                    id="last_name"
+                    name="last_name"
+                    type="text"
+                    required
+                    :tabindex="2"
+                    autocomplete="family-name"
+                    placeholder="González"
+                    class="h-11 px-3.5 text-[14px] rounded-md border border-gris-borde dark:border-pizarra bg-hueso dark:bg-tinta-soft text-tinta dark:text-papel placeholder:text-gris focus:border-terracota focus:ring-2 focus:ring-terracota/20 focus:outline-none transition-colors"
+                />
+                <InputError :message="errors.last_name" />
+            </div>
         </div>
 
         <!-- Email -->
@@ -87,7 +103,7 @@ function scorePassword(pw: string): number {
                 name="email"
                 type="email"
                 required
-                :tabindex="2"
+                :tabindex="3"
                 autocomplete="email"
                 placeholder="usuario@institucion.edu"
                 :value="inviteEmail ?? ''"
@@ -105,7 +121,7 @@ function scorePassword(pw: string): number {
                     id="password"
                     name="password"
                     required
-                    :tabindex="3"
+                    :tabindex="4"
                     autocomplete="new-password"
                     placeholder="Al menos 8 caracteres"
                 />
@@ -137,7 +153,7 @@ function scorePassword(pw: string): number {
                     id="password_confirmation"
                     name="password_confirmation"
                     required
-                    :tabindex="4"
+                    :tabindex="5"
                     autocomplete="new-password"
                     placeholder="Repetir contraseña"
                 />
@@ -149,7 +165,7 @@ function scorePassword(pw: string): number {
             type="submit"
             variant="primary"
             size="lg"
-            :tabindex="5"
+            :tabindex="6"
             :disabled="processing"
             :loading="processing"
             class="w-full justify-center mt-1"
@@ -159,7 +175,7 @@ function scorePassword(pw: string): number {
 
         <div class="text-center text-[13px] text-gris dark:text-gris-light pt-2">
             ¿Ya tienes cuenta?
-            <TextLink :href="login()" :tabindex="6" class="!text-terracota hover:!text-terra-hover !no-underline font-medium">
+            <TextLink :href="login()" :tabindex="7" class="!text-terracota hover:!text-terra-hover !no-underline font-medium">
                 Iniciar sesión
             </TextLink>
         </div>

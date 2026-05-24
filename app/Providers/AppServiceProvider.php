@@ -47,6 +47,8 @@ use App\Models\EnrollmentDetail;
 use App\Models\Pensum;
 use App\Models\Subject;
 use App\Models\User;
+use App\Models\UserAddress;
+use App\Models\UserDocument;
 use App\Observers\CatalogObserver;
 use App\Policies\Academic\CareerCategoryPolicy;
 use App\Policies\Academic\CareerPolicy;
@@ -56,6 +58,8 @@ use App\Policies\CoordinationPolicy;
 use App\Policies\EnrollmentDetailPolicy;
 use App\Policies\EnrollmentPolicy;
 use App\Policies\RolePolicy;
+use App\Policies\UserAddressPolicy;
+use App\Policies\UserDocumentPolicy;
 use App\Policies\UserPolicy;
 use Carbon\CarbonImmutable;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
@@ -106,6 +110,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Subject::class, SubjectPolicy::class);
         Gate::policy(Enrollment::class, EnrollmentPolicy::class);
         Gate::policy(EnrollmentDetail::class, EnrollmentDetailPolicy::class);
+        Gate::policy(UserAddress::class, UserAddressPolicy::class);
+        Gate::policy(UserDocument::class, UserDocumentPolicy::class);
     }
 
     /**

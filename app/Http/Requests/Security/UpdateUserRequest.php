@@ -22,8 +22,14 @@ class UpdateUserRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        if (is_string($this->input('name'))) {
-            $this->merge(['name' => trim($this->input('name'))]);
+        // Support legacy 'name' field by splitting it into first_name/last_name.
+        if ($this->has('name') && ! $this->has('first_name')) {
+            $name = trim((string) $this->input('name'));
+            $parts = explode(' ', $name, 2);
+            $this->merge([
+                'first_name' => $parts[0] ?? '',
+                'last_name' => $parts[1] ?? '',
+            ]);
         }
     }
 
@@ -36,7 +42,8 @@ class UpdateUserRequest extends FormRequest
         $target = $this->route('user');
 
         return [
-            'name' => ['required', 'string', 'min:2', 'max:255'],
+            'first_name' => ['required', 'string', 'min:1', 'max:100'],
+            'last_name' => ['required', 'string', 'min:1', 'max:100'],
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($target->id)],
             'roles' => ['array'],
             'roles.*' => ['string', Rule::exists('roles', 'name')],
