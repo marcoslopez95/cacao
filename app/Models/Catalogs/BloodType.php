@@ -2,18 +2,9 @@
 
 namespace App\Models\Catalogs;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Catalog;
 
-// TODO: extend Catalog once Task 7 is done
-class BloodType extends Model
+class BloodType extends Catalog
 {
-    /** @var list<string> */
-    protected $fillable = ['code', 'name', 'description', 'active', 'sort_order'];
-
-    public $timestamps = false;
-
     protected $table = 'blood_types';
-
-    /** @var array<string, string> */
-    protected $casts = ['active' => 'boolean'];
 }
