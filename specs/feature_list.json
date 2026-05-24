@@ -1,0 +1,104 @@
+{
+  "features": [
+    {
+      "id": "admin-students",
+      "name": "Admin Students Index",
+      "status": "completed",
+      "spec": "specs/admin-students/"
+    },
+    {
+      "id": "enrollment-backend",
+      "name": "Enrollment Backend",
+      "status": "completed",
+      "spec": "specs/enrollment-backend/"
+    },
+    {
+      "id": "enrollment-frontend",
+      "name": "Enrollment Frontend",
+      "status": "completed",
+      "spec": "specs/enrollment-frontend/"
+    },
+    {
+      "id": "students-multilevel",
+      "name": "Students Multi-Level",
+      "status": "completed",
+      "spec": "specs/students-multilevel/"
+    },
+    {
+      "id": "grades-module",
+      "name": "Grades Module",
+      "status": "completed",
+      "spec": "specs/grades-module/"
+    },
+    {
+      "id": "demo-seeder",
+      "name": "Demo Seeder",
+      "status": "completed",
+      "spec": "specs/demo-seeder/"
+    },
+    {
+      "id": "role-dashboards",
+      "name": "Role Dashboards",
+      "status": "completed",
+      "spec": "specs/role-dashboards/"
+    },
+    {
+      "id": "multi-role-login",
+      "name": "Multi-Role Login",
+      "status": "completed",
+      "spec": "specs/multi-role-login/"
+    },
+    {
+      "id": "error-pages",
+      "name": "Error Pages",
+      "status": "completed",
+      "spec": "specs/error-pages/"
+    },
+    {
+      "id": "testing-vitest-dusk",
+      "name": "Testing Vitest + Dusk",
+      "status": "completed",
+      "spec": "specs/testing-vitest-dusk/"
+    },
+    {
+      "id": "catalogs",
+      "name": "Catalogs (Geographic + System)",
+      "status": "pending",
+      "spec": "specs/catalogs/",
+      "depends_on": [],
+      "description": "All lookup tables: Venezuelan geographic hierarchy (countries/states/municipalities/parishes) + 36 system catalog tables. Prerequisite for all profile arneses."
+    },
+    {
+      "id": "user-profiles",
+      "name": "User Profiles",
+      "status": "pending",
+      "spec": "specs/user-profiles/",
+      "depends_on": ["catalogs"],
+      "description": "Extend users with first_name/last_name (GENERATED name), document, phone, photo, soft deletes. Add user_addresses and user_documents."
+    },
+    {
+      "id": "role-profiles",
+      "name": "Role Profiles",
+      "status": "pending",
+      "spec": "specs/role-profiles/",
+      "depends_on": ["catalogs", "user-profiles"],
+      "description": "Extend students with academic fields + student_guardians pivot (migrates guardian_id). Add guardian_profiles and staff_profiles."
+    },
+    {
+      "id": "student-background",
+      "name": "Student Background",
+      "status": "pending",
+      "spec": "specs/student-background/",
+      "depends_on": ["catalogs", "user-profiles", "role-profiles"],
+      "description": "Education background, language skills, family profile, and demographic profile."
+    },
+    {
+      "id": "socioeconomic-health",
+      "name": "Socioeconomic & Health",
+      "status": "pending",
+      "spec": "specs/socioeconomic-health/",
+      "depends_on": ["catalogs", "user-profiles", "role-profiles", "student-background"],
+      "description": "Sensitive modules: socioeconomic study, student benefits, health profile, housing profile + services, LOPD user consents."
+    }
+  ]
+}
