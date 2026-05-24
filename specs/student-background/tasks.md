@@ -7,12 +7,12 @@
 
 ## Overall Progress
 
-- [ ] Task 1 — `student_backgrounds` migration + model + pipeline
-- [ ] Task 2 — `student_languages` pivot migration + model + pipeline
-- [ ] Task 3 — `family_profiles` migration + model + pipeline
-- [ ] Task 4 — `demographic_profiles` migration + model + pipeline
-- [ ] Task 5 — Update `Student` and `User` model relations
-- [ ] Task 6 — Pest feature tests
+- [x] Task 1 — `student_backgrounds` migration + model + pipeline
+- [x] Task 2 — `student_languages` pivot migration + model + pipeline
+- [x] Task 3 — `family_profiles` migration + model + pipeline
+- [x] Task 4 — `demographic_profiles` migration + model + pipeline
+- [x] Task 5 — Update `Student` and `User` model relations
+- [x] Task 6 — Pest feature tests
 
 ---
 

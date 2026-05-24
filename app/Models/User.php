@@ -103,4 +103,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Guardian::class);
     }
+
+    public function demographicProfile(): HasOne
+    {
+        return $this->hasOne(DemographicProfile::class);
+    }
 }

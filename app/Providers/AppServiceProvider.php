@@ -42,10 +42,13 @@ use App\Models\Catalogs\TenureType;
 use App\Models\Catalogs\TransferReason;
 use App\Models\Catalogs\TransportType;
 use App\Models\Coordination;
+use App\Models\DemographicProfile;
 use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
+use App\Models\FamilyProfile;
 use App\Models\Pensum;
 use App\Models\StaffProfile;
+use App\Models\StudentBackground;
 use App\Models\Subject;
 use App\Models\User;
 use App\Models\UserAddress;
@@ -56,10 +59,13 @@ use App\Policies\Academic\CareerPolicy;
 use App\Policies\Academic\PensumPolicy;
 use App\Policies\Academic\SubjectPolicy;
 use App\Policies\CoordinationPolicy;
+use App\Policies\DemographicProfilePolicy;
 use App\Policies\EnrollmentDetailPolicy;
 use App\Policies\EnrollmentPolicy;
+use App\Policies\FamilyProfilePolicy;
 use App\Policies\RolePolicy;
 use App\Policies\StaffProfilePolicy;
+use App\Policies\StudentBackgroundPolicy;
 use App\Policies\UserAddressPolicy;
 use App\Policies\UserDocumentPolicy;
 use App\Policies\UserPolicy;
@@ -115,6 +121,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(UserAddress::class, UserAddressPolicy::class);
         Gate::policy(UserDocument::class, UserDocumentPolicy::class);
         Gate::policy(StaffProfile::class, StaffProfilePolicy::class);
+        Gate::policy(StudentBackground::class, StudentBackgroundPolicy::class);
+        Gate::policy(FamilyProfile::class, FamilyProfilePolicy::class);
+        Gate::policy(DemographicProfile::class, DemographicProfilePolicy::class);
     }
 
     /**

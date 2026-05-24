@@ -6,6 +6,7 @@ use App\Enums\EducationalLevel;
 use App\Models\Catalogs\AcademicShift;
 use App\Models\Catalogs\AcademicStatus;
 use App\Models\Catalogs\AdmissionType;
+use App\Models\Catalogs\Language;
 use App\Models\Catalogs\SchoolGrade;
 use App\Models\Catalogs\StudyModality;
 use Database\Factories\StudentFactory;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Student extends Model
 {
@@ -95,5 +97,26 @@ class Student extends Model
     public function grade(): BelongsTo
     {
         return $this->belongsTo(SchoolGrade::class);
+    }
+
+    public function background(): HasOne
+    {
+        return $this->hasOne(StudentBackground::class);
+    }
+
+    public function languages(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Language::class,
+            'student_languages',
+            'student_id',
+            'language_id'
+        )->withPivot(['language_level_id', 'is_mother_tongue'])
+            ->using(StudentLanguage::class);
+    }
+
+    public function familyProfile(): HasOne
+    {
+        return $this->hasOne(FamilyProfile::class);
     }
 }

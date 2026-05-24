@@ -5,9 +5,13 @@ use App\Http\Controllers\Academic\CareerController;
 use App\Http\Controllers\Academic\PensumController;
 use App\Http\Controllers\Academic\StudentController;
 use App\Http\Controllers\Academic\SubjectController;
+use App\Http\Controllers\Admin\DemographicProfileController;
+use App\Http\Controllers\Admin\FamilyProfileController;
 use App\Http\Controllers\Admin\GradeConfigController;
 use App\Http\Controllers\Admin\GuardianProfileController;
 use App\Http\Controllers\Admin\StaffProfileController;
+use App\Http\Controllers\Admin\StudentBackgroundController;
+use App\Http\Controllers\Admin\StudentLanguageController;
 use App\Http\Controllers\Admin\UserAddressController;
 use App\Http\Controllers\Admin\UserDocumentController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
@@ -99,6 +103,24 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     // Guardian Profiles
     Route::put('guardians/{guardian}/profile', [GuardianProfileController::class, 'upsert'])
         ->name('guardians.profile.upsert');
+
+    // Student Background
+    Route::put('students/{student}/background', [StudentBackgroundController::class, 'upsert'])
+        ->name('students.background.upsert');
+
+    // Student Languages
+    Route::post('students/{student}/languages', [StudentLanguageController::class, 'store'])
+        ->name('students.languages.store');
+    Route::delete('students/{student}/languages/{language}', [StudentLanguageController::class, 'destroy'])
+        ->name('students.languages.destroy');
+
+    // Family Profile
+    Route::put('students/{student}/family-profile', [FamilyProfileController::class, 'upsert'])
+        ->name('students.family-profile.upsert');
+
+    // Demographic Profile
+    Route::put('users/{user}/demographic-profile', [DemographicProfileController::class, 'upsert'])
+        ->name('users.demographic-profile.upsert');
 
     // Grade Configs
     Route::get('grade-configs', [GradeConfigController::class, 'index'])->name('grade-configs.index');
