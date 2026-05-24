@@ -46,12 +46,17 @@ use App\Models\DemographicProfile;
 use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\FamilyProfile;
+use App\Models\HealthProfile;
+use App\Models\HousingProfile;
 use App\Models\Pensum;
+use App\Models\SocioeconomicProfile;
 use App\Models\StaffProfile;
 use App\Models\StudentBackground;
+use App\Models\StudentBenefit;
 use App\Models\Subject;
 use App\Models\User;
 use App\Models\UserAddress;
+use App\Models\UserConsent;
 use App\Models\UserDocument;
 use App\Observers\CatalogObserver;
 use App\Policies\Academic\CareerCategoryPolicy;
@@ -63,10 +68,15 @@ use App\Policies\DemographicProfilePolicy;
 use App\Policies\EnrollmentDetailPolicy;
 use App\Policies\EnrollmentPolicy;
 use App\Policies\FamilyProfilePolicy;
+use App\Policies\HealthProfilePolicy;
+use App\Policies\HousingProfilePolicy;
 use App\Policies\RolePolicy;
+use App\Policies\SocioeconomicProfilePolicy;
 use App\Policies\StaffProfilePolicy;
 use App\Policies\StudentBackgroundPolicy;
+use App\Policies\StudentBenefitPolicy;
 use App\Policies\UserAddressPolicy;
+use App\Policies\UserConsentPolicy;
 use App\Policies\UserDocumentPolicy;
 use App\Policies\UserPolicy;
 use Carbon\CarbonImmutable;
@@ -124,6 +134,11 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(StudentBackground::class, StudentBackgroundPolicy::class);
         Gate::policy(FamilyProfile::class, FamilyProfilePolicy::class);
         Gate::policy(DemographicProfile::class, DemographicProfilePolicy::class);
+        Gate::policy(UserConsent::class, UserConsentPolicy::class);
+        Gate::policy(SocioeconomicProfile::class, SocioeconomicProfilePolicy::class);
+        Gate::policy(StudentBenefit::class, StudentBenefitPolicy::class);
+        Gate::policy(HealthProfile::class, HealthProfilePolicy::class);
+        Gate::policy(HousingProfile::class, HousingProfilePolicy::class);
     }
 
     /**

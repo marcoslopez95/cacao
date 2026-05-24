@@ -6,6 +6,7 @@ use App\Enums\EducationalLevel;
 use App\Models\Catalogs\AcademicShift;
 use App\Models\Catalogs\AcademicStatus;
 use App\Models\Catalogs\AdmissionType;
+use App\Models\Catalogs\InstitutionalBenefit;
 use App\Models\Catalogs\Language;
 use App\Models\Catalogs\SchoolGrade;
 use App\Models\Catalogs\StudyModality;
@@ -118,5 +119,22 @@ class Student extends Model
     public function familyProfile(): HasOne
     {
         return $this->hasOne(FamilyProfile::class);
+    }
+
+    public function housingProfile(): HasOne
+    {
+        return $this->hasOne(HousingProfile::class);
+    }
+
+    public function socioeconomicProfile(): HasOne
+    {
+        return $this->hasOne(SocioeconomicProfile::class);
+    }
+
+    public function benefits(): BelongsToMany
+    {
+        return $this->belongsToMany(InstitutionalBenefit::class, 'student_benefits', 'student_id', 'benefit_id')
+            ->withPivot(['is_active', 'since', 'until'])
+            ->using(StudentBenefit::class);
     }
 }

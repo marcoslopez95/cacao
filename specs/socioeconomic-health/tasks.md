@@ -7,13 +7,13 @@
 
 ## Overall Progress
 
-- [ ] Task 1 — `ConsentService` + `user_consents` migration + model + pipeline
-- [ ] Task 2 — `socioeconomic_profiles` migration + model + pipeline
-- [ ] Task 3 — `student_benefits` pivot migration + model + pipeline
-- [ ] Task 4 — `health_profiles` migration + model + pipeline
-- [ ] Task 5 — `housing_profiles` + `housing_services` migration + model + pipeline
-- [ ] Task 6 — Update `User` and `Student` model relations
-- [ ] Task 7 — Pest feature tests
+- [x] Task 1 — `ConsentService` + `user_consents` migration + model + pipeline
+- [x] Task 2 — `socioeconomic_profiles` migration + model + pipeline
+- [x] Task 3 — `student_benefits` pivot migration + model + pipeline
+- [x] Task 4 — `health_profiles` migration + model + pipeline
+- [x] Task 5 — `housing_profiles` + `housing_services` migration + model + pipeline
+- [x] Task 6 — Update `User` and `Student` model relations
+- [x] Task 7 — Pest feature tests
 
 ---
 

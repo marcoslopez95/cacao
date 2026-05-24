@@ -108,4 +108,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(DemographicProfile::class);
     }
+
+    public function healthProfile(): HasOne
+    {
+        return $this->hasOne(HealthProfile::class);
+    }
+
+    public function consents(): HasMany
+    {
+        return $this->hasMany(UserConsent::class);
+    }
+
+    public function activeConsent(): ?UserConsent
+    {
+        return $this->consents()->whereNull('revoked_at')->latest('granted_at')->first();
+    }
 }

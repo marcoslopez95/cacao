@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\ConsentRequiredException;
 use App\Http\Middleware\EnsureRole;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
@@ -31,6 +32,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias(['role' => EnsureRole::class]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (ConsentRequiredException $e, Request $request) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        });
+
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
             return match ($response->getStatusCode()) {
                 401 => Inertia::render('errors/AccessDenied', ['status' => 401])

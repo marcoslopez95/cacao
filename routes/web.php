@@ -9,8 +9,12 @@ use App\Http\Controllers\Admin\DemographicProfileController;
 use App\Http\Controllers\Admin\FamilyProfileController;
 use App\Http\Controllers\Admin\GradeConfigController;
 use App\Http\Controllers\Admin\GuardianProfileController;
+use App\Http\Controllers\Admin\HealthProfileController;
+use App\Http\Controllers\Admin\HousingProfileController;
+use App\Http\Controllers\Admin\SocioeconomicProfileController;
 use App\Http\Controllers\Admin\StaffProfileController;
 use App\Http\Controllers\Admin\StudentBackgroundController;
+use App\Http\Controllers\Admin\StudentBenefitController;
 use App\Http\Controllers\Admin\StudentLanguageController;
 use App\Http\Controllers\Admin\UserAddressController;
 use App\Http\Controllers\Admin\UserDocumentController;
@@ -33,6 +37,7 @@ use App\Http\Controllers\Security\RoleController;
 use App\Http\Controllers\Security\UserController;
 use App\Http\Controllers\Student;
 use App\Http\Controllers\Teams\TeamInvitationController;
+use App\Http\Controllers\UserConsentController;
 use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -121,6 +126,32 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     // Demographic Profile
     Route::put('users/{user}/demographic-profile', [DemographicProfileController::class, 'upsert'])
         ->name('users.demographic-profile.upsert');
+
+    // User Consents
+    Route::post('users/{user}/consents', [UserConsentController::class, 'store'])
+        ->name('users.consents.store');
+    Route::patch('users/{user}/consents/{consent}/revoke', [UserConsentController::class, 'revoke'])
+        ->name('users.consents.revoke');
+
+    // Socioeconomic Profile
+    Route::put('students/{student}/socioeconomic-profile', [SocioeconomicProfileController::class, 'upsert'])
+        ->name('students.socioeconomic-profile.upsert');
+
+    // Student Benefits
+    Route::post('students/{student}/benefits/{benefit}', [StudentBenefitController::class, 'store'])
+        ->name('students.benefits.store');
+    Route::delete('students/{student}/benefits/{benefit}', [StudentBenefitController::class, 'destroy'])
+        ->name('students.benefits.destroy');
+
+    // Health Profile
+    Route::put('users/{user}/health-profile', [HealthProfileController::class, 'upsert'])
+        ->name('users.health-profile.upsert');
+
+    // Housing Profile
+    Route::put('students/{student}/housing-profile', [HousingProfileController::class, 'upsert'])
+        ->name('students.housing-profile.upsert');
+    Route::patch('students/{student}/housing-profile/services', [HousingProfileController::class, 'syncServices'])
+        ->name('students.housing-profile.services.sync');
 
     // Grade Configs
     Route::get('grade-configs', [GradeConfigController::class, 'index'])->name('grade-configs.index');

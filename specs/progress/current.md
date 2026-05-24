@@ -6,7 +6,7 @@
 
 ## Active Feature
 
-None — ready to start `socioeconomic-health` (arnés 4).
+None — arnés 4 completo. No hay más arneses pendientes.
 
 ---
 
@@ -18,7 +18,7 @@ None — ready to start `socioeconomic-health` (arnés 4).
 | 1 | `user-profiles` | **DONE** | catalogs |
 | 2 | `role-profiles` | **DONE** | catalogs, user-profiles |
 | 3 | `student-background` | **DONE** | catalogs, user-profiles, role-profiles |
-| 4 | `socioeconomic-health` | **NEXT** | all above |
+| 4 | `socioeconomic-health` | **DONE** | all above |
 
 ---
 
