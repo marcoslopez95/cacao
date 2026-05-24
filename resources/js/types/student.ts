@@ -35,4 +35,5 @@ export interface StudentFilters {
     enrollment_status?: string[]
     level?: StudentLevel
     section_letter?: string[]
+    quick_view?: string
 }

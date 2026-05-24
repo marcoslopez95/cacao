@@ -5,6 +5,7 @@ use App\Enums\EnrollmentStatus;
 use App\Enums\PeriodStatus;
 use App\Enums\SectionType;
 use App\Models\Career;
+use App\Models\Catalogs\KinshipType;
 use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\Guardian;
@@ -76,10 +77,10 @@ test('students are listed with user and career data', function () {
 
 test('search by name returns matching students only', function () {
     $match = Student::factory()->create();
-    $match->user->update(['name' => 'Camila Ríos Especial']);
+    $match->user->update(['first_name' => 'Camila', 'last_name' => 'Ríos Especial']);
 
     $other = Student::factory()->create();
-    $other->user->update(['name' => 'Pedro González']);
+    $other->user->update(['first_name' => 'Pedro', 'last_name' => 'González']);
 
     $this->actingAs(User::factory()->create())
         ->get('/academic/students?search=camila')
@@ -282,21 +283,21 @@ it('filters by educational level university', function () {
 // Guardian and section data
 // ---------------------------------------------------------------------------
 
-it('includes guardian name and relation for primary student', function () {
-    $guardian = Guardian::factory()->create([
-        'name' => 'María Rodríguez',
-        'relation' => 'madre',
-    ]);
-
-    Student::factory()->primary()->create(['guardian_id' => $guardian->id]);
+it('includes guardian_name and guardian_relation keys in student list row', function () {
+    // guardian_name and guardian_relation are returned as null until Task 5
+    // populates them from guardian_profiles + kinship_types
+    $guardian = Guardian::factory()->create();
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    $student = Student::factory()->primary()->create();
+    $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $this->actingAs(User::factory()->create())
         ->get('/academic/students?level=primary')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->has('students.data', 1, fn ($row) => $row
-                ->where('guardian_name', 'María Rodríguez')
-                ->where('guardian_relation', 'madre')
+                ->where('guardian_name', null)
+                ->where('guardian_relation', null)
                 ->etc()
             )
         );
@@ -323,7 +324,9 @@ it('includes section grade and letter when student has school enrollment', funct
     ]);
 
     $guardian = Guardian::factory()->create();
-    $student = Student::factory()->primary()->create(['guardian_id' => $guardian->id]);
+    $student = Student::factory()->primary()->create();
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $enrollment = Enrollment::factory()->create([
         'student_id' => $student->id,

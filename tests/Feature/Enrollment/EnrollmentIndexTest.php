@@ -2,6 +2,7 @@
 
 use App\Enums\EnrollmentDetailStatus;
 use App\Enums\EnrollmentStatus;
+use App\Models\Catalogs\KinshipType;
 use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\Guardian;
@@ -85,7 +86,8 @@ test('guardian sees enrollment for assigned student via student_id param', funct
     $this->withoutVite();
     ['student' => $student] = makeStudentWithPensumAndSection();
     $guardian = Guardian::factory()->create();
-    $student->update(['guardian_id' => $guardian->id]);
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $this->actingAs($guardian->user)
         ->get("/enrollment?student_id={$student->id}")
@@ -100,7 +102,8 @@ test('guardian without student_id sees first assigned student', function () {
     $this->withoutVite();
     ['student' => $student] = makeStudentWithPensumAndSection();
     $guardian = Guardian::factory()->create();
-    $student->update(['guardian_id' => $guardian->id]);
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $this->actingAs($guardian->user)
         ->get('/enrollment')

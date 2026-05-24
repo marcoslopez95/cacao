@@ -26,7 +26,7 @@ class EnrollmentResource extends JsonResource
             'uc_disponibles' => $this->uc_disponibles,
             'uc_inscritas' => $this->uc_inscritas,
             'status' => $this->status->value,
-            'details' => $this->whenLoaded('details', fn () => EnrollmentDetailResource::collection($this->details)),
+            'details' => $this->whenLoaded('details', fn () => EnrollmentDetailResource::collection($this->details)->resolve()),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

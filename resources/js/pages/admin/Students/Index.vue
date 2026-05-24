@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { Head } from '@inertiajs/vue3'
 import Pagination from '@/components/UI/AppPagination.vue'
 import Button from '@/components/UI/AppButton.vue'
@@ -27,11 +27,9 @@ defineOptions({
 })
 
 const {
-    search, careerIds, academicYears, enrollStatuses, level, sectionLetters,
+    search, careerIds, academicYears, enrollStatuses, level, sectionLetters, quickView,
     applyFilters, onSearchInput, applyLevel, applyQuickView, paginationFilters,
 } = useStudentFilters(props.filters, props.students.meta.per_page)
-
-const activeQuickView = ref<string>('all')
 
 // ── Level tabs ────────────────────────────────────────────
 
@@ -43,7 +41,6 @@ const LEVEL_TABS: Array<{ key: StudentLevel; label: string }> = [
 ]
 
 function handleLevelClick(newLevel: StudentLevel): void {
-    activeQuickView.value = 'all'
     applyLevel(newLevel)
 }
 
@@ -83,7 +80,6 @@ const QUICK_VIEWS_BY_LEVEL: Record<StudentLevel, QuickViewDef[]> = {
 const currentQuickViews = computed<QuickViewDef[]>(() => QUICK_VIEWS_BY_LEVEL[level.value])
 
 function handleQuickViewClick(key: string): void {
-    activeQuickView.value = key
     applyQuickView(key)
 }
 
@@ -262,7 +258,7 @@ function toggleSectionLetter(l: string): void {
                     qv.disabled
                         ? 'opacity:.45;cursor:not-allowed;'
                         : 'cursor:pointer;',
-                    !qv.disabled && activeQuickView.value === qv.key
+                    !qv.disabled && quickView === qv.key
                         ? 'border-color:var(--color-terracota,#C8521A);background:color-mix(in srgb,#C8521A 10%,transparent);color:var(--color-terracota,#C8521A);font-weight:600;'
                         : '',
                 ]"

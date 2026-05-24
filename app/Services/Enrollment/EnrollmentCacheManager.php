@@ -81,13 +81,15 @@ class EnrollmentCacheManager
         $key = "guardian:student:{$student->id}";
 
         return Cache::remember($key, 1800, function () use ($student) {
-            if (! $student->guardian) {
+            $guardian = $student->primaryGuardian();
+
+            if (! $guardian) {
                 return null;
             }
 
             return [
-                'id' => $student->guardian->id,
-                'user_id' => $student->guardian->user_id,
+                'id' => $guardian->id,
+                'user_id' => $guardian->user_id,
             ];
         });
     }

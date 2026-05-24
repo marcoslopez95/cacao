@@ -63,7 +63,7 @@ class EnrollmentController extends Controller
         $catalog = app(BuildEnrollmentCatalogAction::class)->handle($student, $period, $draft);
 
         return Inertia::render('enrollment/Index', [
-            'enrollment' => new EnrollmentResource($draft),
+            'enrollment' => (new EnrollmentResource($draft))->resolve(),
             'catalog' => EnrollmentCatalogSubjectResource::collection($catalog)->resolve(),
             'rules' => $this->buildRules($period, $student),
             'can' => ['confirm' => $user->can('confirm', $draft)],
@@ -86,10 +86,45 @@ class EnrollmentController extends Controller
         StoreEnrollmentDetailRequest $request,
         AddEnrollmentDetailAction $action,
         EnrollmentService $service,
+        EnrollmentCacheManager $cache,
     ): JsonResponse {
         $wrapper = new EnrollmentDetailWrapper($request->validated());
         $subject = $wrapper->getSubject();
         $section = $wrapper->getSection();
+
+        // Detect section change: existing non-rejected detail for this subject
+        $existingDetail = $enrollment->details()
+            ->where('subject_id', $subject->id)
+            ->where('status', '!=', EnrollmentDetailStatus::Rejected->value)
+            ->first();
+
+        if ($existingDetail) {
+            if ($existingDetail->section_id === $section->id) {
+                // Idempotent: already enrolled in this exact section
+                return response()->json(
+                    (new EnrollmentDetailResource($existingDetail->load(['subject', 'section'])))->resolve(),
+                    200
+                );
+            }
+
+            // Section change: validate new section, then swap in-place (unique constraint forbids two rows)
+            if ($enrollment->status->value !== 'draft') {
+                return response()->json(['error' => 'La inscripción ya fue confirmada.'], 422);
+            }
+            if (! $service->hasQuota($section)) {
+                return response()->json(['error' => 'No hay cupos disponibles en esta sección.'], 422);
+            }
+
+            $cache->incrementQuota($existingDetail->section);
+            $existingDetail->update(['section_id' => $section->id]);
+            $cache->decrementQuota($section);
+            $service->updateEnrolledCredits($enrollment->fresh());
+
+            return response()->json(
+                (new EnrollmentDetailResource($existingDetail->load(['subject', 'section'])))->resolve(),
+                200
+            );
+        }
 
         $validation = $service->validateAddSubject($enrollment, $subject, $section);
         if (! $validation['valid']) {
@@ -100,7 +135,7 @@ class EnrollmentController extends Controller
         $service->updateEnrolledCredits($enrollment->fresh());
 
         return response()->json(
-            new EnrollmentDetailResource($detail->load(['subject', 'section'])),
+            (new EnrollmentDetailResource($detail->load(['subject', 'section'])))->resolve(),
             201
         );
     }

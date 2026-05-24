@@ -18,12 +18,14 @@ function makeService(): EnrollmentService
     return new EnrollmentService(new PrerequisiteValidator, new EnrollmentCacheManager);
 }
 
-test('calculate enrolled credits sums confirmed details only', function () {
+test('calculate enrolled credits sums all non-rejected details', function () {
     $student = Student::factory()->create();
     $subject1 = Subject::factory()->create(['credits_uc' => 3]);
     $subject2 = Subject::factory()->create(['credits_uc' => 4]);
+    $subject3 = Subject::factory()->create(['credits_uc' => 5]);
     $section1 = Section::factory()->create(['subject_id' => $subject1->id]);
     $section2 = Section::factory()->create(['subject_id' => $subject2->id]);
+    $section3 = Section::factory()->create(['subject_id' => $subject3->id]);
 
     $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
 
@@ -38,10 +40,17 @@ test('calculate enrolled credits sums confirmed details only', function () {
         'enrollment_id' => $enrollment->id,
         'subject_id' => $subject2->id,
         'section_id' => $section2->id,
-        'status' => EnrollmentDetailStatus::Draft,  // draft — should NOT count
+        'status' => EnrollmentDetailStatus::Draft,  // draft — counts too
     ]);
 
-    expect(makeService()->calculateEnrolledCredits($enrollment))->toBe(3);
+    EnrollmentDetail::factory()->create([
+        'enrollment_id' => $enrollment->id,
+        'subject_id' => $subject3->id,
+        'section_id' => $section3->id,
+        'status' => EnrollmentDetailStatus::Rejected,  // rejected — should NOT count
+    ]);
+
+    expect(makeService()->calculateEnrolledCredits($enrollment))->toBe(7);
 });
 
 test('has quota returns true when section has capacity', function () {

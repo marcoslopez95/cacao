@@ -37,7 +37,6 @@ class StudentController extends Controller
                 ->on('enrollments.student_id', '=', 'students.id')
                 ->where('enrollments.period_id', '=', $activePeriodId)
             )
-            ->leftJoin('guardians', 'guardians.id', '=', 'students.guardian_id')
             ->leftJoin('enrollment_details AS ed_school', 'ed_school.enrollment_id', '=', 'enrollments.id')
             ->leftJoin('sections AS sec_school', fn ($join) => $join
                 ->on('sec_school.id', '=', 'ed_school.section_id')
@@ -54,8 +53,6 @@ class StudentController extends Controller
                 DB::raw('careers.id  AS _career_id'),
                 DB::raw('enrollments.status AS _enrollment_status'),
                 DB::raw('enrollments.uc_inscritas AS _uc_inscritas'),
-                DB::raw('guardians.name AS _guardian_name'),
-                DB::raw('guardians.relation AS _guardian_relation'),
                 DB::raw('sec_school.grade AS _section_grade'),
                 DB::raw('sec_school.letter AS _section_letter'),
             ])
@@ -95,6 +92,8 @@ class StudentController extends Controller
             )
             ->when($level, fn ($q) => $q->where('students.educational_level', $level));
 
+        $year1Count = $baseCount()->where('students.academic_year', 1)->count();
+
         $quickCounts = [
             'all' => $baseCount()->count(),
             'pending' => $baseCount()
@@ -103,8 +102,15 @@ class StudentController extends Controller
                 ->count(),
             'top' => 0,
             'risk' => 0,
-            'newcomers' => $baseCount()->where('students.academic_year', 1)->count(),
-            'no_guardian' => Student::whereNull('guardian_id')
+            'newcomers' => $year1Count,
+            'year_1' => $year1Count,
+            'grade_1' => $year1Count,
+            'year_5' => $baseCount()->where('students.academic_year', 5)->count(),
+            'grade_6' => $baseCount()->where('students.academic_year', 6)->count(),
+            'enrolled' => $baseCount()
+                ->whereIn('enrollments.status', ['confirmed', 'approved', 'draft'])
+                ->count(),
+            'no_guardian' => Student::whereDoesntHave('guardians')
                 ->when($level, fn ($q) => $q->where('educational_level', $level))
                 ->count(),
         ];
@@ -116,7 +122,7 @@ class StudentController extends Controller
             'careers' => $careers->map(fn ($c) => ['id' => $c->id, 'name' => $c->name]),
             'activePeriod' => $activePeriod?->name,
             'quickCounts' => $quickCounts,
-            'filters' => $request->only('search', 'career_id', 'academic_year', 'enrollment_status', 'level', 'section_letter'),
+            'filters' => $request->only('search', 'career_id', 'academic_year', 'enrollment_status', 'level', 'section_letter', 'quick_view'),
         ]);
     }
 }

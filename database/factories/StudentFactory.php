@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\EducationalLevel;
+use App\Models\Catalogs\KinshipType;
 use App\Models\Guardian;
 use App\Models\Student;
 use App\Models\User;
@@ -18,7 +19,6 @@ class StudentFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'guardian_id' => null,
             'educational_level' => EducationalLevel::University,
             'current_pensum_id' => null,
             'academic_year' => null,
@@ -51,8 +51,17 @@ class StudentFactory extends Factory
 
     public function withGuardian(): static
     {
-        return $this->state(fn () => [
-            'guardian_id' => Guardian::factory(),
-        ]);
+        return $this->afterCreating(function (Student $student) {
+            $guardian = Guardian::factory()->create();
+            $kinshipType = KinshipType::firstOrCreate(
+                ['code' => 'other'],
+                ['name' => 'Otro', 'active' => true, 'sort_order' => 99],
+            );
+            $student->guardians()->attach($guardian->id, [
+                'kinship_type_id' => $kinshipType->id,
+                'is_primary' => true,
+                'is_emergency_contact' => true,
+            ]);
+        });
     }
 }

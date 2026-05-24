@@ -9,6 +9,7 @@ use App\Models\Pensum;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
@@ -68,7 +69,6 @@ class DemoStudentsSeeder extends Seeder
                         'educational_level' => EducationalLevel::University,
                         'current_pensum_id' => $pensum->id,
                         'academic_year' => $academicYear,
-                        'guardian_id' => null,
                     ],
                 );
             }
@@ -111,15 +111,23 @@ class DemoStudentsSeeder extends Seeder
 
             $secUser->syncRoles([$estudianteRole->name]);
 
-            Student::firstOrCreate(
+            $student = Student::firstOrCreate(
                 ['user_id' => $secUser->id],
                 [
                     'educational_level' => EducationalLevel::Secondary,
                     'current_pensum_id' => null,
                     'academic_year' => $academicYear,
-                    'guardian_id' => $guardian->id,
                 ],
             );
+
+            // Attach guardian via pivot (only when first created)
+            if ($student->wasRecentlyCreated) {
+                $student->guardians()->attach($guardian->id, [
+                    'kinship_type_id' => DB::table('kinship_types')->where('code', 'mother')->value('id'),
+                    'is_primary' => true,
+                    'is_emergency_contact' => true,
+                ]);
+            }
         }
     }
 }

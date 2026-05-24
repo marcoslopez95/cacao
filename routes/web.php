@@ -6,6 +6,8 @@ use App\Http\Controllers\Academic\PensumController;
 use App\Http\Controllers\Academic\StudentController;
 use App\Http\Controllers\Academic\SubjectController;
 use App\Http\Controllers\Admin\GradeConfigController;
+use App\Http\Controllers\Admin\GuardianProfileController;
+use App\Http\Controllers\Admin\StaffProfileController;
 use App\Http\Controllers\Admin\UserAddressController;
 use App\Http\Controllers\Admin\UserDocumentController;
 use App\Http\Controllers\Auth\AcceptInvitationController;
@@ -94,6 +96,10 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
         Route::patch('/{document}/verify', [UserDocumentController::class, 'verify'])->name('verify');
     });
 
+    // Guardian Profiles
+    Route::put('guardians/{guardian}/profile', [GuardianProfileController::class, 'upsert'])
+        ->name('guardians.profile.upsert');
+
     // Grade Configs
     Route::get('grade-configs', [GradeConfigController::class, 'index'])->name('grade-configs.index');
     Route::get('grade-configs/create', [GradeConfigController::class, 'create'])->name('grade-configs.create');
@@ -104,6 +110,9 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
 
 Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->group(function () {
     Route::get('students', [StudentController::class, 'index'])->name('students.index');
+
+    Route::put('professors/{professor}/staff-profile', [StaffProfileController::class, 'upsert'])
+        ->name('professors.staff-profile.upsert');
 
     Route::get('career-categories', [CareerCategoryController::class, 'index'])->name('career-categories.index');
     Route::post('career-categories', [CareerCategoryController::class, 'store'])->name('career-categories.store');

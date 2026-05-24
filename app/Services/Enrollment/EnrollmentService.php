@@ -15,7 +15,8 @@ class EnrollmentService
 
     public function calculateEnrolledCredits(Enrollment $enrollment): int
     {
-        return (int) $enrollment->confirmedDetails()
+        return (int) $enrollment->details()
+            ->where('status', '!=', 'rejected')
             ->join('subjects', 'enrollment_details.subject_id', '=', 'subjects.id')
             ->sum('subjects.credits_uc');
     }
@@ -29,6 +30,7 @@ class EnrollmentService
     {
         return $enrollment->details()
             ->where('subject_id', $subject->id)
+            ->where('status', '!=', 'rejected')
             ->exists();
     }
 

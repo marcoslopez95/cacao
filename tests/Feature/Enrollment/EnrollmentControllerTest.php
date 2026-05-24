@@ -2,6 +2,7 @@
 
 use App\Enums\EnrollmentDetailStatus;
 use App\Enums\EnrollmentStatus;
+use App\Models\Catalogs\KinshipType;
 use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\Guardian;
@@ -71,7 +72,9 @@ test('guardian can access enrollment index for assigned student', function () {
     $this->withoutVite();
 
     $guardian = Guardian::factory()->create();
-    $student = Student::factory()->withGuardian()->create(['guardian_id' => $guardian->id]);
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    $student = Student::factory()->create();
+    $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $this->actingAs($guardian->user)
         ->get('/enrollment')
@@ -110,10 +113,9 @@ test('guardian can create enrollment for assigned student', function () {
 
     $pensum = Pensum::factory()->create();
     $guardian = Guardian::factory()->create();
-    $student = Student::factory()->withGuardian()->create([
-        'guardian_id' => $guardian->id,
-        'current_pensum_id' => $pensum->id,
-    ]);
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Outro', 'active' => true, 'sort_order' => 99]);
+    $student = Student::factory()->create(['current_pensum_id' => $pensum->id]);
+    $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $this->actingAs($guardian->user)
         ->postJson(route('enrollment.store'), ['student_id' => $student->id])
@@ -158,7 +160,7 @@ test('student can add subject to their draft enrollment', function () {
     ]);
 });
 
-test('student cannot add the same subject twice', function () {
+test('adding same subject and section again is idempotent and returns existing detail', function () {
     $subject = Subject::factory()->create();
     $section = Section::factory()->create(['subject_id' => $subject->id, 'capacity' => 30]);
     $student = Student::factory()->create(['current_pensum_id' => $subject->pensum_id]);
@@ -167,7 +169,7 @@ test('student cannot add the same subject twice', function () {
         'pensum_id' => $subject->pensum_id,
     ]);
 
-    EnrollmentDetail::factory()->create([
+    $existing = EnrollmentDetail::factory()->create([
         'enrollment_id' => $enrollment->id,
         'subject_id' => $subject->id,
         'section_id' => $section->id,
@@ -178,8 +180,36 @@ test('student cannot add the same subject twice', function () {
             'subject_id' => $subject->id,
             'section_id' => $section->id,
         ])
-        ->assertUnprocessable()
-        ->assertJsonFragment(['error' => 'Ya estás inscrito en esta materia.']);
+        ->assertOk()
+        ->assertJsonFragment(['id' => $existing->id]);
+});
+
+test('student can change section for an enrolled subject', function () {
+    $subject = Subject::factory()->create();
+    $section1 = Section::factory()->create(['subject_id' => $subject->id, 'capacity' => 30]);
+    $section2 = Section::factory()->create(['subject_id' => $subject->id, 'capacity' => 30]);
+    $student = Student::factory()->create(['current_pensum_id' => $subject->pensum_id]);
+    $enrollment = Enrollment::factory()->create([
+        'student_id' => $student->id,
+        'pensum_id' => $subject->pensum_id,
+    ]);
+
+    $detail = EnrollmentDetail::factory()->create([
+        'enrollment_id' => $enrollment->id,
+        'subject_id' => $subject->id,
+        'section_id' => $section1->id,
+    ]);
+
+    $this->actingAs($student->user)
+        ->postJson(route('enrollment.detail.store', $enrollment), [
+            'subject_id' => $subject->id,
+            'section_id' => $section2->id,
+        ])
+        ->assertOk()
+        ->assertJsonFragment(['section_id' => $section2->id]);
+
+    // Same row updated in-place (unique constraint on enrollment_id+subject_id)
+    expect($detail->fresh()->section_id)->toBe($section2->id);
 });
 
 test('student cannot add subject to another students enrollment', function () {

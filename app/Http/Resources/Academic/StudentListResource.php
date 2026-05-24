@@ -25,8 +25,8 @@ class StudentListResource extends JsonResource
             'gpa' => null,
             'cedula' => null,
             'code' => null,
-            'guardian_name' => $this->_guardian_name,
-            'guardian_relation' => $this->_guardian_relation,
+            'guardian_name' => null,
+            'guardian_relation' => null,
             'section_grade' => $this->_section_grade !== null ? (int) $this->_section_grade : null,
             'section_letter' => $this->_section_letter,
         ];

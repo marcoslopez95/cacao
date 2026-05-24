@@ -71,7 +71,7 @@ it('seeds students', function () {
 
     $sec = User::where('email', 'sec01@utcacao.edu.ve')->first();
     expect($sec)->not->toBeNull();
-    expect($sec->student->guardian_id)->not->toBeNull();
+    expect($sec->student->guardians()->exists())->toBeTrue();
 });
 
 it('seeds sections and schedules', function () {

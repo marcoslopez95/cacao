@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Catalogs\KinshipType;
 use App\Models\Guardian;
 use App\Models\Period;
 use App\Models\Professor;
@@ -37,7 +38,10 @@ test('guardian dashboard returns students array with one entry per representado'
     $guardian = Guardian::factory()->create();
     $user = $guardian->user;
 
-    Student::factory()->count(2)->create(['guardian_id' => $guardian->id]);
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    Student::factory()->count(2)->create()->each(
+        fn ($s) => $s->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false])
+    );
 
     $this->withoutVite()
         ->actingAs($user)
@@ -69,7 +73,9 @@ test('guardian dashboard student entry has nota_promedio and inasistencias as nu
     $guardian = Guardian::factory()->create();
     $user = $guardian->user;
 
-    Student::factory()->create(['guardian_id' => $guardian->id]);
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    $student = Student::factory()->create();
+    $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $this->withoutVite()
         ->actingAs($user)

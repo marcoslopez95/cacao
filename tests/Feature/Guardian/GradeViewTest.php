@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Catalogs\KinshipType;
 use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\GradeConfig;
@@ -22,7 +23,9 @@ beforeEach(function () {
 function guardianGradeContext(): array
 {
     $guardian = Guardian::factory()->create();
-    $student = Student::factory()->create(['guardian_id' => $guardian->id]);
+    $student = Student::factory()->create();
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $period = Period::factory()->active()->create();
     $config = GradeConfig::factory()->university()->create();
@@ -76,7 +79,9 @@ test('guardian can view their students grades', function () {
 
 test('guardian grades page shows null when no active period', function () {
     $guardian = Guardian::factory()->create();
-    Student::factory()->create(['guardian_id' => $guardian->id]);
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    $s = Student::factory()->create();
+    $s->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     Period::where('status', 'active')->delete();
 

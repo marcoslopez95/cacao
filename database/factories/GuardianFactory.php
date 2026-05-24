@@ -16,8 +16,6 @@ class GuardianFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->name(),
-            'relation' => $this->faker->randomElement(['madre', 'padre', 'tutor', 'tutora', 'abuelo', 'abuela']),
         ];
     }
 
