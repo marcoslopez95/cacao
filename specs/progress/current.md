@@ -6,7 +6,7 @@
 
 ## Active Feature
 
-None — ready to start `role-profiles` (arnés 2).
+None — ready to start `student-background` (arnés 3).
 
 ---
 
@@ -16,8 +16,8 @@ None — ready to start `role-profiles` (arnés 2).
 |---|---------|--------|------------|
 | 0 | `catalogs` | **DONE** | — |
 | 1 | `user-profiles` | **DONE** | catalogs |
-| 2 | `role-profiles` | **NEXT** | catalogs, user-profiles |
-| 3 | `student-background` | pending | catalogs, user-profiles, role-profiles |
+| 2 | `role-profiles` | **DONE** | catalogs, user-profiles |
+| 3 | `student-background` | **NEXT** | catalogs, user-profiles, role-profiles |
 | 4 | `socioeconomic-health` | pending | all above |
 
 ---
