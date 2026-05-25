@@ -6,7 +6,7 @@
 
 ## Active Feature
 
-`06-user-form-connect` — Conexión del formulario de usuario al backend (15 tasks)
+`06-user-form-connect` — **DONE** (15/15 tasks completas)
 
 ---
 
@@ -19,8 +19,8 @@
 | 2 | `role-profiles` | **DONE** | catalogs, user-profiles |
 | 3 | `student-background` | **DONE** | catalogs, user-profiles, role-profiles |
 | 4 | `socioeconomic-health` | **DONE** | all above |
-| 5 | `user-form-views` | **IN PROGRESS** (Task 22 pendiente) | ninguno (frontend only) |
-| 6 | `user-form-connect` | **NEXT** | user-form-views, socioeconomic-health |
+| 5 | `user-form-views` | **DONE** | ninguno (frontend only) |
+| 6 | `user-form-connect` | **DONE** | user-form-views, socioeconomic-health |
 
 ---
 

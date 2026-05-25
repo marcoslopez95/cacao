@@ -8,21 +8,21 @@
 
 ## Overall Progress
 
-- [ ] Task 01 — Backend: ruta `edit` + `UserController::edit()` + cambio de redirect en `store()`
-- [ ] Task 02 — Tipos: `passwordMode` en `UserFormData` + interfaces `UserEditProps`
-- [ ] Task 03 — S02: pills de `password_mode` (link / manual / random)
-- [ ] Task 04 — `Create.vue` refactorizada: solo S01 + S02 + `useForm` de Inertia
-- [ ] Task 05 — `Edit.vue` + `useUserEditForm.ts` (skeleton: props, formData inicial, dispatcher)
-- [ ] Task 06 — Wire S03 (dirección) — sync de addresses
-- [ ] Task 07 — Wire S04 + S05 (demográfico + salud)
-- [ ] Task 08 — Wire S06 + S07 (consentimientos + documentos metadata)
-- [ ] Task 09 — Wire S08+S09 (background estudiantil)
-- [ ] Task 10 — Wire S10 (idiomas)
-- [ ] Task 11 — Wire S11+S12 (familia + socioeconómico)
-- [ ] Task 12 — Wire S13+S14 (beneficios + vivienda)
-- [ ] Task 13 — Wire S16 + S17 (perfil representante + perfil personal)
-- [ ] Task 14 — Tests Pest: `edit()` props, redirect de `store()`, validación `password_mode`
-- [ ] Task 15 — Polish: loading states, errores inline por sección, toast feedback
+- [x] Task 01 — Backend: ruta `edit` + `UserController::edit()` + cambio de redirect en `store()`
+- [x] Task 02 — Tipos: `passwordMode` en `UserFormData` + interfaces `UserEditProps`
+- [x] Task 03 — S02: pills de `password_mode` (link / manual / random)
+- [x] Task 04 — `Create.vue` refactorizada: solo S01 + S02 + `useForm` de Inertia
+- [x] Task 05 — `Edit.vue` + `useUserEditForm.ts` (skeleton: props, formData inicial, dispatcher)
+- [x] Task 06 — Wire S03 (dirección) — sync de addresses
+- [x] Task 07 — Wire S04 + S05 (demográfico + salud)
+- [x] Task 08 — Wire S06 + S07 (consentimientos + documentos metadata)
+- [x] Task 09 — Wire S08+S09 (background estudiantil)
+- [x] Task 10 — Wire S10 (idiomas)
+- [x] Task 11 — Wire S11+S12 (familia + socioeconómico)
+- [x] Task 12 — Wire S13+S14 (beneficios + vivienda)
+- [x] Task 13 — Wire S16 + S17 (perfil representante + perfil personal)
+- [x] Task 14 — Tests Pest: `edit()` props, redirect de `store()`, validación `password_mode`
+- [x] Task 15 — Polish: loading states, errores inline por sección, toast feedback
 
 ---
 

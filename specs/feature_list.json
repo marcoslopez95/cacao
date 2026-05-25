@@ -103,7 +103,7 @@
     {
       "id": "user-form-views",
       "name": "User Form Views",
-      "status": "in_progress",
+      "status": "completed",
       "spec": "specs/user-form-views/",
       "depends_on": [],
       "description": "Full create/edit user form UI: role picker, 17 sections, 4 roles, tabs, sidebar nav, progress indicator, autosave. Frontend only — no backend wiring."
@@ -111,7 +111,7 @@
     {
       "id": "user-form-connect",
       "name": "User Form Connect",
-      "status": "pending",
+      "status": "completed",
       "spec": "specs/user-form-connect/",
       "depends_on": ["user-form-views", "socioeconomic-health"],
       "description": "Connect the user form UI to the backend. Progressive section-by-section saves: Create.vue (S01+S02) creates the user, Edit.vue (S03-S17) saves each profile section independently via existing endpoints."
