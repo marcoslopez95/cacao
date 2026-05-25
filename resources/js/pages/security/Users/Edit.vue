@@ -46,6 +46,8 @@ const {
     savedSections,
     editingSections,
     autosave,
+    saving,
+    errors,
     tabs,
     activeTabDef,
     completion,
@@ -113,6 +115,8 @@ onUnmounted(() => cleanupSpy?.())
                     :status="statusFor(secNum)"
                     :saved="savedSections.has(secNum) ? { at: new Date() } : null"
                     :section-id="secNum"
+                    :is-saving="saving === secNum"
+                    :section-errors="errors[secNum]"
                     @save="saveSection(secNum)"
                     @enter-edit="editSection(secNum)"
                     @cancel="cancelSection(secNum)"

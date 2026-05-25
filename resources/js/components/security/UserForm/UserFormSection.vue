@@ -12,6 +12,8 @@ defineProps<{
     saved?: { at: Date } | null
     readonly?: boolean
     sectionId: number
+    isSaving?: boolean
+    sectionErrors?: Record<string, string>
 }>()
 
 defineEmits<{ save: []; enterEdit: []; cancel: [] }>()
@@ -55,6 +57,15 @@ defineEmits<{ save: []; enterEdit: []; cancel: [] }>()
             <slot />
         </div>
 
+        <div
+            v-if="sectionErrors && Object.keys(sectionErrors).length"
+            class="uf-section-errors"
+        >
+            <p v-for="(msg, field) in sectionErrors" :key="field" class="uf-section-error">
+                {{ msg }}
+            </p>
+        </div>
+
         <div v-if="!readonly" class="uf-section-foot">
             <span class="uf-section-status-text">
                 <template v-if="status === 'complete'">Sección completa</template>
@@ -71,8 +82,14 @@ defineEmits<{ save: []; enterEdit: []; cancel: [] }>()
                 >
                     Descartar
                 </button>
-                <button type="button" class="uf-btn primary sm" @click="$emit('save')">
-                    Guardar sección
+                <button
+                    type="button"
+                    class="uf-btn primary sm"
+                    :disabled="isSaving"
+                    @click="$emit('save')"
+                >
+                    <span v-if="isSaving" class="uf-btn-spinner" aria-hidden="true" />
+                    {{ isSaving ? 'Guardando…' : 'Guardar sección' }}
                 </button>
             </div>
         </div>
