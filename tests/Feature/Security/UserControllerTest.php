@@ -103,16 +103,16 @@ test('store with password_mode link creates user and sends reset', function () {
             'email' => 'carlos@test.com',
             'role' => 'Profesor',
             'password_mode' => 'link',
-        ])
-        ->assertRedirect(route('security.users.index'));
+        ]);
 
-    expect(User::where('email', 'carlos@test.com')->exists())->toBeTrue();
+    $user = User::where('email', 'carlos@test.com')->firstOrFail();
+    expect($user)->not->toBeNull();
 });
 
 test('store with password_mode manual creates user with given password', function () {
     $actor = userWithUserPerm('users.create');
 
-    $this->actingAs($actor)
+    $response = $this->actingAs($actor)
         ->post('/security/users', [
             'name' => 'Laura Torres',
             'email' => 'laura@test.com',
@@ -120,26 +120,26 @@ test('store with password_mode manual creates user with given password', functio
             'password_mode' => 'manual',
             'password' => 'secret12345',
             'password_confirmation' => 'secret12345',
-        ])
-        ->assertRedirect(route('security.users.index'));
+        ]);
 
     $user = User::where('email', 'laura@test.com')->firstOrFail();
+    $response->assertRedirect(route('security.users.edit', $user));
     expect(Hash::check('secret12345', $user->password))->toBeTrue();
 });
 
 test('store with password_mode random creates user', function () {
     $actor = userWithUserPerm('users.create');
 
-    $this->actingAs($actor)
+    $response = $this->actingAs($actor)
         ->post('/security/users', [
             'name' => 'Marta Díaz',
             'email' => 'marta@test.com',
             'role' => 'Profesor',
             'password_mode' => 'random',
-        ])
-        ->assertRedirect(route('security.users.index'));
+        ]);
 
-    expect(User::where('email', 'marta@test.com')->exists())->toBeTrue();
+    $user = User::where('email', 'marta@test.com')->firstOrFail();
+    $response->assertRedirect(route('security.users.edit', $user));
 });
 
 // ---------------------------------------------------------------------------
@@ -266,4 +266,110 @@ test('resetPassword with random mode updates password', function () {
         ->assertRedirect(route('security.users.index'));
 
     expect($target->fresh()->password)->not->toBe($oldPassword);
+});
+
+// ---------------------------------------------------------------------------
+// edit
+// ---------------------------------------------------------------------------
+
+test('user without users.update gets 403 on edit', function () {
+    $target = User::factory()->create();
+
+    $this->actingAs(User::factory()->create())
+        ->get("/security/users/{$target->id}/edit")
+        ->assertForbidden();
+});
+
+test('user with users.update can view edit page', function () {
+    $actor = userWithUserPerm('users.update');
+    $target = User::factory()->create();
+
+    $this->actingAs($actor)
+        ->get("/security/users/{$target->id}/edit")
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('security/Users/Edit', false)
+            ->has('user')
+            ->has('addresses')
+            ->has('documents')
+        );
+});
+
+test('edit props include user data and sub-collections', function () {
+    $actor  = userWithUserPerm('users.update');
+    $target = User::factory()->create([
+        'first_name' => 'Ana',
+        'last_name'  => 'García',
+        'email'      => 'ana@test.com',
+    ]);
+
+    $this->actingAs($actor)
+        ->get("/security/users/{$target->id}/edit")
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('user')
+            ->has('addresses')
+            ->has('documents')
+            ->has('consent')
+        );
+});
+
+test('store redirects to edit after creating user', function () {
+    $actor = userWithUserPerm('users.create');
+
+    $response = $this->actingAs($actor)
+        ->post('/security/users', [
+            'first_name'   => 'Nuevo',
+            'last_name'    => 'Usuario',
+            'email'        => 'nuevo@test.com',
+            'role'         => 'Profesor',
+            'password_mode' => 'link',
+        ]);
+
+    $user = User::where('email', 'nuevo@test.com')->firstOrFail();
+    $response->assertRedirect(route('security.users.edit', $user));
+});
+
+test('store with invalid password_mode returns validation error', function () {
+    $actor = userWithUserPerm('users.create');
+
+    $this->actingAs($actor)
+        ->post('/security/users', [
+            'first_name'    => 'Test',
+            'last_name'     => 'User',
+            'email'         => 'test@test.com',
+            'role'          => 'Profesor',
+            'password_mode' => 'invalid_mode',
+        ])
+        ->assertSessionHasErrors('password_mode');
+});
+
+test('store with manual password_mode requires password', function () {
+    $actor = userWithUserPerm('users.create');
+
+    $this->actingAs($actor)
+        ->post('/security/users', [
+            'first_name'    => 'Test',
+            'last_name'     => 'User',
+            'email'         => 'test@test.com',
+            'role'          => 'Profesor',
+            'password_mode' => 'manual',
+        ])
+        ->assertSessionHasErrors('password');
+});
+
+test('store with link password_mode does not require password', function () {
+    Password::shouldReceive('sendResetLink')->once()->andReturn(Password::RESET_LINK_SENT);
+
+    $actor = userWithUserPerm('users.create');
+
+    $this->actingAs($actor)
+        ->post('/security/users', [
+            'first_name'    => 'Link',
+            'last_name'     => 'User',
+            'email'         => 'link@test.com',
+            'role'          => 'Profesor',
+            'password_mode' => 'link',
+        ])
+        ->assertSessionDoesntHaveErrors('password');
 });
