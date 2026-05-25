@@ -25,6 +25,7 @@ use App\Http\Resources\Admin\UserAddressResource;
 use App\Http\Resources\Admin\UserDocumentResource;
 use App\Http\Resources\Security\UserEditResource;
 use App\Http\Resources\Security\UserResource;
+use App\Http\Resources\UserConsentResource;
 use App\Http\Wrappers\Security\UserWrapper;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -109,12 +110,29 @@ class UserController extends Controller
     {
         Gate::authorize('update', $user);
 
-        $user->load('roles');
+        $user->load([
+            'roles',
+            'demographicProfile',
+            'healthProfile',
+            'addresses',
+            'documents',
+            'consents',
+            'student.background',
+            'student.languages',
+            'student.familyProfile',
+            'student.socioeconomicProfile',
+            'student.benefits',
+            'student.housingProfile',
+            'professor.staffProfile',
+            'guardian.profile',
+        ]);
+
+        $activeConsent = $user->consents->filter(fn ($c) => $c->revoked_at === null)->sortByDesc('granted_at')->first();
 
         $props = [
             'user' => new UserEditResource($user),
             'addresses' => UserAddressResource::collection(
-                $user->addresses()->orderByDesc('is_primary')->get()
+                $user->addresses->sortByDesc('is_primary')
             ),
             'demographicProfile' => $user->demographicProfile
                 ? new DemographicProfileResource($user->demographicProfile)
@@ -122,15 +140,12 @@ class UserController extends Controller
             'healthProfile' => $user->healthProfile
                 ? new HealthProfileResource($user->healthProfile)
                 : null,
-            'consent' => $user->consents()->whereNull('revoked_at')->latest('granted_at')->first(),
+            'consent' => $activeConsent ? new UserConsentResource($activeConsent) : null,
             'documents' => UserDocumentResource::collection($user->documents),
         ];
 
         if ($user->student) {
-            $student = $user->student->load([
-                'background', 'languages', 'familyProfile',
-                'socioeconomicProfile', 'benefits', 'housingProfile',
-            ]);
+            $student = $user->student;
             $props['student'] = [
                 'id' => $student->id,
                 'background' => $student->background
