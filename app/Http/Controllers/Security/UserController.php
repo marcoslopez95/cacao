@@ -11,6 +11,19 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Security\ResetPasswordRequest;
 use App\Http\Requests\Security\StoreUserRequest;
 use App\Http\Requests\Security\UpdateUserRequest;
+use App\Http\Resources\Admin\DemographicProfileResource;
+use App\Http\Resources\Admin\FamilyProfileResource;
+use App\Http\Resources\Admin\GuardianProfileResource;
+use App\Http\Resources\Admin\HealthProfileResource;
+use App\Http\Resources\Admin\HousingProfileResource;
+use App\Http\Resources\Admin\SocioeconomicProfileResource;
+use App\Http\Resources\Admin\StaffProfileResource;
+use App\Http\Resources\Admin\StudentBackgroundResource;
+use App\Http\Resources\Admin\StudentBenefitResource;
+use App\Http\Resources\Admin\StudentLanguageResource;
+use App\Http\Resources\Admin\UserAddressResource;
+use App\Http\Resources\Admin\UserDocumentResource;
+use App\Http\Resources\Security\UserEditResource;
 use App\Http\Resources\Security\UserResource;
 use App\Http\Wrappers\Security\UserWrapper;
 use App\Models\User;
@@ -23,6 +36,16 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    /**
+     * Show the form for creating a new user.
+     */
+    public function create(): Response
+    {
+        Gate::authorize('create', User::class);
+
+        return Inertia::render('security/Users/Create');
+    }
+
     /**
      * Display a paginated list of users with optional filters.
      */
@@ -73,10 +96,79 @@ class UserController extends Controller
     public function store(StoreUserRequest $request, CreateUserAction $action): RedirectResponse
     {
         $wrapper = new UserWrapper($request->validated());
-        $action->handle($wrapper);
+        $user = $action->handle($wrapper);
         $this->flashCreated($wrapper);
 
-        return to_route('security.users.index');
+        return to_route('security.users.edit', $user);
+    }
+
+    /**
+     * Show the form for editing the specified user.
+     */
+    public function edit(User $user): Response
+    {
+        Gate::authorize('update', $user);
+
+        $user->load('roles');
+
+        $props = [
+            'user' => new UserEditResource($user),
+            'addresses' => UserAddressResource::collection(
+                $user->addresses()->orderByDesc('is_primary')->get()
+            ),
+            'demographicProfile' => $user->demographicProfile
+                ? new DemographicProfileResource($user->demographicProfile)
+                : null,
+            'healthProfile' => $user->healthProfile
+                ? new HealthProfileResource($user->healthProfile)
+                : null,
+            'consent' => $user->consents()->whereNull('revoked_at')->latest('granted_at')->first(),
+            'documents' => UserDocumentResource::collection($user->documents),
+        ];
+
+        if ($user->student) {
+            $student = $user->student->load([
+                'background', 'languages', 'familyProfile',
+                'socioeconomicProfile', 'benefits', 'housingProfile',
+            ]);
+            $props['student'] = [
+                'id' => $student->id,
+                'background' => $student->background
+                    ? new StudentBackgroundResource($student->background)
+                    : null,
+                'languages' => StudentLanguageResource::collection($student->languages),
+                'familyProfile' => $student->familyProfile
+                    ? new FamilyProfileResource($student->familyProfile)
+                    : null,
+                'socioeconomicProfile' => $student->socioeconomicProfile
+                    ? new SocioeconomicProfileResource($student->socioeconomicProfile)
+                    : null,
+                'benefits' => StudentBenefitResource::collection($student->benefits),
+                'housingProfile' => $student->housingProfile
+                    ? new HousingProfileResource($student->housingProfile)
+                    : null,
+            ];
+        }
+
+        if ($user->professor) {
+            $props['professor'] = [
+                'id' => $user->professor->id,
+                'staffProfile' => $user->professor->staffProfile
+                    ? new StaffProfileResource($user->professor->staffProfile)
+                    : null,
+            ];
+        }
+
+        if ($user->guardian) {
+            $props['guardian'] = [
+                'id' => $user->guardian->id,
+                'profile' => $user->guardian->profile
+                    ? new GuardianProfileResource($user->guardian->profile)
+                    : null,
+            ];
+        }
+
+        return Inertia::render('security/Users/Edit', $props);
     }
 
     /**
