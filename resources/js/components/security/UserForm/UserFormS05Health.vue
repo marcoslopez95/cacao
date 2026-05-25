@@ -1,0 +1,170 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import type { UserFormData } from '@/types/userForm'
+import { UF_BLOOD, UF_DISABILITY_TYPES, UF_INSURANCE, UF_COUNTRIES } from '@/types/userFormCatalogs'
+import AppFormField from '@/components/UI/AppFormField.vue'
+import AppToggleCard from '@/components/UI/AppToggleCard.vue'
+import AppTelInput from '@/components/UI/AppTelInput.vue'
+
+const props = defineProps<{
+    data: UserFormData
+    setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+}>()
+
+const imc = computed(() => {
+    const w = parseFloat(props.data.weight ?? '')
+    const h = parseFloat(props.data.height ?? '') / 100
+    if (!w || !h) return null
+    return (w / (h * h)).toFixed(1)
+})
+</script>
+
+<template>
+    <div class="uf-subsection">
+        <p class="uf-sub-title">Generalidades</p>
+        <div class="uf-grid">
+            <AppFormField label="Grupo sanguíneo" :col="3">
+                <select
+                    class="uf-select"
+                    :value="data.bloodType ?? ''"
+                    @change="setField('bloodType', ($event.target as HTMLSelectElement).value)"
+                >
+                    <option value="">Seleccionar</option>
+                    <option v-for="b in UF_BLOOD" :key="b" :value="b">{{ b }}</option>
+                </select>
+            </AppFormField>
+            <AppFormField label="Peso (kg)" :col="3">
+                <input
+                    class="uf-input"
+                    type="number"
+                    min="0"
+                    :value="data.weight"
+                    placeholder="70"
+                    @input="setField('weight', ($event.target as HTMLInputElement).value)"
+                />
+            </AppFormField>
+            <AppFormField label="Talla (cm)" :col="3">
+                <input
+                    class="uf-input"
+                    type="number"
+                    min="0"
+                    :value="data.height"
+                    placeholder="170"
+                    @input="setField('height', ($event.target as HTMLInputElement).value)"
+                />
+            </AppFormField>
+            <AppFormField label="IMC calculado" :col="3">
+                <div v-if="imc" class="uf-calc ok">
+                    <strong>{{ imc }}</strong> kg/m²
+                </div>
+                <div v-else class="uf-input" style="pointer-events:none;color:var(--text-muted);font-style:italic;">
+                    Calculado automáticamente
+                </div>
+            </AppFormField>
+        </div>
+    </div>
+
+    <div class="uf-subsection">
+        <p class="uf-sub-title">Condiciones especiales</p>
+        <div class="uf-grid">
+            <AppFormField :col="12">
+                <AppToggleCard
+                    label="Tiene alguna discapacidad"
+                    :model-value="data.disability ?? false"
+                    @update:model-value="setField('disability', $event)"
+                />
+            </AppFormField>
+            <template v-if="data.disability">
+                <AppFormField label="Tipo de discapacidad" :col="6">
+                    <select
+                        class="uf-select"
+                        :value="data.disabilityType ?? ''"
+                        @change="setField('disabilityType', ($event.target as HTMLSelectElement).value)"
+                    >
+                        <option value="">Seleccionar</option>
+                        <option v-for="d in UF_DISABILITY_TYPES" :key="d" :value="d">{{ d }}</option>
+                    </select>
+                </AppFormField>
+                <AppFormField label="Descripción" optional :col="6">
+                    <textarea
+                        class="uf-textarea"
+                        :value="data.disabilityDesc"
+                        @input="setField('disabilityDesc', ($event.target as HTMLTextAreaElement).value)"
+                    />
+                </AppFormField>
+            </template>
+
+            <AppFormField :col="12">
+                <AppToggleCard
+                    label="Tiene necesidades especiales"
+                    :model-value="data.specialNeeds ?? false"
+                    @update:model-value="setField('specialNeeds', $event)"
+                />
+            </AppFormField>
+            <template v-if="data.specialNeeds">
+                <AppFormField label="Descripción" :col="12">
+                    <textarea
+                        class="uf-textarea"
+                        :value="data.specialNeedsDesc"
+                        @input="setField('specialNeedsDesc', ($event.target as HTMLTextAreaElement).value)"
+                    />
+                </AppFormField>
+            </template>
+
+            <AppFormField label="Condición crónica" optional :col="4">
+                <input class="uf-input" :value="data.chronic" @input="setField('chronic', ($event.target as HTMLInputElement).value)" />
+            </AppFormField>
+            <AppFormField label="Medicación regular" optional :col="4">
+                <input class="uf-input" :value="data.medication" @input="setField('medication', ($event.target as HTMLInputElement).value)" />
+            </AppFormField>
+            <AppFormField label="Alergias" optional :col="4">
+                <input class="uf-input" :value="data.allergies" @input="setField('allergies', ($event.target as HTMLInputElement).value)" />
+            </AppFormField>
+        </div>
+    </div>
+
+    <div class="uf-subsection">
+        <p class="uf-sub-title">Seguro médico</p>
+        <div class="uf-grid">
+            <AppFormField :col="12">
+                <AppToggleCard
+                    label="Cuenta con seguro médico"
+                    :model-value="data.insurance ?? false"
+                    @update:model-value="setField('insurance', $event)"
+                />
+            </AppFormField>
+            <template v-if="data.insurance">
+                <AppFormField label="Tipo de seguro" :col="6">
+                    <select
+                        class="uf-select"
+                        :value="data.insuranceType ?? ''"
+                        @change="setField('insuranceType', ($event.target as HTMLSelectElement).value)"
+                    >
+                        <option value="">Seleccionar</option>
+                        <option v-for="ins in UF_INSURANCE" :key="ins" :value="ins">{{ ins }}</option>
+                    </select>
+                </AppFormField>
+            </template>
+        </div>
+    </div>
+
+    <div class="uf-subsection">
+        <p class="uf-sub-title">Contacto de emergencia</p>
+        <div class="uf-grid">
+            <AppFormField label="Nombre" required :col="5">
+                <input class="uf-input" :value="data.emergencyName" @input="setField('emergencyName', ($event.target as HTMLInputElement).value)" />
+            </AppFormField>
+            <AppFormField label="Teléfono" required :col="4">
+                <AppTelInput
+                    :dial="data.emergencyDial ?? '+58'"
+                    :number="data.emergencyPhone ?? ''"
+                    @update:dial="setField('emergencyDial', $event)"
+                    @update:number="setField('emergencyPhone', $event)"
+                />
+            </AppFormField>
+            <AppFormField label="Parentesco" required :col="3">
+                <input class="uf-input" :value="data.emergencyRel" placeholder="Madre, padre…" @input="setField('emergencyRel', ($event.target as HTMLInputElement).value)" />
+            </AppFormField>
+        </div>
+    </div>
+</template>

@@ -92,8 +92,6 @@ const config = computed(() => ({
 </template>
 
 <style>
-@import '@/../css/error-pages.css';
-
 /* Staggered cell drops — 7 cells (no [0,2], taken by lock) */
 .ep-c1 { animation: ep-cellDrop 0.5s cubic-bezier(.2,.9,.25,1.15) 0.04s both; }
 .ep-c2 { animation: ep-cellDrop 0.5s cubic-bezier(.2,.9,.25,1.15) 0.10s both; }

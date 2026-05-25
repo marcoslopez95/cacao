@@ -76,8 +76,6 @@ import { Head } from '@inertiajs/vue3'
 </template>
 
 <style>
-@import '@/../css/error-pages.css';
-
 /* Staggered cellDrop delays */
 .ep-c1 { animation: ep-cellDrop 0.55s cubic-bezier(.2,.8,.2,1) 0.05s both; }
 .ep-c2 { animation: ep-cellDrop 0.55s cubic-bezier(.2,.8,.2,1) 0.10s both; }

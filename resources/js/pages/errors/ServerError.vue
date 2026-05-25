@@ -119,8 +119,6 @@ async function handleCopy(): Promise<void> {
 </template>
 
 <style>
-@import '@/../css/error-pages.css';
-
 /* Tilted cell drops — each with unique final transform */
 .ep-d1 { animation: ep-drop-1 0.6s cubic-bezier(.2,.8,.2,1) 0.05s both; }
 .ep-d2 { animation: ep-drop-2 0.6s cubic-bezier(.2,.8,.2,1) 0.12s both; }
