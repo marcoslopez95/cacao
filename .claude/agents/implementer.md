@@ -52,3 +52,5 @@ FormRequest → Controller → Wrapper → Action → Resource
 - Sin URLs hardcodeadas en Vue
 - Un composable = un concern (form ≠ permisos ≠ filtros)
 - `router.post/.put/.delete` solo dentro de composables de form
+- **NUNCA modificar ni eliminar archivos en `tests/Feature/{Feature}/Acceptance/`** — son el contrato del `senior_tester`
+- Si un acceptance test parece incorrecto: reportarlo al `senior_tester` vía el `leader` — nunca editarlo directamente
