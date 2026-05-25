@@ -19,7 +19,13 @@ class UserEditResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'active' => $this->active,
-            'roles' => $this->whenLoaded('roles', fn () => $this->roles->pluck('name')->values()),
+            'roles' => $this->whenLoaded('roles', fn () => $this->roles->pluck('name')->map(fn ($name) => match ($name) {
+                'Admin' => 'admin',
+                'Estudiante' => 'student',
+                'Profesor' => 'professor',
+                'Representante' => 'guardian',
+                default => strtolower($name),
+            })->values()),
             'created_at' => $this->created_at?->toDateString(),
         ];
     }
