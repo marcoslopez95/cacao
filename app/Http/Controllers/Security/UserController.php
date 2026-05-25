@@ -129,19 +129,23 @@ class UserController extends Controller
 
         $activeConsent = $user->consents->filter(fn ($c) => $c->revoked_at === null)->sortByDesc('granted_at')->first();
 
+        // Call ->resolve() on each resource so Inertia receives plain arrays instead
+        // of Responsable objects (which PropsResolver wraps in {"data":{...}}).
         $props = [
-            'user' => new UserEditResource($user),
+            'user' => (new UserEditResource($user))->resolve(),
             'addresses' => UserAddressResource::collection(
                 $user->addresses->sortByDesc('is_primary')
-            ),
+            )->resolve(),
             'demographicProfile' => $user->demographicProfile
-                ? new DemographicProfileResource($user->demographicProfile)
+                ? (new DemographicProfileResource($user->demographicProfile))->resolve()
                 : null,
             'healthProfile' => $user->healthProfile
-                ? new HealthProfileResource($user->healthProfile)
+                ? (new HealthProfileResource($user->healthProfile))->resolve()
                 : null,
-            'consent' => $activeConsent ? new UserConsentResource($activeConsent) : null,
-            'documents' => UserDocumentResource::collection($user->documents),
+            'consent' => $activeConsent
+                ? (new UserConsentResource($activeConsent))->resolve()
+                : null,
+            'documents' => UserDocumentResource::collection($user->documents)->resolve(),
         ];
 
         if ($user->student) {
