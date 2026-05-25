@@ -7,20 +7,21 @@
 
 ## Contexto
 
-El arnés SDD actual tiene 4 agentes: `leader`, `spec_author`, `implementer`, `reviewer`. El `reviewer` actual hace de todo: verifica arquitectura, corre tests y aprueba tasks. Este diseño lo reemplaza con una separación clara de responsabilidades en 3 agentes especializados: `reviewer` (calidad de código), `senior_tester` (contrato de tests) y `qa` (integración E2E y aprobación final).
+El arnés SDD actual tiene 4 agentes: `leader`, `spec_author`, `implementer`, `reviewer`. El `reviewer` actual hace de todo: verifica arquitectura, corre tests y aprueba tasks. Este diseño lo reemplaza con una separación clara de responsabilidades en 4 agentes especializados: `reviewer` (calidad de código), `senior_tester` (contrato de tests), `qa` (integración E2E y aprobación final) y `qa_manager` (auditoría ad-hoc iniciada por el humano).
 
 ---
 
-## Agentes resultantes (6 en total)
+## Agentes resultantes (7 en total)
 
-| Agente | Rol | ¿Modifica código app? | ¿Tiene poder de bloqueo? |
-|--------|-----|----------------------|--------------------------|
-| `leader` | Orquesta el flujo | No | — |
-| `spec_author` | Escribe specs | No | — |
-| `senior_tester` | Contrato de tests (PRE + POST) | Solo archivos de test | Sí (POST) |
-| `implementer` | Implementa tasks | Sí | — |
-| `reviewer` | Calidad de código | No | Sí |
-| `qa` | E2E con Dusk + aprobación final | Solo tests Browser/ | Sí (gate final) |
+| Agente | Rol | ¿Modifica código app? | ¿Tiene poder de bloqueo? | Invocado por |
+|--------|-----|----------------------|--------------------------|--------------|
+| `leader` | Orquesta el flujo | No | — | Humano / flujo arnés |
+| `spec_author` | Escribe specs | No | — | Leader |
+| `senior_tester` | Contrato de tests (PRE + POST) | Solo archivos de test | Sí (POST) | Leader |
+| `implementer` | Implementa tasks | Sí | — | Leader |
+| `reviewer` | Calidad de código | No | Sí | Leader |
+| `qa` | E2E con Dusk + aprobación final | Solo tests Browser/ | Sí (gate final) | Leader |
+| `qa_manager` | Auditoría ad-hoc, hallazgos, backlog | Solo specs/qa/ | No | Humano directamente |
 
 ---
 
@@ -229,6 +230,52 @@ UC-03 FALLIDO: Validación falla si email duplicado
 - QA prueba integración web completa (browser → front → back → DB), no APIs directamente
 - Consulta `specs/qa/{dominio}/` antes de escribir nuevos UCs para evitar duplicados y detectar regresiones
 - Solo el QA puede marcar una task como lista para que el leader la apruebe
+- QA no tiene modo ad-hoc — para auditorías fuera del arnés existe `qa_manager`
+
+---
+
+## Agente: `qa_manager`
+
+**Invocado por:** el humano directamente, fuera del flujo del arnés.
+
+**Casos de uso de activación:**
+- "Revisa esta URL: http://localhost:8000/security/users/198/edit"
+- "Quiero verificar que el flujo de crear usuario sigue funcionando"
+- "¿Tenemos casos de uso documentados para inscripciones?"
+
+### Protocolo de trabajo
+
+1. **Recibir el contexto del humano** — URL, descripción del flujo, o referencia a un dominio
+2. **Consultar `specs/qa/{dominio}/`** — identificar si ya existen UCs para ese flujo
+3. **Colaborar con el humano** para:
+   - Crear nuevos UCs que no existan
+   - Modificar UCs existentes si el comportamiento esperado cambió
+   - Identificar gaps en la cobertura actual
+4. **Ejecutar tests Dusk existentes** del dominio si los hay — reportar qué pasa y qué falla
+5. **Guardar hallazgos** en `specs/qa/backlog.md` con estructura clara
+6. **Reportar al humano** para que decida si abrir un nuevo ciclo del arnés
+
+### Estructura de hallazgos — `specs/qa/backlog.md`
+
+Archivo acumulativo. Cada hallazgo tiene:
+
+```markdown
+## HLZ-{n} — [Nombre del flujo afectado]
+**Fecha:** YYYY-MM-DD
+**Dominio:** {dominio} (ej: usuarios, inscripciones)
+**UC relacionado:** UC-{n} en specs/qa/{dominio}/{flujo}.md (o "nuevo")
+**Descripción:** [qué falla o qué falta]
+**Evidencia:** [URL, screenshot path, output de Dusk]
+**Acción sugerida:** [crear feature / corregir bug / agregar UC]
+**Estado:** pendiente | en-desarrollo | resuelto
+```
+
+### Lo que `qa_manager` NO hace
+
+- No aprueba ni rechaza tasks del arnés — eso es exclusivo de `qa`
+- No modifica código de la aplicación
+- No crea features ni specs — solo documenta hallazgos para que el humano decida
+- No invoca al `leader` directamente — reporta al humano y espera instrucción
 
 ---
 
@@ -262,5 +309,6 @@ Una restricción adicional:
   senior_tester.md   ← nuevo (reemplaza parte del reviewer actual)
   implementer.md     ← agregar restricción sobre Acceptance/
   reviewer.md        ← refocused a calidad de código
-  qa.md              ← nuevo
+  qa.md              ← nuevo (gate final del arnés)
+  qa_manager.md      ← nuevo (auditoría ad-hoc, invocado por el humano)
 ```
