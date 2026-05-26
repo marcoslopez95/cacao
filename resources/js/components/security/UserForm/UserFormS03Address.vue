@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UserFormData, AddressItem } from '@/types/userForm'
-import { UF_COUNTRIES, UF_STATES_VE, UF_MUNICIPIOS_DTTO, UF_PARROQUIAS, UF_ZONES } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppToggle from '@/components/UI/AppToggle.vue'
 import AppRepeatable from '@/components/UI/AppRepeatable.vue'
@@ -8,13 +8,19 @@ import AppRepeatable from '@/components/UI/AppRepeatable.vue'
 const props = defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+    catalogData: UserFormCatalogData
 }>()
+
+function statesForAddress(index: number) {
+    const countryId = props.data.addresses?.[index]?.country_id
+    if (!countryId) return []
+    return props.catalogData.states.filter(s => s.country_id === countryId)
+}
 
 function addAddress(): void {
     const items = props.data.addresses ?? []
     const newItem: AddressItem = {
         __id: Date.now(),
-        country: 've',
         primary: items.length === 0,
     }
     props.setField('addresses', [...items, newItem])
@@ -31,6 +37,11 @@ function updateAddress(i: number, patch: Partial<AddressItem>): void {
         idx === i ? { ...a, ...patch } : a,
     )
     props.setField('addresses', items)
+}
+
+function onCountryChange(index: number, value: string): void {
+    const countryId = parseInt(value) || undefined
+    updateAddress(index, { country_id: countryId, state_id: undefined })
 }
 
 function setPrimary(i: number): void {
@@ -55,55 +66,22 @@ function setPrimary(i: number): void {
                 <AppFormField label="País" :col="4">
                     <select
                         class="uf-select"
-                        :value="data.addresses?.[index]?.country ?? ''"
-                        @change="updateAddress(index, { country: ($event.target as HTMLSelectElement).value })"
+                        :value="data.addresses?.[index]?.country_id ?? ''"
+                        @change="onCountryChange(index, ($event.target as HTMLSelectElement).value)"
                     >
                         <option value="">Seleccionar</option>
-                        <option v-for="c in UF_COUNTRIES" :key="c.key" :value="c.key">{{ c.label }}</option>
+                        <option v-for="c in catalogData.countries" :key="c.id" :value="c.id">{{ c.name }}</option>
                     </select>
                 </AppFormField>
 
                 <AppFormField label="Estado" :col="4">
                     <select
                         class="uf-select"
-                        :value="data.addresses?.[index]?.state ?? ''"
-                        @change="updateAddress(index, { state: ($event.target as HTMLSelectElement).value })"
+                        :value="data.addresses?.[index]?.state_id ?? ''"
+                        @change="updateAddress(index, { state_id: parseInt(($event.target as HTMLSelectElement).value) || undefined })"
                     >
                         <option value="">Seleccionar</option>
-                        <option v-for="s in UF_STATES_VE" :key="s" :value="s">{{ s }}</option>
-                    </select>
-                </AppFormField>
-
-                <AppFormField label="Municipio" :col="4">
-                    <select
-                        class="uf-select"
-                        :value="data.addresses?.[index]?.muni ?? ''"
-                        @change="updateAddress(index, { muni: ($event.target as HTMLSelectElement).value })"
-                    >
-                        <option value="">Seleccionar</option>
-                        <option v-for="m in UF_MUNICIPIOS_DTTO" :key="m" :value="m">{{ m }}</option>
-                    </select>
-                </AppFormField>
-
-                <AppFormField label="Parroquia" :col="4">
-                    <select
-                        class="uf-select"
-                        :value="data.addresses?.[index]?.parish ?? ''"
-                        @change="updateAddress(index, { parish: ($event.target as HTMLSelectElement).value })"
-                    >
-                        <option value="">Seleccionar</option>
-                        <option v-for="p in UF_PARROQUIAS" :key="p" :value="p">{{ p }}</option>
-                    </select>
-                </AppFormField>
-
-                <AppFormField label="Zona" :col="4">
-                    <select
-                        class="uf-select"
-                        :value="data.addresses?.[index]?.zone ?? ''"
-                        @change="updateAddress(index, { zone: ($event.target as HTMLSelectElement).value })"
-                    >
-                        <option value="">Seleccionar</option>
-                        <option v-for="z in UF_ZONES" :key="z" :value="z">{{ z }}</option>
+                        <option v-for="s in statesForAddress(index)" :key="s.id" :value="s.id">{{ s.name }}</option>
                     </select>
                 </AppFormField>
 

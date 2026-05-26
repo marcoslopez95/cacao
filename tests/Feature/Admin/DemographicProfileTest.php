@@ -42,7 +42,7 @@ test('admin sees religion_id in response', function () {
     );
 
     $response->assertSuccessful();
-    $response->assertJsonPath('data.religion_id', $religion->id);
+    $response->assertJsonPath('religion_id', $religion->id);
 });
 
 test('non-admin student gets 403 on demographic-profile upsert', function () {

@@ -2,18 +2,17 @@
 
 namespace App\Policies;
 
-use App\Models\StudentBenefit;
 use App\Models\User;
 
 class StudentBenefitPolicy
 {
     public function create(User $user): bool
     {
-        return $user->hasAnyRole(['Administrador', 'Coordinador']);
+        return $user->hasRole('Coordinador');
     }
 
-    public function delete(User $user, StudentBenefit $studentBenefit): bool
+    public function delete(User $user): bool
     {
-        return $user->hasAnyRole(['Administrador', 'Coordinador']);
+        return $user->hasRole('Coordinador');
     }
 }

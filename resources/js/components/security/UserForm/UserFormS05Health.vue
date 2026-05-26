@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { UserFormData } from '@/types/userForm'
-import { UF_BLOOD, UF_DISABILITY_TYPES, UF_INSURANCE, UF_COUNTRIES } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppToggleCard from '@/components/UI/AppToggleCard.vue'
 import AppTelInput from '@/components/UI/AppTelInput.vue'
@@ -9,6 +9,7 @@ import AppTelInput from '@/components/UI/AppTelInput.vue'
 const props = defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+    catalogData: UserFormCatalogData
 }>()
 
 const imc = computed(() => {
@@ -26,11 +27,11 @@ const imc = computed(() => {
             <AppFormField label="Grupo sanguíneo" :col="3">
                 <select
                     class="uf-select"
-                    :value="data.bloodType ?? ''"
-                    @change="setField('bloodType', ($event.target as HTMLSelectElement).value)"
+                    :value="data.bloodTypeId ?? ''"
+                    @change="setField('bloodTypeId', Number(($event.target as HTMLSelectElement).value) || undefined)"
                 >
                     <option value="">Seleccionar</option>
-                    <option v-for="b in UF_BLOOD" :key="b" :value="b">{{ b }}</option>
+                    <option v-for="item in catalogData.bloodTypes" :key="item.id" :value="item.id">{{ item.name }}</option>
                 </select>
             </AppFormField>
             <AppFormField label="Peso (kg)" :col="3">
@@ -78,11 +79,11 @@ const imc = computed(() => {
                 <AppFormField label="Tipo de discapacidad" :col="6">
                     <select
                         class="uf-select"
-                        :value="data.disabilityType ?? ''"
-                        @change="setField('disabilityType', ($event.target as HTMLSelectElement).value)"
+                        :value="data.disabilityTypeId ?? ''"
+                        @change="setField('disabilityTypeId', Number(($event.target as HTMLSelectElement).value) || undefined)"
                     >
                         <option value="">Seleccionar</option>
-                        <option v-for="d in UF_DISABILITY_TYPES" :key="d" :value="d">{{ d }}</option>
+                        <option v-for="item in catalogData.disabilityTypes" :key="item.id" :value="item.id">{{ item.name }}</option>
                     </select>
                 </AppFormField>
                 <AppFormField label="Descripción" optional :col="6">
@@ -137,11 +138,11 @@ const imc = computed(() => {
                 <AppFormField label="Tipo de seguro" :col="6">
                     <select
                         class="uf-select"
-                        :value="data.insuranceType ?? ''"
-                        @change="setField('insuranceType', ($event.target as HTMLSelectElement).value)"
+                        :value="data.insuranceTypeId ?? ''"
+                        @change="setField('insuranceTypeId', Number(($event.target as HTMLSelectElement).value) || undefined)"
                     >
                         <option value="">Seleccionar</option>
-                        <option v-for="ins in UF_INSURANCE" :key="ins" :value="ins">{{ ins }}</option>
+                        <option v-for="item in catalogData.insuranceTypes" :key="item.id" :value="item.id">{{ item.name }}</option>
                     </select>
                 </AppFormField>
             </template>

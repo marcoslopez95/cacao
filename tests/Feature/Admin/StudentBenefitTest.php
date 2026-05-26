@@ -15,16 +15,16 @@ beforeEach(function () {
     $this->withoutVite();
     app(PermissionRegistrar::class)->forgetCachedPermissions();
     (new SocioeconomicCatalogsSeeder)->run();
-    Role::firstOrCreate(['name' => 'Administrador', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
 });
 
 /**
- * Returns an admin User with the Administrador role.
+ * Returns an admin User with the Admin role (Gate::before bypass).
  */
 function adminForBenefit(): User
 {
     $user = User::factory()->create();
-    $user->assignRole('Administrador');
+    $user->assignRole('Admin');
 
     return $user;
 }

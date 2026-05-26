@@ -116,11 +116,7 @@ test('sync services sets is_available pivot', function () {
 
     $response = $this->actingAs($admin)->patchJson(
         route('security.students.housing-profile.services.sync', $student),
-        [
-            'services' => [
-                ['basic_service_id' => $service->id, 'is_available' => true],
-            ],
-        ]
+        ['services' => [$service->code]]
     );
 
     $response->assertSuccessful();

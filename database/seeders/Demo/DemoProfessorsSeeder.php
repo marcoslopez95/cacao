@@ -36,10 +36,12 @@ class DemoProfessorsSeeder extends Seeder
             $email = "prof{$profesorData['num']}@utcacao.edu.ve";
 
             // Create or get user
+            $nameParts = explode(' ', (string) $profesorData['name'], 2);
             $user = User::firstOrCreate(
                 ['email' => $email],
                 [
-                    'name' => $profesorData['name'],
+                    'first_name' => $nameParts[0],
+                    'last_name' => $nameParts[1] ?? '',
                     'password' => Hash::make('password'),
                     'email_verified_at' => now(),
                 ],

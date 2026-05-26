@@ -115,6 +115,94 @@
       "spec": "specs/user-form-connect/",
       "depends_on": ["user-form-views", "socioeconomic-health"],
       "description": "Connect the user form UI to the backend. Progressive section-by-section saves: Create.vue (S01+S02) creates the user, Edit.vue (S03-S17) saves each profile section independently via existing endpoints."
+    },
+    {
+      "id": "user-edit-auth-fix",
+      "name": "User Edit Auth Fix",
+      "status": "completed",
+      "spec": "specs/user-edit-auth-fix/",
+      "depends_on": [],
+      "description": "Fix three Admin FormRequests using hasAnyRole('Administrador') instead of Gate::authorize() — admins with only the 'Admin' role get 403 saving S10, S13, S16."
+    },
+    {
+      "id": "user-edit-catalog-ids",
+      "name": "User Edit Catalog IDs",
+      "status": "completed",
+      "spec": "specs/user-edit-catalog-ids/",
+      "depends_on": ["user-edit-auth-fix"],
+      "description": "Migrate S04/S09/S16/S17 from hardcoded string catalogs to DB-backed ID selects. S17 always 422 (BLOQUEANTE); S04/S09/S16 cause silent data loss."
+    },
+    {
+      "id": "geographic-seeder-fix",
+      "name": "Geographic Seeder Fix",
+      "status": "completed",
+      "spec": "specs/geographic-seeder-fix/",
+      "depends_on": [],
+      "description": "Countries and states tables are empty in dev. Register GeographicSeeder in DatabaseSeeder and add a test asserting catalogData.countries is non-empty."
+    },
+    {
+      "id": "role-sub-record-integrity",
+      "name": "Role Sub-Record Integrity",
+      "status": "completed",
+      "spec": "specs/role-sub-record-integrity/",
+      "depends_on": [],
+      "description": "Users with a Spatie role (Profesor/Estudiante/Representante) but no sub-record (professors/students/guardians) get silent early-return on save. Fix: firstOrCreate in Actions + artisan fix command."
+    },
+    {
+      "id": "student-academic-show",
+      "name": "Student Academic Show & Edit Wiring",
+      "status": "completed",
+      "spec": "specs/student-academic-show/",
+      "depends_on": [],
+      "description": "Wire Edit button to /security/users/{id}/edit. Implement Show page /academic/students/{id} with Level 2 academic profile: identity, career/pensum, enrollment, inscriptions history, grades, current sections with schedule."
+    },
+    {
+      "id": "user-edit-professor-s17-fix",
+      "name": "User Edit Professor S17 Fix",
+      "status": "completed",
+      "spec": "specs/user-edit-professor-s17-fix/",
+      "depends_on": [],
+      "description": "HLZ-20 (CRITICO): crash 500 cuando is_coordinator=true — StoreStaffProfileRequest usa exists:departments,id pero la tabla es coordinations. HLZ-21: fechas ISO 8601 en staff profile dejan input[type=date] vacíos. HLZ-04: PHPDoc ausente en StaffProfile."
+    },
+    {
+      "id": "user-seeder-subrecord-fix",
+      "name": "User Seeder Sub-Record Fix",
+      "status": "completed",
+      "spec": "specs/user-seeder-subrecord-fix/",
+      "depends_on": [],
+      "description": "HLZ-22: UserSeeder no llama ensureSubRecord() — cada migrate:fresh --seed reproduce usuarios demo con rol pero sin sub-registro (Professor/Student/Guardian huérfanos)."
+    },
+    {
+      "id": "user-edit-admin-fix",
+      "name": "User Edit Admin Fix",
+      "status": "completed",
+      "spec": "specs/user-edit-admin-fix/",
+      "depends_on": [],
+      "description": "HLZ-14: DemographicProfileResource usa hasAnyRole(['Administrador','Coordinador']) en lugar de incluir 'Admin' — religion_id ausente del resource para admins, cada save de S04 nullifica religion_id silenciosamente."
+    },
+    {
+      "id": "user-edit-health-fix",
+      "name": "User Edit Health Fix",
+      "status": "completed",
+      "spec": "specs/user-edit-health-fix/",
+      "depends_on": [],
+      "description": "HLZ-10/HLZ-15: S05 Salud — buildInitialFormData() lee h.blood_type?.name (objeto anidado ausente) en lugar de h.blood_type_id (ID plano presente). Dropdowns siempre vacíos en reload. Save destruye blood_type_id, disability_type_id, insurance_type_id existentes."
+    },
+    {
+      "id": "user-edit-student-sections-fix",
+      "name": "User Edit Student Sections Fix",
+      "status": "completed",
+      "spec": "specs/user-edit-student-sections-fix/",
+      "depends_on": [],
+      "description": "HLZ-11 (S11 Familia), HLZ-12 (S12 Socioeconómico), HLZ-13 (S14 Vivienda): mismo patrón string/ID en tres secciones de estudiante. S11/S12 reload y save ambos rotos. S14 reload funciona pero save silenciosamente inefectivo."
+    },
+    {
+      "id": "user-edit-s01-identity-fix",
+      "name": "User Edit S01 Identity Fix",
+      "status": "pending",
+      "spec": "specs/user-edit-s01-identity-fix/",
+      "depends_on": [],
+      "description": "HLZ-27/HLZ-28: S01 Identidad — 8 columnas de users (doc, fecha_nacimiento, género, nacionalidad, teléfonos, foto) no se exponen en UserEditResource ni se envían en el handler. Pérdida silenciosa de datos. Fix: catálogos dinámicos (documentTypes, genders, nationalities) + round-trip completo + AppDocInput refactor."
     }
   ]
 }

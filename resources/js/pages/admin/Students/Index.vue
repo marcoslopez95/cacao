@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Head } from '@inertiajs/vue3'
+import { Head, Link } from '@inertiajs/vue3'
 import Pagination from '@/components/UI/AppPagination.vue'
 import Button from '@/components/UI/AppButton.vue'
+import AppIcon from '@/components/UI/AppIcon.vue'
 import { useStudentFilters } from '@/composables/filters/useStudentFilters'
-import { index } from '@/routes/academic/students'
+import { index, show as showStudent } from '@/routes/academic/students'
+import { edit as editUser } from '@/actions/App/Http/Controllers/Security/UserController'
 import type { StudentCollection, StudentFilters, StudentLevel, StudentListItem } from '@/types/student'
 
 type Props = {
@@ -527,8 +529,12 @@ function toggleSectionLetter(l: string): void {
                                 <!-- Actions -->
                                 <td>
                                     <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-                                        <Button variant="ghost" size="sm" icon-only icon="eye" :aria-label="`Ver perfil de ${s.name}`" />
-                                        <Button variant="ghost" size="sm" icon-only icon="edit" :aria-label="`Editar ${s.name}`" />
+                                        <Link :href="showStudent({ student: s.id }).url" class="btn btn-ghost btn-sm btn-icon" :aria-label="`Ver perfil de ${s.name}`">
+                                            <AppIcon name="eye" :size="13" />
+                                        </Link>
+                                        <Link :href="editUser({ user: s.user_id }).url" class="btn btn-ghost btn-sm btn-icon" :aria-label="`Editar ${s.name}`">
+                                            <AppIcon name="edit" :size="13" />
+                                        </Link>
                                         <Button variant="ghost" size="sm" icon-only icon="more-vertical" :aria-label="`Más opciones de ${s.name}`" />
                                     </div>
                                 </td>
@@ -591,8 +597,12 @@ function toggleSectionLetter(l: string): void {
                                 <!-- Actions -->
                                 <td>
                                     <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-                                        <Button variant="ghost" size="sm" icon-only icon="eye" :aria-label="`Ver perfil de ${s.name}`" />
-                                        <Button variant="ghost" size="sm" icon-only icon="edit" :aria-label="`Editar ${s.name}`" />
+                                        <Link :href="showStudent({ student: s.id }).url" class="btn btn-ghost btn-sm btn-icon" :aria-label="`Ver perfil de ${s.name}`">
+                                            <AppIcon name="eye" :size="13" />
+                                        </Link>
+                                        <Link :href="editUser({ user: s.user_id }).url" class="btn btn-ghost btn-sm btn-icon" :aria-label="`Editar ${s.name}`">
+                                            <AppIcon name="edit" :size="13" />
+                                        </Link>
                                         <Button variant="ghost" size="sm" icon-only icon="more-vertical" :aria-label="`Más opciones de ${s.name}`" />
                                     </div>
                                 </td>
@@ -655,8 +665,12 @@ function toggleSectionLetter(l: string): void {
                                 <!-- Actions -->
                                 <td>
                                     <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-                                        <Button variant="ghost" size="sm" icon-only icon="eye" :aria-label="`Ver perfil de ${s.name}`" />
-                                        <Button variant="ghost" size="sm" icon-only icon="edit" :aria-label="`Editar ${s.name}`" />
+                                        <Link :href="showStudent({ student: s.id }).url" class="btn btn-ghost btn-sm btn-icon" :aria-label="`Ver perfil de ${s.name}`">
+                                            <AppIcon name="eye" :size="13" />
+                                        </Link>
+                                        <Link :href="editUser({ user: s.user_id }).url" class="btn btn-ghost btn-sm btn-icon" :aria-label="`Editar ${s.name}`">
+                                            <AppIcon name="edit" :size="13" />
+                                        </Link>
                                         <Button variant="ghost" size="sm" icon-only icon="more-vertical" :aria-label="`Más opciones de ${s.name}`" />
                                     </div>
                                 </td>
@@ -727,8 +741,12 @@ function toggleSectionLetter(l: string): void {
                                 <!-- Actions -->
                                 <td>
                                     <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px;">
-                                        <Button variant="ghost" size="sm" icon-only icon="eye" :aria-label="`Ver perfil de ${s.name}`" />
-                                        <Button variant="ghost" size="sm" icon-only icon="edit" :aria-label="`Editar ${s.name}`" />
+                                        <Link :href="showStudent({ student: s.id }).url" class="btn btn-ghost btn-sm btn-icon" :aria-label="`Ver perfil de ${s.name}`">
+                                            <AppIcon name="eye" :size="13" />
+                                        </Link>
+                                        <Link :href="editUser({ user: s.user_id }).url" class="btn btn-ghost btn-sm btn-icon" :aria-label="`Editar ${s.name}`">
+                                            <AppIcon name="edit" :size="13" />
+                                        </Link>
                                         <Button variant="ghost" size="sm" icon-only icon="more-vertical" :aria-label="`Más opciones de ${s.name}`" />
                                     </div>
                                 </td>

@@ -19,6 +19,6 @@ class StaffProfileController extends Controller
     {
         $profile = $this->action->handle($professor->id, new StaffProfileWrapper($request->validated()));
 
-        return new StaffProfileResource($profile->load(['contractType', 'dedicationType', 'employmentStatus', 'coordinatedDepartment']));
+        return new StaffProfileResource($profile->load(['contractType', 'dedicationType', 'employmentStatus']));
     }
 }

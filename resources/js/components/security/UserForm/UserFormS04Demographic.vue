@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { UserFormData } from '@/types/userForm'
-import { UF_COUNTRIES, UF_STATES_VE, UF_LANGUAGES, UF_RELIGIONS } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppToggleCard from '@/components/UI/AppToggleCard.vue'
 
 const props = defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+    catalogData: UserFormCatalogData
 }>()
 </script>
 
@@ -22,24 +23,28 @@ const props = defineProps<{
                     @input="setField('birthCity', ($event.target as HTMLInputElement).value)"
                 />
             </AppFormField>
-            <AppFormField label="Estado" :col="4">
-                <select
-                    class="uf-select"
-                    :value="data.birthState ?? ''"
-                    @change="setField('birthState', ($event.target as HTMLSelectElement).value)"
-                >
-                    <option value="">Seleccionar</option>
-                    <option v-for="s in UF_STATES_VE" :key="s" :value="s">{{ s }}</option>
-                </select>
-            </AppFormField>
             <AppFormField label="País de nacimiento" :col="4">
                 <select
                     class="uf-select"
-                    :value="data.birthCountry ?? ''"
-                    @change="setField('birthCountry', ($event.target as HTMLSelectElement).value)"
+                    :value="data.birthCountryId ?? ''"
+                    @change="setField('birthCountryId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
                 >
                     <option value="">Seleccionar</option>
-                    <option v-for="c in UF_COUNTRIES" :key="c.key" :value="c.key">{{ c.label }}</option>
+                    <option v-for="c in catalogData.countries" :key="c.id" :value="c.id">{{ c.name }}</option>
+                </select>
+            </AppFormField>
+            <AppFormField label="Estado de nacimiento" :col="4">
+                <select
+                    class="uf-select"
+                    :value="data.birthStateId ?? ''"
+                    @change="setField('birthStateId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
+                >
+                    <option value="">Seleccionar</option>
+                    <option
+                        v-for="s in catalogData.states.filter(s => !data.birthCountryId || s.country_id === data.birthCountryId)"
+                        :key="s.id"
+                        :value="s.id"
+                    >{{ s.name }}</option>
                 </select>
             </AppFormField>
         </div>
@@ -66,11 +71,11 @@ const props = defineProps<{
                 <AppFormField label="Lengua nativa" :col="6">
                     <select
                         class="uf-select"
-                        :value="data.nativeLang ?? ''"
-                        @change="setField('nativeLang', ($event.target as HTMLSelectElement).value)"
+                        :value="data.nativeLangId ?? ''"
+                        @change="setField('nativeLangId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
                     >
                         <option value="">Seleccionar</option>
-                        <option v-for="l in UF_LANGUAGES" :key="l" :value="l">{{ l }}</option>
+                        <option v-for="l in catalogData.languages" :key="l.id" :value="l.id">{{ l.name }}</option>
                     </select>
                 </AppFormField>
             </template>
@@ -86,11 +91,11 @@ const props = defineProps<{
                 <AppFormField label="País de procedencia" :col="6">
                     <select
                         class="uf-select"
-                        :value="data.returnFrom ?? ''"
-                        @change="setField('returnFrom', ($event.target as HTMLSelectElement).value)"
+                        :value="data.previousCountryId ?? ''"
+                        @change="setField('previousCountryId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
                     >
                         <option value="">Seleccionar</option>
-                        <option v-for="c in UF_COUNTRIES" :key="c.key" :value="c.key">{{ c.label }}</option>
+                        <option v-for="c in catalogData.countries" :key="c.id" :value="c.id">{{ c.name }}</option>
                     </select>
                 </AppFormField>
             </template>
@@ -98,11 +103,11 @@ const props = defineProps<{
             <AppFormField label="Religión" optional :col="6">
                 <select
                     class="uf-select"
-                    :value="data.religion ?? ''"
-                    @change="setField('religion', ($event.target as HTMLSelectElement).value)"
+                    :value="data.religionId ?? ''"
+                    @change="setField('religionId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
                 >
                     <option value="">Seleccionar</option>
-                    <option v-for="r in UF_RELIGIONS" :key="r" :value="r">{{ r }}</option>
+                    <option v-for="r in catalogData.religions" :key="r.id" :value="r.id">{{ r.name }}</option>
                 </select>
             </AppFormField>
 

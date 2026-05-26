@@ -149,6 +149,13 @@ class UserWrapper extends Collection
             'first_name' => $this->getFirstName(),
             'last_name' => $this->getLastName(),
             'email' => $this->getEmail(),
+            'document_type_id' => $this->getDocumentTypeId(),
+            'document_number' => $this->getDocumentNumber(),
+            'birth_date' => $this->getBirthDate(),
+            'gender_id' => $this->getGenderId(),
+            'nationality_id' => $this->getNationalityId(),
+            'phone_primary' => $this->getPhonePrimary(),
+            'phone_secondary' => $this->getPhoneSecondary(),
         ];
     }
 }

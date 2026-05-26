@@ -332,6 +332,45 @@ export interface StaffProfileData {
 }
 
 // ---------------------------------------------------------------------------
+// Catalog data passed from the server for dropdown options
+// ---------------------------------------------------------------------------
+
+export interface UserFormCatalogData {
+    countries: Array<{ id: number; name: string; iso2: string }>
+    states: Array<{ id: number; name: string; country_id: number }>
+    languages: Array<{ id: number; name: string; code: string }>
+    languageLevels: Array<{ id: number; name: string; code: string }>
+    benefits: Array<{ id: number; name: string; code: string }>
+    // Added for S04, S09, S16, S17 catalog migration
+    religions: Array<{ id: number; name: string }>
+    institutionTypes: Array<{ id: number; name: string }>
+    transferReasons: Array<{ id: number; name: string }>
+    digitalLevels: Array<{ id: number; name: string }>
+    educationLevels: Array<{ id: number; name: string }>
+    maritalStatuses: Array<{ id: number; name: string }>
+    contractTypes: Array<{ id: number; name: string }>
+    dedicationTypes: Array<{ id: number; name: string }>
+    employmentStatuses: Array<{ id: number; name: string }>
+    departments: Array<{ id: number; name: string }>
+    bloodTypes: Array<{ id: number; name: string }>
+    disabilityTypes: Array<{ id: number; name: string }>
+    insuranceTypes: Array<{ id: number; name: string }>
+    // S11 — Familia
+    livingArrangements: Array<{ id: number; name: string; code: string }>
+    householdHeadTypes: Array<{ id: number; name: string; code: string }>
+    // S12 — Socioeconómico
+    incomeRanges: Array<{ id: number; name: string; code: string }>
+    incomeSources: Array<{ id: number; name: string; code: string }>
+    employmentTypes: Array<{ id: number; name: string; code: string }>
+    // S14 — Vivienda
+    housingTypes: Array<{ id: number; name: string; code: string }>
+    tenureTypes: Array<{ id: number; name: string; code: string }>
+    constructionMaterials: Array<{ id: number; name: string; code: string }>
+    commuteTimes: Array<{ id: number; name: string; code: string }>
+    transportTypes: Array<{ id: number; name: string; code: string }>
+}
+
+// ---------------------------------------------------------------------------
 // Main Inertia props interface for the Edit page
 // ---------------------------------------------------------------------------
 
@@ -359,4 +398,5 @@ export interface UserEditProps {
         id: number
         profile: GuardianProfileData | null
     }
+    catalogData: UserFormCatalogData
 }

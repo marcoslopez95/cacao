@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { UserFormData } from '@/types/userForm'
-import { UF_INCOME_RANGES, UF_INCOME_SOURCES, UF_EMPLOYMENT_TYPES, UF_COUNTRIES } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppToggleCard from '@/components/UI/AppToggleCard.vue'
 
 const props = defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+    catalogData: UserFormCatalogData
 }>()
 </script>
 
@@ -15,15 +16,23 @@ const props = defineProps<{
         <p class="uf-sub-title">Ingresos del hogar</p>
         <div class="uf-grid">
             <AppFormField label="Rango de ingreso mensual" :col="6">
-                <select class="uf-select" :value="data.incomeRange ?? ''" @change="setField('incomeRange', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.incomeRangeId ?? ''"
+                    @change="setField('incomeRangeId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="r in UF_INCOME_RANGES" :key="r" :value="r">{{ r }}</option>
+                    <option v-for="r in catalogData.incomeRanges" :key="r.id" :value="r.id">{{ r.name }}</option>
                 </select>
             </AppFormField>
             <AppFormField label="Fuente principal de ingreso" :col="6">
-                <select class="uf-select" :value="data.incomeSource ?? ''" @change="setField('incomeSource', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.incomeSourceId ?? ''"
+                    @change="setField('incomeSourceId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="s in UF_INCOME_SOURCES" :key="s" :value="s">{{ s }}</option>
+                    <option v-for="s in catalogData.incomeSources" :key="s.id" :value="s.id">{{ s.name }}</option>
                 </select>
             </AppFormField>
             <AppFormField label="Personas que aportan ingresos" :col="6">
@@ -37,9 +46,13 @@ const props = defineProps<{
             </AppFormField>
             <template v-if="data.remit">
                 <AppFormField label="País de origen de las remesas" :col="6">
-                    <select class="uf-select" :value="data.remitFrom ?? ''" @change="setField('remitFrom', ($event.target as HTMLSelectElement).value)">
+                    <select
+                        class="uf-select"
+                        :value="data.remitFromId ?? ''"
+                        @change="setField('remitFromId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+                    >
                         <option value="">Seleccionar</option>
-                        <option v-for="c in UF_COUNTRIES" :key="c.key" :value="c.key">{{ c.label }}</option>
+                        <option v-for="c in catalogData.countries" :key="c.id" :value="c.id">{{ c.name }}</option>
                     </select>
                 </AppFormField>
             </template>
@@ -54,9 +67,13 @@ const props = defineProps<{
             </AppFormField>
             <template v-if="data.studentWorks">
                 <AppFormField label="Tipo de empleo" :col="6">
-                    <select class="uf-select" :value="data.employmentType ?? ''" @change="setField('employmentType', ($event.target as HTMLSelectElement).value)">
+                    <select
+                        class="uf-select"
+                        :value="data.employmentTypeId ?? ''"
+                        @change="setField('employmentTypeId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+                    >
                         <option value="">Seleccionar</option>
-                        <option v-for="t in UF_EMPLOYMENT_TYPES" :key="t" :value="t">{{ t }}</option>
+                        <option v-for="t in catalogData.employmentTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
                     </select>
                 </AppFormField>
                 <AppFormField label="Horas semanales" :col="6">

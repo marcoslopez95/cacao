@@ -44,6 +44,18 @@ Presentar cada UC propuesto y esperar confirmación antes de guardarlo:
 **Última verificación:** YYYY-MM-DD
 ```
 
+**Regla obligatoria para formularios:** todo formulario con un botón de guardar/submit visible DEBE tener al menos estos UCs:
+- UC de **carga**: la página/sección carga sin errores JS
+- UC de **guardado exitoso**: llenar campos válidos → click guardar → verificar que se produce un request HTTP y los datos persisten en DB
+- UC de **guardado con error**: enviar datos inválidos → verificar que el error se muestra al usuario
+
+Si el botón existe pero el handler es un no-op (`Promise.resolve()`, `() => {}`, o similar), documentarlo como hallazgo CRÍTICO — un botón visible que no hace nada es una funcionalidad rota.
+
+**Cómo verificar si un handler está wired:**
+1. Leer `useUserEditForm.ts` (o el composable equivalente) — buscar `handlers` y verificar que la sección tiene una función real (no `() => Promise.resolve()`)
+2. Verificar que existe un endpoint backend correspondiente (no solo en frontend)
+3. Verificar que el endpoint retorna sin redirigir (un redirect navegaría al usuario fuera del formulario)
+
 ### 4. Ejecutar tests existentes
 
 Si existen tests Dusk para el dominio, correrlos y reportar resultado al humano.
@@ -74,3 +86,18 @@ Presentar resumen de hallazgos y sugerir acciones concretas. El humano decide si
 - No crea features ni specs del arnés — solo documenta hallazgos en `specs/qa/backlog.md`
 - No invoca al `leader` directamente — reporta al humano y espera instrucción
 - Si encuentra algo crítico durante la auditoría, lo señala explícitamente con prioridad `CRÍTICO` y recomienda acción urgente
+
+## Regla de cobertura con datos reales
+
+Al auditar cualquier flujo que involucre relaciones Eloquent (idiomas, beneficios, direcciones, inscripciones, documentos, etc.), **siempre crear UCs en dos variantes**:
+
+1. **Sin datos relacionados** — entidad con la colección vacía (0 registros)
+2. **Con datos reales** — entidad con ≥1 registro en la relación
+
+**Por qué es crítico:** las colecciones vacías ocultan bugs de serialización. Un `ResourceCollection` sin `.resolve()` serializa como `{ data: [] }` en Inertia en vez de `[]`, lo que rompe `.map()` en el frontend — pero solo cuando hay registros. Con colección vacía el bug pasa desapercibido.
+
+**Ejemplo de UC correcto para un flujo de edición de estudiante:**
+- UC-A: Editar estudiante sin idiomas → página carga, S10 muestra lista vacía
+- UC-B: Editar estudiante con ≥1 idioma → página carga, S10 muestra los idiomas existentes sin error JS
+
+Estos UCs se convierten en acceptance tests que verifican que las props Inertia llegan como arrays `[]` y no como objetos `{ data: [] }`.

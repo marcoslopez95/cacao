@@ -11,6 +11,15 @@ class HealthProfileWrapper extends Collection
         parent::__construct($validated);
     }
 
+    /**
+     * Returns true when the 'blood_type_id' key was present in the validated payload,
+     * regardless of whether its value is null or a valid integer.
+     */
+    public function hasBloodTypeId(): bool
+    {
+        return $this->has('blood_type_id');
+    }
+
     public function getBloodTypeId(): ?int
     {
         $value = $this->get('blood_type_id');
@@ -37,6 +46,15 @@ class HealthProfileWrapper extends Collection
         $value = $this->get('has_disability');
 
         return $value !== null ? (bool) $value : null;
+    }
+
+    /**
+     * Returns true when the 'disability_type_id' key was present in the validated payload,
+     * regardless of whether its value is null or a valid integer.
+     */
+    public function hasDisabilityTypeId(): bool
+    {
+        return $this->has('disability_type_id');
     }
 
     public function getDisabilityTypeId(): ?int
@@ -83,6 +101,15 @@ class HealthProfileWrapper extends Collection
         $value = $this->get('has_medical_insurance');
 
         return $value !== null ? (bool) $value : null;
+    }
+
+    /**
+     * Returns true when the 'insurance_type_id' key was present in the validated payload,
+     * regardless of whether its value is null or a valid integer.
+     */
+    public function hasInsuranceTypeId(): bool
+    {
+        return $this->has('insurance_type_id');
     }
 
     public function getInsuranceTypeId(): ?int

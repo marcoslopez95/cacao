@@ -7,12 +7,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DemographicProfileResource extends JsonResource
 {
+    /** @var string|null Remove the 'data' wrapper so callers can access fields directly. */
+    public static $wrap = null;
+
     /**
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
     {
-        $isPrivileged = $request->user()->hasAnyRole(['Administrador', 'Coordinador']);
+        $isPrivileged = $request->user()->hasAnyRole(['Admin', 'Administrador', 'Coordinador']);
 
         return [
             'id' => $this->id,

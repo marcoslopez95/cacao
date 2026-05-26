@@ -1,20 +1,25 @@
 <script setup lang="ts">
 import type { UserFormData } from '@/types/userForm'
-import { UF_MARITAL, UF_LIVING, UF_HOUSEHOLD_HEAD } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 
 const props = defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+    catalogData: UserFormCatalogData
 }>()
 </script>
 
 <template>
     <div class="uf-grid">
         <AppFormField label="Estado civil del representante" :col="6">
-            <select class="uf-select" :value="data.repMarital ?? ''" @change="setField('repMarital', ($event.target as HTMLSelectElement).value)">
+            <select
+                class="uf-select"
+                :value="data.repMaritalId ?? ''"
+                @change="setField('repMaritalId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+            >
                 <option value="">Seleccionar</option>
-                <option v-for="m in UF_MARITAL" :key="m" :value="m">{{ m }}</option>
+                <option v-for="m in catalogData.maritalStatuses" :key="m.id" :value="m.id">{{ m.name }}</option>
             </select>
         </AppFormField>
 
@@ -31,16 +36,24 @@ const props = defineProps<{
         </AppFormField>
 
         <AppFormField label="Arreglo de convivencia" :col="8">
-            <select class="uf-select" :value="data.living ?? ''" @change="setField('living', ($event.target as HTMLSelectElement).value)">
+            <select
+                class="uf-select"
+                :value="data.livingId ?? ''"
+                @change="setField('livingId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+            >
                 <option value="">Seleccionar</option>
-                <option v-for="l in UF_LIVING" :key="l" :value="l">{{ l }}</option>
+                <option v-for="l in catalogData.livingArrangements" :key="l.id" :value="l.id">{{ l.name }}</option>
             </select>
         </AppFormField>
 
         <AppFormField label="Tipo de jefe del hogar" :col="6">
-            <select class="uf-select" :value="data.householdHead ?? ''" @change="setField('householdHead', ($event.target as HTMLSelectElement).value)">
+            <select
+                class="uf-select"
+                :value="data.householdHeadId ?? ''"
+                @change="setField('householdHeadId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+            >
                 <option value="">Seleccionar</option>
-                <option v-for="h in UF_HOUSEHOLD_HEAD" :key="h" :value="h">{{ h }}</option>
+                <option v-for="h in catalogData.householdHeadTypes" :key="h.id" :value="h.id">{{ h.name }}</option>
             </select>
         </AppFormField>
 

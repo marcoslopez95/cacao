@@ -76,6 +76,8 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::patch('users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
     Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
+    Route::patch('users/{user}/identity', [UserController::class, 'updateIdentity'])->name('users.identity.update');
+    Route::post('users/{user}/credentials', [UserController::class, 'updateCredentials'])->name('users.credentials.update');
 
     // Invitations
     Route::post('invitations', [InvitationController::class, 'store'])->name('invitations.store');
@@ -164,6 +166,7 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
 });
 
 Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->group(function () {
+    Route::get('students/{student}', [StudentController::class, 'show'])->name('students.show');
     Route::get('students', [StudentController::class, 'index'])->name('students.index');
 
     Route::put('professors/{professor}/staff-profile', [StaffProfileController::class, 'upsert'])

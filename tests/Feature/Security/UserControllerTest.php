@@ -292,15 +292,20 @@ test('user with users.update can view edit page', function () {
             ->has('user')
             ->has('addresses')
             ->has('documents')
+            ->has('catalogData.countries')
+            ->has('catalogData.states')
+            ->has('catalogData.languages')
+            ->has('catalogData.languageLevels')
+            ->has('catalogData.benefits')
         );
 });
 
 test('edit props include user data and sub-collections', function () {
-    $actor  = userWithUserPerm('users.update');
+    $actor = userWithUserPerm('users.update');
     $target = User::factory()->create([
         'first_name' => 'Ana',
-        'last_name'  => 'García',
-        'email'      => 'ana@test.com',
+        'last_name' => 'García',
+        'email' => 'ana@test.com',
     ]);
 
     $this->actingAs($actor)
@@ -319,10 +324,10 @@ test('store redirects to edit after creating user', function () {
 
     $response = $this->actingAs($actor)
         ->post('/security/users', [
-            'first_name'   => 'Nuevo',
-            'last_name'    => 'Usuario',
-            'email'        => 'nuevo@test.com',
-            'role'         => 'Profesor',
+            'first_name' => 'Nuevo',
+            'last_name' => 'Usuario',
+            'email' => 'nuevo@test.com',
+            'role' => 'Profesor',
             'password_mode' => 'link',
         ]);
 
@@ -335,10 +340,10 @@ test('store with invalid password_mode returns validation error', function () {
 
     $this->actingAs($actor)
         ->post('/security/users', [
-            'first_name'    => 'Test',
-            'last_name'     => 'User',
-            'email'         => 'test@test.com',
-            'role'          => 'Profesor',
+            'first_name' => 'Test',
+            'last_name' => 'User',
+            'email' => 'test@test.com',
+            'role' => 'Profesor',
             'password_mode' => 'invalid_mode',
         ])
         ->assertSessionHasErrors('password_mode');
@@ -349,10 +354,10 @@ test('store with manual password_mode requires password', function () {
 
     $this->actingAs($actor)
         ->post('/security/users', [
-            'first_name'    => 'Test',
-            'last_name'     => 'User',
-            'email'         => 'test@test.com',
-            'role'          => 'Profesor',
+            'first_name' => 'Test',
+            'last_name' => 'User',
+            'email' => 'test@test.com',
+            'role' => 'Profesor',
             'password_mode' => 'manual',
         ])
         ->assertSessionHasErrors('password');
@@ -365,11 +370,107 @@ test('store with link password_mode does not require password', function () {
 
     $this->actingAs($actor)
         ->post('/security/users', [
-            'first_name'    => 'Link',
-            'last_name'     => 'User',
-            'email'         => 'link@test.com',
-            'role'          => 'Profesor',
+            'first_name' => 'Link',
+            'last_name' => 'User',
+            'email' => 'link@test.com',
+            'role' => 'Profesor',
             'password_mode' => 'link',
         ])
         ->assertSessionDoesntHaveErrors('password');
+});
+
+// ---------------------------------------------------------------------------
+// updateIdentity (PATCH /security/users/{user}/identity)
+// ---------------------------------------------------------------------------
+
+test('updateIdentity returns updated user resource', function () {
+    Role::firstOrCreate(['name' => 'Estudiante', 'guard_name' => 'web']);
+    $actor = userWithUserPerm('users.update');
+    $target = User::factory()->create(['first_name' => 'Old', 'last_name' => 'Name', 'email' => 'old@test.com']);
+    $target->assignRole('Profesor');
+
+    $this->actingAs($actor)
+        ->patchJson("/security/users/{$target->id}/identity", [
+            'first_name' => 'New',
+            'last_name' => 'Name',
+            'email' => 'new@test.com',
+            'roles' => ['professor'],
+        ])
+        ->assertOk()
+        ->assertJsonPath('data.first_name', 'New')
+        ->assertJsonPath('data.email', 'new@test.com');
+});
+
+test('updateIdentity maps frontend role keys to spatie names', function () {
+    Role::firstOrCreate(['name' => 'Estudiante', 'guard_name' => 'web']);
+    $actor = userWithUserPerm('users.update');
+    $target = User::factory()->create();
+
+    $this->actingAs($actor)
+        ->patchJson("/security/users/{$target->id}/identity", [
+            'first_name' => 'Test',
+            'last_name' => 'User',
+            'email' => 'mapped@test.com',
+            'roles' => ['student'],
+        ])
+        ->assertOk();
+
+    expect($target->fresh()->hasRole('Estudiante'))->toBeTrue();
+});
+
+test('updateIdentity requires users.update permission', function () {
+    $actor = User::factory()->create();
+    $target = User::factory()->create();
+
+    $this->actingAs($actor)
+        ->patchJson("/security/users/{$target->id}/identity", [
+            'first_name' => 'X',
+            'last_name' => 'Y',
+            'email' => 'x@test.com',
+        ])
+        ->assertForbidden();
+});
+
+// ---------------------------------------------------------------------------
+// updateCredentials (POST /security/users/{user}/credentials)
+// ---------------------------------------------------------------------------
+
+test('updateCredentials with random mode returns ok without password', function () {
+    $actor = userWithUserPerm('users.reset-password');
+    $target = User::factory()->create();
+
+    $this->actingAs($actor)
+        ->postJson("/security/users/{$target->id}/credentials", [
+            'password_mode' => 'random',
+        ])
+        ->assertOk()
+        ->assertJsonPath('ok', true);
+});
+
+test('updateCredentials with manual mode requires password', function () {
+    $actor = userWithUserPerm('users.reset-password');
+    $target = User::factory()->create();
+
+    $this->actingAs($actor)
+        ->postJson("/security/users/{$target->id}/credentials", [
+            'password_mode' => 'manual',
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('password');
+});
+
+test('updateCredentials with manual mode changes the password', function () {
+    $actor = userWithUserPerm('users.reset-password');
+    $target = User::factory()->create();
+
+    $this->actingAs($actor)
+        ->postJson("/security/users/{$target->id}/credentials", [
+            'password_mode' => 'manual',
+            'password' => 'NewPass123!',
+            'password_confirmation' => 'NewPass123!',
+        ])
+        ->assertOk()
+        ->assertJsonPath('ok', true);
+
+    expect(Hash::check('NewPass123!', $target->fresh()->password))->toBeTrue();
 });

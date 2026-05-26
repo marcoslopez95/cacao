@@ -27,7 +27,7 @@ class SocioeconomicProfileResource extends JsonResource
             'scholarship_name' => $this->scholarship_name,
             'has_institutional_benefit' => $this->has_institutional_benefit,
             'recorded_by' => $this->recorded_by,
-            'study_date' => $this->study_date,
+            'study_date' => $this->study_date?->format('Y-m-d'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'income_range' => $this->whenLoaded('incomeRange', fn () => $this->incomeRange ? [

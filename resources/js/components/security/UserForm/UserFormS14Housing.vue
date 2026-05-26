@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { UserFormData } from '@/types/userForm'
-import { UF_HOUSING, UF_TENURE, UF_CONSTRUCTION, UF_COMMUTE, UF_TRANSPORT } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 
 const props = defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+    catalogData: UserFormCatalogData
 }>()
 
 const ratio = computed(() => {
@@ -29,21 +30,33 @@ const SERVICES: Array<{ key: keyof UserFormData; label: string }> = [
         <p class="uf-sub-title">Tipo y tenencia</p>
         <div class="uf-grid">
             <AppFormField label="Tipo de vivienda" :col="4">
-                <select class="uf-select" :value="data.housing ?? ''" @change="setField('housing', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.housingId ?? ''"
+                    @change="setField('housingId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="h in UF_HOUSING" :key="h" :value="h">{{ h }}</option>
+                    <option v-for="h in catalogData.housingTypes" :key="h.id" :value="h.id">{{ h.name }}</option>
                 </select>
             </AppFormField>
             <AppFormField label="Tenencia" :col="4">
-                <select class="uf-select" :value="data.tenure ?? ''" @change="setField('tenure', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.tenureId ?? ''"
+                    @change="setField('tenureId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="t in UF_TENURE" :key="t" :value="t">{{ t }}</option>
+                    <option v-for="t in catalogData.tenureTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
                 </select>
             </AppFormField>
             <AppFormField label="Tipo de construcción" :col="4">
-                <select class="uf-select" :value="data.construction ?? ''" @change="setField('construction', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.constructionId ?? ''"
+                    @change="setField('constructionId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="c in UF_CONSTRUCTION" :key="c" :value="c">{{ c }}</option>
+                    <option v-for="c in catalogData.constructionMaterials" :key="c.id" :value="c.id">{{ c.name }}</option>
                 </select>
             </AppFormField>
         </div>
@@ -74,15 +87,23 @@ const SERVICES: Array<{ key: keyof UserFormData; label: string }> = [
         <p class="uf-sub-title">Traslado</p>
         <div class="uf-grid">
             <AppFormField label="Tiempo de traslado" :col="6">
-                <select class="uf-select" :value="data.commute ?? ''" @change="setField('commute', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.commuteId ?? ''"
+                    @change="setField('commuteId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="c in UF_COMMUTE" :key="c" :value="c">{{ c }}</option>
+                    <option v-for="c in catalogData.commuteTimes" :key="c.id" :value="c.id">{{ c.name }}</option>
                 </select>
             </AppFormField>
             <AppFormField label="Medio de transporte" :col="6">
-                <select class="uf-select" :value="data.transport ?? ''" @change="setField('transport', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.transportId ?? ''"
+                    @change="setField('transportId', Number(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="t in UF_TRANSPORT" :key="t" :value="t">{{ t }}</option>
+                    <option v-for="t in catalogData.transportTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
                 </select>
             </AppFormField>
         </div>

@@ -55,7 +55,8 @@ class DemoStudentsSeeder extends Seeder
                 $user = User::firstOrCreate(
                     ['email' => $email],
                     [
-                        'name' => fake()->name(),
+                        'first_name' => fake()->firstName(),
+                        'last_name' => fake()->lastName().' '.fake()->lastName(),
                         'password' => Hash::make('password'),
                         'email_verified_at' => now(),
                     ],
@@ -86,7 +87,8 @@ class DemoStudentsSeeder extends Seeder
             $repUser = User::firstOrCreate(
                 ['email' => $repEmail],
                 [
-                    'name' => fake()->name(),
+                    'first_name' => fake()->firstName(),
+                    'last_name' => fake()->lastName().' '.fake()->lastName(),
                     'password' => Hash::make('password'),
                     'email_verified_at' => now(),
                 ],
@@ -103,7 +105,8 @@ class DemoStudentsSeeder extends Seeder
             $secUser = User::firstOrCreate(
                 ['email' => $secEmail],
                 [
-                    'name' => fake()->name(),
+                    'first_name' => fake()->firstName(),
+                    'last_name' => fake()->lastName().' '.fake()->lastName(),
                     'password' => Hash::make('password'),
                     'email_verified_at' => now(),
                 ],

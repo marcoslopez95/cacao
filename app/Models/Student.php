@@ -137,4 +137,14 @@ class Student extends Model
             ->withPivot(['is_active', 'since', 'until'])
             ->using(StudentBenefit::class);
     }
+
+    public function studentLanguages(): HasMany
+    {
+        return $this->hasMany(StudentLanguage::class);
+    }
+
+    public function studentBenefits(): HasMany
+    {
+        return $this->hasMany(StudentBenefit::class);
+    }
 }

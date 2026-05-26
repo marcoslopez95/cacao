@@ -9,9 +9,11 @@ use App\Http\Resources\Admin\StudentBenefitResource;
 use App\Http\Wrappers\Admin\StudentBenefitWrapper;
 use App\Models\Catalogs\InstitutionalBenefit;
 use App\Models\Student;
+use App\Models\StudentBenefit;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class StudentBenefitController extends Controller
 {
@@ -28,7 +30,7 @@ class StudentBenefitController extends Controller
 
     public function destroy(Request $request, Student $student, InstitutionalBenefit $benefit): Response
     {
-        abort_unless($request->user()->hasAnyRole(['Administrador', 'Coordinador']), 403);
+        Gate::authorize('delete', StudentBenefit::class);
 
         DB::table('student_benefits')
             ->where('student_id', $student->id)

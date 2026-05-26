@@ -2,6 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Enums\EducationalLevel;
+use App\Models\Guardian;
+use App\Models\Professor;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +22,7 @@ class UserSeeder extends Seeder
 
             if ($existing) {
                 $existing->syncRoles([$userData['role']]);
+                $this->ensureSubRecord($existing, $userData['role']);
 
                 continue;
             }
@@ -33,6 +38,20 @@ class UserSeeder extends Seeder
             ]);
 
             $user->syncRoles([$userData['role']]);
+            $this->ensureSubRecord($user, $userData['role']);
         }
+    }
+
+    private function ensureSubRecord(User $user, string $roleName): void
+    {
+        match ($roleName) {
+            'Profesor' => Professor::firstOrCreate(['user_id' => $user->id]),
+            'Estudiante' => Student::firstOrCreate(
+                ['user_id' => $user->id],
+                ['educational_level' => EducationalLevel::University]
+            ),
+            'Representante' => Guardian::firstOrCreate(['user_id' => $user->id]),
+            default => null,
+        };
     }
 }

@@ -5,6 +5,8 @@ import type { UserFormData } from '@/types/userForm'
 import { UF_SECTIONS, UF_TABS } from '@/types/userFormCatalogs'
 import type { RoleKey, TabDef } from '@/types/userFormCatalogs'
 import type { SectionStatus } from '@/composables/forms/useUserFormPage'
+import { update as updateIdentity } from '@/routes/security/users/identity'
+import { update as updateCredentials } from '@/routes/security/users/credentials'
 import { store as storeAddress, update as updateAddress, destroy as destroyAddress } from '@/routes/security/users/addresses'
 import { upsert as upsertDemographic } from '@/routes/security/users/demographic-profile'
 import { upsert as upsertHealth } from '@/routes/security/users/health-profile'
@@ -149,14 +151,14 @@ export function useUserEditForm(props: UserEditProps) {
         const userId = props.user.id
         await http.transform(() => ({
             birth_city:           formData.birthCity          ?? null,
-            birth_state:          formData.birthState         ?? null,
-            birth_country:        formData.birthCountry       ?? null,
+            birth_state_id:       formData.birthStateId       ?? null,
+            birth_country_id:     formData.birthCountryId     ?? null,
             is_indigenous:        formData.indigenous         ?? false,
             indigenous_community: formData.indigenousComm     ?? null,
-            native_language:      formData.nativeLang         ?? null,
+            native_language_id:   formData.nativeLangId       ?? null,
             is_returned_migrant:  formData.returnedMigrant    ?? false,
-            previous_country:     formData.returnFrom         ?? null,
-            religion:             formData.religion           ?? null,
+            previous_country_id:  formData.previousCountryId  ?? null,
+            religion_id:          formData.religionId         ?? null,
             practices_sport:      formData.sport              ?? false,
             sport:                formData.sportName          ?? null,
             cultural_activities:  formData.culture            ?? null,
@@ -166,11 +168,11 @@ export function useUserEditForm(props: UserEditProps) {
     async function saveHealth(): Promise<void> {
         const userId = props.user.id
         await http.transform(() => ({
-            blood_type:                 formData.bloodType        ?? null,
+            blood_type_id:              formData.bloodTypeId      ?? null,
             weight_kg:                  formData.weight           ? Number(formData.weight) : null,
             height_cm:                  formData.height           ? Number(formData.height) : null,
             has_disability:             formData.disability       ?? false,
-            disability_type:            formData.disabilityType   ?? null,
+            disability_type_id:         formData.disabilityTypeId ?? null,
             disability_description:     formData.disabilityDesc   ?? null,
             has_special_needs:          formData.specialNeeds     ?? false,
             special_needs_description:  formData.specialNeedsDesc ?? null,
@@ -178,7 +180,7 @@ export function useUserEditForm(props: UserEditProps) {
             regular_medication:         formData.medication       ?? null,
             allergies:                  formData.allergies        ?? null,
             has_medical_insurance:      formData.insurance        ?? false,
-            insurance_type:             formData.insuranceType    ?? null,
+            insurance_type_id:          formData.insuranceTypeId  ?? null,
             emergency_contact_name:     formData.emergencyName    ?? null,
             emergency_contact_phone:    formData.emergencyPhone   ?? null,
             emergency_contact_relation: formData.emergencyRel     ?? null,
@@ -189,36 +191,37 @@ export function useUserEditForm(props: UserEditProps) {
         if (!props.student) return
         await http.transform(() => ({
             // S8 fields (academic status fields live on students table, handled separately)
-            previous_institution:       formData.prevInstitution     ?? null,
-            institution_type:           formData.prevInstitutionType  ?? null,
-            graduation_year:            formData.gradYear             ? Number(formData.gradYear) : null,
-            previous_gpa:               formData.prevGpa              ? Number(formData.prevGpa)  : null,
-            repeated_grade:             formData.repeated             ?? false,
-            repeated_grade_description: formData.repeatedDesc         ?? null,
-            transfer_reason:            formData.transferReason       ?? null,
-            has_prior_studies:          formData.priorUni             ?? false,
-            prior_studies_description:  formData.priorUniDesc         ?? null,
-            digital_level:              formData.digitalLevel         ?? null,
-            mother_education_level:     formData.motherEdu            ?? null,
-            father_education_level:     formData.fatherEdu            ?? null,
+            previous_institution:       formData.prevInstitution       ?? null,
+            institution_type_id:        formData.prevInstitutionTypeId ?? null,
+            graduation_year:            formData.gradYear               ? Number(formData.gradYear) : null,
+            previous_gpa:               formData.prevGpa                ? Number(formData.prevGpa)  : null,
+            repeated_grade:             formData.repeated               ?? false,
+            repeated_grade_description: formData.repeatedDesc           ?? null,
+            transfer_reason_id:         formData.transferReasonId      ?? null,
+            has_prior_studies:          formData.priorUni               ?? false,
+            prior_studies_description:  formData.priorUniDesc           ?? null,
+            digital_level_id:           formData.digitalLevelId        ?? null,
+            mother_education_level_id:  formData.motherEduId           ?? null,
+            father_education_level_id:  formData.fatherEduId           ?? null,
         })).put(upsertBackground({ student: props.student.id }).url)
     }
 
     async function saveLanguages(): Promise<void> {
         if (!props.student) return
         const studentId  = props.student.id
-        const savedIds   = new Set(props.student.languages.map(l => l.id ?? 0).filter(Boolean))
+        // Track by language_id (pivot has no auto-increment id — id is always null)
+        const savedIds   = new Set(props.student.languages.map(l => l.language_id).filter((id): id is number => id !== null))
         const current    = formData.languages ?? []
-        const currentIds = new Set(current.filter(l => savedIds.has(l.__id)).map(l => l.__id))
+        const currentIds = new Set(current.filter(l => l.language_id != null).map(l => l.language_id as number))
 
         for (const id of [...savedIds].filter(id => !currentIds.has(id))) {
             await http.transform(() => ({})).delete(destroyLanguage({ student: studentId, language: id }).url)
         }
-        for (const lang of current.filter(l => !savedIds.has(l.__id))) {
+        for (const lang of current.filter(l => l.language_id != null && !savedIds.has(l.language_id as number))) {
             await http.transform(() => ({
-                language:         lang.lang   ?? null,
-                language_level:   lang.level  ?? null,
-                is_mother_tongue: lang.mother ?? false,
+                language_id:       lang.language_id,
+                language_level_id: lang.language_level_id ?? null,
+                is_mother_tongue:  lang.mother ?? false,
             })).post(storeLanguage({ student: studentId }).url)
         }
     }
@@ -226,50 +229,51 @@ export function useUserEditForm(props: UserEditProps) {
     async function saveFamily(): Promise<void> {
         if (!props.student) return
         await http.transform(() => ({
-            guardian_marital_status: formData.repMarital        ?? null,
-            children_count:          formData.repChildren        ? Number(formData.repChildren)  : null,
-            sibling_count:           formData.siblings           ? Number(formData.siblings)     : null,
-            sibling_position:        formData.siblingPos         ? Number(formData.siblingPos)   : null,
-            living_arrangement:      formData.living             ?? null,
-            household_head_type:     formData.householdHead      ?? null,
-            household_head_name:     formData.householdHeadName  ?? null,
+            guardian_marital_status_id: formData.repMaritalId    ?? null,
+            children_count:             formData.repChildren      ? Number(formData.repChildren)  : null,
+            sibling_count:              formData.siblings          ? Number(formData.siblings)     : null,
+            sibling_position:           formData.siblingPos        ? Number(formData.siblingPos)   : null,
+            living_arrangement_id:      formData.livingId         ?? null,
+            household_head_type_id:     formData.householdHeadId  ?? null,
+            household_head_name:        formData.householdHeadName ?? null,
         })).put(upsertFamily({ student: props.student.id }).url)
     }
 
     async function saveSocioeconomic(): Promise<void> {
         if (!props.student) return
         await http.transform(() => ({
-            income_range:             formData.incomeRange           ?? null,
-            income_source:            formData.incomeSource          ?? null,
-            household_earners:        formData.contributors          ? Number(formData.contributors) : null,
-            study_date:               formData.socioDate             ?? null,
-            receives_remittances:     formData.remit                 ?? false,
-            remittance_country:       formData.remitFrom             ?? null,
-            student_works:            formData.studentWorks          ?? false,
-            employment_type:          formData.employmentType        ?? null,
-            weekly_work_hours:        formData.weekHours             ? Number(formData.weekHours) : null,
-            has_scholarship:          formData.externalScholarship   ?? false,
-            scholarship_name:         formData.scholarshipName       ?? null,
-            has_institutional_benefit: formData.instBenefits         ?? false,
+            income_range_id:           formData.incomeRangeId    ?? null,
+            income_source_id:          formData.incomeSourceId   ?? null,
+            household_earners:         formData.contributors      ? Number(formData.contributors) : null,
+            study_date:                formData.socioDate         ?? null,
+            receives_remittances:      formData.remit             ?? false,
+            remittance_country_id:     formData.remitFromId       ?? null,
+            student_works:             formData.studentWorks      ?? false,
+            employment_type_id:        formData.employmentTypeId  ?? null,
+            weekly_work_hours:         formData.weekHours         ? Number(formData.weekHours) : null,
+            has_scholarship:           formData.externalScholarship ?? false,
+            scholarship_name:          formData.scholarshipName   ?? null,
+            has_institutional_benefit: formData.instBenefits      ?? false,
         })).put(upsertSocioeconomic({ student: props.student.id }).url)
     }
 
     async function saveBenefits(): Promise<void> {
         if (!props.student) return
         const studentId = props.student.id
+        // Track by benefit_id (catalog FK — pivot has no auto-increment id)
         const savedIds  = new Set(props.student.benefits.map(b => b.benefit_id).filter((id): id is number => id !== null))
         const current   = formData.benefits ?? []
-        const currentIds = new Set(current.map(b => b.__id))
+        const currentIds = new Set(current.filter(b => b.benefit_id != null).map(b => b.benefit_id as number))
 
         for (const id of [...savedIds].filter(id => !currentIds.has(id))) {
             await http.transform(() => ({})).delete(destroyBenefit({ student: studentId, benefit: id }).url)
         }
-        for (const b of current.filter(b => !savedIds.has(b.__id))) {
+        for (const b of current.filter(b => b.benefit_id != null && !savedIds.has(b.benefit_id as number))) {
             await http.transform(() => ({
-                active: b.active ?? true,
-                since:  b.start  ?? null,
-                until:  b.end    ?? null,
-            })).post(storeBenefit({ student: studentId, benefit: b.__id }).url)
+                is_active: b.active ?? true,
+                since:     b.start  ?? null,
+                until:     b.end    ?? null,
+            })).post(storeBenefit({ student: studentId, benefit: b.benefit_id as number }).url)
         }
     }
 
@@ -277,17 +281,17 @@ export function useUserEditForm(props: UserEditProps) {
         if (!props.student) return
         const studentId = props.student.id
         await http.transform(() => ({
-            housing_type:          formData.housing       ?? null,
-            tenure_type:           formData.tenure        ?? null,
-            construction_material: formData.construction  ?? null,
-            room_count:            formData.rooms         ? Number(formData.rooms)      : null,
-            bathroom_count:        formData.bathrooms     ? Number(formData.bathrooms)  : null,
-            household_members:     formData.peopleHome    ? Number(formData.peopleHome) : null,
-            commute_time:          formData.commute       ?? null,
-            transport_type:        formData.transport     ?? null,
+            housing_type_id:          formData.housingId      ?? null,
+            tenure_type_id:           formData.tenureId       ?? null,
+            construction_material_id: formData.constructionId ?? null,
+            room_count:               formData.rooms          ? Number(formData.rooms)      : null,
+            bathroom_count:           formData.bathrooms      ? Number(formData.bathrooms)  : null,
+            household_members:        formData.peopleHome     ? Number(formData.peopleHome) : null,
+            commute_time_id:          formData.commuteId      ?? null,
+            transport_type_id:        formData.transportId    ?? null,
         })).put(upsertHousing({ student: studentId }).url)
         const services: string[] = []
-        if (formData.svc_water) services.push('water')
+        if (formData.svc_water) services.push('potable_water')
         if (formData.svc_elec)  services.push('electricity')
         if (formData.svc_gas)   services.push('gas')
         if (formData.svc_inet)  services.push('internet')
@@ -297,29 +301,29 @@ export function useUserEditForm(props: UserEditProps) {
     async function saveGuardianProfile(): Promise<void> {
         if (!props.guardian) return
         await http.transform(() => ({
-            occupation:       formData.occupation       ?? null,
-            employer:         formData.employer         ?? null,
-            work_phone:       formData.workPhone        ?? null,
-            marital_status:   formData.guardianMarital  ?? null,
-            education_level:  formData.guardianEdu      ?? null,
+            occupation:          formData.occupation         ?? null,
+            employer:            formData.employer           ?? null,
+            work_phone:          formData.workPhone          ?? null,
+            marital_status_id:   formData.guardianMaritalId  ?? null,
+            education_level_id:  formData.guardianEduId      ?? null,
         })).put(upsertGuardianProfile({ guardian: props.guardian.id }).url)
     }
 
     async function saveStaffProfile(): Promise<void> {
         if (!props.professor) return
         await http.transform(() => ({
-            employee_code:         formData.empCode      ?? null,
-            academic_title:        formData.degree       ?? null,
-            specialty:             formData.specialty    ?? null,
-            contract_type:         formData.contract     ?? null,
-            dedication_type:       formData.dedication   ?? null,
-            weekly_hour_load:      formData.weeklyHours  ? Number(formData.weeklyHours) : null,
-            hire_date:             formData.hireDate     ?? null,
-            termination_date:      formData.endDate      ?? null,
-            employment_status:     formData.emplStatus   ?? null,
-            is_coordinator:        formData.isCoord      ?? false,
-            coordinated_department: formData.coordDept   ?? null,
-            coordinator_since:     formData.coordSince   ?? null,
+            employee_code:              formData.empCode         ?? null,
+            academic_title:             formData.degree          ?? null,
+            specialty:                  formData.specialty       ?? null,
+            contract_type_id:           formData.contractTypeId  ?? null,
+            dedication_type_id:         formData.dedicationTypeId ?? null,
+            weekly_hour_load:           formData.weeklyHours      ? Number(formData.weeklyHours) : null,
+            hire_date:                  formData.hireDate         ?? null,
+            termination_date:           formData.endDate          ?? null,
+            employment_status_id:       formData.emplStatusId     ?? null,
+            is_coordinator:             formData.isCoord          ?? false,
+            coordinated_department_id:  formData.coordDeptId      ?? null,
+            coordinator_since:          formData.coordSince       ?? null,
         })).put(upsertStaffProfile({ professor: props.professor.id }).url)
     }
 
@@ -329,8 +333,21 @@ export function useUserEditForm(props: UserEditProps) {
     // S07: File uploads are a separate feature; only metadata is shown here.
 
     const handlers: Partial<Record<number, () => Promise<void>>> = {
-        1:  () => Promise.resolve(),
-        2:  () => Promise.resolve(),
+        1: async () => {
+            await http.transform(() => ({
+                first_name: formData.firstName ?? '',
+                last_name:  formData.lastName  ?? '',
+                email:      formData.email      ?? '',
+                roles:      formData.roles      ?? [],
+            })).patch(updateIdentity({ user: props.user.id }).url)
+        },
+        2: async () => {
+            await http.transform(() => ({
+                password_mode:          formData.passwordMode ?? 'link',
+                password:               formData.password     ?? undefined,
+                password_confirmation:  formData.password     ?? undefined,
+            })).post(updateCredentials({ user: props.user.id }).url)
+        },
         3:  saveAddresses,
         4:  saveDemographic,
         5:  saveHealth,
@@ -374,16 +391,13 @@ export function useUserEditForm(props: UserEditProps) {
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
-function addressPayload(addr: { country?: string; state?: string; muni?: string; parish?: string; zone?: string; line1?: string; line2?: string; primary?: boolean }) {
+function addressPayload(addr: { country_id?: number; state_id?: number; line1?: string; line2?: string; primary?: boolean }) {
     return {
-        country:       addr.country  ?? null,
-        state:         addr.state    ?? null,
-        municipality:  addr.muni     ?? null,
-        parish:        addr.parish   ?? null,
-        zone:          addr.zone     ?? null,
-        address_line1: addr.line1    ?? null,
-        address_line2: addr.line2    ?? null,
-        is_primary:    addr.primary  ?? false,
+        country_id:    addr.country_id ?? null,
+        state_id:      addr.state_id   ?? null,
+        address_line1: addr.line1      ?? null,
+        address_line2: addr.line2      ?? null,
+        is_primary:    addr.primary    ?? false,
     }
 }
 
@@ -415,42 +429,43 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
     d.firstName = props.user.first_name
     d.lastName  = props.user.last_name
     d.email     = props.user.email
+    d.roles     = props.user.roles
 
     d.addresses = props.addresses.map(a => ({
-        __id:    a.id,
-        country: a.country?.name            ?? undefined,
-        state:   a.state?.name              ?? undefined,
-        muni:    a.municipality?.name       ?? undefined,
-        parish:  a.parish?.name             ?? undefined,
-        zone:    a.geographic_zone?.name    ?? undefined,
-        line1:   a.address_line1            ?? undefined,
-        line2:   a.address_line2            ?? undefined,
-        primary: a.is_primary,
+        __id:       a.id,
+        country_id: a.country_id            ?? undefined,
+        state_id:   a.state_id              ?? undefined,
+        muni:       a.municipality?.name    ?? undefined,
+        parish:     a.parish?.name          ?? undefined,
+        zone:       a.geographic_zone?.name ?? undefined,
+        line1:      a.address_line1         ?? undefined,
+        line2:      a.address_line2         ?? undefined,
+        primary:    a.is_primary,
     }))
 
     if (props.demographicProfile) {
         const p = props.demographicProfile
-        d.birthCity       = p.birth_city                    ?? undefined
-        d.birthState      = p.birth_state?.name             ?? undefined
-        d.birthCountry    = p.birth_country?.name           ?? undefined
-        d.indigenous      = p.is_indigenous
-        d.indigenousComm  = p.indigenous_community          ?? undefined
-        d.nativeLang      = p.native_language?.name         ?? undefined
-        d.returnedMigrant = p.is_returned_migrant
-        d.returnFrom      = p.previous_country?.name        ?? undefined
-        d.religion        = p.religion?.name                ?? undefined
-        d.sport           = p.practices_sport
-        d.sportName       = p.sport                         ?? undefined
-        d.culture         = p.cultural_activities           ?? undefined
+        d.birthCity        = p.birth_city              ?? undefined
+        d.birthStateId     = p.birth_state_id          ?? undefined
+        d.birthCountryId   = p.birth_country_id        ?? undefined
+        d.indigenous       = p.is_indigenous
+        d.indigenousComm   = p.indigenous_community    ?? undefined
+        d.nativeLangId     = p.native_language_id      ?? undefined
+        d.returnedMigrant  = p.is_returned_migrant
+        d.previousCountryId = p.previous_country_id   ?? undefined
+        d.religionId       = p.religion_id             ?? undefined
+        d.sport            = p.practices_sport
+        d.sportName        = p.sport                   ?? undefined
+        d.culture          = p.cultural_activities     ?? undefined
     }
 
     if (props.healthProfile) {
         const h = props.healthProfile
-        d.bloodType        = h.blood_type?.name             ?? undefined
+        d.bloodTypeId      = h.blood_type_id                ?? undefined
         d.weight           = h.weight_kg?.toString()        ?? undefined
         d.height           = h.height_cm?.toString()        ?? undefined
         d.disability       = h.has_disability
-        d.disabilityType   = h.disability_type?.name        ?? undefined
+        d.disabilityTypeId = h.disability_type_id           ?? undefined
         d.disabilityDesc   = h.disability_description       ?? undefined
         d.specialNeeds     = h.has_special_needs
         d.specialNeedsDesc = h.special_needs_description    ?? undefined
@@ -458,7 +473,7 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
         d.medication       = h.regular_medication           ?? undefined
         d.allergies        = h.allergies                    ?? undefined
         d.insurance        = h.has_medical_insurance
-        d.insuranceType    = h.insurance_type?.name         ?? undefined
+        d.insuranceTypeId  = h.insurance_type_id            ?? undefined
         d.emergencyName    = h.emergency_contact_name       ?? undefined
         d.emergencyPhone   = h.emergency_contact_phone      ?? undefined
         d.emergencyRel     = h.emergency_contact_relation   ?? undefined
@@ -484,97 +499,100 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
         const s = props.student
         if (s.background) {
             const b = s.background
-            d.prevInstitution     = b.previous_institution          ?? undefined
-            d.prevInstitutionType = b.institution_type?.name        ?? undefined
-            d.gradYear            = b.graduation_year?.toString()    ?? undefined
-            d.prevGpa             = b.previous_gpa?.toString()       ?? undefined
-            d.repeated            = b.repeated_grade
-            d.repeatedDesc        = b.repeated_grade_description     ?? undefined
-            d.transferReason      = b.transfer_reason?.name         ?? undefined
-            d.priorUni            = b.has_prior_studies
-            d.priorUniDesc        = b.prior_studies_description      ?? undefined
-            d.digitalLevel        = b.digital_level?.name            ?? undefined
-            d.motherEdu           = b.mother_education_level?.name   ?? undefined
-            d.fatherEdu           = b.father_education_level?.name   ?? undefined
+            d.prevInstitution        = b.previous_institution             ?? undefined
+            d.prevInstitutionTypeId  = b.institution_type_id              ?? undefined
+            d.gradYear               = b.graduation_year?.toString()       ?? undefined
+            d.prevGpa                = b.previous_gpa?.toString()          ?? undefined
+            d.repeated               = b.repeated_grade
+            d.repeatedDesc           = b.repeated_grade_description        ?? undefined
+            d.transferReasonId       = b.transfer_reason_id               ?? undefined
+            d.priorUni               = b.has_prior_studies
+            d.priorUniDesc           = b.prior_studies_description         ?? undefined
+            d.digitalLevelId         = b.digital_level_id                 ?? undefined
+            d.motherEduId            = b.mother_education_level_id        ?? undefined
+            d.fatherEduId            = b.father_education_level_id        ?? undefined
         }
         d.languages = s.languages.map(l => ({
-            __id:   l.id ?? 0,
-            lang:   l.language?.name        ?? undefined,
-            level:  l.language_level?.name  ?? undefined,
-            mother: l.is_mother_tongue,
+            __id:              l.language_id ?? Date.now(),
+            language_id:       l.language_id       ?? undefined,
+            language_level_id: l.language_level_id ?? undefined,
+            mother:            l.is_mother_tongue,
         }))
         if (s.familyProfile) {
             const f = s.familyProfile
-            d.repMarital        = f.guardian_marital_status?.name   ?? undefined
             d.repChildren       = f.children_count?.toString()      ?? undefined
             d.siblings          = f.sibling_count?.toString()       ?? undefined
             d.siblingPos        = f.sibling_position?.toString()    ?? undefined
-            d.living            = f.living_arrangement?.name        ?? undefined
-            d.householdHead     = f.household_head_type?.name       ?? undefined
             d.householdHeadName = f.household_head_name             ?? undefined
+            // FK ids
+            d.repMaritalId    = f.guardian_marital_status_id ?? undefined
+            d.livingId        = f.living_arrangement_id      ?? undefined
+            d.householdHeadId = f.household_head_type_id     ?? undefined
         }
         if (s.socioeconomicProfile) {
             const e = s.socioeconomicProfile
-            d.incomeRange         = e.income_range?.name            ?? undefined
-            d.incomeSource        = e.income_source?.name           ?? undefined
             d.contributors        = e.household_earners?.toString() ?? undefined
-            d.socioDate           = e.study_date                    ?? undefined
             d.remit               = e.receives_remittances
-            d.remitFrom           = e.remittance_country?.name      ?? undefined
             d.studentWorks        = e.student_works
-            d.employmentType      = e.employment_type?.name         ?? undefined
             d.weekHours           = e.weekly_work_hours?.toString() ?? undefined
             d.externalScholarship = e.has_scholarship
             d.scholarshipName     = e.scholarship_name              ?? undefined
             d.instBenefits        = e.has_institutional_benefit
+            // FK ids + date normalization
+            d.incomeRangeId    = e.income_range_id         ?? undefined
+            d.incomeSourceId   = e.income_source_id        ?? undefined
+            d.remitFromId      = e.remittance_country_id   ?? undefined
+            d.employmentTypeId = e.employment_type_id      ?? undefined
+            d.socioDate        = e.study_date?.substring(0, 10) ?? undefined
         }
         d.benefits = s.benefits.map(b => ({
-            __id:    b.benefit_id ?? 0,
-            benefit: b.benefit?.name    ?? undefined,
-            active:  b.is_active,
-            start:   b.since            ?? undefined,
-            end:     b.until            ?? undefined,
+            __id:       b.benefit_id ?? 0,
+            benefit_id: b.benefit_id ?? undefined,
+            active:     b.is_active,
+            start:      b.since      ?? undefined,
+            end:        b.until      ?? undefined,
         }))
         if (s.housingProfile) {
             const h = s.housingProfile
-            d.housing      = h.housing_type?.name               ?? undefined
-            d.tenure       = h.tenure_type?.name                ?? undefined
-            d.construction = h.construction_material?.name      ?? undefined
             d.rooms        = h.room_count?.toString()            ?? undefined
             d.bathrooms    = h.bathroom_count?.toString()        ?? undefined
             d.peopleHome   = h.household_members?.toString()     ?? undefined
-            d.commute      = h.commute_time?.name                ?? undefined
-            d.transport    = h.transport_type?.name              ?? undefined
-            d.svc_water    = h.services.some(sv => sv.code === 'water'        && sv.is_available)
-            d.svc_elec     = h.services.some(sv => sv.code === 'electricity'  && sv.is_available)
-            d.svc_gas      = h.services.some(sv => sv.code === 'gas'          && sv.is_available)
-            d.svc_inet     = h.services.some(sv => sv.code === 'internet'     && sv.is_available)
+            d.svc_water    = (h.services ?? []).some(sv => sv.code === 'potable_water' && sv.is_available)
+            d.svc_elec     = (h.services ?? []).some(sv => sv.code === 'electricity'  && sv.is_available)
+            d.svc_gas      = (h.services ?? []).some(sv => sv.code === 'gas'          && sv.is_available)
+            d.svc_inet     = (h.services ?? []).some(sv => sv.code === 'internet'     && sv.is_available)
+            // FK ids
+            d.housingId      = h.housing_type_id          ?? undefined
+            d.tenureId       = h.tenure_type_id           ?? undefined
+            d.constructionId = h.construction_material_id ?? undefined
+            d.commuteId      = h.commute_time_id          ?? undefined
+            d.transportId    = h.transport_type_id        ?? undefined
         }
     }
 
     if (props.guardian?.profile) {
         const g = props.guardian.profile
-        d.occupation      = g.occupation              ?? undefined
-        d.employer        = g.employer                ?? undefined
-        d.workPhone       = g.work_phone              ?? undefined
-        d.guardianMarital = g.marital_status?.name    ?? undefined
-        d.guardianEdu     = g.education_level?.name   ?? undefined
+        d.occupation        = g.occupation          ?? undefined
+        d.employer          = g.employer            ?? undefined
+        d.workPhone         = g.work_phone          ?? undefined
+        d.guardianMaritalId = g.marital_status_id   ?? undefined
+        d.guardianEduId     = g.education_level_id  ?? undefined
     }
 
     if (props.professor?.staffProfile) {
         const p = props.professor.staffProfile
-        d.empCode     = p.employee_code                 ?? undefined
-        d.degree      = p.academic_title                ?? undefined
-        d.specialty   = p.specialty                     ?? undefined
-        d.contract    = p.contract_type?.name           ?? undefined
-        d.dedication  = p.dedication_type?.name         ?? undefined
-        d.weeklyHours = p.weekly_hour_load?.toString()  ?? undefined
-        d.hireDate    = p.hire_date                     ?? undefined
-        d.endDate     = p.termination_date              ?? undefined
-        d.emplStatus  = p.employment_status?.name       ?? undefined
-        d.isCoord     = p.is_coordinator
-        d.coordDept   = p.coordinated_department?.name  ?? undefined
-        d.coordSince  = p.coordinator_since             ?? undefined
+        d.empCode          = p.employee_code                  ?? undefined
+        d.degree           = p.academic_title                 ?? undefined
+        d.specialty        = p.specialty                      ?? undefined
+        d.contractTypeId   = p.contract_type_id               ?? undefined
+        d.dedicationTypeId = p.dedication_type_id             ?? undefined
+        d.weeklyHours      = p.weekly_hour_load?.toString()   ?? undefined
+        d.hireDate         = p.hire_date?.substring(0, 10)         ?? undefined
+        d.endDate          = p.termination_date?.substring(0, 10)  ?? undefined
+        d.emplStatusId     = p.employment_status_id                ?? undefined
+        d.isCoord          = p.is_coordinator
+        d.coordDeptId      = p.coordinated_department_id           ?? undefined
+        d.coordSince       = p.coordinator_since?.substring(0, 10) ?? undefined
     }
 
     return d

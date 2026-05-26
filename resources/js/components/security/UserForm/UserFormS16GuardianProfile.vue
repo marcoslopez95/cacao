@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { UserFormData } from '@/types/userForm'
-import { UF_MARITAL, UF_EDU_LEVELS } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppTelInput from '@/components/UI/AppTelInput.vue'
 
 const props = defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+    catalogData: UserFormCatalogData
 }>()
 </script>
 
@@ -30,16 +31,24 @@ const props = defineProps<{
         </AppFormField>
 
         <AppFormField label="Estado civil" :col="6">
-            <select class="uf-select" :value="data.guardianMarital ?? ''" @change="setField('guardianMarital', ($event.target as HTMLSelectElement).value)">
+            <select
+                class="uf-select"
+                :value="data.guardianMaritalId ?? ''"
+                @change="setField('guardianMaritalId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
+            >
                 <option value="">Seleccionar</option>
-                <option v-for="m in UF_MARITAL" :key="m" :value="m">{{ m }}</option>
+                <option v-for="m in catalogData.maritalStatuses" :key="m.id" :value="m.id">{{ m.name }}</option>
             </select>
         </AppFormField>
 
         <AppFormField label="Nivel educativo" :col="12">
-            <select class="uf-select" :value="data.guardianEdu ?? ''" @change="setField('guardianEdu', ($event.target as HTMLSelectElement).value)">
+            <select
+                class="uf-select"
+                :value="data.guardianEduId ?? ''"
+                @change="setField('guardianEduId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
+            >
                 <option value="">Seleccionar</option>
-                <option v-for="e in UF_EDU_LEVELS" :key="e" :value="e">{{ e }}</option>
+                <option v-for="e in catalogData.educationLevels" :key="e.id" :value="e.id">{{ e.name }}</option>
             </select>
         </AppFormField>
     </div>

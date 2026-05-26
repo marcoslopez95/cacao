@@ -3,6 +3,7 @@
 use App\Models\Catalogs\ContractType;
 use App\Models\Catalogs\DedicationType;
 use App\Models\Catalogs\EmploymentStatus;
+use App\Models\Coordination;
 use App\Models\Professor;
 use App\Models\StaffProfile;
 use App\Models\User;
@@ -91,6 +92,29 @@ test('employee_code is auto-generated', function () {
 
     expect($profile)->not->toBeNull();
     expect($profile->employee_code)->toMatch('/^EMP-'.$year.'-\d{5}$/');
+});
+
+it('can save staff profile with is_coordinator true and valid coordination id', function () {
+    $admin = adminForStaff();
+    $professor = Professor::factory()->create();
+    $coordination = Coordination::factory()->create(['active' => true]);
+
+    $response = $this->actingAs($admin)->putJson(
+        route('academic.professors.staff-profile.upsert', $professor),
+        array_merge(validStaffPayload(), [
+            'is_coordinator' => true,
+            'coordinated_department_id' => $coordination->id,
+            'coordinator_since' => '2023-09-01',
+        ])
+    );
+
+    $response->assertSuccessful();
+
+    $this->assertDatabaseHas('staff_profiles', [
+        'professor_id' => $professor->id,
+        'is_coordinator' => true,
+        'coordinated_department_id' => $coordination->id,
+    ]);
 });
 
 test('upsert is idempotent — employee_code not regenerated on update', function () {

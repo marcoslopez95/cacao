@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Academic;
 use App\Enums\PeriodStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Academic\StudentListResource;
+use App\Http\Resources\Academic\StudentShowResource;
 use App\Models\Career;
 use App\Models\Period;
 use App\Models\Student;
@@ -15,6 +16,27 @@ use Inertia\Response;
 
 class StudentController extends Controller
 {
+    /**
+     * Display the academic profile of a single student.
+     */
+    public function show(Student $student): Response
+    {
+        $student->load([
+            'user',
+            'pensum.career',
+            'academicStatus',
+            'modality',
+            'shift',
+            'guardians' => fn ($q) => $q->withPivot(['kinship_type_id', 'is_primary', 'is_emergency_contact']),
+            'guardians.user',
+            'enrollments.period',
+        ]);
+
+        return Inertia::render('admin/Students/Show', [
+            'student' => (new StudentShowResource($student))->resolve(),
+        ]);
+    }
+
     public function index(Request $request): Response
     {
         $activePeriod = Period::where('status', PeriodStatus::Active)->first();
@@ -44,6 +66,7 @@ class StudentController extends Controller
             )
             ->select([
                 'students.id',
+                'students.user_id',
                 'students.academic_year',
                 'students.educational_level',
                 'students.current_pensum_id',

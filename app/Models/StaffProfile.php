@@ -8,6 +8,13 @@ use App\Models\Catalogs\EmploymentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Staff profile for a professor.
+ *
+ * FK: `staff_profiles.professor_id` → `professors.id`
+ * To find a user's staff profile: User → Professor → StaffProfile
+ * Do NOT use StaffProfile::where('user_id', ...) — no such column exists.
+ */
 class StaffProfile extends Model
 {
     /** @var list<string> */
@@ -58,12 +65,11 @@ class StaffProfile extends Model
     }
 
     /**
-     * Relation will be wired once departments table exists.
-     *
-     * @phpstan-ignore-next-line
+     * The coordination (department) this professor coordinates, if is_coordinator=true.
+     * Uses the `coordinations` table (model Coordination), NOT a `departments` table.
      */
     public function coordinatedDepartment(): BelongsTo
     {
-        return $this->belongsTo(Department::class, 'coordinated_department_id');
+        return $this->belongsTo(Coordination::class, 'coordinated_department_id');
     }
 }

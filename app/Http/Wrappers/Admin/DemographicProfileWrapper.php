@@ -63,6 +63,15 @@ class DemographicProfileWrapper extends Collection
         return $value !== null ? (int) $value : null;
     }
 
+    /**
+     * Returns true when the 'religion_id' key was present in the validated payload,
+     * regardless of whether its value is null or a valid integer.
+     */
+    public function hasReligionId(): bool
+    {
+        return $this->has('religion_id');
+    }
+
     public function getReligionId(): ?int
     {
         $value = $this->get('religion_id');

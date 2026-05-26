@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UserFormData, BenefitItem } from '@/types/userForm'
-import { UF_BENEFITS } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppToggle from '@/components/UI/AppToggle.vue'
 import AppRepeatable from '@/components/UI/AppRepeatable.vue'
@@ -8,6 +8,7 @@ import AppRepeatable from '@/components/UI/AppRepeatable.vue'
 const props = defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+    catalogData: UserFormCatalogData
 }>()
 
 function addBenefit(): void {
@@ -41,11 +42,11 @@ function updateBenefit(i: number, patch: Partial<BenefitItem>): void {
                 <AppFormField label="Beneficio" required :col="6">
                     <select
                         class="uf-select"
-                        :value="data.benefits?.[index]?.benefit ?? ''"
-                        @change="updateBenefit(index, { benefit: ($event.target as HTMLSelectElement).value })"
+                        :value="data.benefits?.[index]?.benefit_id ?? ''"
+                        @change="updateBenefit(index, { benefit_id: parseInt(($event.target as HTMLSelectElement).value) || undefined })"
                     >
                         <option value="">Seleccionar</option>
-                        <option v-for="b in UF_BENEFITS" :key="b" :value="b">{{ b }}</option>
+                        <option v-for="b in catalogData.benefits" :key="b.id" :value="b.id">{{ b.name }}</option>
                     </select>
                 </AppFormField>
 

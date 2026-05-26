@@ -2,21 +2,28 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\Guardian;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class StoreGuardianProfileRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        /** @var Guardian $guardian */
         $guardian = $this->route('guardian');
         $user = $this->user();
 
-        if ($user->hasAnyRole(['Administrador', 'Coordinador'])) {
+        // The guardian may edit their own profile without going through the Gate.
+        if ($user->guardian?->id === $guardian->id) {
             return true;
         }
 
-        return $user->guardian?->id === $guardian->id;
+        // Admins are short-circuited by Gate::before; coordinators pass via GuardianPolicy.
+        Gate::authorize('update', $guardian);
+
+        return true;
     }
 
     /**

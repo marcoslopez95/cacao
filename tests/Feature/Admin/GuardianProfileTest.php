@@ -18,13 +18,13 @@ beforeEach(function () {
     app(PermissionRegistrar::class)->forgetCachedPermissions();
     (new AcademicCatalogsSeeder)->run();
     (new SocialCatalogsSeeder)->run();
-    Role::firstOrCreate(['name' => 'Administrador', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
     Role::firstOrCreate(['name' => 'Representante', 'guard_name' => 'web']);
 });
 
 test('admin can upsert guardian profile', function () {
     $admin = User::factory()->create();
-    $admin->assignRole('Administrador');
+    $admin->assignRole('Admin');
     $guardian = Guardian::factory()->create();
 
     $response = $this->actingAs($admin)->put(
@@ -77,7 +77,7 @@ test('guardian cannot upsert another guardian\'s profile (403)', function () {
 
 test('upsert is idempotent — second PUT updates existing profile', function () {
     $admin = User::factory()->create();
-    $admin->assignRole('Administrador');
+    $admin->assignRole('Admin');
     $guardian = Guardian::factory()->create();
 
     $this->actingAs($admin)->put(

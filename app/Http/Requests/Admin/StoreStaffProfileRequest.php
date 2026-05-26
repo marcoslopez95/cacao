@@ -30,7 +30,7 @@ class StoreStaffProfileRequest extends FormRequest
             'termination_date' => ['nullable', 'date', 'after_or_equal:hire_date'],
             'employment_status_id' => ['required', 'integer', 'exists:employment_statuses,id'],
             'is_coordinator' => ['boolean'],
-            'coordinated_department_id' => ['nullable', 'integer', 'exists:departments,id', 'required_if:is_coordinator,true'],
+            'coordinated_department_id' => ['nullable', 'integer', 'exists:coordinations,id', 'required_if:is_coordinator,true'],
             'coordinator_since' => ['nullable', 'date', 'required_if:is_coordinator,true'],
         ];
     }

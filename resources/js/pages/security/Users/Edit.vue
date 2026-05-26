@@ -123,21 +123,21 @@ onUnmounted(() => cleanupSpy?.())
                 >
                     <UserFormS01Identity          v-if="secNum === 1"  :data="formData" :set-field="setField" />
                     <UserFormS02Credentials       v-else-if="secNum === 2"  :data="formData" :set-field="setField" />
-                    <UserFormS03Address           v-else-if="secNum === 3"  :data="formData" :set-field="setField" />
-                    <UserFormS04Demographic       v-else-if="secNum === 4"  :data="formData" :set-field="setField" />
-                    <UserFormS05Health            v-else-if="secNum === 5"  :data="formData" :set-field="setField" />
+                    <UserFormS03Address           v-else-if="secNum === 3"  :data="formData" :set-field="setField" :catalog-data="catalogData" />
+                    <UserFormS04Demographic       v-else-if="secNum === 4"  :data="formData" :set-field="setField" :catalog-data="catalogData" />
+                    <UserFormS05Health            v-else-if="secNum === 5"  :data="formData" :set-field="setField" :catalog-data="catalogData" />
                     <UserFormS06Consents          v-else-if="secNum === 6"  :data="formData" :set-field="setField" />
                     <UserFormS07Attachments       v-else-if="secNum === 7"  :data="formData" :set-field="setField" />
                     <UserFormS08Academic          v-else-if="secNum === 8"  :data="formData" :set-field="setField" />
-                    <UserFormS09PrevEducation     v-else-if="secNum === 9"  :data="formData" :set-field="setField" />
-                    <UserFormS10Languages         v-else-if="secNum === 10" :data="formData" :set-field="setField" />
-                    <UserFormS11Family            v-else-if="secNum === 11" :data="formData" :set-field="setField" />
-                    <UserFormS12Socioeconomic     v-else-if="secNum === 12" :data="formData" :set-field="setField" />
-                    <UserFormS13Benefits          v-else-if="secNum === 13" :data="formData" :set-field="setField" />
-                    <UserFormS14Housing           v-else-if="secNum === 14" :data="formData" :set-field="setField" />
+                    <UserFormS09PrevEducation     v-else-if="secNum === 9"  :data="formData" :set-field="setField" :catalog-data="catalogData" />
+                    <UserFormS10Languages         v-else-if="secNum === 10" :data="formData" :set-field="setField" :catalog-data="catalogData" />
+                    <UserFormS11Family            v-else-if="secNum === 11" :data="formData" :set-field="setField" :catalog-data="catalogData" />
+                    <UserFormS12Socioeconomic     v-else-if="secNum === 12" :data="formData" :set-field="setField" :catalog-data="catalogData" />
+                    <UserFormS13Benefits          v-else-if="secNum === 13" :data="formData" :set-field="setField" :catalog-data="catalogData" />
+                    <UserFormS14Housing           v-else-if="secNum === 14" :data="formData" :set-field="setField" :catalog-data="catalogData" />
                     <UserFormS15Guardians         v-else-if="secNum === 15" :data="formData" :set-field="setField" />
-                    <UserFormS16GuardianProfile   v-else-if="secNum === 16" :data="formData" :set-field="setField" />
-                    <UserFormS17ProfessorProfile  v-else-if="secNum === 17" :data="formData" :set-field="setField" />
+                    <UserFormS16GuardianProfile   v-else-if="secNum === 16" :data="formData" :set-field="setField" :catalog-data="catalogData" />
+                    <UserFormS17ProfessorProfile  v-else-if="secNum === 17" :data="formData" :set-field="setField" :catalog-data="catalogData" />
                 </UserFormSection>
             </div>
         </div>

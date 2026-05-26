@@ -6,6 +6,7 @@ export type StudentLevel = 'all' | 'primary' | 'secondary' | 'university'
 
 export interface StudentListItem {
     id: number
+    user_id: number
     name: string
     email: string
     career_name: string | null

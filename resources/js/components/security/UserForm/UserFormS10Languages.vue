@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UserFormData, LanguageItem } from '@/types/userForm'
-import { UF_LANGUAGES, UF_LANG_LEVELS } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppToggle from '@/components/UI/AppToggle.vue'
 import AppRepeatable from '@/components/UI/AppRepeatable.vue'
@@ -8,6 +8,7 @@ import AppRepeatable from '@/components/UI/AppRepeatable.vue'
 const props = defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+    catalogData: UserFormCatalogData
 }>()
 
 function addLanguage(): void {
@@ -41,22 +42,22 @@ function updateLanguage(i: number, patch: Partial<LanguageItem>): void {
                 <AppFormField label="Idioma" required :col="5">
                     <select
                         class="uf-select"
-                        :value="data.languages?.[index]?.lang ?? ''"
-                        @change="updateLanguage(index, { lang: ($event.target as HTMLSelectElement).value })"
+                        :value="data.languages?.[index]?.language_id ?? ''"
+                        @change="updateLanguage(index, { language_id: parseInt(($event.target as HTMLSelectElement).value) || undefined })"
                     >
                         <option value="">Seleccionar</option>
-                        <option v-for="l in UF_LANGUAGES" :key="l" :value="l">{{ l }}</option>
+                        <option v-for="l in catalogData.languages" :key="l.id" :value="l.id">{{ l.name }}</option>
                     </select>
                 </AppFormField>
 
                 <AppFormField label="Nivel" required :col="5">
                     <select
                         class="uf-select"
-                        :value="data.languages?.[index]?.level ?? ''"
-                        @change="updateLanguage(index, { level: ($event.target as HTMLSelectElement).value })"
+                        :value="data.languages?.[index]?.language_level_id ?? ''"
+                        @change="updateLanguage(index, { language_level_id: parseInt(($event.target as HTMLSelectElement).value) || undefined })"
                     >
                         <option value="">Seleccionar</option>
-                        <option v-for="lv in UF_LANG_LEVELS" :key="lv" :value="lv">{{ lv }}</option>
+                        <option v-for="lv in catalogData.languageLevels" :key="lv.id" :value="lv.id">{{ lv.name }}</option>
                     </select>
                 </AppFormField>
 

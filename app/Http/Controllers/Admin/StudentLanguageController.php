@@ -9,9 +9,11 @@ use App\Http\Resources\Admin\StudentLanguageResource;
 use App\Http\Wrappers\Admin\StudentLanguageWrapper;
 use App\Models\Catalogs\Language;
 use App\Models\Student;
+use App\Models\StudentLanguage;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class StudentLanguageController extends Controller
 {
@@ -28,7 +30,7 @@ class StudentLanguageController extends Controller
 
     public function destroy(Request $request, Student $student, Language $language): Response
     {
-        abort_unless($request->user()->hasAnyRole(['Administrador', 'Coordinador']), 403);
+        Gate::authorize('delete', StudentLanguage::class);
 
         DB::table('student_languages')
             ->where('student_id', $student->id)

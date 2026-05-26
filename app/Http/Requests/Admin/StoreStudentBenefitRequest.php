@@ -2,13 +2,17 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\StudentBenefit;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StoreStudentBenefitRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->hasAnyRole(['Administrador', 'Coordinador']);
+        Gate::authorize('create', StudentBenefit::class);
+
+        return true;
     }
 
     /**

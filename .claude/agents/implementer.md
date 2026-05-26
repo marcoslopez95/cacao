@@ -21,6 +21,13 @@ Ejecuta `specs/{feature}/tasks.md` línea por línea, siguiendo estrictamente la
    - Actualizar `progress/current.md` con la task recién completada y la próxima
    - Reportar al Leader que la task está lista para revisión
 
+4. **Si la task crea migraciones o modelos nuevos:**
+   - Actualizar el `DemoSeeder` correspondiente (en `database/seeders/Demo/`) con datos venezolanos realistas para los usuarios, estudiantes, profesores o representantes ya existentes
+   - Si el nuevo modelo pertenece a un perfil de usuario/estudiante/representante/profesor, extender `DemoProfilesSeeder`
+   - Si el nuevo modelo es una entidad independiente (catálogo, entidad académica, etc.), crear o extender el seeder Demo apropiado
+   - El `DemoSeeder.php` debe incluir el nuevo seeder en su array `$this->call([...])`
+   - Los seeders demo usan `firstOrCreate` o `insertOrIgnore` — nunca inserts que fallen en segunda ejecución
+
 ## Arquitectura OBLIGATORIA — Pipeline backend
 
 ```

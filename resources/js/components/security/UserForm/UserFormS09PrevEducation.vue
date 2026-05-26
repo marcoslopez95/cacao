@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { UserFormData } from '@/types/userForm'
-import { UF_INSTITUTION_TYPES, UF_TRANSFER_REASONS, UF_DIGITAL_LEVELS, UF_EDU_LEVELS } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppToggleCard from '@/components/UI/AppToggleCard.vue'
 
 const props = defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
+    catalogData: UserFormCatalogData
 }>()
 </script>
 
@@ -18,9 +19,13 @@ const props = defineProps<{
                 <input class="uf-input" :value="data.prevInstitution" @input="setField('prevInstitution', ($event.target as HTMLInputElement).value)" />
             </AppFormField>
             <AppFormField label="Tipo" :col="3">
-                <select class="uf-select" :value="data.prevInstitutionType ?? ''" @change="setField('prevInstitutionType', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.prevInstitutionTypeId ?? ''"
+                    @change="setField('prevInstitutionTypeId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="t in UF_INSTITUTION_TYPES" :key="t" :value="t">{{ t }}</option>
+                    <option v-for="t in catalogData.institutionTypes" :key="t.id" :value="t.id">{{ t.name }}</option>
                 </select>
             </AppFormField>
             <AppFormField label="Año de egreso" :col="3">
@@ -33,15 +38,23 @@ const props = defineProps<{
                 </div>
             </AppFormField>
             <AppFormField label="Motivo de traslado" :col="4">
-                <select class="uf-select" :value="data.transferReason ?? ''" @change="setField('transferReason', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.transferReasonId ?? ''"
+                    @change="setField('transferReasonId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="r in UF_TRANSFER_REASONS" :key="r" :value="r">{{ r }}</option>
+                    <option v-for="r in catalogData.transferReasons" :key="r.id" :value="r.id">{{ r.name }}</option>
                 </select>
             </AppFormField>
             <AppFormField label="Nivel digital" :col="4">
-                <select class="uf-select" :value="data.digitalLevel ?? ''" @change="setField('digitalLevel', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.digitalLevelId ?? ''"
+                    @change="setField('digitalLevelId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="d in UF_DIGITAL_LEVELS" :key="d" :value="d">{{ d }}</option>
+                    <option v-for="d in catalogData.digitalLevels" :key="d.id" :value="d.id">{{ d.name }}</option>
                 </select>
             </AppFormField>
         </div>
@@ -74,15 +87,23 @@ const props = defineProps<{
         <p class="uf-sub-title">Educación del grupo familiar</p>
         <div class="uf-grid">
             <AppFormField label="Nivel educativo de la madre" :col="6">
-                <select class="uf-select" :value="data.motherEdu ?? ''" @change="setField('motherEdu', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.motherEduId ?? ''"
+                    @change="setField('motherEduId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="e in UF_EDU_LEVELS" :key="e" :value="e">{{ e }}</option>
+                    <option v-for="e in catalogData.educationLevels" :key="e.id" :value="e.id">{{ e.name }}</option>
                 </select>
             </AppFormField>
             <AppFormField label="Nivel educativo del padre" :col="6">
-                <select class="uf-select" :value="data.fatherEdu ?? ''" @change="setField('fatherEdu', ($event.target as HTMLSelectElement).value)">
+                <select
+                    class="uf-select"
+                    :value="data.fatherEduId ?? ''"
+                    @change="setField('fatherEduId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
+                >
                     <option value="">Seleccionar</option>
-                    <option v-for="e in UF_EDU_LEVELS" :key="e" :value="e">{{ e }}</option>
+                    <option v-for="e in catalogData.educationLevels" :key="e.id" :value="e.id">{{ e.name }}</option>
                 </select>
             </AppFormField>
         </div>
