@@ -1,26 +1,33 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { UF_DOC_TYPES } from '@/types/userFormCatalogs'
 
 const props = defineProps<{
-    type: string
+    typeId: number | null
     number: string
+    catalog: { id: number; name: string; code: string }[]
 }>()
 
 const emit = defineEmits<{
-    'update:type': [string]
+    'update:typeId': [number | null]
     'update:number': [string]
 }>()
 
+const selectedCode = computed(() => props.catalog.find(t => t.id === props.typeId)?.code ?? null)
+
 const placeholder = computed(() => {
-    if (props.type === 'PAS') return 'AB123456'
-    if (props.type === 'J-CI') return '123456789'
+    if (selectedCode.value === 'P') return 'AB1234567'
+    if (selectedCode.value === 'J') return '123456789'
     return '12345678'
 })
 
+function onTypeChange(e: Event): void {
+    const val = (e.target as HTMLSelectElement).value
+    emit('update:typeId', val ? Number(val) : null)
+}
+
 function onNumber(e: Event): void {
     const raw = (e.target as HTMLInputElement).value
-    const clean = props.type === 'PAS' ? raw.replace(/[^A-Za-z0-9]/g, '').toUpperCase() : raw.replace(/\D/g, '')
+    const clean = selectedCode.value === 'P' ? raw.replace(/[^A-Za-z0-9]/g, '').toUpperCase() : raw.replace(/\D/g, '')
     emit('update:number', clean)
 }
 </script>
@@ -29,10 +36,11 @@ function onNumber(e: Event): void {
     <div class="uf-id-combo">
         <select
             class="uf-select"
-            :value="type"
-            @change="$emit('update:type', ($event.target as HTMLSelectElement).value)"
+            :value="typeId ?? ''"
+            @change="onTypeChange"
         >
-            <option v-for="t in UF_DOC_TYPES" :key="t.key" :value="t.key">{{ t.label }}</option>
+            <option :value="''">Seleccionar</option>
+            <option v-for="t in catalog" :key="t.id" :value="t.id">{{ t.name }}</option>
         </select>
         <input
             class="uf-input"

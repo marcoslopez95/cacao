@@ -121,7 +121,7 @@ onUnmounted(() => cleanupSpy?.())
                     @enter-edit="editSection(secNum)"
                     @cancel="cancelSection(secNum)"
                 >
-                    <UserFormS01Identity          v-if="secNum === 1"  :data="formData" :set-field="setField" />
+                    <UserFormS01Identity          v-if="secNum === 1"  :data="formData" :set-field="setField" :catalog-data="catalogData" />
                     <UserFormS02Credentials       v-else-if="secNum === 2"  :data="formData" :set-field="setField" />
                     <UserFormS03Address           v-else-if="secNum === 3"  :data="formData" :set-field="setField" :catalog-data="catalogData" />
                     <UserFormS04Demographic       v-else-if="secNum === 4"  :data="formData" :set-field="setField" :catalog-data="catalogData" />

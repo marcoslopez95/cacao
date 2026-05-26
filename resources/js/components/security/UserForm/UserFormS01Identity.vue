@@ -1,16 +1,51 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type { UserFormData } from '@/types/userForm'
-import { UF_DOC_TYPES, UF_GENDERS, UF_COUNTRIES } from '@/types/userFormCatalogs'
+import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppDocInput from '@/components/UI/AppDocInput.vue'
 import AppTelInput from '@/components/UI/AppTelInput.vue'
 import AppAvatarUpload from '@/components/UI/AppAvatarUpload.vue'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
-}>()
+    catalogData?: UserFormCatalogData
+}>(), {
+    catalogData: () => ({
+        documentTypes: [],
+        genders: [],
+        nationalities: [],
+        countries: [],
+        states: [],
+        languages: [],
+        languageLevels: [],
+        benefits: [],
+        religions: [],
+        institutionTypes: [],
+        transferReasons: [],
+        digitalLevels: [],
+        educationLevels: [],
+        maritalStatuses: [],
+        contractTypes: [],
+        dedicationTypes: [],
+        employmentStatuses: [],
+        departments: [],
+        bloodTypes: [],
+        disabilityTypes: [],
+        insuranceTypes: [],
+        livingArrangements: [],
+        householdHeadTypes: [],
+        incomeRanges: [],
+        incomeSources: [],
+        employmentTypes: [],
+        housingTypes: [],
+        tenureTypes: [],
+        constructionMaterials: [],
+        commuteTimes: [],
+        transportTypes: [],
+    }),
+})
 
 const fullName = computed(() =>
     [props.data.firstName, props.data.lastName].filter(Boolean).join(' '),
@@ -47,9 +82,10 @@ const fullName = computed(() =>
 
             <AppFormField label="Documento de identidad" required :col="6">
                 <AppDocInput
-                    :type="data.docType ?? 'V-CI'"
+                    :type-id="data.docTypeId ?? null"
                     :number="data.docNumber ?? ''"
-                    @update:type="setField('docType', $event)"
+                    :catalog="catalogData.documentTypes"
+                    @update:type-id="setField('docTypeId', $event)"
                     @update:number="setField('docNumber', $event)"
                 />
             </AppFormField>
@@ -66,22 +102,22 @@ const fullName = computed(() =>
             <AppFormField label="Género" :col="3">
                 <select
                     class="uf-select"
-                    :value="data.gender ?? ''"
-                    @change="setField('gender', ($event.target as HTMLSelectElement).value)"
+                    :value="data.genderId ?? null"
+                    @change="setField('genderId', Number(($event.target as HTMLSelectElement).value) || null)"
                 >
-                    <option value="">Seleccionar</option>
-                    <option v-for="g in UF_GENDERS" :key="g.key" :value="g.key">{{ g.label }}</option>
+                    <option :value="null">Seleccionar</option>
+                    <option v-for="g in catalogData.genders" :key="g.id" :value="g.id">{{ g.name }}</option>
                 </select>
             </AppFormField>
 
             <AppFormField label="Nacionalidad" :col="4">
                 <select
                     class="uf-select"
-                    :value="data.nationality ?? ''"
-                    @change="setField('nationality', ($event.target as HTMLSelectElement).value)"
+                    :value="data.nationalityId ?? null"
+                    @change="setField('nationalityId', Number(($event.target as HTMLSelectElement).value) || null)"
                 >
-                    <option value="">Seleccionar</option>
-                    <option v-for="c in UF_COUNTRIES" :key="c.key" :value="c.key">{{ c.label }}</option>
+                    <option :value="null">Seleccionar</option>
+                    <option v-for="c in catalogData.nationalities" :key="c.id" :value="c.id">{{ c.name }}</option>
                 </select>
             </AppFormField>
 
