@@ -53,8 +53,6 @@ class UserWrapper extends Collection
         return $this->get('roles', []);
     }
 
-    // S01 Identity section getters
-
     public function getDocumentTypeId(): ?int
     {
         return $this->has('document_type_id') && $this->get('document_type_id') !== null
