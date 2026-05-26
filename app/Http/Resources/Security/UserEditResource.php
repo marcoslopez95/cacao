@@ -27,6 +27,14 @@ class UserEditResource extends JsonResource
                 default => strtolower($name),
             })->values()),
             'created_at' => $this->created_at?->toDateString(),
+            'document_type_id' => $this->document_type_id,
+            'document_number' => $this->document_number,
+            'birth_date' => $this->birth_date?->toDateString(),
+            'gender_id' => $this->gender_id,
+            'nationality_id' => $this->nationality_id,
+            'phone_primary' => $this->phone_primary,
+            'phone_secondary' => $this->phone_secondary,
+            'profile_photo_url' => $this->profile_photo_url,
         ];
     }
 }
