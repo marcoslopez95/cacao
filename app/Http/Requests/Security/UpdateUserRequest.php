@@ -63,7 +63,6 @@ class UpdateUserRequest extends FormRequest
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($target->id)],
             'roles' => ['array'],
             'roles.*' => ['string', Rule::exists('roles', 'name')],
-            // S01 Identity fields
             'document_type_id' => ['nullable', 'integer', 'exists:document_types,id'],
             'document_number' => ['nullable', 'string', 'max:20'],
             'birth_date' => ['nullable', 'date', 'before:today'],
