@@ -27,7 +27,38 @@ use App\Http\Resources\Security\UserEditResource;
 use App\Http\Resources\Security\UserResource;
 use App\Http\Resources\UserConsentResource;
 use App\Http\Wrappers\Security\UserWrapper;
+use App\Models\Catalogs\BloodType;
+use App\Models\Catalogs\CommuteTime;
+use App\Models\Catalogs\ConstructionMaterial;
+use App\Models\Catalogs\ContractType;
+use App\Models\Catalogs\DedicationType;
+use App\Models\Catalogs\DigitalLevel;
+use App\Models\Catalogs\DisabilityType;
+use App\Models\Catalogs\DocumentType;
+use App\Models\Catalogs\EducationLevel;
+use App\Models\Catalogs\EmploymentStatus;
+use App\Models\Catalogs\EmploymentType;
+use App\Models\Catalogs\Gender;
+use App\Models\Catalogs\HouseholdHeadType;
+use App\Models\Catalogs\HousingType;
+use App\Models\Catalogs\IncomeRange;
+use App\Models\Catalogs\IncomeSource;
+use App\Models\Catalogs\InstitutionalBenefit;
+use App\Models\Catalogs\InstitutionType;
+use App\Models\Catalogs\InsuranceType;
+use App\Models\Catalogs\Language;
+use App\Models\Catalogs\LanguageLevel;
+use App\Models\Catalogs\LivingArrangement;
+use App\Models\Catalogs\MaritalStatus;
+use App\Models\Catalogs\Religion;
+use App\Models\Catalogs\TenureType;
+use App\Models\Catalogs\TransferReason;
+use App\Models\Catalogs\TransportType;
+use App\Models\Coordination;
+use App\Models\Country;
+use App\Models\State;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -118,11 +149,17 @@ class UserController extends Controller
             'documents',
             'consents',
             'student.background',
-            'student.languages',
+            'student.studentLanguages.language',
+            'student.studentLanguages.languageLevel',
             'student.familyProfile',
             'student.socioeconomicProfile',
-            'student.benefits',
-            'student.housingProfile',
+            'student.studentBenefits.benefit',
+            'student.housingProfile.housingType',
+            'student.housingProfile.tenureType',
+            'student.housingProfile.constructionMaterial',
+            'student.housingProfile.commuteTime',
+            'student.housingProfile.transportType',
+            'student.housingProfile.services',
             'professor.staffProfile',
             'guardian.profile',
         ]);
@@ -153,18 +190,18 @@ class UserController extends Controller
             $props['student'] = [
                 'id' => $student->id,
                 'background' => $student->background
-                    ? new StudentBackgroundResource($student->background)
+                    ? (new StudentBackgroundResource($student->background))->resolve()
                     : null,
-                'languages' => StudentLanguageResource::collection($student->languages),
+                'languages' => StudentLanguageResource::collection($student->studentLanguages)->resolve(),
                 'familyProfile' => $student->familyProfile
-                    ? new FamilyProfileResource($student->familyProfile)
+                    ? (new FamilyProfileResource($student->familyProfile))->resolve()
                     : null,
                 'socioeconomicProfile' => $student->socioeconomicProfile
-                    ? new SocioeconomicProfileResource($student->socioeconomicProfile)
+                    ? (new SocioeconomicProfileResource($student->socioeconomicProfile))->resolve()
                     : null,
-                'benefits' => StudentBenefitResource::collection($student->benefits),
+                'benefits' => StudentBenefitResource::collection($student->studentBenefits)->resolve(),
                 'housingProfile' => $student->housingProfile
-                    ? new HousingProfileResource($student->housingProfile)
+                    ? (new HousingProfileResource($student->housingProfile))->resolve()
                     : null,
             ];
         }
@@ -173,7 +210,7 @@ class UserController extends Controller
             $props['professor'] = [
                 'id' => $user->professor->id,
                 'staffProfile' => $user->professor->staffProfile
-                    ? new StaffProfileResource($user->professor->staffProfile)
+                    ? (new StaffProfileResource($user->professor->staffProfile))->resolve()
                     : null,
             ];
         }
@@ -182,10 +219,47 @@ class UserController extends Controller
             $props['guardian'] = [
                 'id' => $user->guardian->id,
                 'profile' => $user->guardian->profile
-                    ? new GuardianProfileResource($user->guardian->profile)
+                    ? (new GuardianProfileResource($user->guardian->profile))->resolve()
                     : null,
             ];
         }
+
+        $props['catalogData'] = [
+            'documentTypes' => DocumentType::where('active', true)->orderBy('sort_order')->get(['id', 'name', 'code']),
+            'genders' => Gender::where('active', true)->orderBy('sort_order')->get(['id', 'name', 'code']),
+            'nationalities' => Country::where('active', true)->orderBy('name')->get(['id', 'name', 'iso2']),
+            'countries' => Country::where('active', true)->orderBy('name')->get(['id', 'name', 'iso2']),
+            'states' => State::where('active', true)->orderBy('name')->get(['id', 'name', 'country_id']),
+            'languages' => Language::active()->ordered()->get(['id', 'name', 'code']),
+            'languageLevels' => LanguageLevel::active()->ordered()->get(['id', 'name', 'code']),
+            'benefits' => InstitutionalBenefit::active()->ordered()->get(['id', 'name', 'code']),
+            'religions' => Religion::active()->ordered()->get(['id', 'name']),
+            'institutionTypes' => InstitutionType::active()->ordered()->get(['id', 'name']),
+            'transferReasons' => TransferReason::active()->ordered()->get(['id', 'name']),
+            'digitalLevels' => DigitalLevel::active()->ordered()->get(['id', 'name']),
+            'educationLevels' => EducationLevel::active()->ordered()->get(['id', 'name']),
+            'maritalStatuses' => MaritalStatus::active()->ordered()->get(['id', 'name']),
+            'contractTypes' => ContractType::active()->ordered()->get(['id', 'name']),
+            'dedicationTypes' => DedicationType::active()->ordered()->get(['id', 'name']),
+            'employmentStatuses' => EmploymentStatus::active()->ordered()->get(['id', 'name']),
+            'departments' => Coordination::where('active', true)->orderBy('name')->get(['id', 'name']),
+            'bloodTypes' => BloodType::active()->ordered()->get(['id', 'name']),
+            'disabilityTypes' => DisabilityType::active()->ordered()->get(['id', 'name']),
+            'insuranceTypes' => InsuranceType::active()->ordered()->get(['id', 'name']),
+            // S11 — Familia
+            'livingArrangements' => LivingArrangement::active()->ordered()->get(['id', 'name', 'code']),
+            'householdHeadTypes' => HouseholdHeadType::active()->ordered()->get(['id', 'name', 'code']),
+            // S12 — Socioeconómico
+            'incomeRanges' => IncomeRange::active()->ordered()->get(['id', 'name', 'code']),
+            'incomeSources' => IncomeSource::active()->ordered()->get(['id', 'name', 'code']),
+            'employmentTypes' => EmploymentType::active()->ordered()->get(['id', 'name', 'code']),
+            // S14 — Vivienda
+            'housingTypes' => HousingType::active()->ordered()->get(['id', 'name', 'code']),
+            'tenureTypes' => TenureType::active()->ordered()->get(['id', 'name', 'code']),
+            'constructionMaterials' => ConstructionMaterial::active()->ordered()->get(['id', 'name', 'code']),
+            'commuteTimes' => CommuteTime::active()->ordered()->get(['id', 'name', 'code']),
+            'transportTypes' => TransportType::active()->ordered()->get(['id', 'name', 'code']),
+        ];
 
         return Inertia::render('security/Users/Edit', $props);
     }
@@ -200,6 +274,32 @@ class UserController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Usuario actualizado.']);
 
         return to_route('security.users.index');
+    }
+
+    /**
+     * Update identity (name, email, roles) from the edit-form section save — returns without redirect.
+     */
+    public function updateIdentity(UpdateUserRequest $request, User $user, UpdateUserAction $action): UserEditResource
+    {
+        $action->handle($user, new UserWrapper($request->validated()));
+
+        return new UserEditResource($user->fresh()->load('roles'));
+    }
+
+    /**
+     * Reset password from the edit-form credentials section — returns without redirect.
+     */
+    public function updateCredentials(ResetPasswordRequest $request, User $user, ResetUserPasswordAction $action): JsonResponse
+    {
+        $wrapper = new UserWrapper($request->validated());
+        $action->handle($user, $wrapper);
+
+        $data = ['ok' => true];
+        if ($wrapper->getPasswordMode() === 'random') {
+            $data['password'] = $wrapper->getPlainPassword();
+        }
+
+        return response()->json($data);
     }
 
     /**
