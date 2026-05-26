@@ -31,6 +31,22 @@ class UpdateUserRequest extends FormRequest
                 'last_name' => $parts[1] ?? '',
             ]);
         }
+
+        // Map frontend role keys (English lowercase) back to Spatie role names.
+        if ($this->has('roles')) {
+            $map = [
+                'admin' => 'Admin',
+                'student' => 'Estudiante',
+                'professor' => 'Profesor',
+                'guardian' => 'Representante',
+            ];
+            $this->merge([
+                'roles' => collect($this->input('roles', []))
+                    ->map(fn ($r) => $map[$r] ?? $r)
+                    ->values()
+                    ->all(),
+            ]);
+        }
     }
 
     /**
@@ -47,6 +63,14 @@ class UpdateUserRequest extends FormRequest
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($target->id)],
             'roles' => ['array'],
             'roles.*' => ['string', Rule::exists('roles', 'name')],
+            // S01 Identity fields
+            'document_type_id' => ['nullable', 'integer', 'exists:document_types,id'],
+            'document_number' => ['nullable', 'string', 'max:20'],
+            'birth_date' => ['nullable', 'date', 'before:today'],
+            'gender_id' => ['nullable', 'integer', 'exists:genders,id'],
+            'nationality_id' => ['nullable', 'integer', 'exists:countries,id'],
+            'phone_primary' => ['nullable', 'string', 'max:20'],
+            'phone_secondary' => ['nullable', 'string', 'max:20'],
         ];
     }
 }
