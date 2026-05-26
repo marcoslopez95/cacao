@@ -53,6 +53,49 @@ class UserWrapper extends Collection
         return $this->get('roles', []);
     }
 
+    // S01 Identity section getters
+
+    public function getDocumentTypeId(): ?int
+    {
+        return $this->has('document_type_id') && $this->get('document_type_id') !== null
+            ? (int) $this->get('document_type_id')
+            : null;
+    }
+
+    public function getDocumentNumber(): ?string
+    {
+        return $this->get('document_number');
+    }
+
+    public function getBirthDate(): ?string
+    {
+        return $this->get('birth_date');
+    }
+
+    public function getGenderId(): ?int
+    {
+        return $this->has('gender_id') && $this->get('gender_id') !== null
+            ? (int) $this->get('gender_id')
+            : null;
+    }
+
+    public function getNationalityId(): ?int
+    {
+        return $this->has('nationality_id') && $this->get('nationality_id') !== null
+            ? (int) $this->get('nationality_id')
+            : null;
+    }
+
+    public function getPhonePrimary(): ?string
+    {
+        return $this->get('phone_primary');
+    }
+
+    public function getPhoneSecondary(): ?string
+    {
+        return $this->get('phone_secondary');
+    }
+
     public function getPasswordMode(): string
     {
         return $this->get('password_mode', 'link');
