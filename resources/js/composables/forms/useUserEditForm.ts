@@ -335,10 +335,17 @@ export function useUserEditForm(props: UserEditProps) {
     const handlers: Partial<Record<number, () => Promise<void>>> = {
         1: async () => {
             await http.transform(() => ({
-                first_name: formData.firstName ?? '',
-                last_name:  formData.lastName  ?? '',
-                email:      formData.email      ?? '',
-                roles:      formData.roles      ?? [],
+                first_name:       formData.firstName    ?? '',
+                last_name:        formData.lastName     ?? '',
+                email:            formData.email        ?? '',
+                roles:            formData.roles        ?? [],
+                document_type_id: formData.docTypeId    ?? null,
+                document_number:  formData.docNumber    ?? null,
+                birth_date:       formData.birthDate    ?? null,
+                gender_id:        formData.genderId     ?? null,
+                nationality_id:   formData.nationalityId ?? null,
+                phone_primary:    formData.phone1       ?? null,
+                phone_secondary:  formData.phone2       ?? null,
             })).patch(updateIdentity({ user: props.user.id }).url)
         },
         2: async () => {
