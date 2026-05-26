@@ -14,6 +14,8 @@ const emit = defineEmits<{
 
 const selectedCode = computed(() => props.catalog.find(t => t.id === props.typeId)?.code ?? null)
 
+const inputMode = computed(() => selectedCode.value === 'P' ? 'text' : 'numeric')
+
 const placeholder = computed(() => {
     if (selectedCode.value === 'P') return 'AB1234567'
     if (selectedCode.value === 'J') return '123456789'
@@ -45,7 +47,7 @@ function onNumber(e: Event): void {
         <input
             class="uf-input"
             type="text"
-            inputmode="numeric"
+            :inputmode="inputMode"
             :value="number"
             :placeholder="placeholder"
             @input="onNumber"

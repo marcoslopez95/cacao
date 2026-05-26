@@ -36,12 +36,12 @@ const form = useForm(() => ({
     role:          activeRole.value,
     password_mode: localData.passwordMode ?? 'link',
     password:      localData.passwordMode === 'manual' ? (localData.password ?? '') : undefined,
-    doc_type:            localData.docType       ?? undefined,
+    document_type_id:    localData.docTypeId      ?? undefined,
     doc_number:          localData.docNumber      ?? undefined,
     phone1:              localData.phone1         ?? undefined,
     phone1_country_code: localData.phone1Dial     ?? undefined,
-    gender:              localData.gender         ?? undefined,
-    nationality:         localData.nationality    ?? undefined,
+    gender_id:           localData.genderId       ?? undefined,
+    nationality_id:      localData.nationalityId  ?? undefined,
     birth_date:          localData.birthDate      ?? undefined,
 }))
 
