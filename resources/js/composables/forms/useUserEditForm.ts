@@ -430,6 +430,14 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
     d.lastName  = props.user.last_name
     d.email     = props.user.email
     d.roles     = props.user.roles
+    d.docTypeId       = props.user.document_type_id  ?? undefined
+    d.docNumber       = props.user.document_number   ?? undefined
+    d.birthDate       = props.user.birth_date        ?? undefined
+    d.genderId        = props.user.gender_id         ?? undefined
+    d.nationalityId   = props.user.nationality_id    ?? undefined
+    d.phone1          = props.user.phone_primary     ?? undefined
+    d.phone2          = props.user.phone_secondary   ?? undefined
+    d.profilePhotoUrl = props.user.profile_photo_url ?? undefined
 
     d.addresses = props.addresses.map(a => ({
         __id:       a.id,
