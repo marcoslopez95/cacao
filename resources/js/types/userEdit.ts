@@ -26,6 +26,14 @@ export interface UserEditData {
     email: string
     active: boolean
     roles: string[]
+    document_type_id: number | null
+    document_number: string | null
+    birth_date: string | null
+    gender_id: number | null
+    nationality_id: number | null
+    phone_primary: string | null
+    phone_secondary: string | null
+    profile_photo_url: string | null
     created_at: string | null
 }
 
@@ -336,6 +344,11 @@ export interface StaffProfileData {
 // ---------------------------------------------------------------------------
 
 export interface UserFormCatalogData {
+    // S01 — Identidad personal
+    documentTypes: Array<{ id: number; name: string; code: string }>
+    genders: Array<{ id: number; name: string; code: string }>
+    nationalities: Array<{ id: number; name: string; iso2: string }>
+    // Geographic & language
     countries: Array<{ id: number; name: string; iso2: string }>
     states: Array<{ id: number; name: string; country_id: number }>
     languages: Array<{ id: number; name: string; code: string }>

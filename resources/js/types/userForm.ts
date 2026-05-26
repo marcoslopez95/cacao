@@ -52,11 +52,11 @@ export interface UserFormData {
     firstName?: string
     lastName?: string
     roles?: string[]
-    docType?: string
+    docTypeId?: number
     docNumber?: string
     birthDate?: string
-    gender?: string
-    nationality?: string
+    genderId?: number
+    nationalityId?: number
     phone1?: string
     phone1Dial?: string
     phone2?: string
