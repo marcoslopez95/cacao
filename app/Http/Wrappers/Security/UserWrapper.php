@@ -141,21 +141,53 @@ class UserWrapper extends Collection
     }
 
     /**
+     * Build the array used in User::update().
+     *
+     * Core identity fields (first_name, last_name, email) are always included.
+     * S01 nullable fields are only included when the key was present in the
+     * incoming payload — this prevents a partial PATCH (e.g. only sending
+     * document fields) from accidentally nullifying gender_id, nationality_id
+     * or other fields that were not part of the request.
+     *
      * @return array<string, mixed>
      */
     public function getUpdateData(): array
     {
-        return [
+        $data = [
             'first_name' => $this->getFirstName(),
             'last_name' => $this->getLastName(),
             'email' => $this->getEmail(),
-            'document_type_id' => $this->getDocumentTypeId(),
-            'document_number' => $this->getDocumentNumber(),
-            'birth_date' => $this->getBirthDate(),
-            'gender_id' => $this->getGenderId(),
-            'nationality_id' => $this->getNationalityId(),
-            'phone_primary' => $this->getPhonePrimary(),
-            'phone_secondary' => $this->getPhoneSecondary(),
         ];
+
+        // Only include S01 fields that were explicitly sent in the payload.
+        if ($this->has('document_type_id')) {
+            $data['document_type_id'] = $this->getDocumentTypeId();
+        }
+
+        if ($this->has('document_number')) {
+            $data['document_number'] = $this->getDocumentNumber();
+        }
+
+        if ($this->has('birth_date')) {
+            $data['birth_date'] = $this->getBirthDate();
+        }
+
+        if ($this->has('gender_id')) {
+            $data['gender_id'] = $this->getGenderId();
+        }
+
+        if ($this->has('nationality_id')) {
+            $data['nationality_id'] = $this->getNationalityId();
+        }
+
+        if ($this->has('phone_primary')) {
+            $data['phone_primary'] = $this->getPhonePrimary();
+        }
+
+        if ($this->has('phone_secondary')) {
+            $data['phone_secondary'] = $this->getPhoneSecondary();
+        }
+
+        return $data;
     }
 }
