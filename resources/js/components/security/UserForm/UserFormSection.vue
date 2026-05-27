@@ -84,6 +84,7 @@ defineEmits<{ save: []; enterEdit: []; cancel: [] }>()
                 </button>
                 <button
                     type="button"
+                    :dusk="'save-section-' + sectionId"
                     class="uf-btn primary sm"
                     :disabled="isSaving"
                     @click="$emit('save')"

@@ -21,7 +21,7 @@ pest()->extend(DuskTestCase::class)
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->in('Feature');
+    ->in('Feature', '../.worktrees/feat/academic-career-categories/tests/Feature');
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)

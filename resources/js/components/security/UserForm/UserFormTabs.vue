@@ -31,6 +31,7 @@ function padIdx(i: number): string {
                 :key="tb.key"
                 type="button"
                 role="tab"
+                :dusk="'tab-' + tb.key"
                 class="uf-tab"
                 :class="{
                     active: modelValue === tb.key,

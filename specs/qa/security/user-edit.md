@@ -117,9 +117,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 **Nota HLZ-10/HLZ-15 (user-edit-health-fix):** antes del fix, `buildInitialFormData()` leía `h.blood_type?.name` (objeto anidado ausente) → `undefined`. Los tres dropdowns siempre aparecían vacíos aunque hubiera datos en DB. Además, `saveHealth()` enviaba claves sin `_id` (`blood_type`, `disability_type`, `insurance_type`) que el backend ignoraba; los valores previos en DB quedaban en `NULL` silenciosamente. Fix: leer los campos planos `blood_type_id`, `disability_type_id`, `insurance_type_id` del resource; enviar con sufijo `_id`; agregar `bloodTypes`, `disabilityTypes`, `insuranceTypes` a `catalogData`. Frontend-only — el resource ya devolvía los campos planos correctamente.
 
 **Test automático:** `tests/Feature/UserEditHealthFix/Acceptance/HealthProfileS05AcceptanceTest.php` (RF-01 ×2, RF-02, RF-03, RF-04 ×2, RF-05 ×2, RF-06 ×4 = 12 tests); `tests/Feature/Security/UserEditUseCaseTest.php` (nuevo S5 catalog IDs test)  
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS05HealthTest.php` (7 tests: UC-S05-01 ×2, UC-S05-02, UC-S05-03, UC-S05-04, UC-S05-05, UC-S05-06) ✅ 7/7 pasan  
 **Feature de origen:** user-profiles; actualizado en user-edit-health-fix  
-**Última verificación:** 2026-05-26 ✅ (12 acceptance tests pasan; HLZ-10 y HLZ-15 resueltos)
+**Última verificación:** 2026-05-27 ✅ (12 acceptance tests pasan; 7 Dusk tests pasan; HLZ-10 y HLZ-15 resueltos)
 
 ---
 
@@ -139,8 +139,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 - `buildInitialFormData()`: `d.bloodTypeId = h.blood_type_id ?? undefined`, `d.disabilityTypeId = h.disability_type_id ?? undefined`, `d.insuranceTypeId = h.insurance_type_id ?? undefined`
 
 **Test automático:** `tests/Feature/UserEditHealthFix/Acceptance/HealthProfileS05AcceptanceTest.php` (RF-01 ×2, RF-02, RF-03)  
+**Test Dusk:** `tests/Browser/Security/UserEditS05HealthTest.php` (UC-S05-01 ×2) ✅  
 **Feature de origen:** user-edit-health-fix  
-**Última verificación:** 2026-05-26 ✅ (4 acceptance tests pasan)
+**Última verificación:** 2026-05-27 ✅ (4 acceptance tests pasan; 2 Dusk tests pasan)
 
 ---
 
@@ -164,8 +165,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 **Contexto RF-05:** antes del fix, `saveHealth()` enviaba `blood_type: null` (clave incorrecta pero `??null` producía valor nulo). El backend `StoreHealthProfileRequest` tiene `blood_type_id` como nullable; aceptaba `null` explícito y destruía el valor previo. Fix: enviar `blood_type_id: formData.bloodTypeId ?? null` (clave correcta con `_id`).
 
 **Test automático:** `tests/Feature/UserEditHealthFix/Acceptance/HealthProfileS05AcceptanceTest.php` (RF-04 ×2, RF-05 ×2)  
+**Test Dusk:** `tests/Browser/Security/UserEditS05HealthTest.php` (UC-S05-02, UC-S05-03) ✅  
 **Feature de origen:** user-edit-health-fix  
-**Última verificación:** 2026-05-26 ✅ (4 acceptance tests pasan)
+**Última verificación:** 2026-05-27 ✅ (4 acceptance tests pasan; 2 Dusk tests pasan)
 
 ---
 
@@ -184,8 +186,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 - `UserFormCatalogData` interface en `userEdit.ts`: agrega `bloodTypes`, `disabilityTypes`, `insuranceTypes`
 
 **Test automático:** `tests/Feature/UserEditHealthFix/Acceptance/HealthProfileS05AcceptanceTest.php` (RF-06 ×4)  
+**Test Dusk:** `tests/Browser/Security/UserEditS05HealthTest.php` (UC-S05-04) ✅  
 **Feature de origen:** user-edit-health-fix  
-**Última verificación:** 2026-05-26 ✅ (4 acceptance tests pasan)
+**Última verificación:** 2026-05-27 ✅ (4 acceptance tests pasan; 1 Dusk test pasa)
 
 ---
 

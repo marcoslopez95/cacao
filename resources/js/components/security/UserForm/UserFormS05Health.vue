@@ -26,6 +26,7 @@ const imc = computed(() => {
         <div class="uf-grid">
             <AppFormField label="Grupo sanguíneo" :col="3">
                 <select
+                    dusk="blood-type-select"
                     class="uf-select"
                     :value="data.bloodTypeId ?? ''"
                     @change="setField('bloodTypeId', Number(($event.target as HTMLSelectElement).value) || undefined)"
@@ -36,6 +37,7 @@ const imc = computed(() => {
             </AppFormField>
             <AppFormField label="Peso (kg)" :col="3">
                 <input
+                    dusk="weight-input"
                     class="uf-input"
                     type="number"
                     min="0"
@@ -46,6 +48,7 @@ const imc = computed(() => {
             </AppFormField>
             <AppFormField label="Talla (cm)" :col="3">
                 <input
+                    dusk="height-input"
                     class="uf-input"
                     type="number"
                     min="0"
@@ -70,6 +73,7 @@ const imc = computed(() => {
         <div class="uf-grid">
             <AppFormField :col="12">
                 <AppToggleCard
+                    dusk="disability-toggle"
                     label="Tiene alguna discapacidad"
                     :model-value="data.disability ?? false"
                     @update:model-value="setField('disability', $event)"
@@ -78,6 +82,7 @@ const imc = computed(() => {
             <template v-if="data.disability">
                 <AppFormField label="Tipo de discapacidad" :col="6">
                     <select
+                        dusk="disability-type-select"
                         class="uf-select"
                         :value="data.disabilityTypeId ?? ''"
                         @change="setField('disabilityTypeId', Number(($event.target as HTMLSelectElement).value) || undefined)"
@@ -129,6 +134,7 @@ const imc = computed(() => {
         <div class="uf-grid">
             <AppFormField :col="12">
                 <AppToggleCard
+                    dusk="insurance-toggle"
                     label="Cuenta con seguro médico"
                     :model-value="data.insurance ?? false"
                     @update:model-value="setField('insurance', $event)"
@@ -137,6 +143,7 @@ const imc = computed(() => {
             <template v-if="data.insurance">
                 <AppFormField label="Tipo de seguro" :col="6">
                     <select
+                        dusk="insurance-type-select"
                         class="uf-select"
                         :value="data.insuranceTypeId ?? ''"
                         @change="setField('insuranceTypeId', Number(($event.target as HTMLSelectElement).value) || undefined)"
@@ -153,7 +160,7 @@ const imc = computed(() => {
         <p class="uf-sub-title">Contacto de emergencia</p>
         <div class="uf-grid">
             <AppFormField label="Nombre" required :col="5">
-                <input class="uf-input" :value="data.emergencyName" @input="setField('emergencyName', ($event.target as HTMLInputElement).value)" />
+                <input dusk="emergency-name-input" class="uf-input" :value="data.emergencyName" @input="setField('emergencyName', ($event.target as HTMLInputElement).value)" />
             </AppFormField>
             <AppFormField label="Teléfono" required :col="4">
                 <AppTelInput
@@ -164,7 +171,7 @@ const imc = computed(() => {
                 />
             </AppFormField>
             <AppFormField label="Parentesco" required :col="3">
-                <input class="uf-input" :value="data.emergencyRel" placeholder="Madre, padre…" @input="setField('emergencyRel', ($event.target as HTMLInputElement).value)" />
+                <input dusk="emergency-rel-input" class="uf-input" :value="data.emergencyRel" placeholder="Madre, padre…" @input="setField('emergencyRel', ($event.target as HTMLInputElement).value)" />
             </AppFormField>
         </div>
     </div>
