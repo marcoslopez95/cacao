@@ -271,6 +271,8 @@
 }
 .uf-autosave.saving .uf-autosave-dot { background: var(--warning); animation: ufPulse 1s infinite; }
 .uf-autosave.idle .uf-autosave-dot { background: var(--text-muted); }
+.uf-autosave.error .uf-autosave-dot { background: var(--danger, #dc2626); }
+.uf-autosave.error { color: var(--danger, #dc2626); }
 @keyframes ufPulse { 50% { opacity: .35; } }
 
 /* ============================================================

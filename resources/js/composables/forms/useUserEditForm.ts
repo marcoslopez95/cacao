@@ -48,7 +48,7 @@ export function useUserEditForm(props: UserEditProps) {
         }
     })
 
-    const autosave = ref<{ status: 'idle' | 'saving' | 'saved'; when: Date | null }>({
+    const autosave = ref<{ status: 'idle' | 'saving' | 'saved' | 'error'; when: Date | null; message?: string }>({
         status: 'idle',
         when: null,
     })
@@ -74,9 +74,13 @@ export function useUserEditForm(props: UserEditProps) {
             editingSections.value = next
             autosave.value = { status: 'saved', when: new Date() }
         } catch (e) {
-            autosave.value = { status: 'idle', when: null }
             if (e && typeof e === 'object' && 'errors' in e) {
                 errors.value[n] = (e as { errors: Record<string, string> }).errors
+                autosave.value = { status: 'idle', when: null }
+            } else if (e && typeof e === 'object' && 'message' in e) {
+                autosave.value = { status: 'error', when: null, message: (e as { message: string }).message }
+            } else {
+                autosave.value = { status: 'error', when: null, message: 'Error al guardar' }
             }
         } finally {
             saving.value = null

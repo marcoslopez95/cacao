@@ -7,6 +7,7 @@ use App\Models\Guardian;
 use App\Models\Professor;
 use App\Models\Student;
 use App\Models\User;
+use App\Models\UserConsent;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\Yaml\Yaml;
@@ -23,6 +24,7 @@ class UserSeeder extends Seeder
             if ($existing) {
                 $existing->syncRoles([$userData['role']]);
                 $this->ensureSubRecord($existing, $userData['role']);
+                $this->ensureConsent($existing);
 
                 continue;
             }
@@ -39,7 +41,28 @@ class UserSeeder extends Seeder
 
             $user->syncRoles([$userData['role']]);
             $this->ensureSubRecord($user, $userData['role']);
+            $this->ensureConsent($user);
         }
+    }
+
+    private function ensureConsent(User $user): void
+    {
+        if (UserConsent::where('user_id', $user->id)->whereNull('revoked_at')->exists()) {
+            return;
+        }
+
+        UserConsent::create([
+            'user_id' => $user->id,
+            'policy_version' => 'v1.0',
+            'accepts_data_processing' => true,
+            'accepts_image_use' => true,
+            'accepts_whatsapp_contact' => true,
+            'accepts_email_contact' => true,
+            'ip_address' => '127.0.0.1',
+            'user_agent' => 'seeder',
+            'granted_at' => now(),
+            'revoked_at' => null,
+        ]);
     }
 
     private function ensureSubRecord(User $user, string $roleName): void

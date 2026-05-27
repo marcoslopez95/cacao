@@ -24,6 +24,7 @@ const canSubmit = computed(() => props.completion.pct >= 50)
                 <span class="uf-autosave-dot" />
                 <span v-if="autosave.status === 'saving'">Guardando…</span>
                 <span v-else-if="autosave.status === 'saved'">Guardado</span>
+                <span v-else-if="autosave.status === 'error'" :title="autosave.message">Error al guardar</span>
                 <span v-else>Sin cambios</span>
             </span>
         </div>

@@ -12,14 +12,17 @@
  * - UC-S05-04: Dropdowns del catálogo muestran opciones de bloodTypes, insuranceTypes
  * - UC-S05-05: Toggle disability muestra/oculta el select de tipo de discapacidad
  * - UC-S05-06: Contacto de emergencia se guarda y pre-llena en reload
+ * - UC-S05-07: Sin consentimiento — error se muestra al usuario (no swallow silencioso)
  *
  * Run with: vendor/bin/sail dusk tests/Browser/Security/UserEditS05HealthTest.php
  */
 
+use App\Enums\EducationalLevel;
 use App\Models\Catalogs\BloodType;
 use App\Models\Catalogs\DisabilityType;
 use App\Models\Catalogs\InsuranceType;
 use App\Models\HealthProfile;
+use App\Models\Student;
 use App\Models\User;
 use App\Models\UserConsent;
 use Database\Seeders\Catalogs\SocioeconomicCatalogsSeeder;
@@ -63,13 +66,23 @@ function adminForS05(): User
 }
 
 /**
- * Crea un usuario objetivo con rol Admin, consentimiento activo y perfil de salud pre-cargado.
- * El rol Admin es necesario para que UF_TABS renderice las secciones del formulario de admin.
+ * Crea un usuario objetivo con rol Estudiante, consentimiento activo, sub-registro Student
+ * y perfil de salud pre-cargado.
+ *
+ * Rol Estudiante — refleja el usuario real que usa el formulario S05 en producción.
+ * UF_TABS renderiza la tab "Salud" para Estudiante igual que para Admin.
+ * ConsentService::requireConsent() requiere consentimiento activo en el target.
  */
 function targetWithHealthProfile(array $healthData = []): User
 {
     $target = User::factory()->create();
-    $target->assignRole('Admin');
+    $target->assignRole('Estudiante');
+
+    // Sub-registro requerido para que UF_TABS renderice tabs de Estudiante
+    Student::firstOrCreate(
+        ['user_id' => $target->id],
+        ['educational_level' => EducationalLevel::University]
+    );
 
     // Consentimiento activo — requerido por ConsentService::requireConsent()
     UserConsent::create([
@@ -314,5 +327,36 @@ test('UC-S05-06: contacto de emergencia se guarda y pre-llena en reload', functi
 
         expect($nameValue)->toBe($emergencyName);
         expect($relValue)->toBe($emergencyRel);
+    });
+});
+
+// ---------------------------------------------------------------------------
+// UC-S05-07 — Sin consentimiento: el error se muestra al usuario (no swallow silencioso)
+// ---------------------------------------------------------------------------
+
+test('UC-S05-07: target sin consentimiento muestra error al guardar S05', function () {
+    $admin = adminForS05();
+
+    // Target sin consentimiento activo
+    $target = User::factory()->create();
+    $target->assignRole('Estudiante');
+    Student::firstOrCreate(
+        ['user_id' => $target->id],
+        ['educational_level' => EducationalLevel::University]
+    );
+
+    $this->browse(function (Browser $browser) use ($admin, $target) {
+        navigateToS05($browser, $admin, $target);
+
+        $browser->waitFor('[dusk="blood-type-select"]', 5);
+
+        $browser->click('[dusk="save-section-5"]')
+            ->pause(2000);
+
+        // El indicador de autosave debe mostrar error — no "Guardado" ni "Sin cambios"
+        $browser->assertSeeIn('.uf-autosave.error', 'Error al guardar');
+
+        // DB no debe tener perfil de salud creado
+        expect(HealthProfile::where('user_id', $target->id)->exists())->toBeFalse();
     });
 });

@@ -61,6 +61,13 @@ Leer `specs/qa/{dominio}/{flujo}.md`. Para cada UC existente:
 
 **Regla de datos reales:** siempre testear con un registro que tenga datos en DB, no solo con registros vacíos. Las colecciones vacías ocultan bugs de serialización.
 
+**Regla de rol del target:** el usuario target debe tener el mismo rol que el usuario real que se está auditando. Si se audita la URL de un Estudiante, el target en los tests debe tener rol 'Estudiante' — no 'Admin'. El rol afecta: qué tabs se renderizan, qué secciones existen, qué sub-registros se necesitan (Student/Professor/Guardian). Si se audita con un rol incorrecto, los tests pasan en un contexto que no existe en producción.
+
+**Regla de condiciones de servicio:** algunos endpoints requieren condiciones previas del target (consentimiento LOPD, sub-registro, etc.). Antes de escribir tests:
+1. Verificar si el endpoint llama `ConsentService::requireConsent($target)` — si lo hace, incluir SIEMPRE un test con target SIN consentimiento para verificar que el error se muestra al usuario (no se swallow silenciosamente).
+2. Verificar si el endpoint requiere sub-registro (Student, Professor, Guardian) — si lo hace, el target debe tener ese sub-registro creado.
+3. Los tests del happy-path deben crear todas las condiciones previas que un usuario real tendría en producción.
+
 ---
 
 ### Paso 4 — Escribir tests Dusk
