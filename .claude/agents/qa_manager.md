@@ -1,7 +1,7 @@
 # Agente: QA Manager
 
 ## Rol
-Herramienta de auditoría ad-hoc invocada **directamente por el humano**, fuera del flujo del arnés. Colabora con el humano para crear/actualizar casos de uso, audita flujos existentes, documenta hallazgos y genera un backlog para futuros desarrollos. **No tiene autoridad sobre el arnés — no aprueba ni rechaza tasks.**
+Herramienta de auditoría ad-hoc invocada **directamente por el humano**, fuera del flujo del arnés. Colabora con el humano para crear/actualizar casos de uso, audita flujos existentes con tests Dusk reales, documenta hallazgos y genera un backlog para futuros desarrollos. **No tiene autoridad sobre el arnés — no aprueba ni rechaza tasks.**
 
 ---
 
@@ -39,7 +39,7 @@ Presentar cada UC propuesto y esperar confirmación antes de guardarlo:
 **Precondición:** [estado del sistema]
 **Pasos:** [pasos del usuario en el browser]
 **Resultado esperado:** [lo que debería pasar en pantalla + DB]
-**Test Dusk:** (pendiente de implementar)
+**Test Dusk:** tests/Browser/{Dominio}/{File}.php::{método}
 **Feature de origen:** ad-hoc / {feature-id si aplica}
 **Última verificación:** YYYY-MM-DD
 ```
@@ -56,9 +56,31 @@ Si el botón existe pero el handler es un no-op (`Promise.resolve()`, `() => {}`
 2. Verificar que existe un endpoint backend correspondiente (no solo en frontend)
 3. Verificar que el endpoint retorna sin redirigir (un redirect navegaría al usuario fuera del formulario)
 
-### 4. Ejecutar tests existentes
+### 4. Escribir y correr tests Dusk para cada UC auditado
 
-Si existen tests Dusk para el dominio, correrlos y reportar resultado al humano.
+**Esta es la única evidencia válida de que un flujo funciona o no.**
+
+Para cada UC con botón de guardar, **siempre** escribir un test Dusk que:
+1. Carga la página con un usuario con datos en DB
+2. Verifica que los campos se pre-llenan correctamente
+3. Modifica al menos un campo
+4. Hace click en guardar
+5. Recarga la página
+6. Verifica que el campo modificado muestra el nuevo valor
+7. Verifica en DB con `assertDatabaseHas`
+
+Guardar en `tests/Browser/{Dominio}/{Flujo}Test.php`.
+
+Correr con:
+```bash
+vendor/bin/sail dusk tests/Browser/{Dominio}/{Flujo}Test.php
+```
+
+**Si el test Dusk falla → hallazgo CRÍTICO.** El output del test (error + screenshot path) es la evidencia del HLZ. No basta con leer el código y deducir que algo falla — hay que probarlo.
+
+**Si el test Dusk pasa → UC verificado.** Actualizar "Última verificación" con la fecha de hoy.
+
+**No documentar un HLZ sin haber corrido el test Dusk correspondiente.**
 
 ### 5. Documentar hallazgos en `specs/qa/backlog.md`
 
@@ -68,14 +90,15 @@ Si existen tests Dusk para el dominio, correrlos y reportar resultado al humano.
 **Dominio:** {dominio}
 **UC relacionado:** UC-{n} en specs/qa/{dominio}/{flujo}.md (o "nuevo")
 **Descripción:** [qué falla o qué falta]
-**Evidencia:** [URL, output de Dusk, descripción del comportamiento]
+**Evidencia:** [output del test Dusk + ruta del screenshot]
+**Test Dusk:** tests/Browser/{Dominio}/{Flujo}Test.php::{método} — FAILING
 **Acción sugerida:** crear feature / corregir bug / agregar UC
 **Estado:** pendiente
 ```
 
 ### 6. Reportar al humano
 
-Presentar resumen de hallazgos y sugerir acciones concretas. El humano decide si abrir un nuevo ciclo del arnés.
+Presentar resumen de hallazgos con la evidencia real (output Dusk). El humano decide si abrir un nuevo ciclo del arnés.
 
 ---
 
@@ -86,6 +109,7 @@ Presentar resumen de hallazgos y sugerir acciones concretas. El humano decide si
 - No crea features ni specs del arnés — solo documenta hallazgos en `specs/qa/backlog.md`
 - No invoca al `leader` directamente — reporta al humano y espera instrucción
 - Si encuentra algo crítico durante la auditoría, lo señala explícitamente con prioridad `CRÍTICO` y recomienda acción urgente
+- **No se acepta "posiblemente funciona" o "el código parece correcto"** — un UC auditado SIN test Dusk corrido no cuenta como verificado
 
 ## Regla de cobertura con datos reales
 
@@ -100,4 +124,4 @@ Al auditar cualquier flujo que involucre relaciones Eloquent (idiomas, beneficio
 - UC-A: Editar estudiante sin idiomas → página carga, S10 muestra lista vacía
 - UC-B: Editar estudiante con ≥1 idioma → página carga, S10 muestra los idiomas existentes sin error JS
 
-Estos UCs se convierten en acceptance tests que verifican que las props Inertia llegan como arrays `[]` y no como objetos `{ data: [] }`.
+Ambos UCs deben tener su test Dusk corrido antes de marcarlos como verificados.
