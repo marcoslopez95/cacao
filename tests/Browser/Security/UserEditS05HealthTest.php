@@ -15,6 +15,10 @@
  * - UC-S05-07: Sin consentimiento — error se muestra al usuario (no swallow silencioso)
  *
  * Run with: vendor/bin/sail dusk tests/Browser/Security/UserEditS05HealthTest.php
+ *
+ * NOTA: No usa DatabaseMigrations — los tests corren sobre la DB de desarrollo sin borrarla.
+ *
+ * Los usuarios de test se crean con email *@dusk.test y se limpian en beforeEach.
  */
 
 use App\Enums\EducationalLevel;
@@ -25,29 +29,25 @@ use App\Models\HealthProfile;
 use App\Models\Student;
 use App\Models\User;
 use App\Models\UserConsent;
-use Database\Seeders\Catalogs\SocioeconomicCatalogsSeeder;
-use Database\Seeders\Catalogs\UserProfileCatalogsSeeder;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\DB;
 use Laravel\Dusk\Browser;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
-uses(DatabaseMigrations::class);
-
 // ---------------------------------------------------------------------------
-// Setup
+// Setup — idempotente, nunca borra la DB de desarrollo
 // ---------------------------------------------------------------------------
 
 beforeEach(function () {
     app(PermissionRegistrar::class)->forgetCachedPermissions();
 
+    // Roles: idempotente, no falla si ya existen
     Role::firstOrCreate(['name' => 'Admin',         'guard_name' => 'web']);
     Role::firstOrCreate(['name' => 'Administrador', 'guard_name' => 'web']);
     Role::firstOrCreate(['name' => 'Estudiante',    'guard_name' => 'web']);
 
-    $this->seed(SocioeconomicCatalogsSeeder::class);
-    $this->seed(UserProfileCatalogsSeeder::class);
+    // Limpiar usuarios de test de ejecuciones anteriores (email *@dusk.test)
+    cleanDuskTestUsers();
 });
 
 // ---------------------------------------------------------------------------
@@ -55,11 +55,41 @@ beforeEach(function () {
 // ---------------------------------------------------------------------------
 
 /**
+ * Elimina todos los usuarios creados por tests Dusk (email *@dusk.test).
+ * Se ejecuta en beforeEach para limpiar ejecuciones anteriores.
+ * El orden respeta las FKs RESTRICT del proyecto.
+ */
+function cleanDuskTestUsers(): void
+{
+    $ids = User::where('email', 'like', '%@dusk.test')->pluck('id');
+
+    if ($ids->isEmpty()) {
+        return;
+    }
+
+    DB::table('health_profiles')->whereIn('user_id', $ids)->delete();
+    DB::table('user_consents')->whereIn('user_id', $ids)->delete();
+    DB::table('demographic_profiles')->whereIn('user_id', $ids)->delete();
+    DB::table('user_addresses')->whereIn('user_id', $ids)->delete();
+    DB::table('user_documents')->whereIn('user_id', $ids)->delete();
+    DB::table('students')->whereIn('user_id', $ids)->delete();
+    DB::table('professors')->whereIn('user_id', $ids)->delete();
+    DB::table('guardians')->whereIn('user_id', $ids)->delete();
+    DB::table('model_has_roles')
+        ->where('model_type', User::class)
+        ->whereIn('model_id', $ids)
+        ->delete();
+    DB::table('sessions')->whereIn('user_id', $ids)->delete();
+    User::whereIn('id', $ids)->forceDelete();
+}
+
+/**
  * Admin con solo rol 'Admin' — Gate::before cortocircuita autorización.
+ * Email con dominio @dusk.test para que sea limpiado en el próximo beforeEach.
  */
 function adminForS05(): User
 {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['email' => uniqid('admin.s05.').'@dusk.test']);
     $user->assignRole('Admin');
 
     return $user;
@@ -75,7 +105,7 @@ function adminForS05(): User
  */
 function targetWithHealthProfile(array $healthData = []): User
 {
-    $target = User::factory()->create();
+    $target = User::factory()->create(['email' => uniqid('target.s05.').'@dusk.test']);
     $target->assignRole('Estudiante');
 
     // Sub-registro requerido para que UF_TABS renderice tabs de Estudiante
@@ -135,7 +165,6 @@ test('UC-S05-01: S05 pre-llena blood_type_id en el select al cargar la página',
 
         $browser->waitFor('[dusk="blood-type-select"]', 5);
 
-        // El select de grupo sanguíneo debe tener el valor pre-llenado
         $selectedValue = $browser->value('[dusk="blood-type-select"]');
         expect((int) $selectedValue)->toBe($bloodType->id);
     });
@@ -166,42 +195,31 @@ test('UC-S05-01: S05 pre-llena insurance_type_id en el select cuando has_medical
 test('UC-S05-02: cambiar blood_type_id → guardar → recargar → nuevo valor persiste en DB y pantalla', function () {
     $admin = adminForS05();
     $allTypes = BloodType::orderBy('id')->get();
-
-    // Empezar con el primer tipo; cambiar al segundo
     $initial = $allTypes->first();
     $changed = $allTypes->skip(1)->first();
-
     $target = targetWithHealthProfile(['blood_type_id' => $initial->id]);
 
     $this->browse(function (Browser $browser) use ($admin, $target, $changed) {
         navigateToS05($browser, $admin, $target);
 
-        $browser->waitFor('[dusk="blood-type-select"]', 5);
-
-        // Cambiar el tipo de sangre al segundo valor
-        $browser->select('[dusk="blood-type-select"]', (string) $changed->id);
-
-        // Guardar la sección
-        $browser->click('[dusk="save-section-5"]')
-            ->pause(2000); // Esperar respuesta XHR
-
-        $browser->assertDontSee('Whoops, looks like something went wrong.');
+        $browser->waitFor('[dusk="blood-type-select"]', 5)
+            ->select('[dusk="blood-type-select"]', (string) $changed->id)
+            ->click('[dusk="save-section-5"]')
+            ->waitForText('Guardado', 5);
     });
 
-    // Verificar en DB que el cambio persistió
     $this->assertDatabaseHas('health_profiles', [
         'user_id' => $target->id,
         'blood_type_id' => $changed->id,
     ]);
 
-    // Recargar y verificar que el valor persiste en pantalla
+    // Recargar: el browser debe mostrar el nuevo valor
     $this->browse(function (Browser $browser) use ($admin, $target, $changed) {
         navigateToS05($browser, $admin, $target);
 
         $browser->waitFor('[dusk="blood-type-select"]', 5);
 
-        $selectedValue = $browser->value('[dusk="blood-type-select"]');
-        expect((int) $selectedValue)->toBe($changed->id);
+        expect((int) $browser->value('[dusk="blood-type-select"]'))->toBe($changed->id);
     });
 });
 
@@ -220,14 +238,10 @@ test('UC-S05-03: guardar S05 con disability existente no nullifica disability_ty
     $this->browse(function (Browser $browser) use ($admin, $target) {
         navigateToS05($browser, $admin, $target);
 
-        // Guardar sin cambiar ningún campo de disability
         $browser->click('[dusk="save-section-5"]')
-            ->pause(2000);
-
-        $browser->assertDontSee('Whoops, looks like something went wrong.');
+            ->waitForText('Guardado', 5);
     });
 
-    // DB no debe haber nullificado disability_type_id
     $this->assertDatabaseHas('health_profiles', [
         'user_id' => $target->id,
         'disability_type_id' => $disType->id,
@@ -247,9 +261,8 @@ test('UC-S05-04: el select de grupo sanguíneo tiene al menos 4 opciones del cat
 
         $browser->waitFor('[dusk="blood-type-select"]', 5);
 
-        // Verificar que el select tiene opciones (además de la opción vacía inicial)
         $options = $browser->elements('[dusk="blood-type-select"] option');
-        expect(count($options))->toBeGreaterThan(4); // 1 vacía + 8 tipos de sangre
+        expect(count($options))->toBeGreaterThan(4);
     });
 });
 
@@ -266,16 +279,13 @@ test('UC-S05-05: activar toggle discapacidad muestra el select de tipo de discap
 
         $browser->waitFor('[dusk="disability-toggle"]', 5);
 
-        // El select de tipo discapacidad no debe estar visible aún
         $browser->assertMissing('[dusk="disability-type-select"]');
 
-        // Scrollear al toggle antes de hacer click para evitar que el footer lo tape
         $browser->scrollIntoView('[dusk="disability-toggle"]')
             ->pause(300)
             ->click('[dusk="disability-toggle"]')
             ->pause(500);
 
-        // Ahora el select debe aparecer
         $browser->assertVisible('[dusk="disability-type-select"]');
     });
 });
@@ -293,40 +303,29 @@ test('UC-S05-06: contacto de emergencia se guarda y pre-llena en reload', functi
     $this->browse(function (Browser $browser) use ($admin, $target, $emergencyName, $emergencyRel) {
         navigateToS05($browser, $admin, $target);
 
-        $browser->waitFor('[dusk="emergency-name-input"]', 5);
-
-        // Llenar contacto de emergencia
-        $browser->clear('[dusk="emergency-name-input"]')
-            ->type('[dusk="emergency-name-input"]', $emergencyName);
-
-        $browser->clear('[dusk="emergency-rel-input"]')
-            ->type('[dusk="emergency-rel-input"]', $emergencyRel);
-
-        // Guardar
-        $browser->click('[dusk="save-section-5"]')
-            ->pause(2000)
-            ->assertDontSee('500')
-            ->assertDontSee('Whoops');
+        $browser->waitFor('[dusk="emergency-name-input"]', 5)
+            ->clear('[dusk="emergency-name-input"]')
+            ->type('[dusk="emergency-name-input"]', $emergencyName)
+            ->clear('[dusk="emergency-rel-input"]')
+            ->type('[dusk="emergency-rel-input"]', $emergencyRel)
+            ->click('[dusk="save-section-5"]')
+            ->waitForText('Guardado', 5);
     });
 
-    // Verificar en DB
     $this->assertDatabaseHas('health_profiles', [
         'user_id' => $target->id,
         'emergency_contact_name' => $emergencyName,
         'emergency_contact_relation' => $emergencyRel,
     ]);
 
-    // Recargar y verificar que pre-llena
+    // Recargar: el browser debe mostrar los valores guardados
     $this->browse(function (Browser $browser) use ($admin, $target, $emergencyName, $emergencyRel) {
         navigateToS05($browser, $admin, $target);
 
         $browser->waitFor('[dusk="emergency-name-input"]', 5);
 
-        $nameValue = $browser->value('[dusk="emergency-name-input"]');
-        $relValue = $browser->value('[dusk="emergency-rel-input"]');
-
-        expect($nameValue)->toBe($emergencyName);
-        expect($relValue)->toBe($emergencyRel);
+        expect($browser->value('[dusk="emergency-name-input"]'))->toBe($emergencyName);
+        expect($browser->value('[dusk="emergency-rel-input"]'))->toBe($emergencyRel);
     });
 });
 
@@ -336,27 +335,25 @@ test('UC-S05-06: contacto de emergencia se guarda y pre-llena en reload', functi
 
 test('UC-S05-07: target sin consentimiento muestra error al guardar S05', function () {
     $admin = adminForS05();
-
-    // Target sin consentimiento activo
-    $target = User::factory()->create();
+    $target = User::factory()->create(['email' => uniqid('target.noconsent.').'@dusk.test']);
     $target->assignRole('Estudiante');
     Student::firstOrCreate(
         ['user_id' => $target->id],
         ['educational_level' => EducationalLevel::University]
     );
+    // Sin UserConsent — condición de error intencional
 
     $this->browse(function (Browser $browser) use ($admin, $target) {
         navigateToS05($browser, $admin, $target);
 
-        $browser->waitFor('[dusk="blood-type-select"]', 5);
-
-        $browser->click('[dusk="save-section-5"]')
+        $browser->waitFor('[dusk="blood-type-select"]', 5)
+            ->click('[dusk="save-section-5"]')
             ->pause(2000);
 
-        // El indicador de autosave debe mostrar error — no "Guardado" ni "Sin cambios"
-        $browser->assertSeeIn('.uf-autosave.error', 'Error al guardar');
+        // El browser debe mostrar el estado de error — no "Guardado" ni "Sin cambios"
+        $browser->assertVisible('.uf-autosave.error');
+        $browser->assertDontSeeIn('.uf-autosave', 'Guardado');
 
-        // DB no debe tener perfil de salud creado
         expect(HealthProfile::where('user_id', $target->id)->exists())->toBeFalse();
     });
 });

@@ -94,6 +94,58 @@ Leer `specs/qa/{dominio}/{flujo}.md`. Para cada UC existente:
 
 Para cada UC del Paso 3, escribir un test en `tests/Browser/{Dominio}/{Flujo}Test.php`.
 
+#### Regla de aislamiento — NUNCA usar DatabaseMigrations
+
+**Prohibido** usar `uses(DatabaseMigrations::class)` o `uses(RefreshDatabase::class)` en tests Dusk. Estos traits borran la base de datos de desarrollo completa porque Dusk usa la misma DB que el servidor web.
+
+El patrón obligatorio es:
+
+```php
+// En beforeEach: limpiar test data de ejecuciones anteriores
+beforeEach(function () {
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    // Roles — idempotente
+    Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'Estudiante', 'guard_name' => 'web']);
+
+    // Eliminar usuarios de test de ejecuciones anteriores
+    cleanDuskTestUsers();
+});
+
+// Función de limpieza — respeta FKs RESTRICT
+function cleanDuskTestUsers(): void
+{
+    $ids = User::where('email', 'like', '%@dusk.test')->pluck('id');
+    if ($ids->isEmpty()) return;
+
+    DB::table('health_profiles')->whereIn('user_id', $ids)->delete();
+    DB::table('user_consents')->whereIn('user_id', $ids)->delete();
+    DB::table('demographic_profiles')->whereIn('user_id', $ids)->delete();
+    DB::table('user_addresses')->whereIn('user_id', $ids)->delete();
+    DB::table('user_documents')->whereIn('user_id', $ids)->delete();
+    DB::table('students')->whereIn('user_id', $ids)->delete();
+    DB::table('professors')->whereIn('user_id', $ids)->delete();
+    DB::table('guardians')->whereIn('user_id', $ids)->delete();
+    DB::table('model_has_roles')
+        ->where('model_type', User::class)
+        ->whereIn('model_id', $ids)
+        ->delete();
+    DB::table('sessions')->whereIn('user_id', $ids)->delete();
+    User::whereIn('id', $ids)->forceDelete();
+}
+
+// Todos los usuarios de test usan dominio @dusk.test
+function adminForTest(): User
+{
+    $user = User::factory()->create(['email' => uniqid('admin.') . '@dusk.test']);
+    $user->assignRole('Admin');
+    return $user;
+}
+```
+
+Los catálogos (BloodType, InsuranceType, etc.) ya están seedeados en la DB de desarrollo — no hay que re-seedearlos. Si un catálogo está vacío en tu entorno, llamar al seeder correspondiente **solo si `Model::count() === 0`** (guard idempotente).
+
 #### Regla de condiciones reales
 
 El usuario target en los tests debe tener las mismas condiciones que un usuario real en producción:
