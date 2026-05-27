@@ -6,7 +6,7 @@
 
 ## Active Feature
 
-`user-edit-s01-identity-fix` — **IN PROGRESS** (iniciado 2026-05-26)
+Ninguna — todas las features completadas.
 
 ---
 
@@ -31,9 +31,9 @@
 | 14 | `user-edit-admin-fix` | **DONE** | — | HLZ-14 |
 | 15 | `user-edit-health-fix` | **DONE** | — | HLZ-10, HLZ-15 |
 | 16 | `user-edit-student-sections-fix` | **DONE** | — | HLZ-11, HLZ-12, HLZ-13 |
-| 17 | `user-edit-s01-identity-fix` | **IN PROGRESS** | — | HLZ-27 (CRÍTICO), HLZ-28 (CRÍTICO) |
+| 17 | `user-edit-s01-identity-fix` | **DONE** | — | HLZ-27 (CRÍTICO), HLZ-28 (CRÍTICO) |
 
-**Próxima:** `user-edit-s01-identity-fix` — 10 tasks, ver `specs/user-edit-s01-identity-fix/tasks.md`
+**Próxima:** sin features pendientes en la queue.
 
 ---
 
@@ -63,6 +63,12 @@
 | role-sub-record-integrity | firstOrCreate in CreateUserAction+UpdateUserAction; artisan fix command; 3 dev orphans repaired (HLZ-02, HLZ-07) |
 | user-edit-catalog-ids | S04/S09/S16/S17 migrated to DB-backed ID selects; S17 422 bug fixed; 13 acceptance tests; build clean (HLZ-05, HLZ-08) |
 | student-academic-show | Show page /academic/students/{id} Level 2; Edit button wired to /security/users/{id}/edit (HLZ-09) |
+| user-edit-professor-s17-fix | StoreStaffProfileRequest exists:coordinations fix; ISO dates; PHPDoc (HLZ-04, HLZ-20, HLZ-21) |
+| user-seeder-subrecord-fix | UserSeeder calls ensureSubRecord(); no más huérfanos post-seed (HLZ-22) |
+| user-edit-admin-fix | DemographicProfileResource incluye 'Admin' en role check (HLZ-14) |
+| user-edit-health-fix | buildInitialFormData() lee blood_type_id (ID plano); save preserva IDs (HLZ-10, HLZ-15) |
+| user-edit-student-sections-fix | S11/S12/S14 migrados a ID-based; 3 secciones, 10+ catálogos nuevos (HLZ-11, HLZ-12, HLZ-13) |
+| user-edit-s01-identity-fix | 8 campos S01 expuestos+persistidos; catálogos dinámicos; AppDocInput refactorizado; 13 acceptance tests (HLZ-27, HLZ-28) |
 
 ---
 
@@ -73,24 +79,24 @@
 | HLZ-01 | resuelto | geographic-seeder-fix |
 | HLZ-02 | resuelto | role-sub-record-integrity |
 | HLZ-03 | resuelto | geographic-seeder-fix |
-| HLZ-04 | pendiente → feature 12 | user-edit-professor-s17-fix |
+| HLZ-04 | resuelto | user-edit-professor-s17-fix |
 | HLZ-05 | resuelto | user-edit-catalog-ids |
 | HLZ-06 | resuelto | user-edit-auth-fix |
 | HLZ-07 | resuelto | role-sub-record-integrity |
 | HLZ-08 | resuelto | user-edit-catalog-ids |
 | HLZ-09 | resuelto | student-academic-show |
-| HLZ-10 | pendiente → feature 15 | user-edit-health-fix |
+| HLZ-10 | resuelto | user-edit-health-fix |
 | HLZ-11 | resuelto | user-edit-student-sections-fix |
 | HLZ-12 | resuelto | user-edit-student-sections-fix |
 | HLZ-13 | resuelto | user-edit-student-sections-fix |
-| HLZ-14 | pendiente → feature 14 | user-edit-admin-fix |
-| HLZ-15 | pendiente → feature 15 | user-edit-health-fix |
-| HLZ-20 | pendiente → feature 12 | user-edit-professor-s17-fix |
-| HLZ-21 | pendiente → feature 12 | user-edit-professor-s17-fix |
-| HLZ-22 | pendiente → feature 13 | user-seeder-subrecord-fix |
+| HLZ-14 | resuelto | user-edit-admin-fix |
+| HLZ-15 | resuelto | user-edit-health-fix |
+| HLZ-20 | resuelto | user-edit-professor-s17-fix |
+| HLZ-21 | resuelto | user-edit-professor-s17-fix |
+| HLZ-22 | resuelto | user-seeder-subrecord-fix |
 | HLZ-26 | deferred (cosmético) | — |
-| HLZ-27 | pendiente → feature 17 | user-edit-s01-identity-fix |
-| HLZ-28 | pendiente → feature 17 | user-edit-s01-identity-fix |
+| HLZ-27 | resuelto | user-edit-s01-identity-fix |
+| HLZ-28 | resuelto | user-edit-s01-identity-fix |
 | HLZ-29 | verificación pendiente | posiblemente resuelto por user-edit-student-sections-fix |
 
 ---

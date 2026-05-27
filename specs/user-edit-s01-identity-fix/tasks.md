@@ -24,7 +24,7 @@ Agregar al `toArray()`:
 Verificación: `(new UserEditResource(User::find(X)))->resolve()` contiene los 8 campos.  
 Pint: `vendor/bin/sail bin pint --dirty --format agent`
 
-- [ ] T01
+- [x] T01
 
 ---
 
@@ -44,7 +44,7 @@ Agregar los imports correspondientes al top del archivo.
 Verificación: `catalogData` en la respuesta de `GET /security/users/{id}/edit` incluye `documentTypes`, `genders`, `nationalities` con ≥1 item cada uno.  
 Pint: `vendor/bin/sail bin pint --dirty --format agent`
 
-- [ ] T02
+- [x] T02
 
 ---
 
@@ -66,7 +66,7 @@ Agregar al `rules()`:
 Verificación: PATCH `/security/users/{user}/identity` con campos válidos → 200; con `document_type_id: 9999` → 422.  
 Pint: `vendor/bin/sail bin pint --dirty --format agent`
 
-- [ ] T03
+- [x] T03
 
 ---
 
@@ -120,7 +120,7 @@ public function getPhoneSecondary(): ?string
 
 Pint: `vendor/bin/sail bin pint --dirty --format agent`
 
-- [ ] T04
+- [x] T04
 
 ---
 
@@ -142,7 +142,7 @@ En el método `handle()`, agregar al array del `update()` o `fill()` de User:
 Verificación: PATCH `/security/users/{user}/identity` con `document_number: '12345678'` → `users.document_number = '12345678'` en DB.  
 Pint: `vendor/bin/sail bin pint --dirty --format agent`
 
-- [ ] T05
+- [x] T05
 
 ---
 
@@ -178,7 +178,7 @@ nationalities:  { id: number; name: string; iso2: string }[]
 
 Verificación: TypeScript compila sin errores (`pnpm run build` o verificar que no hay errores TS).
 
-- [ ] T06
+- [x] T06
 
 ---
 
@@ -200,7 +200,7 @@ d.profilePhotoUrl = props.user.profile_photo_url ?? undefined
 
 Verificación: abrir `/security/users/{id}/edit` con usuario que tiene `document_number` en DB → campo `docNumber` en form state tiene el valor correcto.
 
-- [ ] T07
+- [x] T07
 
 ---
 
@@ -221,7 +221,7 @@ phone_secondary:   formData.phone2        ?? null,
 
 Verificación: guardar S01 → PATCH `/security/users/{user}/identity` → los nuevos campos están en el request payload.
 
-- [ ] T08
+- [x] T08
 
 ---
 
@@ -269,7 +269,7 @@ Verificar que `Edit.vue` o el componente `UserFormSection` pasa `catalogData` a 
 
 Verificación: abrir S01 en navegador → select de tipo de documento muestra tipos de DB; select de género muestra opciones de DB; no hay errores JS en consola.
 
-- [ ] T09
+- [x] T09
 
 ---
 

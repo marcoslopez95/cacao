@@ -199,7 +199,7 @@
     {
       "id": "user-edit-s01-identity-fix",
       "name": "User Edit S01 Identity Fix",
-      "status": "pending",
+      "status": "completed",
       "spec": "specs/user-edit-s01-identity-fix/",
       "depends_on": [],
       "description": "HLZ-27/HLZ-28: S01 Identidad — 8 columnas de users (doc, fecha_nacimiento, género, nacionalidad, teléfonos, foto) no se exponen en UserEditResource ni se envían en el handler. Pérdida silenciosa de datos. Fix: catálogos dinámicos (documentTypes, genders, nationalities) + round-trip completo + AppDocInput refactor."

@@ -730,8 +730,10 @@ El formulario S01 muestra como editables: documento (tipo + número), fecha de n
 6. Actualizar `UpdateUserAction` / `UserWrapper` para persistirlos
 7. Ver HLZ-28 para la decisión de tipos antes de implementar
 
-**Estado:** pendiente  
-**Prioridad:** CRÍTICO — campos visibles en UI que nunca persisten
+**Estado:** resuelto  
+**Fecha de resolución:** 2026-05-26  
+**Feature:** user-edit-s01-identity-fix  
+**Verificación:** 13 acceptance tests (RF-01a–RF-05) pasan en verde. Round-trip completo verificado en browser.
 
 ---
 
@@ -763,8 +765,10 @@ Pero la tabla `users` almacena `document_type_id` (int8 FK → `document_types`)
 - `vendor/bin/sail artisan db:table genders`: misma estructura
 - Tablas S04, S05 ya usan el patrón de catálogos dinámicos con IDs
 
-**Estado:** pendiente  
-**Prioridad:** CRÍTICO — bloquea la implementación de HLZ-27
+**Estado:** resuelto  
+**Fecha de resolución:** 2026-05-26  
+**Feature:** user-edit-s01-identity-fix  
+**Verificación:** Opción A implementada — catálogos dinámicos en catalogData, AppDocInput refactorizado con typeId + catalog props.
 
 ---
 
