@@ -24,14 +24,24 @@ Dado una URL, leer el código sin preguntar al humano:
 2. **Leer el controller** — qué props pasa a Inertia, qué `catalogData` incluye
 3. **Leer el componente Vue principal** — qué secciones/tabs existen, qué componentes renderiza
 4. **Por cada sección con botón de guardar:**
-   - Leer el componente de la sección (qué campos tiene, qué tipos)
-   - Leer el handler correspondiente en el composable (`useXxxForm.ts`) — qué payload envía
-   - Identificar el endpoint PATCH/POST al que llama
-   - Leer el FormRequest del endpoint — qué valida
-   - Leer el Resource — qué campos expone de vuelta
-5. **Identificar tablas y listas** — si la página muestra datos en tablas, identificar qué relaciones carga
+   - Leer el componente de la sección — **listar cada campo: nombre, tipo, selector dusk, si es condicional**
+   - Leer el handler en el composable (`useXxxForm.ts`) — qué payload envía, qué campo del formulario mapea a qué clave del payload
+   - Identificar el endpoint PATCH/POST/PUT al que llama
+   - Leer el FormRequest — **listar cada regla de validación: qué campo, si es required/nullable, qué reglas**
+   - Leer el Resource — qué campos expone de vuelta hacia el frontend
+5. **Verificar condiciones del endpoint en el servidor:**
+   - ¿El Action llama `ConsentService::requireConsent($target)`?
+   - ¿La Policy usa `hasRole()` o `hasAnyRole()`? ¿Qué roles tiene acceso?
+   - ¿El Action verifica sub-registros (Student, Professor, Guardian)?
+6. **Consultar estado real de la DB:**
+   - Para la URL auditada, identificar el usuario target y sus condiciones reales:
+     - `php artisan tinker --execute 'User::find(N)->roles->pluck("name")'`
+     - `php artisan tinker --execute 'UserConsent::where("user_id",N)->whereNull("revoked_at")->exists()'`
+     - Si hay sub-registro requerido, verificar que existe
+   - Este paso es crítico: los tests deben modelar las condiciones reales del usuario, no un ideal inventado.
+7. **Identificar tablas y listas** — si la página muestra datos en tablas, identificar qué relaciones carga
 
-Este paso es de solo lectura. Construir un mapa completo de lo que existe antes de escribir un solo test.
+Este paso es de solo lectura. Construir un mapa completo antes de escribir un solo test.
 
 ---
 
@@ -45,78 +55,143 @@ Leer `specs/qa/{dominio}/{flujo}.md`. Para cada UC existente:
 
 ### Paso 3 — Definir UCs autónomamente
 
-**Sin esperar confirmación del humano.** Basado en la exploración del Paso 1, definir UCs para cada cosa testeable encontrada.
+**Sin esperar confirmación del humano.** Basado en la exploración del Paso 1, definir UCs para cada cosa testeable.
 
-**Por cada sección con botón de guardar, siempre definir:**
-- UC de **carga**: la sección carga sin errores JS, los campos se pre-llenan desde DB
-- UC de **guardado exitoso**: llenar campos → guardar → los datos persisten en DB y aparecen al recargar
-- UC de **guardado con error**: datos inválidos → el error se muestra al usuario
+#### Por cada sección con botón de guardar:
 
-**Por cada tabla o lista:**
-- UC de **listado**: la tabla carga y muestra los registros correctos
-- UC de **listado vacío**: si no hay registros, la tabla muestra estado vacío sin error
+**UC de carga:**
+- La sección carga sin errores JS (no 500, no Whoops)
+- Cada campo que tiene valor en DB se pre-llena correctamente en el browser
 
-**Por cada flujo con roles múltiples:**
+**UC de guardado por campo — uno por cada campo editable:**
+- Modificar ese campo → guardar → recargar → el browser muestra el nuevo valor
+- Verificar en DB que el valor persistió
+- Esto se aplica a CADA campo, no a uno representativo. Si la sección tiene 10 campos, se escriben 10 tests de guardado.
+
+**UC de no-nullificación:**
+- Si el campo tiene datos en DB y se guarda la sección sin tocarlo, el campo no debe quedar null
+- Especialmente crítico para IDs de catálogo que el frontend podría no enviar si el sub-componente está oculto
+
+**UC de validación — uno por cada regla `required` o con restricción relevante:**
+- Enviar el campo vacío / con valor inválido
+- Verificar que el error aparece en el browser (no solo que no se guardó en DB)
+- El test falla si el error no es visible al usuario
+
+**UC de error de servicio (si aplica):**
+- Si el endpoint usa `ConsentService::requireConsent()`, incluir un test donde el target no tiene consentimiento
+- Verificar que el browser muestra un mensaje de error visible — no "Sin cambios", no silencio
+
+#### Por cada tabla o lista:
+- UC de listado con datos: la tabla carga y muestra registros correctos
+- UC de listado vacío: sin registros, la tabla muestra estado vacío sin error
+
+#### Por cada flujo con roles múltiples:
 - Repetir los UCs con cada rol relevante (admin, estudiante, profesor, representante)
-
-**Regla de datos reales:** siempre testear con un registro que tenga datos en DB, no solo con registros vacíos. Las colecciones vacías ocultan bugs de serialización.
-
-**Regla de rol del target:** el usuario target debe tener el mismo rol que el usuario real que se está auditando. Si se audita la URL de un Estudiante, el target en los tests debe tener rol 'Estudiante' — no 'Admin'. El rol afecta: qué tabs se renderizan, qué secciones existen, qué sub-registros se necesitan (Student/Professor/Guardian). Si se audita con un rol incorrecto, los tests pasan en un contexto que no existe en producción.
-
-**Regla de condiciones de servicio:** algunos endpoints requieren condiciones previas del target (consentimiento LOPD, sub-registro, etc.). Antes de escribir tests:
-1. Verificar si el endpoint llama `ConsentService::requireConsent($target)` — si lo hace, incluir SIEMPRE un test con target SIN consentimiento para verificar que el error se muestra al usuario (no se swallow silenciosamente).
-2. Verificar si el endpoint requiere sub-registro (Student, Professor, Guardian) — si lo hace, el target debe tener ese sub-registro creado.
-3. Los tests del happy-path deben crear todas las condiciones previas que un usuario real tendría en producción.
 
 ---
 
 ### Paso 4 — Escribir tests Dusk
 
-Para cada UC definido en el Paso 3, escribir un test Dusk en `tests/Browser/{Dominio}/{Flujo}Test.php`.
+Para cada UC del Paso 3, escribir un test en `tests/Browser/{Dominio}/{Flujo}Test.php`.
 
-**Estructura obligatoria de cada test de formulario:**
+#### Regla de condiciones reales
+
+El usuario target en los tests debe tener las mismas condiciones que un usuario real en producción:
+
+- **Rol correcto**: si se audita la edición de un Estudiante, el target tiene rol `Estudiante` — no `Admin`. El rol determina qué tabs se renderizan y qué secciones existen.
+- **Sub-registro correcto**: si el rol requiere Student/Professor/Guardian, crearlo. Sin sub-registro, los tabs de ese rol no se renderizan.
+- **Consentimiento**: si el endpoint llama `requireConsent()`, el target del happy-path tiene consentimiento activo. El test de error-de-servicio explícitamente NO lo tiene.
+- **No 'Admin' por default**: el rol 'Admin' tiene `Gate::before` que cortocircuita todas las Policies. Usarlo como target oculta bugs de autorización que afectan a Estudiante/Profesor/Representante.
+
+#### Estructura obligatoria — test de guardado por campo
+
 ```php
-test('S05 pre-llena blood_type_id desde DB', function () {
-    // 1. Preparar usuario con datos en DB
-    $user = User::factory()->create(['blood_type_id' => 2]);
-    $admin = adminUser();
+test('S05 blood_type_id: modificar → guardar → reload → browser muestra nuevo valor', function () {
+    $admin  = adminForSection();           // admin logueado
+    $types  = BloodType::orderBy('id')->get();
+    $initial = $types->first();
+    $changed = $types->skip(1)->first();
 
-    $this->browse(function (Browser $browser) use ($user, $admin) {
-        $browser->loginAs($admin)
-            // 2. Cargar la página
-            ->visit("/security/users/{$user->id}/edit")
-            // 3. Verificar pre-fill
-            ->assertSelected('@blood-type-select', 2);
-    });
-});
+    $target = targetEstudiante([          // target con rol real + consentimiento + sub-registro
+        'blood_type_id' => $initial->id,
+    ]);
 
-test('S05 guarda blood_type_id y persiste tras reload', function () {
-    $user = User::factory()->create(['blood_type_id' => null]);
-    $admin = adminUser();
+    $this->browse(function (Browser $browser) use ($admin, $target, $changed) {
+        navigateToSection($browser, $admin, $target);
 
-    $this->browse(function (Browser $browser) use ($user, $admin) {
-        $browser->loginAs($admin)
-            // 1. Cargar
-            ->visit("/security/users/{$user->id}/edit")
-            // 2. Navegar a la sección correcta si hay tabs
-            ->click('@tab-s05')
-            // 3. Modificar campo
-            ->select('@blood-type-select', 2)
-            // 4. Guardar
-            ->click('@save-s05')
-            ->waitForText('Guardado')
-            // 5. Recargar
-            ->visit("/security/users/{$user->id}/edit")
-            // 6. Verificar que persiste
-            ->assertSelected('@blood-type-select', 2);
+        // Verificar pre-fill
+        expect((int) $browser->value('[dusk="blood-type-select"]'))->toBe($initial->id);
+
+        // Modificar y guardar
+        $browser->select('[dusk="blood-type-select"]', (string) $changed->id)
+            ->click('[dusk="save-section-5"]')
+            ->waitForText('Guardado', 5);   // el browser debe mostrar "Guardado"
+
+        // Verificar en DB
+        expect(HealthProfile::where('user_id', $target->id)->value('blood_type_id'))
+            ->toBe($changed->id);
     });
 
-    // 7. Verificar en DB
-    expect($user->fresh()->blood_type_id)->toBe(2);
+    // Recargar y verificar que el browser muestra el nuevo valor
+    $this->browse(function (Browser $browser) use ($admin, $target, $changed) {
+        navigateToSection($browser, $admin, $target);
+
+        expect((int) $browser->value('[dusk="blood-type-select"]'))->toBe($changed->id);
+    });
 });
 ```
 
-**Atributos `dusk` en Vue:** si los selectores `@nombre` no existen en los componentes Vue, agregarlos con `dusk="nombre"` en el HTML. Esto es parte del trabajo del QA Manager.
+#### Estructura obligatoria — test de validación
+
+```php
+test('S01 email requerido: campo vacío muestra error en browser', function () {
+    $admin  = adminForSection();
+    $target = targetEstudiante();
+
+    $this->browse(function (Browser $browser) use ($admin, $target) {
+        navigateToSection($browser, $admin, $target);
+
+        // Borrar el campo requerido
+        $browser->clear('[dusk="email-input"]')
+            ->click('[dusk="save-section-1"]')
+            ->pause(1000);
+
+        // El error debe ser VISIBLE en el browser
+        $browser->assertVisible('[dusk="email-error"]');
+        // o: $browser->assertSeeIn('[dusk="field-errors"]', 'El campo email es obligatorio');
+
+        // DB no debe haber cambiado
+        $this->assertDatabaseMissing('users', ['id' => $target->id, 'email' => '']);
+    });
+});
+```
+
+#### Estructura obligatoria — test de error de servicio
+
+```php
+test('S05 sin consentimiento: el browser muestra error visible (no silencio)', function () {
+    $admin  = adminForSection();
+    $target = User::factory()->create();
+    $target->assignRole('Estudiante');
+    Student::firstOrCreate(['user_id' => $target->id], [...]);
+    // SIN UserConsent::create() — condición de error intencional
+
+    $this->browse(function (Browser $browser) use ($admin, $target) {
+        navigateToSection($browser, $admin, $target);
+
+        $browser->click('[dusk="save-section-5"]')
+            ->pause(2000);
+
+        // El browser debe mostrar el estado de error — no "Sin cambios" ni "Guardado"
+        $browser->assertVisible('.uf-autosave.error');
+        $browser->assertDontSeeIn('.uf-autosave', 'Guardado');
+    });
+});
+```
+
+**Atributos `dusk` en Vue:** si los selectores no existen en los componentes Vue, agregarlos. Esto es parte del trabajo del QA Manager.
+
+**`waitForText('Guardado')`** es la verificación de que el frontend confirmó el guardado. Si el test tiene que usar `pause(2000)` y luego verificar en DB sin ver "Guardado" en el browser, el test está probando la DB directamente y saltándose la verificación frontend — eso no es suficiente.
 
 ---
 
@@ -166,12 +241,12 @@ Actualizar también `specs/qa/{dominio}/{flujo}.md` con los UCs nuevos o actuali
 Fecha: YYYY-MM-DD
 
 ### UCs verificados (PASS)
-- UC-XX — S05 carga con datos → ✅ PASS
-- UC-XX — S03 guarda dirección → ✅ PASS
+- UC-XX — S05 blood_type_id guarda y reload muestra nuevo valor → ✅ PASS
+- UC-XX — S05 insurance_type_id guarda y reload muestra nuevo valor → ✅ PASS
 
 ### UCs fallidos (HLZ generado)
-- UC-XX — S05 guarda blood_type_id → ❌ FAIL → HLZ-{n}
-  Evidencia: campo llega como null en DB tras guardar
+- UC-XX — S05 disability_type_id se nullifica al guardar → ❌ FAIL → HLZ-{n}
+  Evidencia: browser muestra valor anterior tras reload; DB tiene null
 
 ### UCs sin test Dusk (no verificados)
 - UC-XX — [nombre] → ⚠️ pendiente de implementar test
@@ -188,14 +263,16 @@ Fecha: YYYY-MM-DD
 
 - **Nunca marcar un UC como verificado sin haber corrido el test Dusk**
 - **Nunca documentar un HLZ sin evidencia Dusk** — "parece que falla por el código" no es evidencia
-- No modifica código de la aplicación (solo agrega atributos `dusk` en templates Vue si son necesarios para los selectores)
+- **La prueba primaria es lo que muestra el browser** — `assertDatabaseHas` es suplementario. Si el browser no muestra el valor correcto, el UC falla aunque la DB esté bien.
+- **`waitForText('Guardado')`** debe aparecer en cada test de guardado exitoso — confirma que el frontend reconoció el save. `pause(N)` sin verificar el estado frontend no es suficiente.
+- No modifica código de la aplicación (solo agrega atributos `dusk` en templates Vue)
 - No aprueba ni rechaza tasks del arnés
 - No invoca al `leader` — reporta al humano y espera instrucción
 - Si el servidor no está corriendo, avisar al humano: `vendor/bin/sail up -d` antes de poder correr Dusk
 
 ## Regla de cobertura con datos reales
 
-Al auditar flujos con relaciones Eloquent (idiomas, beneficios, direcciones, inscripciones, etc.), **siempre testear en dos variantes**:
+Al auditar flujos con relaciones Eloquent (idiomas, beneficios, direcciones, etc.), **siempre testear en dos variantes**:
 
 1. **Sin datos relacionados** — registro con colección vacía
 2. **Con datos reales** — registro con ≥1 registro en la relación
