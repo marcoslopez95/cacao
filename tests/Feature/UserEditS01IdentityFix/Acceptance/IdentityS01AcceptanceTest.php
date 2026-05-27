@@ -311,10 +311,6 @@ it('RF-03c: PATCH /identity with valid birth_date updates users.birth_date', fun
         ]))
         ->assertSuccessful();
 
-    $this->assertDatabaseHas('users', [
-        'id' => $target->id,
-    ]);
-
     $updated = $target->fresh();
     expect($updated->birth_date?->toDateString())->toBe('1985-03-22');
 });
