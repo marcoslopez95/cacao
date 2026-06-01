@@ -22,7 +22,7 @@ class AttendanceSheetResource extends JsonResource
      */
     public static function summaryForSection(Section $section): array
     {
-        $countedStatuses = [ClassSessionStatus::Held->value, ClassSessionStatus::Advanced->value];
+        $countedStatuses = [ClassSessionStatus::Held->value, ClassSessionStatus::Recovered->value, ClassSessionStatus::Advanced->value];
 
         $enrollmentDetails = $section->enrollmentDetails()
             ->with(['enrollment.student.user'])
@@ -91,8 +91,8 @@ class AttendanceSheetResource extends JsonResource
             ->get()
             ->keyBy('enrollment_detail_id');
 
-        // Sessions counted for absence denominator: held or advanced (not recovered)
-        $countedStatuses = [ClassSessionStatus::Held->value, ClassSessionStatus::Advanced->value];
+        // Sessions counted for absence denominator: held, recovered, and advanced
+        $countedStatuses = [ClassSessionStatus::Held->value, ClassSessionStatus::Recovered->value, ClassSessionStatus::Advanced->value];
 
         $sessionsCounted = $section->classSessions()
             ->whereIn('status', $countedStatuses)

@@ -6,6 +6,7 @@ use App\Enums\ClassSessionStatus;
 use App\Enums\ClassSessionType;
 use App\Http\Wrappers\Attendance\ClassSessionWrapper;
 use App\Models\ClassSession;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
 class CreateMakeupSessionAction
@@ -16,6 +17,14 @@ class CreateMakeupSessionAction
 
         if ($linkedSessionId === null) {
             throw new InvalidArgumentException('linked_session_id is required to create a makeup session.');
+        }
+
+        $linkedSession = ClassSession::find($linkedSessionId);
+
+        if ($linkedSession !== null && $linkedSession->status === ClassSessionStatus::Recovered) {
+            throw ValidationException::withMessages([
+                'linked_session_id' => ['Esta sesión ya fue recuperada.'],
+            ]);
         }
 
         $newSession = ClassSession::create([
