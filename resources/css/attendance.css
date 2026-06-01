@@ -618,3 +618,542 @@
 @media (max-width: 480px) {
     .att-stats { grid-template-columns: 1fr; }
 }
+
+/* ===== Roll-call overlay (Sheet.vue) ===== */
+.att-rc {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-canvas, #f4f2ef);
+    overflow: hidden;
+}
+
+/* Top bar */
+.att-rc-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+    height: 60px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-xs);
+}
+.att-rc-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-family: inherit;
+    padding: 6px 0;
+    white-space: nowrap;
+    transition: color .12s;
+}
+.att-rc-back:hover { color: var(--text-primary); }
+
+.att-rc-titles {
+    flex: 1;
+    min-width: 0;
+}
+.att-rc-titles h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.att-rc-admin-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--warning-fg);
+    background: var(--warning-bg);
+    border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
+    border-radius: var(--radius-pill);
+    padding: 2px 9px;
+}
+.att-rc-titles .sub {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.att-rc-titles .sub span { display: inline-flex; align-items: center; gap: 5px; }
+
+.att-rc-counts {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+}
+.att-rc-count {
+    text-align: center;
+    padding: 4px 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg-surface-2);
+    min-width: 58px;
+}
+.att-rc-count .n {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+.att-rc-count .l {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+.att-rc-count.present { border-color: color-mix(in srgb, var(--success) 35%, var(--border)); }
+.att-rc-count.present .n { color: var(--success); }
+.att-rc-count.absent  { border-color: color-mix(in srgb, var(--danger) 35%, var(--border)); }
+.att-rc-count.absent  .n { color: var(--danger); }
+
+/* Scrollable body */
+.att-rc-body {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 100px;
+}
+.att-rc-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 20px;
+}
+
+/* Admin banner */
+.att-admin-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: var(--radius-lg);
+    background: var(--warning-bg);
+    border: 1px solid color-mix(in srgb, var(--warning) 30%, transparent);
+    color: var(--warning-fg);
+    font-size: 13px;
+    line-height: 1.5;
+}
+.att-admin-banner .ab-body { flex: 1; min-width: 0; }
+
+/* Progress + search bar */
+.att-rc-progress {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+}
+.att-rc-progress .track {
+    flex: 1;
+    min-width: 80px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+.att-rc-progress .fill {
+    height: 100%;
+    background: var(--success);
+    border-radius: var(--radius-pill);
+    transition: width .3s ease;
+}
+.att-rc-bulk {
+    display: flex;
+    gap: 6px;
+}
+.att-rc-bulk button {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all .12s;
+}
+.att-rc-bulk button:hover { border-color: var(--border-strong); color: var(--text-primary); }
+
+.att-rc-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: 0 14px;
+    margin-bottom: 16px;
+    color: var(--text-muted);
+}
+.att-rc-search input {
+    flex: 1;
+    height: 40px;
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    outline: none;
+}
+.att-rc-search input::placeholder { color: var(--text-muted); }
+
+/* Variant switcher */
+.att-rc-variant-bar {
+    display: inline-flex;
+    gap: 2px;
+    background: var(--bg-surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 3px;
+    margin-bottom: 16px;
+}
+.att-rc-variant-bar button {
+    height: 28px;
+    padding: 0 12px;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: inherit;
+    font-weight: 500;
+    transition: background .12s, color .12s;
+    white-space: nowrap;
+}
+.att-rc-variant-bar button:hover { color: var(--text-primary); }
+.att-rc-variant-bar button.active {
+    background: var(--bg-surface);
+    color: var(--accent);
+    box-shadow: var(--shadow-xs);
+}
+
+/* ---- Variant A: Toggle list ---- */
+.att-rc-list { display: flex; flex-direction: column; gap: 0; }
+.att-rc-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 6px;
+    transition: box-shadow .1s;
+}
+.att-rc-item:hover { box-shadow: var(--shadow-xs); }
+.rc-num {
+    flex-shrink: 0;
+    width: 22px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+.rc-av {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 12px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.rc-info { flex: 1; min-width: 0; }
+.rc-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.rc-sub {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 1px;
+}
+.rc-seg {
+    flex-shrink: 0;
+    display: flex;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-strong);
+    overflow: hidden;
+}
+.rc-seg button {
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 6px 13px;
+    border: 0;
+    cursor: pointer;
+    background: var(--bg-surface-2);
+    color: var(--text-muted);
+    transition: background .1s, color .1s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+.rc-seg button + button { border-left: 1px solid var(--border-strong); }
+.rc-seg button.present.on {
+    background: var(--success-bg);
+    color: var(--success);
+    font-weight: 600;
+}
+.rc-seg button.absent.on {
+    background: var(--danger-bg);
+    color: var(--danger);
+    font-weight: 600;
+}
+.rc-seg button:not(.on):hover { background: var(--bg-surface); color: var(--text-secondary); }
+
+/* PriorChip */
+.rc-prior {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: var(--radius-pill);
+    background: var(--bg-surface-2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+.rc-prior.warn   { background: var(--warning-bg); color: var(--warning-fg); border-color: color-mix(in srgb, var(--warning) 30%, transparent); }
+.rc-prior.danger { background: var(--danger-bg);  color: var(--danger);     border-color: color-mix(in srgb, var(--danger) 30%, transparent); }
+
+/* ---- Variant B: Fast list ---- */
+.att-rc-fastlist { display: flex; flex-direction: column; gap: 0; }
+.att-rc-fastrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    margin-bottom: 5px;
+    cursor: pointer;
+    transition: background .1s, border-color .1s;
+    user-select: none;
+}
+.att-rc-fastrow:hover { background: var(--bg-surface-2); }
+.att-rc-fastrow.absent {
+    background: color-mix(in srgb, var(--danger) 6%, var(--bg-surface));
+    border-color: color-mix(in srgb, var(--danger) 25%, var(--border));
+}
+.rc-check {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid var(--success);
+    display: grid;
+    place-items: center;
+    color: var(--success);
+    background: var(--success-bg);
+}
+.att-rc-fastrow.absent .rc-check {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: var(--danger-bg);
+}
+.rc-state-lbl {
+    flex-shrink: 0;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--success);
+}
+.att-rc-fastrow.absent .rc-state-lbl { color: var(--danger); }
+
+/* ---- Variant C: Tile grid ---- */
+.att-rc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+.att-rc-tile {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+    transition: background .1s, border-color .1s;
+    text-align: center;
+}
+.att-rc-tile:hover { background: var(--bg-surface-2); }
+.att-rc-tile.absent {
+    background: color-mix(in srgb, var(--danger) 7%, var(--bg-surface));
+    border-color: color-mix(in srgb, var(--danger) 30%, var(--border));
+}
+.tile-av {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+}
+.att-rc-tile.absent .tile-av {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+}
+.tile-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.3;
+    word-break: break-word;
+}
+.tile-state {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--success);
+}
+.att-rc-tile.absent .tile-state { color: var(--danger); }
+.tile-abs {
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--warning-fg);
+}
+
+/* ---- Sticky footer ---- */
+.att-rc-foot {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 20px;
+    background: color-mix(in srgb, var(--bg-surface) 85%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,.06);
+}
+.att-rc-foot .summary {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+}
+.att-rc-foot .summary strong { color: var(--text-primary); font-weight: 600; }
+.att-rc-foot .actions { display: flex; gap: 10px; }
+.att-rc-foot .actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border-radius: var(--radius-lg);
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: inherit;
+    padding: 9px 18px;
+    cursor: pointer;
+    border: 0;
+    transition: opacity .15s;
+}
+.att-rc-foot .actions .btn:disabled { opacity: .55; cursor: not-allowed; }
+.att-rc-foot .actions .btn-secondary {
+    background: var(--bg-surface-2);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+.att-rc-foot .actions .btn-secondary:hover:not(:disabled) { background: var(--bg-surface); }
+.att-rc-foot .actions .btn-primary {
+    background: var(--accent);
+    color: var(--accent-fg);
+}
+.att-rc-foot .actions .btn-primary:hover:not(:disabled) { opacity: .88; }
+
+/* ---- Toast ---- */
+.att-toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 300;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 20px;
+    border-radius: var(--radius-xl);
+    background: var(--text-primary);
+    color: var(--bg-surface);
+    font-size: 13.5px;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    pointer-events: none;
+    animation: attToastIn .25s ease forwards;
+    white-space: nowrap;
+}
+@keyframes attToastIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Roll-call responsive */
+@media (max-width: 600px) {
+    .att-rc-bar { padding: 0 14px; gap: 10px; }
+    .att-rc-titles .sub { display: none; }
+    .att-rc-count { padding: 4px 10px; min-width: 48px; }
+    .att-rc-inner { padding: 16px 12px; }
+    .rc-seg button { padding: 6px 9px; font-size: 12px; }
+    .att-rc-foot { padding: 12px 14px; }
+    .att-rc-foot .summary { font-size: 12.5px; }
+    .att-rc-foot .actions .btn { padding: 8px 14px; font-size: 13px; }
+    .att-rc-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+}

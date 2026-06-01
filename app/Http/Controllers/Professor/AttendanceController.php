@@ -31,7 +31,7 @@ class AttendanceController extends Controller
     {
         Gate::authorize('viewAny', [ClassSession::class, $section]);
 
-        $section->load(['subject', 'schedules', 'mainTeacher.user']);
+        $section->load(['subject.pensum.career', 'pensum.career', 'schedules', 'mainTeacher.user', 'theoryClassroom', 'labClassroom', 'classroom']);
 
         $sessions = $section->classSessions()
             ->with(['attendanceRecords', 'linkedSession', 'uploadedBy'])
@@ -75,9 +75,11 @@ class AttendanceController extends Controller
         Gate::authorize('takeAttendance', $classSession);
 
         $classSession->load(['attendanceRecords', 'linkedSession', 'uploadedBy', 'section']);
+        $section->load(['subject.pensum.career', 'pensum.career', 'schedules', 'mainTeacher.user', 'theoryClassroom', 'labClassroom', 'classroom']);
 
         return Inertia::render('professor/attendance/Sheet', [
             'sheet' => (new AttendanceSheetResource($classSession))->toArray($request),
+            'section' => new SectionAttendanceResource($section),
         ]);
     }
 
