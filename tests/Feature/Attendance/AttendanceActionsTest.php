@@ -1,6 +1,8 @@
 <?php
 
+use App\Actions\Attendance\CreateAdvanceSessionAction;
 use App\Actions\Attendance\CreateClassSessionAction;
+use App\Actions\Attendance\CreateMakeupSessionAction;
 use App\Actions\Attendance\TakeAttendanceAction;
 use App\Enums\AttendanceStatus;
 use App\Enums\ClassSessionStatus;
@@ -185,4 +187,184 @@ test('TakeAttendanceAction with no marks still updates session to held', functio
 
     $classSession->refresh();
     expect($classSession->status)->toBe(ClassSessionStatus::Held);
+});
+
+// ---------------------------------------------------------------------------
+// CreateMakeupSessionAction
+// ---------------------------------------------------------------------------
+
+test('CreateMakeupSessionAction creates a Makeup session and marks linked as Recovered', function () {
+    $section = Section::factory()->create();
+    $cancelledSession = ClassSession::factory()->forSection($section)->create([
+        'type' => ClassSessionType::Regular,
+        'status' => ClassSessionStatus::Cancelled,
+    ]);
+
+    $wrapper = new ClassSessionWrapper([
+        'section_id' => $section->id,
+        'type' => ClassSessionType::Makeup->value,
+        'linked_session_id' => $cancelledSession->id,
+        'topic' => 'Sesión de recuperación',
+    ]);
+
+    $action = new CreateMakeupSessionAction;
+    $makeupSession = $action->handle($wrapper);
+
+    expect($makeupSession)->toBeInstanceOf(ClassSession::class)
+        ->and($makeupSession->exists)->toBeTrue()
+        ->and($makeupSession->type)->toBe(ClassSessionType::Makeup)
+        ->and($makeupSession->status)->toBe(ClassSessionStatus::Scheduled)
+        ->and($makeupSession->linked_session_id)->toBe($cancelledSession->id)
+        ->and($makeupSession->section_id)->toBe($section->id);
+
+    $cancelledSession->refresh();
+    expect($cancelledSession->status)->toBe(ClassSessionStatus::Recovered)
+        ->and($cancelledSession->linked_session_id)->toBe($makeupSession->id);
+});
+
+test('CreateMakeupSessionAction throws InvalidArgumentException when linked_session_id is null', function () {
+    $section = Section::factory()->create();
+
+    $wrapper = new ClassSessionWrapper([
+        'section_id' => $section->id,
+        'type' => ClassSessionType::Makeup->value,
+        'linked_session_id' => null,
+    ]);
+
+    $action = new CreateMakeupSessionAction;
+
+    expect(fn () => $action->handle($wrapper))->toThrow(InvalidArgumentException::class);
+});
+
+// ---------------------------------------------------------------------------
+// CreateAdvanceSessionAction
+// ---------------------------------------------------------------------------
+
+test('CreateAdvanceSessionAction creates an Advance session and marks linked as Advanced', function () {
+    $section = Section::factory()->create();
+    $futureSession = ClassSession::factory()->forSection($section)->create([
+        'type' => ClassSessionType::Regular,
+        'status' => ClassSessionStatus::Scheduled,
+    ]);
+
+    $wrapper = new ClassSessionWrapper([
+        'section_id' => $section->id,
+        'type' => ClassSessionType::Advance->value,
+        'linked_session_id' => $futureSession->id,
+        'topic' => 'Clase adelantada',
+    ]);
+
+    $action = new CreateAdvanceSessionAction;
+    $advanceSession = $action->handle($wrapper);
+
+    expect($advanceSession)->toBeInstanceOf(ClassSession::class)
+        ->and($advanceSession->exists)->toBeTrue()
+        ->and($advanceSession->type)->toBe(ClassSessionType::Advance)
+        ->and($advanceSession->status)->toBe(ClassSessionStatus::Scheduled)
+        ->and($advanceSession->linked_session_id)->toBe($futureSession->id)
+        ->and($advanceSession->section_id)->toBe($section->id);
+
+    $futureSession->refresh();
+    expect($futureSession->status)->toBe(ClassSessionStatus::Advanced)
+        ->and($futureSession->linked_session_id)->toBe($advanceSession->id);
+});
+
+test('CreateAdvanceSessionAction throws InvalidArgumentException when linked_session_id is null', function () {
+    $section = Section::factory()->create();
+
+    $wrapper = new ClassSessionWrapper([
+        'section_id' => $section->id,
+        'type' => ClassSessionType::Advance->value,
+        'linked_session_id' => null,
+    ]);
+
+    $action = new CreateAdvanceSessionAction;
+
+    expect(fn () => $action->handle($wrapper))->toThrow(InvalidArgumentException::class);
+});
+
+// ---------------------------------------------------------------------------
+// TakeAttendanceAction — advance session copies records to linked session
+// ---------------------------------------------------------------------------
+
+test('TakeAttendanceAction copies AttendanceRecords to linked session when type is Advance', function () {
+    $section = Section::factory()->create();
+
+    // The future session (linked, already Advanced)
+    $linkedSession = ClassSession::factory()->forSection($section)->create([
+        'type' => ClassSessionType::Regular,
+        'status' => ClassSessionStatus::Advanced,
+    ]);
+
+    // The advance session that points at the future session
+    $advanceSession = ClassSession::factory()->forSection($section)->create([
+        'type' => ClassSessionType::Advance,
+        'status' => ClassSessionStatus::Scheduled,
+        'linked_session_id' => $linkedSession->id,
+    ]);
+
+    $enrollment = Enrollment::factory()->create();
+    $details = EnrollmentDetail::factory()->count(2)->create([
+        'enrollment_id' => $enrollment->id,
+        'section_id' => $section->id,
+    ]);
+
+    $marks = [
+        $details[0]->id => 'present',
+        $details[1]->id => 'absent',
+    ];
+
+    $wrapper = new AttendanceSheetWrapper([
+        'class_session_id' => $advanceSession->id,
+        'marks' => $marks,
+        'professor_present' => true,
+    ]);
+
+    $action = new TakeAttendanceAction;
+    $action->handle($wrapper);
+
+    // Records exist on advance session
+    expect(AttendanceRecord::where('class_session_id', $advanceSession->id)->count())->toBe(2);
+
+    // Records also copied to linked session
+    expect(AttendanceRecord::where('class_session_id', $linkedSession->id)->count())->toBe(2);
+
+    // Statuses match
+    $linkedPresent = AttendanceRecord::where('class_session_id', $linkedSession->id)
+        ->where('enrollment_detail_id', $details[0]->id)
+        ->first();
+
+    $linkedAbsent = AttendanceRecord::where('class_session_id', $linkedSession->id)
+        ->where('enrollment_detail_id', $details[1]->id)
+        ->first();
+
+    expect($linkedPresent->status)->toBe(AttendanceStatus::Present)
+        ->and($linkedAbsent->status)->toBe(AttendanceStatus::Absent);
+});
+
+test('TakeAttendanceAction does NOT copy records when session type is Regular', function () {
+    $section = Section::factory()->create();
+
+    $regularSession = ClassSession::factory()->forSection($section)->create([
+        'type' => ClassSessionType::Regular,
+        'status' => ClassSessionStatus::Scheduled,
+        'linked_session_id' => null,
+    ]);
+
+    $enrollment = Enrollment::factory()->create();
+    $detail = EnrollmentDetail::factory()->create([
+        'enrollment_id' => $enrollment->id,
+        'section_id' => $section->id,
+    ]);
+
+    $wrapper = new AttendanceSheetWrapper([
+        'class_session_id' => $regularSession->id,
+        'marks' => [$detail->id => 'present'],
+        'professor_present' => true,
+    ]);
+
+    (new TakeAttendanceAction)->handle($wrapper);
+
+    // Only the one record on the session itself
+    expect(AttendanceRecord::count())->toBe(1);
 });

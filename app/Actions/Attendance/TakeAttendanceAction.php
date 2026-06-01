@@ -3,6 +3,7 @@
 namespace App\Actions\Attendance;
 
 use App\Enums\ClassSessionStatus;
+use App\Enums\ClassSessionType;
 use App\Http\Wrappers\Attendance\AttendanceSheetWrapper;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
@@ -30,5 +31,30 @@ class TakeAttendanceAction
             'held_at' => today()->format('Y-m-d'),
             'professor_present' => $wrapper->isProfessorPresent(),
         ]);
+
+        $this->maybeCopyRecordsToLinkedSession($sessionId);
+    }
+
+    private function maybeCopyRecordsToLinkedSession(int $sessionId): void
+    {
+        $session = ClassSession::find($sessionId);
+
+        if ($session === null || $session->type !== ClassSessionType::Advance || $session->linked_session_id === null) {
+            return;
+        }
+
+        $records = AttendanceRecord::where('class_session_id', $sessionId)->get();
+
+        foreach ($records as $record) {
+            AttendanceRecord::updateOrCreate(
+                [
+                    'class_session_id' => $session->linked_session_id,
+                    'enrollment_detail_id' => $record->enrollment_detail_id,
+                ],
+                [
+                    'status' => $record->status,
+                ]
+            );
+        }
     }
 }
