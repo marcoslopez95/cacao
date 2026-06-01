@@ -37,10 +37,12 @@ class AttendanceController extends Controller
             ->with(['attendanceRecords', 'linkedSession', 'uploadedBy'])
             ->orderByDesc('held_at')->orderByDesc('created_at')->get();
 
+        $periodName = Period::where('status', PeriodStatus::Active)->first()?->name;
+
         return Inertia::render('professor/attendance/Index', [
             'section' => new SectionAttendanceResource($section),
             'sessions' => ClassSessionResource::collection($sessions),
-            'period' => Period::where('status', PeriodStatus::Active)->first()?->name,
+            'period' => $periodName,
         ]);
     }
 
