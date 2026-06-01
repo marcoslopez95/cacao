@@ -165,6 +165,9 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     Route::get('grade-configs/{gradeConfig}/edit', [GradeConfigController::class, 'edit'])->name('grade-configs.edit');
     Route::patch('grade-configs/{gradeConfig}', [GradeConfigController::class, 'update'])->name('grade-configs.update');
 
+});
+
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     // Admin Attendance
     Route::get('attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
     Route::get('sections/{section}/attendance', [AdminAttendanceController::class, 'sectionIndex'])->name('sections.attendance.index');

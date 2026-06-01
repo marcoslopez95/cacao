@@ -79,7 +79,7 @@ class AttendanceController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Sesión creada.']);
 
-        return to_route('security.sections.attendance.index', $section);
+        return to_route('admin.sections.attendance.index', $section);
     }
 
     public function sheet(Request $request, Section $section, ClassSession $classSession): Response
@@ -106,6 +106,6 @@ class AttendanceController extends Controller
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Asistencia guardada.']);
 
-        return to_route('security.sections.attendance.sheet', [$section, $classSession]);
+        return to_route('admin.sections.attendance.sheet', [$section, $classSession]);
     }
 }

@@ -70,17 +70,17 @@ function adminConfirmedDetail(Section $section): EnrollmentDetail
 }
 
 // ---------------------------------------------------------------------------
-// index — GET /security/attendance
+// index — GET /admin/attendance
 // ---------------------------------------------------------------------------
 
 test('unauthenticated users are redirected from admin attendance index', function () {
-    $this->get(route('security.attendance.index'))->assertRedirect(route('login'));
+    $this->get(route('admin.attendance.index'))->assertRedirect(route('login'));
 });
 
 test('non-admin cannot access admin attendance index', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)->get(route('security.attendance.index'))->assertForbidden();
+    $this->actingAs($user)->get(route('admin.attendance.index'))->assertForbidden();
 });
 
 test('admin can access attendance index and sees pending sessions', function () {
@@ -93,7 +93,7 @@ test('admin can access attendance index and sees pending sessions', function () 
     ]);
 
     $this->actingAs($admin)
-        ->get(route('security.attendance.index'))
+        ->get(route('admin.attendance.index'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('admin/attendance/Index')
@@ -123,7 +123,7 @@ test('index only shows scheduled sessions with past held_at and no attendance re
     ]);
 
     $this->actingAs($admin)
-        ->get(route('security.attendance.index'))
+        ->get(route('admin.attendance.index'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->has('pending_sessions.data', 1)
@@ -151,7 +151,7 @@ test('index excludes sessions that already have attendance records', function ()
     ]);
 
     $this->actingAs($admin)
-        ->get(route('security.attendance.index'))
+        ->get(route('admin.attendance.index'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->has('pending_sessions.data', 0)
@@ -159,13 +159,13 @@ test('index excludes sessions that already have attendance records', function ()
 });
 
 // ---------------------------------------------------------------------------
-// sectionIndex — GET /security/sections/{section}/attendance
+// sectionIndex — GET /admin/sections/{section}/attendance
 // ---------------------------------------------------------------------------
 
 test('unauthenticated users are redirected from admin section attendance', function () {
     $section = Section::factory()->create();
 
-    $this->get(route('security.sections.attendance.index', $section))->assertRedirect(route('login'));
+    $this->get(route('admin.sections.attendance.index', $section))->assertRedirect(route('login'));
 });
 
 test('non-admin cannot access admin section attendance', function () {
@@ -173,7 +173,7 @@ test('non-admin cannot access admin section attendance', function () {
     $section = Section::factory()->create();
 
     $this->actingAs($user)
-        ->get(route('security.sections.attendance.index', $section))
+        ->get(route('admin.sections.attendance.index', $section))
         ->assertForbidden();
 });
 
@@ -183,7 +183,7 @@ test('admin can view section attendance for any section', function () {
     ClassSession::factory()->forSection($section)->count(2)->create();
 
     $this->actingAs($admin)
-        ->get(route('security.sections.attendance.index', $section))
+        ->get(route('admin.sections.attendance.index', $section))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('admin/attendance/SectionIndex')
@@ -193,20 +193,20 @@ test('admin can view section attendance for any section', function () {
 });
 
 // ---------------------------------------------------------------------------
-// storeSession — POST /security/sections/{section}/attendance/sessions
+// storeSession — POST /admin/sections/{section}/attendance/sessions
 // ---------------------------------------------------------------------------
 
 test('admin can create a class session for any section', function () {
     ['admin' => $admin, 'section' => $section] = adminAttendanceContext();
 
     $this->actingAs($admin)
-        ->post(route('security.sections.attendance.sessions.store', $section), [
+        ->post(route('admin.sections.attendance.sessions.store', $section), [
             'type' => 'regular',
             'topic' => 'Sesión creada por admin',
             'linked_session_id' => null,
             'held_at' => null,
         ])
-        ->assertRedirect(route('security.sections.attendance.index', $section));
+        ->assertRedirect(route('admin.sections.attendance.index', $section));
 
     expect(ClassSession::where('section_id', $section->id)->where('type', ClassSessionType::Regular)->exists())
         ->toBeTrue();
@@ -217,14 +217,14 @@ test('non-admin cannot create sessions via admin route', function () {
     $section = Section::factory()->create();
 
     $this->actingAs($user)
-        ->post(route('security.sections.attendance.sessions.store', $section), [
+        ->post(route('admin.sections.attendance.sessions.store', $section), [
             'type' => 'regular',
         ])
         ->assertForbidden();
 });
 
 // ---------------------------------------------------------------------------
-// sheet — GET /security/sections/{section}/attendance/sessions/{classSession}
+// sheet — GET /admin/sections/{section}/attendance/sessions/{classSession}
 // ---------------------------------------------------------------------------
 
 test('admin can view the attendance sheet for any session', function () {
@@ -234,7 +234,7 @@ test('admin can view the attendance sheet for any session', function () {
     adminConfirmedDetail($section);
 
     $this->actingAs($admin)
-        ->get(route('security.sections.attendance.sheet', [$section, $session]))
+        ->get(route('admin.sections.attendance.sheet', [$section, $session]))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('admin/attendance/Sheet')
@@ -243,7 +243,7 @@ test('admin can view the attendance sheet for any session', function () {
 });
 
 // ---------------------------------------------------------------------------
-// upsertAttendance — PUT /security/sections/{section}/attendance/sessions/{classSession}
+// upsertAttendance — PUT /admin/sections/{section}/attendance/sessions/{classSession}
 // ---------------------------------------------------------------------------
 
 test('admin can save attendance and professor_present is always false', function () {
@@ -254,10 +254,10 @@ test('admin can save attendance and professor_present is always false', function
 
     // Admin does NOT send professor_present — it should default to false
     $this->actingAs($admin)
-        ->put(route('security.sections.attendance.upsert', [$section, $session]), [
+        ->put(route('admin.sections.attendance.upsert', [$section, $session]), [
             'marks' => [(string) $detail->id => 'present'],
         ])
-        ->assertRedirect(route('security.sections.attendance.sheet', [$section, $session]));
+        ->assertRedirect(route('admin.sections.attendance.sheet', [$section, $session]));
 
     expect(AttendanceRecord::where('class_session_id', $session->id)
         ->where('enrollment_detail_id', $detail->id)
@@ -278,7 +278,7 @@ test('admin cannot override professor_present to true via request body', functio
 
     // Even if admin sends professor_present=true it should be forced to false
     $this->actingAs($admin)
-        ->put(route('security.sections.attendance.upsert', [$section, $session]), [
+        ->put(route('admin.sections.attendance.upsert', [$section, $session]), [
             'marks' => [(string) $detail->id => 'present'],
             'professor_present' => true,
         ])
@@ -293,7 +293,7 @@ test('upsertAttendance validates marks is required for admin', function () {
     $session = ClassSession::factory()->forSection($section)->create();
 
     $this->actingAs($admin)
-        ->put(route('security.sections.attendance.upsert', [$section, $session]), [])
+        ->put(route('admin.sections.attendance.upsert', [$section, $session]), [])
         ->assertSessionHasErrors('marks');
 });
 
@@ -303,7 +303,7 @@ test('non-admin cannot save attendance via admin route', function () {
     $session = ClassSession::factory()->forSection($section)->create();
 
     $this->actingAs($user)
-        ->put(route('security.sections.attendance.upsert', [$section, $session]), [
+        ->put(route('admin.sections.attendance.upsert', [$section, $session]), [
             'marks' => [],
         ])
         ->assertForbidden();
