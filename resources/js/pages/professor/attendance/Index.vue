@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { router, setLayoutProps } from '@inertiajs/vue3'
-import type { AttendanceSectionContext, ClassSession } from '@/types/attendance'
+import type { AttendanceSectionContext, AttendanceRosterEntry, ClassSession } from '@/types/attendance'
 import AppIcon from '@/components/UI/AppIcon.vue'
 import AttSectionBanner from '@/components/attendance/AttSectionBanner.vue'
 import AttSessionCard from '@/components/attendance/AttSessionCard.vue'
 import AttStatusPill from '@/components/attendance/AttStatusPill.vue'
 import AttTypePill from '@/components/attendance/AttTypePill.vue'
 import AttMiniBar from '@/components/attendance/AttMiniBar.vue'
+import AttTotalsPanel from '@/components/attendance/AttTotalsPanel.vue'
 import { sheet } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
 import { storeSession } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
 import { useClassSessionForm } from '@/composables/forms/useClassSessionForm'
@@ -16,6 +17,9 @@ type Props = {
     section: AttendanceSectionContext
     sessions: ClassSession[]
     period: string | null
+    roster: AttendanceRosterEntry[]
+    absenceTotals: Record<number, number>
+    sessionsCounted: number
 }
 
 const props = defineProps<Props>()
@@ -518,28 +522,14 @@ function tableDowLabel(iso: string): string {
             </div>
         </template>
 
-        <!-- Totals tab (stub — full panel in Task 13) -->
+        <!-- Totals tab -->
         <template v-else>
-            <div class="att-totals">
-                <div class="att-totals-head">
-                    <div>
-                        <h3>Inasistencias acumuladas</h3>
-                        <div class="sub">
-                            Período {{ period ?? '—' }} · {{ stats.dadas }} sesiones registradas
-                        </div>
-                    </div>
-                    <div class="att-totals-legend">
-                        <span><i style="background: var(--success);" /> 0–2 faltas</span>
-                        <span><i style="background: var(--warning);" /> 3–5</span>
-                        <span><i style="background: var(--danger);" /> 6+ en riesgo</span>
-                    </div>
-                </div>
-                <div class="att-empty">
-                    <div class="ic"><AppIcon name="users" :size="20" /></div>
-                    <h3>Panel de inasistencias</h3>
-                    <p>El detalle por estudiante se implementa en la siguiente tarea.</p>
-                </div>
-            </div>
+            <AttTotalsPanel
+                :roster="props.roster"
+                :absence-totals="props.absenceTotals"
+                :sessions-counted="props.sessionsCounted"
+                :period="props.period"
+            />
         </template>
 
         <!-- Create session modal -->

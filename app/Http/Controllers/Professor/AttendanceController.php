@@ -6,7 +6,10 @@ use App\Actions\Attendance\CreateAdvanceSessionAction;
 use App\Actions\Attendance\CreateClassSessionAction;
 use App\Actions\Attendance\CreateMakeupSessionAction;
 use App\Actions\Attendance\TakeAttendanceAction;
+use App\Enums\AttendanceStatus;
+use App\Enums\ClassSessionStatus;
 use App\Enums\ClassSessionType;
+use App\Enums\EnrollmentDetailStatus;
 use App\Enums\PeriodStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Professor\StoreClassSessionRequest;
@@ -16,11 +19,13 @@ use App\Http\Resources\Attendance\ClassSessionResource;
 use App\Http\Resources\Attendance\SectionAttendanceResource;
 use App\Http\Wrappers\Attendance\AttendanceSheetWrapper;
 use App\Http\Wrappers\Attendance\ClassSessionWrapper;
+use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
 use App\Models\Period;
 use App\Models\Section;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -39,10 +44,55 @@ class AttendanceController extends Controller
 
         $periodName = Period::where('status', PeriodStatus::Active)->first()?->name;
 
+        // Roster + absence totals for the Totals panel tab
+        $countedStatuses = [ClassSessionStatus::Held->value, ClassSessionStatus::Advanced->value];
+
+        $sessionsCounted = $section->classSessions()
+            ->whereIn('status', $countedStatuses)
+            ->count();
+
+        $enrollmentDetails = $section->enrollmentDetails()
+            ->with(['enrollment.student.user'])
+            ->where('status', EnrollmentDetailStatus::Confirmed)
+            ->get();
+
+        $detailIds = $enrollmentDetails->pluck('id');
+
+        $absenceTotals = AttendanceRecord::query()
+            ->join('class_sessions', 'attendance_records.class_session_id', '=', 'class_sessions.id')
+            ->whereIn('attendance_records.enrollment_detail_id', $detailIds)
+            ->where('attendance_records.status', AttendanceStatus::Absent->value)
+            ->whereIn('class_sessions.status', $countedStatuses)
+            ->groupBy('attendance_records.enrollment_detail_id')
+            ->select('attendance_records.enrollment_detail_id', DB::raw('count(*) as total'))
+            ->pluck('total', 'enrollment_detail_id')
+            ->map(fn ($v) => (int) $v)
+            ->toArray();
+
+        $roster = $enrollmentDetails->map(function ($detail) {
+            $student = $detail->enrollment->student;
+            $user = $student->user;
+            $firstName = $user->first_name ?? '';
+            $lastName = $user->last_name ?? '';
+            $initials = mb_strtoupper(mb_substr($firstName, 0, 1).mb_substr($lastName, 0, 1));
+
+            return [
+                'enrollment_detail_id' => $detail->id,
+                'student_id' => $student->id,
+                'name' => trim($firstName.' '.$lastName),
+                'initials' => $initials,
+                'code' => $user->document_number ?? (string) $student->id,
+                'status' => null,
+            ];
+        })->values()->all();
+
         return Inertia::render('professor/attendance/Index', [
             'section' => new SectionAttendanceResource($section),
             'sessions' => ClassSessionResource::collection($sessions),
             'period' => $periodName,
+            'roster' => $roster,
+            'absenceTotals' => $absenceTotals,
+            'sessionsCounted' => $sessionsCounted,
         ]);
     }
 
