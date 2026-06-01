@@ -42,4 +42,9 @@ class EnrollmentDetail extends Model
     {
         return $this->hasMany(GradeEntry::class);
     }
+
+    public function attendanceRecords(): HasMany
+    {
+        return $this->hasMany(AttendanceRecord::class);
+    }
 }

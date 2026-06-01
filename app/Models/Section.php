@@ -74,4 +74,9 @@ class Section extends Model
     {
         return $this->hasMany(EnrollmentDetail::class);
     }
+
+    public function classSessions(): HasMany
+    {
+        return $this->hasMany(ClassSession::class);
+    }
 }
