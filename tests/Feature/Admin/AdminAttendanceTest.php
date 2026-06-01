@@ -158,6 +158,32 @@ test('index excludes sessions that already have attendance records', function ()
         );
 });
 
+test('pending sessions include enriched section data (subject, cohort, career, teacher)', function () {
+    ['admin' => $admin, 'section' => $section] = adminAttendanceContext();
+
+    ClassSession::factory()->forSection($section)->create([
+        'status' => ClassSessionStatus::Scheduled,
+        'held_at' => now()->subDay()->format('Y-m-d'),
+        'topic' => 'Clase de prueba',
+    ]);
+
+    $this->actingAs($admin)
+        ->get(route('admin.attendance.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('pending_sessions.data', 1)
+            ->has('pending_sessions.data.0', fn ($s) => $s
+                ->has('subject')
+                ->has('cohort')
+                ->has('career')
+                ->has('teacher_name')
+                ->has('career_color')
+                ->where('topic', 'Clase de prueba')
+                ->etc()
+            )
+        );
+});
+
 // ---------------------------------------------------------------------------
 // sectionIndex — GET /admin/sections/{section}/attendance
 // ---------------------------------------------------------------------------

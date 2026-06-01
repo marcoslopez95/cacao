@@ -7,10 +7,19 @@ import AttDateBlock from '@/components/attendance/AttDateBlock.vue'
 import AttStatusPill from '@/components/attendance/AttStatusPill.vue'
 import { sheet as adminSheet } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
 
+type AdminSession = ClassSession & {
+    subject?: string | null
+    code?: string | null
+    cohort?: string | null
+    career?: string | null
+    careerColor?: string | null
+    teacherName?: string | null
+}
+
 type Props = {
     pending_sessions: {
-        data: ClassSession[]
-    } | ClassSession[]
+        data: AdminSession[]
+    } | AdminSession[]
 }
 
 const props = defineProps<Props>()
@@ -23,9 +32,9 @@ setLayoutProps({
 })
 
 // Normalize — the backend returns ResourceCollection which wraps in { data: [] }
-const sessions = computed<ClassSession[]>(() => {
+const sessions = computed<AdminSession[]>(() => {
     const ps = props.pending_sessions
-    return Array.isArray(ps) ? ps : (ps as { data: ClassSession[] }).data
+    return Array.isArray(ps) ? ps : (ps as { data: AdminSession[] }).data
 })
 
 const pendingCount = computed(() => sessions.value.length)
@@ -36,9 +45,16 @@ const query = ref('')
 const filtered = computed(() => {
     const q = query.value.trim().toLowerCase()
     if (!q) { return sessions.value }
-    return sessions.value.filter((s) =>
-        (s.topic ?? '').toLowerCase().includes(q),
-    )
+    return sessions.value.filter((s) => {
+        const fields = [
+            s.topic,
+            s.subject,
+            s.cohort,
+            s.career,
+            s.teacherName,
+        ]
+        return fields.some((f) => (f ?? '').toLowerCase().includes(q))
+    })
 })
 
 // ---- Date helpers ----
@@ -60,7 +76,7 @@ function dowShort(iso: string): string {
 }
 
 // ---- Navigation ----
-function goToSheet(session: ClassSession): void {
+function goToSheet(session: AdminSession): void {
     router.visit(adminSheet.url({ section: session.sectionId, classSession: session.id }))
 }
 </script>
@@ -175,8 +191,25 @@ function goToSheet(session: ClassSession): void {
                     </div>
 
                     <div class="att-card-head">
-                        <p class="att-card-topic">{{ session.topic || 'Sin tema' }}</p>
+                        <!-- Subject · Cohort -->
+                        <p class="att-card-topic">
+                            <template v-if="session.subject">
+                                {{ session.subject }}
+                                <span v-if="session.cohort" style="color: var(--text-muted); font-weight: 400;"> · {{ session.cohort }}</span>
+                            </template>
+                            <template v-else>
+                                Sección #{{ session.sectionId }}
+                            </template>
+                        </p>
                         <div class="att-card-tags">
+                            <!-- Code pill -->
+                            <span
+                                v-if="session.code"
+                                class="att-pill"
+                                style="font-family: var(--font-mono); font-size: 10px; background: var(--bg-surface-2);"
+                            >
+                                {{ session.code }}
+                            </span>
                             <!-- "Sin registrar" warning badge -->
                             <span
                                 class="att-pill warn"
@@ -192,6 +225,15 @@ function goToSheet(session: ClassSession): void {
 
                 <!-- Body -->
                 <div class="att-card-body">
+                    <!-- Topic -->
+                    <div
+                        v-if="session.topic"
+                        style="font-size: 12.5px; color: var(--text-secondary); display: flex; align-items: center; gap: 5px;"
+                    >
+                        <AppIcon name="book" :size="12" />
+                        {{ session.topic }}
+                    </div>
+
                     <!-- Date info -->
                     <div
                         v-if="session.heldAt"
@@ -199,6 +241,15 @@ function goToSheet(session: ClassSession): void {
                     >
                         <AppIcon name="calendar" :size="12" />
                         {{ fmtDate(session.heldAt) }} · {{ dowShort(session.heldAt) }}
+                    </div>
+
+                    <!-- Professor note -->
+                    <div
+                        v-if="session.teacherName"
+                        style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; margin-top: 2px;"
+                    >
+                        <AppIcon name="user" :size="11" />
+                        {{ session.teacherName }}
                     </div>
 
                     <!-- professor_present note -->
@@ -215,7 +266,8 @@ function goToSheet(session: ClassSession): void {
                 <div class="att-card-foot">
                     <span class="foot-meta">
                         <AppIcon name="users" :size="12" />
-                        Sección #{{ session.sectionId }}
+                        <template v-if="session.career">{{ session.career }}</template>
+                        <template v-else>Sección #{{ session.sectionId }}</template>
                     </span>
 
                     <button

@@ -10,6 +10,7 @@ use App\Enums\ClassSessionType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AdminStoreClassSessionRequest;
 use App\Http\Requests\Admin\AdminUpsertAttendanceRequest;
+use App\Http\Resources\Attendance\AdminPendingSessionResource;
 use App\Http\Resources\Attendance\AttendanceSheetResource;
 use App\Http\Resources\Attendance\ClassSessionResource;
 use App\Http\Resources\Attendance\SectionAttendanceResource;
@@ -29,7 +30,11 @@ class AttendanceController extends Controller
     {
         Gate::authorize('viewAny', [ClassSession::class, new Section]);
 
-        $pendingSessions = ClassSession::with(['section.subject', 'section.mainTeacher.user', 'section.period'])
+        $pendingSessions = ClassSession::with([
+            'section.subject.pensum.career',
+            'section.pensum.career',
+            'section.mainTeacher.user',
+        ])
             ->whereDoesntHave('attendanceRecords')
             ->where('status', 'scheduled')
             ->whereNotNull('held_at')
@@ -38,7 +43,7 @@ class AttendanceController extends Controller
             ->get();
 
         return Inertia::render('admin/attendance/Index', [
-            'pending_sessions' => ClassSessionResource::collection($pendingSessions),
+            'pending_sessions' => AdminPendingSessionResource::collection($pendingSessions),
         ]);
     }
 
