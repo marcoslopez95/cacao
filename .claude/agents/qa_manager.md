@@ -14,49 +14,6 @@ Auditor autónomo invocado directamente por el humano. Cuando recibe una URL, ex
 
 ---
 
-## Base de datos para tests Dusk
-
-Los tests Dusk usan `laravel_dusk` — una base de datos separada — para no destruir los datos de desarrollo. El `.env` tiene la variable lista, comentada:
-
-```
-DB_DATABASE=laravel
-#DB_DATABASE=laravel_dusk
-```
-
-**Antes de correr cualquier test Dusk**, el qa_manager debe:
-1. Comentar `DB_DATABASE=laravel` y descomentar `#DB_DATABASE=laravel_dusk` en `.env`
-2. Limpiar config cache: `vendor/bin/sail artisan config:clear`
-3. Preparar la DB dusk: `vendor/bin/sail artisan migrate:fresh --seed`
-
-**Al terminar todos los tests**, restaurar:
-1. Descomentar `DB_DATABASE=laravel` y comentar `DB_DATABASE=laravel_dusk` en `.env`
-2. `vendor/bin/sail artisan config:clear`
-
----
-
-## Dos modos de operación
-
-### Modo A — Registro específico ("revisa por qué el usuario 5 no guarda")
-
-El humano señala un registro real con un problema. El objetivo es entender el error antes de crear tests.
-
-1. **Mantener `DB_DATABASE=laravel`** — leer el registro real tal como está
-2. Explorar el código para entender la causa (Paso 1 del protocolo)
-3. Reproducir el error mentalmente con los datos reales del registro
-4. **Luego** cambiar a `laravel_dusk`, recrear el escenario exacto en Dusk, y correr los tests
-5. El test debe fallar primero (reproduce el bug) y pasar después de identificar la causa
-
-### Modo B — Auditoría general ("revisa si el módulo X funciona")
-
-No hay registro específico. El objetivo es cobertura completa del flujo.
-
-1. **Cambiar a `laravel_dusk`** desde el principio
-2. Los tests usan `uses(DatabaseMigrations::class)` — DB limpia por test, control total
-3. Crear todos los datos necesarios dentro del test
-4. Al terminar, restaurar `laravel`
-
----
-
 ## Protocolo de auditoría autónoma
 
 ### Paso 1 — Explorar el endpoint
@@ -137,11 +94,57 @@ Leer `specs/qa/{dominio}/{flujo}.md`. Para cada UC existente:
 
 Para cada UC del Paso 3, escribir un test en `tests/Browser/{Dominio}/{Flujo}Test.php`.
 
-#### Regla de aislamiento — según el modo de operación
+#### Regla de aislamiento — NUNCA usar DatabaseMigrations
 
-**Modo A (registro específico):** no usar `DatabaseMigrations`. La DB es `laravel`. Los usuarios de test usan email `*@dusk.test` y se limpian en `beforeEach`. Los catálogos ya están seedeados.
+**Prohibido** usar `uses(DatabaseMigrations::class)` o `uses(RefreshDatabase::class)` en tests Dusk. Estos traits borran la base de datos de desarrollo completa porque Dusk usa la misma DB que el servidor web.
 
-**Modo B (auditoría general):** usar `uses(DatabaseMigrations::class)` con normalidad — la DB es `laravel_dusk`, no la de desarrollo. `DatabaseMigrations` borra `laravel_dusk` en cada test, control total, sin riesgo.
+El patrón obligatorio es:
+
+```php
+// En beforeEach: limpiar test data de ejecuciones anteriores
+beforeEach(function () {
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    // Roles — idempotente
+    Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'Estudiante', 'guard_name' => 'web']);
+
+    // Eliminar usuarios de test de ejecuciones anteriores
+    cleanDuskTestUsers();
+});
+
+// Función de limpieza — respeta FKs RESTRICT
+function cleanDuskTestUsers(): void
+{
+    $ids = User::where('email', 'like', '%@dusk.test')->pluck('id');
+    if ($ids->isEmpty()) return;
+
+    DB::table('health_profiles')->whereIn('user_id', $ids)->delete();
+    DB::table('user_consents')->whereIn('user_id', $ids)->delete();
+    DB::table('demographic_profiles')->whereIn('user_id', $ids)->delete();
+    DB::table('user_addresses')->whereIn('user_id', $ids)->delete();
+    DB::table('user_documents')->whereIn('user_id', $ids)->delete();
+    DB::table('students')->whereIn('user_id', $ids)->delete();
+    DB::table('professors')->whereIn('user_id', $ids)->delete();
+    DB::table('guardians')->whereIn('user_id', $ids)->delete();
+    DB::table('model_has_roles')
+        ->where('model_type', User::class)
+        ->whereIn('model_id', $ids)
+        ->delete();
+    DB::table('sessions')->whereIn('user_id', $ids)->delete();
+    User::whereIn('id', $ids)->forceDelete();
+}
+
+// Todos los usuarios de test usan dominio @dusk.test
+function adminForTest(): User
+{
+    $user = User::factory()->create(['email' => uniqid('admin.') . '@dusk.test']);
+    $user->assignRole('Admin');
+    return $user;
+}
+```
+
+Los catálogos (BloodType, InsuranceType, etc.) ya están seedeados en la DB de desarrollo — no hay que re-seedearlos. Si un catálogo está vacío en tu entorno, llamar al seeder correspondiente **solo si `Model::count() === 0`** (guard idempotente).
 
 #### Regla de condiciones reales
 
