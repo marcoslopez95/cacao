@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('section_id')->constrained('sections')->restrictOnDelete();
             $table->foreignId('uploaded_by_id')->nullable()->constrained('users')->restrictOnDelete();
-            $table->foreignId('linked_session_id')->nullable()->constrained('class_sessions')->restrictOnDelete();
+            $table->foreignId('linked_session_id')->nullable()->constrained('class_sessions')->nullOnDelete();
             $table->string('type')->default('regular');
             $table->string('status')->default('scheduled');
             $table->boolean('professor_present')->default(true);
