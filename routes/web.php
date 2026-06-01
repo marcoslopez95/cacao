@@ -266,6 +266,16 @@ Route::middleware(['auth', 'verified', 'role:Profesor,Coordinador de Area'])
             ->name('grades.publish');
         Route::post('sections/{section}/enrollment-details/{enrollmentDetail}/remedial', [Professor\RemedialController::class, 'store'])
             ->name('grades.remedial.store');
+
+        // Attendance
+        Route::get('sections/{section}/attendance', [Professor\AttendanceController::class, 'index'])
+            ->name('sections.attendance.index');
+        Route::post('sections/{section}/attendance/sessions', [Professor\AttendanceController::class, 'storeSession'])
+            ->name('sections.attendance.sessions.store');
+        Route::get('sections/{section}/attendance/sessions/{classSession}', [Professor\AttendanceController::class, 'sheet'])
+            ->name('sections.attendance.sheet');
+        Route::put('sections/{section}/attendance/sessions/{classSession}', [Professor\AttendanceController::class, 'upsertAttendance'])
+            ->name('sections.attendance.upsert');
     });
 
 Route::middleware(['auth', 'verified', 'role:Estudiante'])
