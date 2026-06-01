@@ -27,6 +27,7 @@ const dotColors = [...new Set(props.schedules.map(scheduleColor))].slice(0, 5)
 
 <template>
     <button
+        dusk="schedule-overflow-tile"
         class="sch-overflow"
         :class="{ 'has-conflict': hasConflict }"
         :style="{

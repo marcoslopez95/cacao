@@ -19,7 +19,7 @@ const props = defineProps<{
                 <input class="uf-input" :value="data.empCode" @input="setField('empCode', ($event.target as HTMLInputElement).value)" />
             </AppFormField>
             <AppFormField label="Título académico" :col="4">
-                <input class="uf-input" :value="data.degree" placeholder="Lic. en…" @input="setField('degree', ($event.target as HTMLInputElement).value)" />
+                <input dusk="degree-input" class="uf-input" :value="data.degree" placeholder="Lic. en…" @input="setField('degree', ($event.target as HTMLInputElement).value)" />
             </AppFormField>
             <AppFormField label="Especialidad" :col="4">
                 <input class="uf-input" :value="data.specialty" @input="setField('specialty', ($event.target as HTMLInputElement).value)" />
@@ -32,6 +32,7 @@ const props = defineProps<{
         <div class="uf-grid">
             <AppFormField label="Tipo de contrato" :col="4">
                 <select
+                    dusk="contract-type-select"
                     class="uf-select"
                     :value="data.contractTypeId ?? ''"
                     @change="setField('contractTypeId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
@@ -42,6 +43,7 @@ const props = defineProps<{
             </AppFormField>
             <AppFormField label="Dedicación" :col="4">
                 <select
+                    dusk="dedication-type-select"
                     class="uf-select"
                     :value="data.dedicationTypeId ?? ''"
                     @change="setField('dedicationTypeId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
@@ -57,13 +59,14 @@ const props = defineProps<{
                 </div>
             </AppFormField>
             <AppFormField label="Fecha de ingreso" required :col="4">
-                <input class="uf-input" type="date" :value="data.hireDate" @input="setField('hireDate', ($event.target as HTMLInputElement).value)" />
+                <input dusk="hire-date-input" class="uf-input" type="date" :value="data.hireDate" @input="setField('hireDate', ($event.target as HTMLInputElement).value)" />
             </AppFormField>
             <AppFormField label="Fecha de egreso" optional :col="4">
                 <input class="uf-input" type="date" :value="data.endDate" @input="setField('endDate', ($event.target as HTMLInputElement).value)" />
             </AppFormField>
             <AppFormField label="Estatus laboral" admin-only :col="4">
                 <select
+                    dusk="employment-status-select"
                     class="uf-select"
                     :value="data.emplStatusId ?? ''"
                     @change="setField('emplStatusId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"

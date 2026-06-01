@@ -69,7 +69,9 @@ class UpdateUserRequest extends FormRequest
             'gender_id' => ['nullable', 'integer', 'exists:genders,id'],
             'nationality_id' => ['nullable', 'integer', 'exists:countries,id'],
             'phone_primary' => ['nullable', 'string', 'max:20'],
+            'phone_primary_dial' => ['nullable', 'string', 'max:10'],
             'phone_secondary' => ['nullable', 'string', 'max:20'],
+            'phone_secondary_dial' => ['nullable', 'string', 'max:10'],
         ];
     }
 }

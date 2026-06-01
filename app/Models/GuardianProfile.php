@@ -15,6 +15,7 @@ class GuardianProfile extends Model
         'occupation',
         'employer',
         'work_phone',
+        'work_phone_dial',
         'education_level_id',
         'marital_status_id',
     ];

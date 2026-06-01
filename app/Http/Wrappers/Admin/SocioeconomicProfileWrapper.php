@@ -11,7 +11,7 @@ class SocioeconomicProfileWrapper extends Collection
         parent::__construct($validated);
     }
 
-    public function getStudyDate(): string
+    public function getStudyDate(): ?string
     {
         return $this->get('study_date');
     }

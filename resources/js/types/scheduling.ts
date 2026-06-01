@@ -205,6 +205,12 @@ export type ScheduleAvailableSection = {
     type: 'university' | 'school'
     periodId: number
     periodName: string
+    careerId: number | null
+}
+
+export type ScheduleAvailableCareer = {
+    id: number
+    name: string
 }
 
 export type ScheduleAvailableProfessor = {

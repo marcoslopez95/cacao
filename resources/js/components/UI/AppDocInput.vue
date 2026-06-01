@@ -5,6 +5,7 @@ const props = defineProps<{
     typeId: number | null
     number: string
     catalog: { id: number; name: string; code: string }[]
+    duskPrefix?: string
 }>()
 
 const emit = defineEmits<{
@@ -38,6 +39,7 @@ function onNumber(e: Event): void {
     <div class="uf-id-combo">
         <select
             class="uf-select"
+            :dusk="duskPrefix ? duskPrefix + '-type-select' : undefined"
             :value="typeId ?? ''"
             @change="onTypeChange"
         >
@@ -47,6 +49,7 @@ function onNumber(e: Event): void {
         <input
             class="uf-input"
             type="text"
+            :dusk="duskPrefix ? duskPrefix + '-number-input' : undefined"
             :inputmode="inputMode"
             :value="number"
             :placeholder="placeholder"

@@ -38,6 +38,7 @@ const initials = props.schedule.professor.user.name
 
 <template>
     <div
+        dusk="schedule-event-card"
         role="button"
         tabindex="0"
         class="sch-evt"

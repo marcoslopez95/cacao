@@ -30,6 +30,7 @@ class HealthProfileResource extends JsonResource
             'insurance_type_id' => $this->insurance_type_id,
             'emergency_contact_name' => $this->emergency_contact_name,
             'emergency_contact_phone' => $this->emergency_contact_phone,
+            'emergency_contact_phone_dial' => $this->emergency_contact_phone_dial,
             'emergency_contact_relation' => $this->emergency_contact_relation,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

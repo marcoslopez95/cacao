@@ -6,6 +6,7 @@ use App\Http\Wrappers\Admin\SocioeconomicProfileWrapper;
 use App\Models\SocioeconomicProfile;
 use App\Models\Student;
 use App\Services\ConsentService;
+use Illuminate\Support\Carbon;
 
 class UpsertSocioeconomicProfileAction
 {
@@ -32,7 +33,7 @@ class UpsertSocioeconomicProfileAction
                 'scholarship_name' => $wrapper->getScholarshipName(),
                 'has_institutional_benefit' => $wrapper->getHasInstitutionalBenefit(),
                 'recorded_by' => $wrapper->getRecordedBy(),
-                'study_date' => $wrapper->getStudyDate(),
+                'study_date' => $wrapper->getStudyDate() ?? Carbon::today()->toDateString(),
             ]
         );
     }

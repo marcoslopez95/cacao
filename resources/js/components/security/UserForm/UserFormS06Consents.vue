@@ -51,6 +51,7 @@ const CONSENTS: Array<{
         >
             <input
                 type="checkbox"
+                :dusk="'consent-' + (c.key as string)"
                 :checked="!!data[c.key]"
                 @change="setField(c.key, ($event.target as HTMLInputElement).checked)"
             />

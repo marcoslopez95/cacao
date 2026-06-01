@@ -74,6 +74,129 @@ UC-03 FALLIDO: Validación falla si email duplicado
 
 ---
 
+---
+
+## Protocolo de tests Dusk
+
+### Regla de aislamiento — usar DatabaseMigrations
+
+Los tests Dusk usan la base de datos `laravel_dusk` definida en `.env.dusk.local` — completamente separada de la DB de desarrollo. Por eso `uses(DatabaseMigrations::class)` es **obligatorio y seguro**: recrea las tablas en `laravel_dusk` sin tocar la DB de desarrollo.
+
+**Prohibido** `uses(RefreshDatabase::class)` en Dusk: usa transacciones que el proceso del browser no puede ver porque corre en un proceso separado.
+
+El patrón obligatorio es:
+
+```php
+uses(DatabaseMigrations::class);
+
+beforeEach(function () {
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    // Roles — creados frescos tras la migración
+    Role::create(['name' => 'Admin',          'guard_name' => 'web']);
+    Role::create(['name' => 'Administrador',  'guard_name' => 'web']);
+    Role::create(['name' => 'Estudiante',     'guard_name' => 'web']);
+    Role::create(['name' => 'Profesor',       'guard_name' => 'web']);
+    Role::create(['name' => 'Representante',  'guard_name' => 'web']);
+
+    // Catálogos — seedear si el test los necesita
+    $this->artisan('db:seed', ['--class' => 'CatalogSeeder']);
+});
+
+// Helpers con factories — sin dominio especial, la DB se limpia entre clases
+function adminForTest(): User
+{
+    $user = User::factory()->create();
+    $user->assignRole('Admin');
+    return $user;
+}
+
+function studentForTest(array $extra = []): User
+{
+    $user = User::factory()->create($extra);
+    $user->assignRole('Estudiante');
+    Student::factory()->create(['user_id' => $user->id]);
+    return $user;
+}
+```
+
+No existe `cleanDuskTestUsers()` ni emails `@dusk.test` — la DB se recrea automáticamente con `DatabaseMigrations`.
+
+### Regla de condiciones reales
+
+El usuario target en los tests debe modelar condiciones de producción:
+
+- **Rol correcto**: target con el rol real del flujo — no `Admin` por comodidad. `Admin` tiene `Gate::before` que cortocircuita Policies y oculta bugs de autorización.
+- **Sub-registro correcto**: si el rol requiere `Student`/`Professor`/`Guardian`, crearlo con factory. Sin sub-registro, los tabs de ese rol no se renderizan.
+- **Consentimiento**: si el endpoint llama `requireConsent()`, el target del happy-path tiene consentimiento activo. El test de error-de-servicio explícitamente NO lo tiene.
+
+### Estructura obligatoria — test de guardado
+
+```php
+test('campo X: modificar → guardar → reload → browser muestra nuevo valor', function () {
+    $admin  = adminForTest();
+    $target = studentForTest();
+
+    $this->browse(function (Browser $browser) use ($admin, $target, $newValue) {
+        $browser->loginAs($admin)
+            ->visit(route('security.users.edit', $target))
+            ->waitFor('[dusk="campo-x"]')
+            ->select('[dusk="campo-x"]', $newValue)
+            ->click('[dusk="save-section"]')
+            ->waitForText('Guardado', 5);
+
+        expect(Model::where('user_id', $target->id)->value('campo_x'))
+            ->toBe($newValue);
+    });
+
+    // Recargar y verificar pre-fill
+    $this->browse(function (Browser $browser) use ($admin, $target, $newValue) {
+        $browser->loginAs($admin)
+            ->visit(route('security.users.edit', $target))
+            ->waitFor('[dusk="campo-x"]');
+
+        expect($browser->value('[dusk="campo-x"]'))->toBe((string) $newValue);
+    });
+});
+```
+
+### Estructura obligatoria — test de validación
+
+```php
+test('campo requerido vacío: error visible en browser', function () {
+    $admin  = adminForTest();
+    $target = studentForTest();
+
+    $this->browse(function (Browser $browser) use ($admin, $target) {
+        $browser->loginAs($admin)
+            ->visit(route('security.users.edit', $target))
+            ->clear('[dusk="campo-input"]')
+            ->click('[dusk="save-section"]')
+            ->pause(1000)
+            ->assertVisible('[dusk="campo-error"]');
+    });
+});
+```
+
+### Regla de verificación frontend
+
+- `waitForText('Guardado')` debe aparecer en cada test de guardado exitoso — confirma que el frontend reconoció el save.
+- `assertDatabaseHas` es suplementario, no suficiente. Si el browser no muestra el valor correcto, el UC falla aunque la DB esté bien.
+- Si los selectores `dusk` faltan en los componentes Vue, agregarlos — es parte del trabajo del QA.
+
+### Correr los tests
+
+```bash
+vendor/bin/sail dusk tests/Browser/{Dominio}/{Flujo}Test.php
+```
+
+Resultados posibles:
+- **PASS** → UC verificado
+- **FAIL con error de selector** → atributo `dusk` falta en el componente Vue; agregarlo y reintentar
+- **FAIL con assertion** → bug real, documentar como HLZ y rechazar la task
+
+---
+
 ## Reglas inamovibles
 
 - Prueba integración web completa (browser → front → back → DB) — **no APIs directamente**
@@ -81,3 +204,5 @@ UC-03 FALLIDO: Validación falla si email duplicado
 - Solo el QA aprueba tasks del arnés — el leader no puede saltarse este gate
 - Si rechaza, indica en el reporte qué agente debe actuar y por qué
 - No tiene modo ad-hoc — para auditorías fuera del arnés existe `qa_manager`
+- **Nunca marcar un UC como verificado sin haber corrido el test Dusk**
+- **Nunca documentar un HLZ sin evidencia Dusk** — "parece que falla por el código" no es evidencia

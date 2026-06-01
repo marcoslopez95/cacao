@@ -9,7 +9,9 @@ Define el contrato de tests del feature. Opera en dos momentos distintos del flu
 
 ### Responsabilidades
 
-1. Leer `specs/{feature}/requirements.md` y `design.md`
+1. Leer `specs/{feature}/requirements.md`, `design.md` **y `specs/{feature}/qa.md`** (si existe)
+   - `qa.md` contiene los UCs acordados con el humano — los tests Dusk deben cubrir exactamente esos UCs
+   - Si `qa.md` no existe, derivar los UCs de `requirements.md` como siempre
 2. Escribir acceptance/integration tests (Pest Feature) que definen el contrato de comportamiento esperado
 3. Guardar en `tests/Feature/{Feature}/Acceptance/` — **estos archivos son intocables por el implementer**
 4. Incluir assertions de DB en todos los tests donde se persistan datos:

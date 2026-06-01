@@ -30,8 +30,8 @@ function submit(): void {
             el {{ schedule.dayLabel }} de {{ schedule.startTime }}–{{ schedule.endTime }}?
         </p>
         <div style="display:flex;justify-content:flex-end;gap:8px;">
-            <Button type="button" variant="secondary" @click="close(false)">Cancelar</Button>
-            <Button type="button" variant="danger" @click="submit">Eliminar</Button>
+            <Button dusk="delete-cancel-btn" type="button" variant="secondary" @click="close(false)">Cancelar</Button>
+            <Button dusk="delete-confirm-btn" type="button" variant="danger" @click="submit">Eliminar</Button>
         </div>
     </Modal>
 </template>

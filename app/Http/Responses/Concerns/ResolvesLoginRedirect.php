@@ -11,6 +11,18 @@ trait ResolvesLoginRedirect
     protected function resolveRedirect(Request $request): string
     {
         $user = $request->user();
+
+        if ($user?->hasRole('Admin')) {
+            $adminTeam = $user->teams()->where('slug', 'admin')->first();
+            $targetTeam = $adminTeam ?? $user->personalTeam();
+
+            if ($targetTeam) {
+                $user->switchTeam($targetTeam);
+            }
+
+            return '/admin/dashboard';
+        }
+
         $team = $user?->currentTeam ?? $user?->personalTeam();
 
         if ($team) {

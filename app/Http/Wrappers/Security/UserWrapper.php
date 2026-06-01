@@ -89,9 +89,19 @@ class UserWrapper extends Collection
         return $this->get('phone_primary');
     }
 
+    public function getPhonePrimaryDial(): ?string
+    {
+        return $this->get('phone_primary_dial');
+    }
+
     public function getPhoneSecondary(): ?string
     {
         return $this->get('phone_secondary');
+    }
+
+    public function getPhoneSecondaryDial(): ?string
+    {
+        return $this->get('phone_secondary_dial');
     }
 
     public function getPasswordMode(): string
@@ -184,8 +194,16 @@ class UserWrapper extends Collection
             $data['phone_primary'] = $this->getPhonePrimary();
         }
 
+        if ($this->has('phone_primary_dial')) {
+            $data['phone_primary_dial'] = $this->getPhonePrimaryDial();
+        }
+
         if ($this->has('phone_secondary')) {
             $data['phone_secondary'] = $this->getPhoneSecondary();
+        }
+
+        if ($this->has('phone_secondary_dial')) {
+            $data['phone_secondary_dial'] = $this->getPhoneSecondaryDial();
         }
 
         return $data;

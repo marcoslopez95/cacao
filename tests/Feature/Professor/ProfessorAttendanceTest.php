@@ -296,7 +296,7 @@ test('sheet absence_totals counts absences from held and advanced sessions only'
         'status' => AttendanceStatus::Absent,
     ]);
 
-    // Recovered session — absence does NOT count
+    // Recovered session — absence counts too (held + recovered + advanced count per spec UC-QA-04)
     $recoveredSession = ClassSession::factory()->forSection($section)->create([
         'status' => ClassSessionStatus::Recovered,
     ]);
@@ -314,9 +314,9 @@ test('sheet absence_totals counts absences from held and advanced sessions only'
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->has('sheet.absence_totals', fn ($totals) => $totals
-                ->where((string) $detail->id, 1) // only the held absence
+                ->where((string) $detail->id, 2) // held + recovered both count
             )
-            ->where('sheet.sessions_counted', 1) // only held session counted
+            ->where('sheet.sessions_counted', 2) // held + recovered
         );
 });
 

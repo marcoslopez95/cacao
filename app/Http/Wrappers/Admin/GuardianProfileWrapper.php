@@ -26,6 +26,11 @@ class GuardianProfileWrapper extends Collection
         return $this->get('work_phone');
     }
 
+    public function getWorkPhoneDial(): ?string
+    {
+        return $this->get('work_phone_dial');
+    }
+
     public function getEducationLevelId(): ?int
     {
         $value = $this->get('education_level_id');

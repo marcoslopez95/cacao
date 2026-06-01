@@ -37,6 +37,7 @@ const classroomCount = computed(() => new Set(props.schedules.map((s) => s.class
             </div>
         </div>
         <button
+            dusk="stats-conflicts-btn"
             type="button"
             class="stat"
             :class="{ warn: conflictsCount > 0, clickable: conflictsCount > 0 }"

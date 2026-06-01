@@ -16,34 +16,20 @@ use App\Models\Catalogs\LanguageLevel;
 use App\Models\Guardian;
 use App\Models\Student;
 use App\Models\User;
-use Database\Seeders\Catalogs\AcademicCatalogsSeeder;
-use Database\Seeders\Catalogs\GeographicSeeder;
-use Database\Seeders\Catalogs\SocialCatalogsSeeder;
-use Database\Seeders\Catalogs\SocioeconomicCatalogsSeeder;
-use Database\Seeders\Catalogs\StaffCatalogsSeeder;
-use Database\Seeders\Catalogs\UserProfileCatalogsSeeder;
+use Database\Seeders\CatalogsSeeder;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Support\Facades\DB;
 use Laravel\Dusk\Browser;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 uses(DatabaseMigrations::class);
 
 beforeEach(function () {
     app(PermissionRegistrar::class)->forgetCachedPermissions();
-
-    Role::firstOrCreate(['name' => 'Admin',         'guard_name' => 'web']);
-    Role::firstOrCreate(['name' => 'Coordinador',   'guard_name' => 'web']);
-    Role::firstOrCreate(['name' => 'Representante', 'guard_name' => 'web']);
-    Role::firstOrCreate(['name' => 'Estudiante',    'guard_name' => 'web']);
-
-    $this->seed(GeographicSeeder::class);
-    $this->seed(SocialCatalogsSeeder::class);
-    $this->seed(SocioeconomicCatalogsSeeder::class);
-    $this->seed(UserProfileCatalogsSeeder::class);
-    $this->seed(AcademicCatalogsSeeder::class);
-    $this->seed(StaffCatalogsSeeder::class);
+    $this->seed(PermissionSeeder::class);
+    $this->seed(RoleSeeder::class);
+    $this->seed(CatalogsSeeder::class);
 });
 
 /**

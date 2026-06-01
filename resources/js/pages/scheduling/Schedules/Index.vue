@@ -17,6 +17,7 @@ import { detectConflicts, todayKey, DAY_KEYS } from '@/composables/scheduling/us
 import { index } from '@/routes/scheduling/schedules'
 import type {
     Schedule,
+    ScheduleAvailableCareer,
     ScheduleAvailableClassroom,
     ScheduleAvailablePeriod,
     ScheduleAvailableProfessor,
@@ -33,7 +34,8 @@ type Props = {
     professors: ScheduleAvailableProfessor[]
     classrooms: ScheduleAvailableClassroom[]
     subjects: ScheduleAvailableSubject[]
-    filters: { period_id: number | null; section_id: number | null; professor_id: number | null }
+    careers: ScheduleAvailableCareer[]
+    filters: { period_id: number | null; section_id: number | null; professor_id: number | null; career_ids: number[] | null }
     can: { create: boolean; update: boolean; delete: boolean }
 }
 
@@ -47,61 +49,46 @@ setLayoutProps({
 })
 
 const { canCreate, canUpdate, canDelete } = useSchedulePermissions()
-const { periodId, sectionId, professorId, applyFilters } = useScheduleFilters(
+const { periodId, sectionId, professorId, careerIds, applyFilters } = useScheduleFilters(
     props.filters.period_id,
     props.filters.section_id,
     props.filters.professor_id,
+    props.filters.career_ids,
 )
 
 // View state
 const view      = ref<'week' | 'day' | 'list'>('week')
 const mobileDay = ref(DAY_KEYS.indexOf(todayKey() ?? 'monday'))
-const searchQuery       = ref('')
-const activeCareerIds   = ref(new Set<number>())
+const searchQuery = ref('')
 
-// Initialise activeCareerIds with all careers in the dataset
-const allCareerIds = computed(() => {
-    const ids = new Set<number>()
-    for (const s of props.schedules) {
-        if (s.career) ids.add(s.career.id)
+// Career filter — server-side with URL persistence
+const activeLegendCareerIds = computed((): Set<number> => {
+    if (!careerIds.value || careerIds.value.length === 0) {
+        return new Set(props.careers.map((c) => c.id))
     }
-    return ids
+    return new Set(careerIds.value)
 })
 
-// Toggle a career filter (if set not yet populated, first show all)
 function toggleCareer(id: number): void {
-    if (activeCareerIds.value.size === 0) {
-        // Populate with all then remove the clicked one
-        activeCareerIds.value = new Set(allCareerIds.value)
-    }
-    if (activeCareerIds.value.has(id)) {
-        activeCareerIds.value.delete(id)
-    } else {
-        activeCareerIds.value.add(id)
-    }
-    activeCareerIds.value = new Set(activeCareerIds.value) // trigger reactivity
+    const allIds = props.careers.map((c) => c.id)
+    const current = careerIds.value ? [...careerIds.value] : [...allIds]
+    const next = current.includes(id) ? current.filter((x) => x !== id) : [...current, id]
+    careerIds.value = next.length === 0 || next.length === allIds.length ? null : next
+    applyFilters()
 }
 
-// Client-side filtered schedules
+// Text search is the only remaining client-side filter
 const filteredSchedules = computed(() => {
     const q = searchQuery.value.toLowerCase().trim()
-    return props.schedules.filter((s) => {
-        // Career filter (empty set = show all)
-        if (activeCareerIds.value.size > 0 && s.career && !activeCareerIds.value.has(s.career.id)) {
-            return false
-        }
-        // Text search
-        if (q) {
-            return (
-                s.subject.name.toLowerCase().includes(q) ||
-                s.subject.code.toLowerCase().includes(q) ||
-                s.professor.user.name.toLowerCase().includes(q) ||
-                s.classroom.identifier.toLowerCase().includes(q) ||
-                s.section.code.toLowerCase().includes(q)
-            )
-        }
-        return true
-    })
+    if (!q) return props.schedules
+    return props.schedules.filter(
+        (s) =>
+            s.subject.name.toLowerCase().includes(q) ||
+            s.subject.code.toLowerCase().includes(q) ||
+            s.professor.user.name.toLowerCase().includes(q) ||
+            s.classroom.identifier.toLowerCase().includes(q) ||
+            s.section.code.toLowerCase().includes(q),
+    )
 })
 
 const conflicts = computed(() => detectConflicts(filteredSchedules.value))
@@ -202,8 +189,8 @@ function handleDeleteFromPopover(schedule: Schedule): void {
 
         <!-- Career legend -->
         <ScheduleLegend
-            :schedules="filteredSchedules"
-            :active-career-ids="activeCareerIds.size === 0 ? allCareerIds : activeCareerIds"
+            :careers="careers"
+            :active-career-ids="activeLegendCareerIds"
             @toggle="toggleCareer"
         />
 
@@ -256,6 +243,7 @@ function handleDeleteFromPopover(schedule: Schedule): void {
         :professors="professors"
         :classrooms="classrooms"
         :subjects="subjects"
+        :active-career-ids="careerIds ?? []"
         :default-section-id="sectionId"
         :default-day-of-week="createDefaults.dayOfWeek"
         :default-start-time="createDefaults.startTime"
@@ -270,6 +258,7 @@ function handleDeleteFromPopover(schedule: Schedule): void {
         :professors="professors"
         :classrooms="classrooms"
         :subjects="subjects"
+        :active-career-ids="careerIds ?? []"
         @update:open="editingSchedule = $event ? editingSchedule : null"
     />
 

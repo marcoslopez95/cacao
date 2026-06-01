@@ -33,7 +33,9 @@ class UserEditResource extends JsonResource
             'gender_id' => $this->gender_id,
             'nationality_id' => $this->nationality_id,
             'phone_primary' => $this->phone_primary,
+            'phone_primary_dial' => $this->phone_primary_dial,
             'phone_secondary' => $this->phone_secondary,
+            'phone_secondary_dial' => $this->phone_secondary_dial,
             'profile_photo_url' => $this->profile_photo_url,
         ];
     }

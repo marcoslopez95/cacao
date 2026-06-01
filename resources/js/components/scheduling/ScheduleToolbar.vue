@@ -99,6 +99,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
             <!-- Period selector (left) -->
             <div class="period-wrap">
                 <button
+                    dusk="period-dropdown-btn"
                     class="sch-period"
                     :class="{ active: periodId !== null }"
                     @click.stop="showPeriodDrop = !showPeriodDrop; showFilterPanel = false"
@@ -109,6 +110,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
                 </button>
                 <div v-if="showPeriodDrop" class="drop-panel period-drop">
                     <button
+                        dusk="period-option-all"
                         class="drop-item"
                         :class="{ selected: periodId === null }"
                         @click.stop="selectPeriod(null)"
@@ -118,6 +120,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
                     <button
                         v-for="p in periods"
                         :key="p.id"
+                        :dusk="`period-option-${p.id}`"
                         class="drop-item"
                         :class="{ selected: periodId === p.id }"
                         @click.stop="selectPeriod(p.id)"
@@ -138,6 +141,7 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
             <div class="sch-search">
                 <span class="icon">⌕</span>
                 <input
+                    dusk="search-input"
                     :value="query"
                     type="search"
                     placeholder="Buscar asignatura, profesor, aula…"
@@ -146,14 +150,14 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
             </div>
 
             <!-- View switcher (right) -->
-            <div class="sch-views">
-                <button :class="{ active: view === 'week' }" @click="emit('update:view', 'week')">⊞ Semana</button>
-                <button :class="{ active: view === 'day' }"  @click="emit('update:view', 'day')">▭ Día</button>
-                <button :class="{ active: view === 'list' }" @click="emit('update:view', 'list')">☰ Lista</button>
+            <div dusk="view-switcher" class="sch-views">
+                <button dusk="btn-view-week" :class="{ active: view === 'week' }" @click="emit('update:view', 'week')">⊞ Semana</button>
+                <button dusk="btn-view-day"  :class="{ active: view === 'day' }"  @click="emit('update:view', 'day')">▭ Día</button>
+                <button dusk="btn-view-list" :class="{ active: view === 'list' }" @click="emit('update:view', 'list')">☰ Lista</button>
             </div>
 
             <!-- Create button -->
-            <button v-if="canCreate" class="btn primary" @click="emit('create')">
+            <button v-if="canCreate" dusk="btn-create-schedule" class="btn primary" @click="emit('create')">
                 + Nuevo horario
             </button>
         </div>
@@ -164,22 +168,23 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
             <span v-if="activePeriodName" class="filter-chip">
                 <span class="key">Período:</span>
                 <span class="val">{{ activePeriodName }}</span>
-                <button class="x" aria-label="Quitar" @click="emit('update:periodId', null); emit('applyFilters')">✕</button>
+                <button dusk="filter-chip-period-remove" class="x" aria-label="Quitar" @click="emit('update:periodId', null); emit('applyFilters')">✕</button>
             </span>
             <span v-if="activeSectionCode" class="filter-chip">
                 <span class="key">Sección:</span>
                 <span class="val">{{ activeSectionCode }}</span>
-                <button class="x" aria-label="Quitar" @click="emit('update:sectionId', null); pendingSectionId = null; emit('applyFilters')">✕</button>
+                <button dusk="filter-chip-section-remove" class="x" aria-label="Quitar" @click="emit('update:sectionId', null); pendingSectionId = null; emit('applyFilters')">✕</button>
             </span>
             <span v-if="activeProfName" class="filter-chip">
                 <span class="key">Profesor:</span>
                 <span class="val">{{ activeProfName }}</span>
-                <button class="x" aria-label="Quitar" @click="emit('update:professorId', null); pendingProfessorId = null; emit('applyFilters')">✕</button>
+                <button dusk="filter-chip-professor-remove" class="x" aria-label="Quitar" @click="emit('update:professorId', null); pendingProfessorId = null; emit('applyFilters')">✕</button>
             </span>
 
             <!-- + Filtro dropdown -->
             <div class="filter-panel-wrap">
                 <button
+                    dusk="filter-add-btn"
                     class="filter-add"
                     @click.stop="showFilterPanel = !showFilterPanel; showPeriodDrop = false"
                 >
@@ -188,26 +193,26 @@ onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
                 <div v-if="showFilterPanel" class="drop-panel filter-panel">
                     <div class="filter-panel-row">
                         <label>Sección</label>
-                        <select v-model="pendingSectionId">
+                        <select dusk="filter-section-select" v-model="pendingSectionId">
                             <option :value="null">Todas</option>
                             <option v-for="s in sections" :key="s.id" :value="s.id">{{ s.code }}</option>
                         </select>
                     </div>
                     <div class="filter-panel-row">
                         <label>Profesor</label>
-                        <select v-model="pendingProfessorId">
+                        <select dusk="filter-professor-select" v-model="pendingProfessorId">
                             <option :value="null">Todos</option>
                             <option v-for="p in professors" :key="p.id" :value="p.id">{{ p.name }}</option>
                         </select>
                     </div>
                     <div class="filter-panel-actions">
-                        <button class="fp-apply" @click.stop="applyFilters">Aplicar</button>
+                        <button dusk="filter-apply-btn" class="fp-apply" @click.stop="applyFilters">Aplicar</button>
                     </div>
                 </div>
             </div>
 
             <!-- Clear all -->
-            <button v-if="hasActiveFilters" class="filters-clear" @click="clearAll">
+            <button v-if="hasActiveFilters" dusk="filters-clear-btn" class="filters-clear" @click="clearAll">
                 Limpiar todos
             </button>
         </div>

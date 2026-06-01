@@ -1,0 +1,10 @@
+# Tasks — HLZ-35+36+37 (feature 13)
+
+- [x] Task 1 — Backend: career_ids filter + careers prop + careerId en sections (HLZ-35)
+- [x] Task 2 — Types: careerId en ScheduleAvailableSection (HLZ-37)
+- [x] Task 3 — useScheduleFilters: careerIds param + applyFilters (HLZ-36)
+- [x] Task 4 — ScheduleLegend: careers prop en vez de schedules (HLZ-35)
+- [x] Task 5 — Index.vue: toggle server-side, wire careers + careerIds a legend y modals (HLZ-35+36)
+- [x] Task 6 — CreateScheduleModal: activeCareerIds + visibleSections + banner (HLZ-37)
+- [x] Task 7 — EditScheduleModal: activeCareerIds + visibleSections + banner (HLZ-37)
+- [x] Task 8 — Dusk tests H74, H75, H76 (3/3 en verde)

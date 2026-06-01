@@ -1,6 +1,13 @@
 import { router } from '@inertiajs/vue3';
-import { toast } from 'vue-sonner';
+import { useToast, type ToastVariant } from '@/components/feedback/useToast';
 import type { FlashToast } from '@/types/ui';
+
+const TYPE_MAP: Record<FlashToast['type'], ToastVariant> = {
+    success: 'success',
+    info: 'info',
+    warning: 'warning',
+    error: 'danger',
+};
 
 export function initializeFlashToast(): void {
     router.on('flash', (event) => {
@@ -11,6 +18,7 @@ export function initializeFlashToast(): void {
             return;
         }
 
-        toast[data.type](data.message);
+        const { toast } = useToast();
+        toast({ message: data.message, variant: TYPE_MAP[data.type] });
     });
 }

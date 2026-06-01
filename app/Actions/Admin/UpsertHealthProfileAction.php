@@ -30,6 +30,7 @@ class UpsertHealthProfileAction
             'has_medical_insurance' => $wrapper->getHasMedicalInsurance(),
             'emergency_contact_name' => $wrapper->getEmergencyContactName(),
             'emergency_contact_phone' => $wrapper->getEmergencyContactPhone(),
+            'emergency_contact_phone_dial' => $wrapper->getEmergencyContactPhoneDial(),
             'emergency_contact_relation' => $wrapper->getEmergencyContactRelation(),
         ];
 

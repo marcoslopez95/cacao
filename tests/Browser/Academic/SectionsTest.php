@@ -1,11 +1,19 @@
 <?php
 
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
+use Spatie\Permission\PermissionRegistrar;
 
-// Note: Browser/Dusk tests run against the real database without transaction rollback.
-// Roles must exist — seed with: php artisan db:seed --class=PermissionSeeder && php artisan db:seed --class=RoleSeeder
-// Sections are managed under scheduling/sections (not academic/), with separate university and school routes.
+uses(DatabaseMigrations::class);
+
+beforeEach(function () {
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+    $this->seed(PermissionSeeder::class);
+    $this->seed(RoleSeeder::class);
+});
 
 test('admin can view sections list', function () {
     $user = User::factory()->create();

@@ -70,8 +70,8 @@ function initials(name: string): string {
                     {{ s.professor.user.name }}
                 </div>
                 <div class="list-actions">
-                    <button v-if="canUpdate" title="Editar" @click.stop="emit('editSchedule', s)">✎</button>
-                    <button v-if="canDelete" class="danger" title="Eliminar" @click.stop="emit('deleteSchedule', s)">✕</button>
+                    <button v-if="canUpdate" dusk="list-edit-btn" title="Editar" @click.stop="emit('editSchedule', s)">✎</button>
+                    <button v-if="canDelete" dusk="list-delete-btn" class="danger" title="Eliminar" @click.stop="emit('deleteSchedule', s)">✕</button>
                 </div>
             </div>
         </div>

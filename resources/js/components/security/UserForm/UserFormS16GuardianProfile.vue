@@ -14,15 +14,16 @@ const props = defineProps<{
 <template>
     <div class="uf-grid">
         <AppFormField label="Ocupación" :col="6">
-            <input class="uf-input" :value="data.occupation" @input="setField('occupation', ($event.target as HTMLInputElement).value)" />
+            <input dusk="occupation-input" class="uf-input" :value="data.occupation" @input="setField('occupation', ($event.target as HTMLInputElement).value)" />
         </AppFormField>
 
         <AppFormField label="Empleador" :col="6">
-            <input class="uf-input" :value="data.employer" @input="setField('employer', ($event.target as HTMLInputElement).value)" />
+            <input dusk="employer-input" class="uf-input" :value="data.employer" @input="setField('employer', ($event.target as HTMLInputElement).value)" />
         </AppFormField>
 
         <AppFormField label="Teléfono del trabajo" optional :col="6">
             <AppTelInput
+                dusk-prefix="work-phone"
                 :dial="data.workDial ?? '+58'"
                 :number="data.workPhone ?? ''"
                 @update:dial="setField('workDial', $event)"
@@ -32,6 +33,7 @@ const props = defineProps<{
 
         <AppFormField label="Estado civil" :col="6">
             <select
+                dusk="guardian-marital-select"
                 class="uf-select"
                 :value="data.guardianMaritalId ?? ''"
                 @change="setField('guardianMaritalId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
@@ -43,6 +45,7 @@ const props = defineProps<{
 
         <AppFormField label="Nivel educativo" :col="12">
             <select
+                dusk="guardian-edu-select"
                 class="uf-select"
                 :value="data.guardianEduId ?? ''"
                 @change="setField('guardianEduId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"

@@ -4,6 +4,7 @@ import { UF_COUNTRIES } from '@/types/userFormCatalogs'
 defineProps<{
     dial: string
     number: string
+    duskPrefix?: string
 }>()
 
 const emit = defineEmits<{
@@ -21,6 +22,7 @@ function onNumber(e: Event): void {
     <div class="uf-tel-combo">
         <select
             class="uf-select"
+            :dusk="duskPrefix ? duskPrefix + '-dial-select' : undefined"
             :value="dial"
             @change="$emit('update:dial', ($event.target as HTMLSelectElement).value)"
         >
@@ -31,6 +33,7 @@ function onNumber(e: Event): void {
         <input
             class="uf-input"
             type="tel"
+            :dusk="duskPrefix ? duskPrefix + '-number-input' : undefined"
             inputmode="numeric"
             :value="number"
             placeholder="4121234567"

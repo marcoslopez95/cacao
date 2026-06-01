@@ -65,6 +65,7 @@ function setPrimary(i: number): void {
             <div class="uf-grid" style="padding: 14px;">
                 <AppFormField label="País" :col="4">
                     <select
+                        :dusk="'address-country-select-' + index"
                         class="uf-select"
                         :value="data.addresses?.[index]?.country_id ?? ''"
                         @change="onCountryChange(index, ($event.target as HTMLSelectElement).value)"
@@ -95,6 +96,7 @@ function setPrimary(i: number): void {
 
                 <AppFormField label="Línea 1" required :col="12">
                     <input
+                        :dusk="'address-line1-' + index"
                         class="uf-input"
                         :value="data.addresses?.[index]?.line1 ?? ''"
                         placeholder="Av. Principal, Casa/Apto…"

@@ -16,7 +16,7 @@ const barColor = computed(() => {
 </script>
 
 <template>
-    <div style="display:flex;flex-direction:column;gap:4px;">
+    <div dusk="professor-hours-bar" style="display:flex;flex-direction:column;gap:4px;">
         <div style="display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--text-secondary);">
             <span>Carga semanal</span>
             <span>{{ currentHours.toFixed(1) }} h de {{ limitHours }} h máx</span>

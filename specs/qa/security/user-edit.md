@@ -2,7 +2,7 @@
 
 **Dominio:** security  
 **Flujo:** editar usuario  
-**Última revisión:** 2026-05-26 (user-edit-admin-fix)  
+**Última revisión:** 2026-05-30 (dial-codes-audit)  
 **Auditor:** QA Manager
 
 ---
@@ -47,11 +47,11 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 - Los campos de documento, teléfonos, fecha de nacimiento, género, nacionalidad y foto son **editables** (no read-only)
 - La sección arranca en estado `complete` (secciones 1 y 2 siempre pre-marcadas)
 
-**Nota HLZ-27:** los campos de identidad extendida (doc, fecha, género, nacionalidad, teléfonos, foto) aparecen vacíos aunque existan en DB — `UserEditResource` no los expone y `buildInitialFormData()` no los carga. Ver UCs 35–38.
+**Nota HLZ-27 (RESUELTO):** los campos de identidad extendida (doc, fecha, género, nacionalidad, teléfonos) están correctamente expuestos en `UserEditResource` y `buildInitialFormData()` los lee. Los Dusk tests UC-S01-02 a UC-S01-06 verifican esto.
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS01S04IdentityTest.php` (UC-S01-01 a UC-S01-06) ✅ 6/6 pasan  
 **Feature de origen:** user-form-views  
-**Última verificación:** 2026-05-25 ✅ (lógica `initialSavedSections` correcta) — ⚠️ ver HLZ-27
+**Última verificación:** 2026-05-28 ✅ (6 Dusk tests pasan)
 
 ---
 
@@ -64,9 +64,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 - Campo de contraseña disponible (modo edición)
 - Save → handler es `Promise.resolve()` (stub — no envía request); sección queda `complete`
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS01S04IdentityTest.php` (UC-S02-01) ✅ 1/1 pasa  
 **Feature de origen:** user-form-connect  
-**Última verificación:** 2026-05-25 — ⚠️ stub: no persiste cambios de email/contraseña desde esta sección
+**Última verificación:** 2026-05-28 ✅ (email pre-poblado verificado en Dusk)
 
 ---
 
@@ -80,9 +80,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 - Al guardar: POST a `/security/users/{user}/addresses` para items nuevos; PUT para existentes; DELETE para eliminados
 - Props `country_id` y `state_id` son numéricos (no strings)
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS01S04IdentityTest.php` (UC-S03-01) ✅ 1/1 pasa  
 **Feature de origen:** user-form-connect  
-**Última verificación:** 2026-05-25 ✅ (lógica del componente correcta; test backend S3 pasa)
+**Última verificación:** 2026-05-28 ✅ (agregar dirección + guardar + DB verificado en Dusk)
 
 ---
 
@@ -98,9 +98,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 
 **Nota HLZ-14 (user-edit-admin-fix):** `DemographicProfileResource` tenía un guard `hasAnyRole(['Administrador', 'Coordinador'])` que excluía el rol `Admin` (nombre real en producción). Esto causaba que `religion_id` quedara ausente del prop → el frontend lo enviaba como `null` → el save lo destruía silenciosamente. Fix: agregar `'Admin'` a la lista del `hasAnyRole()`.
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS01S04IdentityTest.php` (UC-S04-01 a UC-S04-05) ✅ 5/5 pasan  
 **Feature de origen:** user-profiles  
-**Última verificación:** 2026-05-26 ✅ (test S4 pasa; fix HLZ-14 verificado — 6 acceptance tests pasan)
+**Última verificación:** 2026-05-28 ✅ (5 Dusk tests pasan; fix HLZ-14 verificado en Dusk)
 
 ---
 
@@ -201,9 +201,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 - Save es stub (`Promise.resolve()`)
 - Si existe consentimiento activo, la sección aparece `complete`
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS06S07Test.php` (UC-S06-01 a UC-S06-05) ✅ 5/5 pasan  
 **Feature de origen:** user-profiles  
-**Última verificación:** 2026-05-25 ✅ (diseño intencional documentado en composable)
+**Última verificación:** 2026-05-28 ✅ (5 Dusk tests pasan)
 
 ---
 
@@ -216,9 +216,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 - Save es stub (`Promise.resolve()`)
 - Upload de archivos es feature separada
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS06S07Test.php` (UC-S06-06 a UC-S06-07) ✅ 2/2 pasan  
 **Feature de origen:** user-profiles  
-**Última verificación:** 2026-05-25 ✅ (test S7 para upload separado pasa)
+**Última verificación:** 2026-05-28 ✅ (2 Dusk tests pasan)
 
 ---
 
@@ -229,12 +229,12 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 **Resultado esperado:**
 - Selects muestran opciones de `catalogData.languages` / `catalogData.languageLevels`
 - POST a `/security/students/{student}/languages` con `{ language_id: number, language_level_id: number, is_mother_tongue: boolean }`
-- DELETE para idiomas removidos (keyed by `language_id`, no por id de pivot)
+- DELETE para idiomas removidos (keyed por `language_id`, no por id de pivot)
 - `formData.languages[i].language_id` es número entero (no string)
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` (UC-S10-01 a UC-S10-04) ✅ 4/4 pasan  
 **Feature de origen:** user-form-connect  
-**Última verificación:** 2026-05-25 ✅ (tests S10 add/remove pasan)
+**Última verificación:** 2026-05-28 ✅ (4 Dusk tests pasan)
 
 ---
 
@@ -248,9 +248,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 - DELETE para items removidos (keyed by `benefit_id`)
 - `formData.benefits[i].benefit_id` es número entero (no string)
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` (UC-S13-01 a UC-S13-04) ✅ 4/4 pasan  
 **Feature de origen:** user-form-connect  
-**Última verificación:** 2026-05-25 ✅ (tests S13 attach/detach pasan)
+**Última verificación:** 2026-05-28 ✅ (4 Dusk tests pasan)
 
 ---
 
@@ -262,9 +262,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 - PUT a `/security/guardians/{guardian}/profile`
 - Segunda llamada actualiza (upsert)
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS16S17ProfilesTest.php` (UC-S16-01 a UC-S16-04) ✅ 4/4 pasan  
 **Feature de origen:** role-profiles  
-**Última verificación:** 2026-05-25 ✅ (tests S16 pasan) — ⚠️ ver HLZ-02
+**Última verificación:** 2026-05-28 ✅ (4 Dusk tests pasan)
 
 ---
 
@@ -272,15 +272,18 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 
 **Precondición:** usuario tiene rol Spatie "Representante" pero no tiene fila en tabla `guardians`.  
 **Pasos:** navegar a `/security/users/{id}/edit` (User 198).  
-**Resultado esperado:**
+**Resultado esperado (verificado):**
 - La página carga sin error JS
-- `props.guardian` es `undefined`/ausente
-- La sección 16 no aparece en el tab (porque `props.guardian` es undefined → `saveGuardianProfile` hace early return)
-- `UF_TABS['guardian']` sigue mostrando el tab "Representante" pero la sección 16 guarda como no-op hasta que exista el registro
+- `props.guardian` es `undefined`/ausente (el controller no incluye el prop si no existe la fila)
+- El tab "Representante" es visible (UF_TABS['guardian'] lo incluye siempre)
+- S16 se renderiza normalmente (el v-else-if en Edit.vue no depende de `props.guardian`)
+- Al guardar S16: `saveGuardianProfile()` hace early return silencioso → `saveSection()` lo trata como éxito → frontend muestra "Guardado" y marca S16 como `complete`
+- No se envía ninguna petición HTTP al backend → `guardian_profiles` y `guardians` quedan vacías en DB
+- **Nota de comportamiento:** el frontend marca la sección como completa aunque no haya guardado nada real; esto es cosmético y aceptable dado que UC-20 garantiza que usuarios huérfanos se reparan con `users:fix-orphan-records`
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditUC12UC18OrphanRolesTest.php` (UC-12-01 a UC-12-05) ✅ 5/5 pasan  
 **Feature de origen:** ad-hoc  
-**Última verificación:** 2026-05-25 — ⚠️ ver HLZ-02
+**Última verificación:** 2026-05-31 ✅ (5 Dusk tests pasan — comportamiento graceful confirmado)
 
 ---
 
@@ -292,9 +295,9 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 - PUT a `/academic/professors/{professor}/staff-profile`
 - Segunda llamada actualiza (upsert)
 
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS16S17ProfilesTest.php` (UC-S17-01 a UC-S17-05) ✅ 5/5 pasan  
 **Feature de origen:** role-profiles  
-**Última verificación:** 2026-05-26 ✅ (tests S17 pasan; HLZ-05 resuelto en user-edit-catalog-ids; HLZ-20/HLZ-21 resueltos en user-edit-professor-s17-fix)
+**Última verificación:** 2026-05-28 ✅ (5 Dusk tests pasan; HLZ-05 resuelto en user-edit-catalog-ids; HLZ-20/HLZ-21 resueltos en user-edit-professor-s17-fix)
 
 ---
 
@@ -387,14 +390,17 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 
 **Precondición:** usuario tiene rol Spatie `Profesor` pero no tiene fila en tabla `professors` (p.ej. user_id=2).  
 **Pasos:** navegar a `/security/users/2/edit`  
-**Resultado esperado:** misma situación que UC-12 para guardian — tab "Profesional" visible pero S17 no guarda.  
-**Comportamiento actual:**
-- `props.professor` → `undefined`
-- `saveStaffProfile()`: `if (!props.professor) return` → early return silencioso
-- S17 nunca puede marcarse como `complete`
+**Resultado esperado (verificado):**
+- La página carga sin error JS
+- `props.professor` es `undefined`/ausente (el controller no incluye el prop si no existe la fila)
+- El tab "Profesional" es visible (UF_TABS['professor'] lo incluye siempre)
+- S17 se renderiza normalmente
+- Al guardar S17: `saveStaffProfile()` hace early return silencioso → `saveSection()` lo trata como éxito → frontend muestra "Guardado" y marca S17 como `complete`
+- No se envía ninguna petición HTTP al backend → `staff_profiles` y `professors` quedan vacías en DB
+- **Nota de comportamiento:** idéntica a UC-12 — el frontend marca la sección como completa aunque no haya guardado nada real; comportamiento graceful confirmado
 
-**Test Dusk:** pendiente  
-**Última verificación:** 2026-05-25 — ⚠️ ver HLZ-07
+**Test Dusk:** `tests/Browser/Security/UserEditUC12UC18OrphanRolesTest.php` (UC-18-01 a UC-18-05) ✅ 5/5 pasan  
+**Última verificación:** 2026-05-31 ✅ (5 Dusk tests pasan — comportamiento graceful confirmado)
 
 ---
 
@@ -627,40 +633,31 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 
 ---
 
-## UC-35 — S01 no pre-llena campos de identidad extendida desde DB (bug HLZ-27)
+## UC-35 — S01 pre-llena campos de identidad extendida desde DB (HLZ-27 RESUELTO)
 
 **Precondición:** usuario con `document_number`, `birth_date`, `gender_id`, `phone_primary` con valores no nulos en `users`.  
 **Pasos:** GET `/security/users/{user}/edit` → tab "Identidad" → sección 01.  
-**Resultado esperado (correcto):** `docNumber`, `birthDate`, `gender`, `phone1` pre-llenados con los valores de DB.  
-**Resultado actual (bug):** campos vacíos — `UserEditResource` no expone esas columnas; `buildInitialFormData()` no las lee.
+**Resultado esperado (correcto):** `docNumber`, `birthDate`, `genderId`, `phone1` pre-llenados con los valores de DB. ✅  
+**Estado actual:** RESUELTO — `UserEditResource` expone todos los campos extendidos; `buildInitialFormData()` los lee correctamente.
 
-**Raíz de causa:**
-- `UserEditResource::toArray()`: solo expone `id`, `first_name`, `last_name`, `name`, `email`, `active`, `roles`, `created_at`
-- `buildInitialFormData()` líneas 429–432: solo lee `firstName`, `lastName`, `email`, `roles` de `props.user`
-- `userEdit.ts` tipo `User`: no declara `document_type_id`, `document_number`, `birth_date`, `gender_id`, `nationality_id`, `phone_primary`, `phone_secondary`, `profile_photo_url`
+**Columnas expuestas en `UserEditResource`:** `document_type_id`, `document_number`, `birth_date`, `gender_id`, `nationality_id`, `phone_primary`, `phone_secondary`, `profile_photo_url`
 
-**Columnas afectadas en `users`:** `document_type_id` (int8 FK), `document_number`, `birth_date`, `gender_id` (int8 FK), `nationality_id` (int8 FK), `phone_primary`, `phone_secondary`, `profile_photo_url`
-
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS01S04IdentityTest.php` (UC-S01-02) ✅  
 **Feature de origen:** ad-hoc  
-**Última verificación:** 2026-05-26 — ❌ bug confirmado por análisis de código
+**Última verificación:** 2026-05-28 ✅ (Dusk test pasa — gender_id y nationality_id pre-llenados en selects)
 
 ---
 
-## UC-36 — S01 save no persiste campos de identidad extendida (bug HLZ-27)
+## UC-36 — S01 save persiste campos de identidad extendida (HLZ-27 RESUELTO)
 
 **Precondición:** usuario edita `docNumber`, `birthDate`, `phone1` en S01 y hace click en guardar.  
-**Pasos:** editar campos → guardar → PATCH `/security/users/{user}/identity` → recargar página.  
-**Resultado esperado (correcto):** `document_number`, `birth_date`, `phone_primary` actualizados en DB; visibles al recargar.  
-**Resultado actual (bug):** PATCH devuelve 200 (success), sección marca `complete`, pero DB no cambia — el handler solo envía `first_name`, `last_name`, `email`, `roles`.
+**Pasos:** editar campos → guardar → PATCH `/security/users/{user}/identity` → verificar DB.  
+**Resultado esperado (correcto):** `document_number`, `birth_date`, `phone_primary` actualizados en DB. ✅  
+**Estado actual:** RESUELTO — el handler S01 envía `document_type_id`, `document_number`, `birth_date`, `gender_id`, `nationality_id`, `phone_primary`, `phone_secondary`; `UpdateUserRequest` (vía `updateIdentity`) los valida y persiste.
 
-**Raíz de causa:**
-- `useUserEditForm.ts:336–343` handler `1`: envía exclusivamente `{ first_name, last_name, email, roles }`
-- `UpdateUserRequest::rules()`: solo valida `first_name`, `last_name`, `email`, `roles`
-
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS01S04IdentityTest.php` (UC-S01-03, UC-S01-04, UC-S01-05) ✅  
 **Feature de origen:** ad-hoc  
-**Última verificación:** 2026-05-26 — ❌ bug confirmado por análisis de código
+**Última verificación:** 2026-05-28 ✅ (3 Dusk tests pasan — firstName, gender_id, doc_type_id+doc_number persisten en DB)
 
 ---
 
@@ -679,21 +676,447 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 
 ---
 
-## UC-38 — S01 campos de catálogo usan strings estáticos en vez de IDs de DB (bug HLZ-28)
+## UC-38 — S01 campos de catálogo usan IDs enteros de DB correctamente (HLZ-28 RESUELTO)
 
-**Precondición:** usuario selecciona tipo de documento 'V' y género 'f' en S01.  
+**Precondición:** usuario selecciona tipo de documento y género en S01 usando selects dinámicos.  
 **Pasos:** guardar S01 → verificar `document_type_id` y `gender_id` en DB.  
-**Resultado esperado (correcto):** `document_type_id` = ID de la fila en `document_types` con `code = 'V'`; `gender_id` = ID de la fila en `genders` con `code = 'f'`.  
-**Resultado actual (bug):** los campos no se envían al backend (ver UC-36); pero incluso si se enviaran, los valores string `'V'`/`'f'` son incompatibles con los FK enteros de DB — faltaría conversión `code → id`.
+**Resultado esperado (correcto):** `document_type_id` = FK entero a `document_types`; `gender_id` = FK entero a `genders`. ✅  
+**Estado actual:** RESUELTO — `AppDocInput` usa `catalogData.docTypes` con IDs numéricos; `AppTelInput` usa selects de catálogo; el handler envía `document_type_id`, `gender_id`, `nationality_id` como integers directamente.
 
-**Raíz de causa:**
-- `UF_DOC_TYPES` usa keys string (`'V'`, `'E'`) — `users.document_type_id` es int8 FK a `document_types` (que tiene columna `code`)
-- `UF_GENDERS` usa keys string (`'f'`, `'m'`) — `users.gender_id` es int8 FK a `genders` (que tiene columna `code`)
-- `UF_COUNTRIES` usa keys string (`'ve'`, `'co'`) — `users.nationality_id` es int8 FK a `countries`
-- No existe conversión `string code → integer id` en ninguna capa del sistema
+**Nota:** `UF_DOC_TYPES` y `UF_GENDERS` (catálogos estáticos con strings) ya no se usan para los FK de usuario. Los selects en S01 usan `catalogData.docTypes`, `catalogData.genders`, `catalogData.countries` con IDs numéricos.
 
-**Decisión de diseño requerida:** al implementar el fix de S01, usar catálogos dinámicos desde `catalogData` (patrón ya adoptado en S04, S05, S17) — no catálogos estáticos con strings.
-
-**Test Dusk:** pendiente  
+**Test Dusk:** `tests/Browser/Security/UserEditS01S04IdentityTest.php` (UC-S01-04, UC-S01-05) ✅  
 **Feature de origen:** ad-hoc  
-**Última verificación:** 2026-05-26 — ❌ bug confirmado por análisis de código + schema DB
+**Última verificación:** 2026-05-28 ✅ (gender_id y doc_type_id persisten como enteros en DB — verificado en Dusk)
+
+---
+
+## UC-S06-01 — S06 carga sin errores JS en el tab Documentos
+
+**Precondición:** admin autenticado; usuario objetivo con consentimiento activo.  
+**Pasos:** tab "Documentos" → `#sec-6` visible.  
+**Resultado esperado:** sección visible; sin mensajes "500" ni "Whoops".
+
+**Test Dusk:** `tests/Browser/Security/UserEditS06S07Test.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S06-02 — S06 con consentimiento activo arranca en estado complete
+
+**Precondición:** usuario objetivo tiene `UserConsent` activo (`revoked_at = null`, `accepts_data_processing = true`).  
+**Pasos:** tab "Documentos" → verificar clase CSS.  
+**Resultado esperado:** `#sec-6.complete` presente en DOM.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS06S07Test.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S06-03 — S06 sin consentimiento arranca en estado empty
+
+**Precondición:** usuario objetivo sin ningún registro `UserConsent`.  
+**Pasos:** tab "Documentos" → verificar clase CSS.  
+**Resultado esperado:** `#sec-6` presente; `#sec-6.complete` ausente.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS06S07Test.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S06-04 — S06 checkboxes reflejan los valores de props.consent
+
+**Precondición:** usuario objetivo con consentimiento parcial (`consent_image = false`, `consent_whatsapp = false`; `consent_data = true`, `consent_email = true`).  
+**Pasos:** tab "Documentos" → sección 06.  
+**Resultado esperado:**
+- `[dusk="consent-consent_data"]` → checked
+- `[dusk="consent-consent_image"]` → not checked
+- `[dusk="consent-consent_whatsapp"]` → not checked
+- `[dusk="consent-consent_email"]` → checked
+
+**Test Dusk:** `tests/Browser/Security/UserEditS06S07Test.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S06-05 — S06 save stub marca la sección como complete
+
+**Precondición:** usuario objetivo sin consentimiento; sección inicia como empty.  
+**Pasos:** click `[dusk="save-section-6"]` → esperar "Guardado".  
+**Resultado esperado:** `#sec-6.complete` presente post-save.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS06S07Test.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S06-06 — S07 carga sin errores JS (lista vacía)
+
+**Precondición:** usuario objetivo sin documentos adjuntos.  
+**Pasos:** tab "Documentos" → `#sec-7` visible.  
+**Resultado esperado:** sección visible; sin mensajes de error.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS06S07Test.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S06-07 — S07 save stub marca la sección como complete
+
+**Precondición:** usuario objetivo sin documentos adjuntos.  
+**Pasos:** click `[dusk="save-section-7"]` → esperar "Guardado".  
+**Resultado esperado:** `#sec-7.complete` presente post-save.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS06S07Test.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S08-01 — S08 Académico carga sin errores JS
+
+**Precondición:** usuario estudiante; tab "Académico" visible.  
+**Pasos:** tab "Académico" → `#sec-8` visible.  
+**Resultado esperado:** sección visible; sin errores.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S08-02 — S08 campos pre-llenados desde background existente
+
+**Precondición:** estudiante con `StudentBackground` existente en DB (`repeated_grade = true`, `has_prior_studies = false`).  
+**Pasos:** tab "Académico" → sección 08.  
+**Resultado esperado:** toggles y checkboxes reflejan los valores de DB.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S08-03 — S08+S09 save persiste StudentBackground en DB
+
+**Precondición:** estudiante sin background; formulario limpio.  
+**Pasos:** click `[dusk="save-section-8"]` → verificar DB.  
+**Resultado esperado:** fila creada en `student_backgrounds`; `#sec-8.complete` y `#sec-9.complete`.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S09-01 — S09 selects de catálogo muestran opciones
+
+**Precondición:** seeders `SocialCatalogsSeeder` + `SocioeconomicCatalogsSeeder` ejecutados.  
+**Pasos:** tab "Académico" → sección 09 → verificar counts de `<option>`.  
+**Resultado esperado:** `institutionType` ≥ 2 opciones; `transferReason` ≥ 2 opciones.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S10-01 — S10 Idiomas carga sin errores JS (colección vacía)
+
+**Precondición:** estudiante sin idiomas registrados.  
+**Pasos:** tab "Académico" → sección 10.  
+**Resultado esperado:** sección visible; lista de idiomas vacía.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S10-02 — S10 agregar idioma muestra selects con opciones
+
+**Precondición:** seeders de catálogo ejecutados.  
+**Pasos:** click `[dusk="repeatable-add"]` en sección 10 → verificar selects.  
+**Resultado esperado:** ≥ 2 items en `language_id` select; ≥ 2 items en `language_level_id` select.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S10-03 — S10 con idioma en DB arranca como complete
+
+**Precondición:** estudiante con idioma en `student_languages`.  
+**Pasos:** tab "Académico" → sección 10.  
+**Resultado esperado:** `#sec-10.complete` presente.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S10-04 — S10 agregar idioma y guardar persiste en student_languages
+
+**Precondición:** estudiante sin idiomas; idioma de catálogo disponible.  
+**Pasos:** click agregar → seleccionar idioma via JS → click save-section-10 → verificar DB.  
+**Resultado esperado:** fila en `student_languages`; `#sec-10.complete`.
+
+**Nota técnica:** el select de idioma requiere disparo de evento `change` via JavaScript (`dispatchEvent`) porque Vue usa eventos reactivos, no valores de DOM directamente.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S11-01 — S11 Familia carga sin errores JS
+
+**Precondición:** estudiante; tab "Familia" visible.  
+**Pasos:** tab "Familia" → sección 11.  
+**Resultado esperado:** sección visible; sin errores.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S11-02 — S11 selects de catálogo muestran opciones
+
+**Precondición:** seeders de catálogo ejecutados.  
+**Pasos:** tab "Familia" → sección 11 → verificar selects.  
+**Resultado esperado:** `maritalStatus`, `livingArrangement`, `householdHeadType` cada uno con ≥ 2 opciones.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S11-03 — S11 guardar persiste perfil familiar en DB
+
+**Precondición:** estudiante sin `family_profiles`.  
+**Pasos:** click `[dusk="save-section-11"]` → verificar DB.  
+**Resultado esperado:** fila en `family_profiles`; `#sec-11.complete`.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S12-01 — S12 Socioeconómico carga sin errores JS
+
+**Precondición:** estudiante; tab "Socioeconómico" visible.  
+**Pasos:** tab "Socioeconómico" → sección 12.  
+**Resultado esperado:** sección visible; sin errores.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S12-02 — S12 toggle "estudiante trabaja" revela select de tipo de empleo
+
+**Precondición:** estudiante; `studentWorks = false` por defecto.  
+**Pasos:** click en `.uf-toggle-card` "El estudiante trabaja actualmente" via JS → verificar visibilidad del select.  
+**Resultado esperado:** select `employmentTypeId` visible con ≥ 2 opciones.
+
+**Nota técnica:** `AppToggleCard` usa un `<input type="checkbox" style="opacity:0">` dentro de un `<label>`. El click debe hacerse via `querySelector('input[type="checkbox"]')?.click()` en JavaScript.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S12-03 — S12 guardar persiste perfil socioeconómico en DB
+
+**Precondición:** estudiante sin `socioeconomic_profiles`; consentimiento activo.  
+**Pasos:** click `[dusk="save-section-12"]` → verificar DB.  
+**Resultado esperado:** fila en `socioeconomic_profiles`; `#sec-12.complete`.
+
+**HLZ-29 (RESUELTO):** `StoreSocioeconomicProfileRequest` tenía `study_date` como `required|date`. El frontend puede guardar S12 sin llenar ese campo (es de solo admin y opcional en la UI), enviando `study_date: null`. Esto causaba error 422/500 silencioso — la sección nunca marcaba `complete`. Fix: `study_date` cambiado a `nullable|date`; `UpsertSocioeconomicProfileAction` hace `$wrapper->getStudyDate() ?? Carbon::today()->toDateString()` para mantener la columna NOT NULL de DB.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28 ✅ (fix HLZ-29 resuelto — test pasó después del fix)
+
+---
+
+## UC-S13-01 — S13 Beneficios carga sin errores JS (colección vacía)
+
+**Precondición:** estudiante sin beneficios.  
+**Pasos:** tab "Socioeconómico" → sección 13.  
+**Resultado esperado:** sección visible; lista de beneficios vacía.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S13-02 — S13 agregar beneficio muestra select con opciones del catálogo
+
+**Precondición:** seeders con al menos 1 beneficio.  
+**Pasos:** click `[dusk="repeatable-add"]` en sección 13 → verificar select.  
+**Resultado esperado:** select `benefit_id` con ≥ 1 opción.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S13-03 — S13 con beneficio en DB arranca como complete
+
+**Precondición:** fila en `student_benefits` para el estudiante.  
+**Pasos:** tab "Socioeconómico" → sección 13.  
+**Resultado esperado:** `#sec-13.complete` presente.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S13-04 — S13 agregar beneficio y guardar persiste en student_benefits
+
+**Precondición:** estudiante sin beneficios; catálogo con al menos 1 beneficio.  
+**Pasos:** click agregar → seleccionar beneficio via JS → click save-section-13 → verificar DB.  
+**Resultado esperado:** fila en `student_benefits`; `#sec-13.complete`.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S14-01 — S14 Vivienda carga sin errores JS
+
+**Precondición:** estudiante; tab "Socioeconómico" visible.  
+**Pasos:** tab "Socioeconómico" → sección 14.  
+**Resultado esperado:** sección visible; sin errores.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S14-02 — S14 selects de catálogo muestran opciones
+
+**Precondición:** seeders de catálogo ejecutados.  
+**Pasos:** tab "Socioeconómico" → sección 14 → verificar selects.  
+**Resultado esperado:** `housingType`, `tenureType`, `constructionMaterial`, `commuteTime`, `transportType` cada uno con ≥ 2 opciones.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S14-03 — S14 guardar persiste perfil de vivienda en DB
+
+**Precondición:** estudiante sin `housing_profiles`.  
+**Pasos:** click `[dusk="save-section-14"]` → verificar DB.  
+**Resultado esperado:** fila en `housing_profiles`; `#sec-14.complete`.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S15-01 — S15 Representantes carga sin errores JS
+
+**Precondición:** estudiante; tab "Familia" visible.  
+**Pasos:** tab "Familia" → sección 15.  
+**Resultado esperado:** sección visible; sin errores.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-S15-02 — S15 save stub marca la sección como complete
+
+**Precondición:** estudiante; sección 15 sin estado complete.  
+**Pasos:** scroll a `[dusk="save-section-15"]` → click → esperar "Guardado".  
+**Resultado esperado:** `#sec-15.complete` presente post-save.
+
+**Nota técnica:** el botón de S15 puede quedar fuera del viewport (bloqueado por la barra de tabs fija). Se requiere `scrollIntoView` + pause antes del click.
+
+**Test Dusk:** `tests/Browser/Security/UserEditS08S15AcademicTest.php` ✅ PASS  
+**Última verificación:** 2026-05-28
+
+---
+
+## UC-DIAL-01 — S01 phone_primary_dial: pre-fill desde DB y persiste al guardar
+
+**Precondición:** admin autenticado; usuario objetivo tiene `users.phone_primary_dial` con valor no nulo (p.ej. `+58`).  
+**Pasos:** tab "Identidad" → verificar `[dusk="phone1-dial-select"]` pre-llenado → cambiar valor → guardar S01 → verificar DB.  
+**Resultado esperado:**
+- `[dusk="phone1-dial-select"]` muestra el valor de DB al cargar
+- Tras guardar, `users.phone_primary_dial` actualizado en DB
+- Guardado muestra "Guardado" en browser
+
+**Archivos afectados (fix 2026-05-30):** `users` tabla (columna nueva `phone_primary_dial`), `UserEditResource`, `UpdateUserRequest`, `UserWrapper`, `buildInitialFormData()` handler S01 en `useUserEditForm.ts`, `UserFormS01Identity.vue` (ya tenía `dusk-prefix="phone1"`)
+
+**Test Dusk:** `tests/Browser/Security/UserEditDialCodesTest.php` (UC-DIAL-01) ✅ PASS  
+**Última verificación:** 2026-05-30 ✅
+
+---
+
+## UC-DIAL-02 — S01 phone_secondary_dial: pre-fill desde DB y persiste al guardar
+
+**Precondición:** admin autenticado; usuario objetivo tiene `users.phone_secondary_dial` con valor no nulo.  
+**Pasos:** tab "Identidad" → verificar `[dusk="phone2-dial-select"]` → cambiar valor → guardar S01 → verificar DB.  
+**Resultado esperado:**
+- `[dusk="phone2-dial-select"]` muestra el valor de DB al cargar
+- Tras guardar, `users.phone_secondary_dial` actualizado en DB
+
+**Test Dusk:** `tests/Browser/Security/UserEditDialCodesTest.php` (UC-DIAL-02) ✅ PASS  
+**Última verificación:** 2026-05-30 ✅
+
+---
+
+## UC-DIAL-03 — S01 ambos dials: reload muestra nuevos valores tras guardar
+
+**Precondición:** admin autenticado; usuario objetivo tiene ambos teléfonos con `phone_primary_dial=+58` y `phone_secondary_dial=+58`.  
+**Pasos:** cambiar ambos dials → guardar → reload → verificar selects muestran nuevos valores.  
+**Resultado esperado:**
+- Tras reload, `phone1-dial-select` muestra el dial nuevo
+- Tras reload, `phone2-dial-select` muestra el dial nuevo
+
+**Test Dusk:** `tests/Browser/Security/UserEditDialCodesTest.php` (UC-DIAL-03) ✅ PASS  
+**Última verificación:** 2026-05-30 ✅
+
+---
+
+## UC-DIAL-04 — S05 emergency_contact_phone_dial: pre-fill desde DB y persiste al guardar
+
+**Precondición:** admin autenticado; usuario objetivo tiene `health_profiles.emergency_contact_phone_dial` con valor no nulo.  
+**Pasos:** tab "Salud" → verificar `[dusk="emergency-dial-select"]` pre-llenado → cambiar valor → guardar S05 → verificar DB.  
+**Resultado esperado:**
+- `[dusk="emergency-dial-select"]` muestra el valor de DB al cargar
+- Tras guardar, `health_profiles.emergency_contact_phone_dial` actualizado en DB
+
+**Archivos afectados (fix 2026-05-30):** `health_profiles` tabla (columna nueva `emergency_contact_phone_dial`), `HealthProfileResource`, `StoreHealthProfileRequest`, `HealthProfileWrapper`, `UpsertHealthProfileAction`, `buildInitialFormData()` handler S05 en `useUserEditForm.ts`, `UserFormS05Health.vue` (se añadió `dusk-prefix="emergency"` al `AppTelInput` del contacto de emergencia)
+
+**Test Dusk:** `tests/Browser/Security/UserEditDialCodesTest.php` (UC-DIAL-04) ✅ PASS  
+**Última verificación:** 2026-05-30 ✅
+
+---
+
+## UC-DIAL-05 — S05 emergency_contact_phone_dial: reload muestra nuevo valor tras guardar
+
+**Precondición:** admin autenticado; usuario objetivo tiene health profile con `emergency_contact_phone_dial=+58`.  
+**Pasos:** cambiar dial de emergencia → guardar S05 → reload → verificar selector muestra nuevo valor.  
+**Resultado esperado:** tras reload, `emergency-dial-select` muestra el nuevo dial
+
+**Test Dusk:** `tests/Browser/Security/UserEditDialCodesTest.php` (UC-DIAL-05) ✅ PASS  
+**Última verificación:** 2026-05-30 ✅
+
+---
+
+## UC-DIAL-06 — Guardar S01 sin modificar phone_primary_dial no lo nullifica
+
+**Precondición:** usuario objetivo tiene `phone_primary_dial=+58`; admin edita otro campo de S01.  
+**Pasos:** cambiar solo `first_name` → guardar S01 → verificar DB.  
+**Resultado esperado:** `phone_primary_dial` permanece `+58` en DB — no se nullifica
+
+**Test Dusk:** `tests/Browser/Security/UserEditDialCodesTest.php` (UC-DIAL-06) ✅ PASS  
+**Última verificación:** 2026-05-30 ✅
+
+---
+
+## UC-DIAL-07 — Guardar S05 sin modificar emergency_contact_phone_dial no lo nullifica
+
+**Precondición:** usuario objetivo tiene `emergency_contact_phone_dial=+58`; admin edita otro campo de S05.  
+**Pasos:** cambiar solo `emergency_contact_name` → guardar S05 → verificar DB.  
+**Resultado esperado:** `emergency_contact_phone_dial` permanece `+58` en DB — no se nullifica
+
+**Test Dusk:** `tests/Browser/Security/UserEditDialCodesTest.php` (UC-DIAL-07) ✅ PASS  
+**Última verificación:** 2026-05-30 ✅

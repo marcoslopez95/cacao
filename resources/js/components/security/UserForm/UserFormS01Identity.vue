@@ -64,6 +64,7 @@ const fullName = computed(() =>
         <div class="uf-grid" style="margin-top: 20px;">
             <AppFormField label="Nombres" required :col="6">
                 <input
+                    dusk="first-name-input"
                     class="uf-input"
                     :value="data.firstName"
                     placeholder="María Elena"
@@ -73,6 +74,7 @@ const fullName = computed(() =>
 
             <AppFormField label="Apellidos" required :col="6">
                 <input
+                    dusk="last-name-input"
                     class="uf-input"
                     :value="data.lastName"
                     placeholder="González Pérez"
@@ -82,6 +84,7 @@ const fullName = computed(() =>
 
             <AppFormField label="Documento de identidad" required :col="6">
                 <AppDocInput
+                    dusk-prefix="doc"
                     :type-id="data.docTypeId ?? null"
                     :number="data.docNumber ?? ''"
                     :catalog="catalogData.documentTypes"
@@ -92,6 +95,7 @@ const fullName = computed(() =>
 
             <AppFormField label="Fecha de nacimiento" required :col="3">
                 <input
+                    dusk="birth-date-input"
                     class="uf-input"
                     type="date"
                     :value="data.birthDate"
@@ -101,6 +105,7 @@ const fullName = computed(() =>
 
             <AppFormField label="Género" :col="3">
                 <select
+                    dusk="gender-select"
                     class="uf-select"
                     :value="data.genderId ?? null"
                     @change="setField('genderId', Number(($event.target as HTMLSelectElement).value) || null)"
@@ -112,6 +117,7 @@ const fullName = computed(() =>
 
             <AppFormField label="Nacionalidad" :col="4">
                 <select
+                    dusk="nationality-select"
                     class="uf-select"
                     :value="data.nationalityId ?? null"
                     @change="setField('nationalityId', Number(($event.target as HTMLSelectElement).value) || null)"
@@ -123,6 +129,7 @@ const fullName = computed(() =>
 
             <AppFormField label="Teléfono principal" required :col="4">
                 <AppTelInput
+                    dusk-prefix="phone1"
                     :dial="data.phone1Dial ?? '+58'"
                     :number="data.phone1 ?? ''"
                     @update:dial="setField('phone1Dial', $event)"
@@ -132,6 +139,7 @@ const fullName = computed(() =>
 
             <AppFormField label="Teléfono secundario" optional :col="4">
                 <AppTelInput
+                    dusk-prefix="phone2"
                     :dial="data.phone2Dial ?? '+58'"
                     :number="data.phone2 ?? ''"
                     @update:dial="setField('phone2Dial', $event)"

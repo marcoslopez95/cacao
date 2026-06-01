@@ -17,6 +17,7 @@ const props = defineProps<{
         <div class="uf-grid">
             <AppFormField label="Ciudad de nacimiento" :col="4">
                 <input
+                    dusk="birth-city-input"
                     class="uf-input"
                     :value="data.birthCity"
                     placeholder="Caracas"
@@ -25,6 +26,7 @@ const props = defineProps<{
             </AppFormField>
             <AppFormField label="País de nacimiento" :col="4">
                 <select
+                    dusk="birth-country-select"
                     class="uf-select"
                     :value="data.birthCountryId ?? ''"
                     @change="setField('birthCountryId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"
@@ -102,6 +104,7 @@ const props = defineProps<{
 
             <AppFormField label="Religión" optional :col="6">
                 <select
+                    dusk="religion-select"
                     class="uf-select"
                     :value="data.religionId ?? ''"
                     @change="setField('religionId', parseInt(($event.target as HTMLSelectElement).value) || undefined)"

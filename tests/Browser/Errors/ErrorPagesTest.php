@@ -1,8 +1,19 @@
 <?php
 
 use App\Models\User;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
-use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
+
+uses(DatabaseMigrations::class);
+
+beforeEach(function () {
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+    $this->seed(PermissionSeeder::class);
+    $this->seed(RoleSeeder::class);
+});
 
 test('404 page is shown for unknown route', function () {
     $this->browse(function (Browser $browser) {
@@ -25,8 +36,6 @@ test('404 page has working home link', function () {
 });
 
 test('403 page is shown when user lacks permission', function () {
-    Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
-
     $user = User::factory()->create();
     $user->assignRole('Admin');
 

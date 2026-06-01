@@ -30,6 +30,7 @@ class HealthProfile extends Model
         'insurance_type_id',
         'emergency_contact_name',
         'emergency_contact_phone',
+        'emergency_contact_phone_dial',
         'emergency_contact_relation',
     ];
 

@@ -1,30 +1,27 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { ScheduleCollection } from '@/types/scheduling'
+import type { ScheduleAvailableCareer } from '@/types/scheduling'
 import { careerColor } from '@/composables/scheduling/useScheduleLayout'
 
 const props = defineProps<{
-    schedules: ScheduleCollection
+    careers: ScheduleAvailableCareer[]
     activeCareerIds: Set<number>
 }>()
 
 const emit = defineEmits<{ toggle: [careerId: number] }>()
 
-const careers = computed(() => {
-    const map = new Map<number, string>()
-    for (const s of props.schedules) {
-        if (s.career) map.set(s.career.id, s.career.name)
-    }
-    return [...map.entries()].map(([id, name]) => ({ id, name, color: careerColor(id) }))
-})
+const careersWithColor = computed(() =>
+    props.careers.map((c) => ({ ...c, color: careerColor(c.id) })),
+)
 </script>
 
 <template>
-    <div v-if="careers.length > 0" class="sch-legend">
+    <div v-if="careersWithColor.length > 0" class="sch-legend">
         <span class="legend-label">Carreras</span>
         <button
-            v-for="c in careers"
+            v-for="c in careersWithColor"
             :key="c.id"
+            dusk="legend-career-btn"
             class="legend-item"
             :class="{ muted: !activeCareerIds.has(c.id) }"
             @click="emit('toggle', c.id)"

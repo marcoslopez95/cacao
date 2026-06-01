@@ -48,7 +48,6 @@ return new class extends Migration
             $table->dropForeign(['main_teacher_id']);
             $table->dropForeign(['pensum_id']);
             $table->dropColumn(['classroom_id', 'main_teacher_id', 'letter', 'grade', 'pensum_id']);
-            $table->foreignId('subject_id')->nullable(false)->change();
             $table->string('code', 10)->nullable(false)->change();
             $table->unique(['period_id', 'subject_id', 'code']);
         });

@@ -164,6 +164,7 @@ const imc = computed(() => {
             </AppFormField>
             <AppFormField label="Teléfono" required :col="4">
                 <AppTelInput
+                    dusk-prefix="emergency"
                     :dial="data.emergencyDial ?? '+58'"
                     :number="data.emergencyPhone ?? ''"
                     @update:dial="setField('emergencyDial', $event)"

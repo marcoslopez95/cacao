@@ -16,9 +16,7 @@
  *
  * Run with: vendor/bin/sail dusk tests/Browser/Security/UserEditS05HealthTest.php
  *
- * NOTA: No usa DatabaseMigrations — los tests corren sobre la DB de desarrollo sin borrarla.
- *
- * Los usuarios de test se crean con email *@dusk.test y se limpian en beforeEach.
+ * Usa DatabaseMigrations — corre contra laravel_dusk (DB separada, ver .env.dusk.local).
  */
 
 use App\Enums\EducationalLevel;
@@ -29,25 +27,24 @@ use App\Models\HealthProfile;
 use App\Models\Student;
 use App\Models\User;
 use App\Models\UserConsent;
-use Illuminate\Support\Facades\DB;
+use Database\Seeders\Catalogs\SocioeconomicCatalogsSeeder;
+use Database\Seeders\PermissionSeeder;
+use Database\Seeders\RoleSeeder;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
+uses(DatabaseMigrations::class);
+
 // ---------------------------------------------------------------------------
-// Setup — idempotente, nunca borra la DB de desarrollo
+// Setup
 // ---------------------------------------------------------------------------
 
 beforeEach(function () {
     app(PermissionRegistrar::class)->forgetCachedPermissions();
-
-    // Roles: idempotente, no falla si ya existen
-    Role::firstOrCreate(['name' => 'Admin',         'guard_name' => 'web']);
-    Role::firstOrCreate(['name' => 'Administrador', 'guard_name' => 'web']);
-    Role::firstOrCreate(['name' => 'Estudiante',    'guard_name' => 'web']);
-
-    // Limpiar usuarios de test de ejecuciones anteriores (email *@dusk.test)
-    cleanDuskTestUsers();
+    $this->seed(PermissionSeeder::class);
+    $this->seed(RoleSeeder::class);
+    $this->seed(SocioeconomicCatalogsSeeder::class);
 });
 
 // ---------------------------------------------------------------------------
@@ -55,41 +52,11 @@ beforeEach(function () {
 // ---------------------------------------------------------------------------
 
 /**
- * Elimina todos los usuarios creados por tests Dusk (email *@dusk.test).
- * Se ejecuta en beforeEach para limpiar ejecuciones anteriores.
- * El orden respeta las FKs RESTRICT del proyecto.
- */
-function cleanDuskTestUsers(): void
-{
-    $ids = User::where('email', 'like', '%@dusk.test')->pluck('id');
-
-    if ($ids->isEmpty()) {
-        return;
-    }
-
-    DB::table('health_profiles')->whereIn('user_id', $ids)->delete();
-    DB::table('user_consents')->whereIn('user_id', $ids)->delete();
-    DB::table('demographic_profiles')->whereIn('user_id', $ids)->delete();
-    DB::table('user_addresses')->whereIn('user_id', $ids)->delete();
-    DB::table('user_documents')->whereIn('user_id', $ids)->delete();
-    DB::table('students')->whereIn('user_id', $ids)->delete();
-    DB::table('professors')->whereIn('user_id', $ids)->delete();
-    DB::table('guardians')->whereIn('user_id', $ids)->delete();
-    DB::table('model_has_roles')
-        ->where('model_type', User::class)
-        ->whereIn('model_id', $ids)
-        ->delete();
-    DB::table('sessions')->whereIn('user_id', $ids)->delete();
-    User::whereIn('id', $ids)->forceDelete();
-}
-
-/**
- * Admin con solo rol 'Admin' — Gate::before cortocircuita autorización.
- * Email con dominio @dusk.test para que sea limpiado en el próximo beforeEach.
+ * Admin logueado — Gate::before cortocircuita autorización para el actor.
  */
 function adminForS05(): User
 {
-    $user = User::factory()->create(['email' => uniqid('admin.s05.').'@dusk.test']);
+    $user = User::factory()->create();
     $user->assignRole('Admin');
 
     return $user;
@@ -98,23 +65,17 @@ function adminForS05(): User
 /**
  * Crea un usuario objetivo con rol Estudiante, consentimiento activo, sub-registro Student
  * y perfil de salud pre-cargado.
- *
- * Rol Estudiante — refleja el usuario real que usa el formulario S05 en producción.
- * UF_TABS renderiza la tab "Salud" para Estudiante igual que para Admin.
- * ConsentService::requireConsent() requiere consentimiento activo en el target.
  */
 function targetWithHealthProfile(array $healthData = []): User
 {
-    $target = User::factory()->create(['email' => uniqid('target.s05.').'@dusk.test']);
+    $target = User::factory()->create();
     $target->assignRole('Estudiante');
 
-    // Sub-registro requerido para que UF_TABS renderice tabs de Estudiante
-    Student::firstOrCreate(
-        ['user_id' => $target->id],
-        ['educational_level' => EducationalLevel::University]
-    );
+    Student::factory()->create([
+        'user_id' => $target->id,
+        'educational_level' => EducationalLevel::University,
+    ]);
 
-    // Consentimiento activo — requerido por ConsentService::requireConsent()
     UserConsent::create([
         'user_id' => $target->id,
         'policy_version' => 'v1.0',
@@ -335,12 +296,13 @@ test('UC-S05-06: contacto de emergencia se guarda y pre-llena en reload', functi
 
 test('UC-S05-07: target sin consentimiento muestra error al guardar S05', function () {
     $admin = adminForS05();
-    $target = User::factory()->create(['email' => uniqid('target.noconsent.').'@dusk.test']);
+
+    $target = User::factory()->create();
     $target->assignRole('Estudiante');
-    Student::firstOrCreate(
-        ['user_id' => $target->id],
-        ['educational_level' => EducationalLevel::University]
-    );
+    Student::factory()->create([
+        'user_id' => $target->id,
+        'educational_level' => EducationalLevel::University,
+    ]);
     // Sin UserConsent — condición de error intencional
 
     $this->browse(function (Browser $browser) use ($admin, $target) {

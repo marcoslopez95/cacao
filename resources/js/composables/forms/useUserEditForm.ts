@@ -186,7 +186,8 @@ export function useUserEditForm(props: UserEditProps) {
             has_medical_insurance:      formData.insurance        ?? false,
             insurance_type_id:          formData.insuranceTypeId  ?? null,
             emergency_contact_name:     formData.emergencyName    ?? null,
-            emergency_contact_phone:    formData.emergencyPhone   ?? null,
+            emergency_contact_phone:      formData.emergencyPhone   ?? null,
+            emergency_contact_phone_dial: formData.emergencyDial   ?? null,
             emergency_contact_relation: formData.emergencyRel     ?? null,
         })).put(upsertHealth({ user: userId }).url)
     }
@@ -308,6 +309,7 @@ export function useUserEditForm(props: UserEditProps) {
             occupation:          formData.occupation         ?? null,
             employer:            formData.employer           ?? null,
             work_phone:          formData.workPhone          ?? null,
+            work_phone_dial:     formData.workDial           ?? null,
             marital_status_id:   formData.guardianMaritalId  ?? null,
             education_level_id:  formData.guardianEduId      ?? null,
         })).put(upsertGuardianProfile({ guardian: props.guardian.id }).url)
@@ -348,8 +350,10 @@ export function useUserEditForm(props: UserEditProps) {
                 birth_date:       formData.birthDate    ?? null,
                 gender_id:        formData.genderId     ?? null,
                 nationality_id:   formData.nationalityId ?? null,
-                phone_primary:    formData.phone1       ?? null,
-                phone_secondary:  formData.phone2       ?? null,
+                phone_primary:      formData.phone1       ?? null,
+                phone_primary_dial: formData.phone1Dial  ?? null,
+                phone_secondary:    formData.phone2       ?? null,
+                phone_secondary_dial: formData.phone2Dial ?? null,
             })).patch(updateIdentity({ user: props.user.id }).url)
         },
         2: async () => {
@@ -446,8 +450,10 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
     d.birthDate       = props.user.birth_date        ?? undefined
     d.genderId        = props.user.gender_id         ?? undefined
     d.nationalityId   = props.user.nationality_id    ?? undefined
-    d.phone1          = props.user.phone_primary     ?? undefined
-    d.phone2          = props.user.phone_secondary   ?? undefined
+    d.phone1          = props.user.phone_primary      ?? undefined
+    d.phone1Dial      = props.user.phone_primary_dial ?? undefined
+    d.phone2          = props.user.phone_secondary    ?? undefined
+    d.phone2Dial      = props.user.phone_secondary_dial ?? undefined
     d.profilePhotoUrl = props.user.profile_photo_url ?? undefined
 
     d.addresses = props.addresses.map(a => ({
@@ -494,7 +500,8 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
         d.insurance        = h.has_medical_insurance
         d.insuranceTypeId  = h.insurance_type_id            ?? undefined
         d.emergencyName    = h.emergency_contact_name       ?? undefined
-        d.emergencyPhone   = h.emergency_contact_phone      ?? undefined
+        d.emergencyPhone   = h.emergency_contact_phone           ?? undefined
+        d.emergencyDial    = h.emergency_contact_phone_dial      ?? undefined
         d.emergencyRel     = h.emergency_contact_relation   ?? undefined
     }
 
@@ -594,6 +601,7 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
         d.occupation        = g.occupation          ?? undefined
         d.employer          = g.employer            ?? undefined
         d.workPhone         = g.work_phone          ?? undefined
+        d.workDial          = g.work_phone_dial     ?? undefined
         d.guardianMaritalId = g.marital_status_id   ?? undefined
         d.guardianEduId     = g.education_level_id  ?? undefined
     }

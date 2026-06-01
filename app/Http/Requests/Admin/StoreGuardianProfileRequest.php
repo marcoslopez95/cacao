@@ -35,6 +35,7 @@ class StoreGuardianProfileRequest extends FormRequest
             'occupation' => ['nullable', 'string', 'max:150'],
             'employer' => ['nullable', 'string', 'max:200'],
             'work_phone' => ['nullable', 'string', 'max:20'],
+            'work_phone_dial' => ['nullable', 'string', 'max:10'],
             'education_level_id' => ['nullable', 'integer', Rule::exists('education_levels', 'id')],
             'marital_status_id' => ['nullable', 'integer', Rule::exists('marital_statuses', 'id')],
         ];

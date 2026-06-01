@@ -18,6 +18,7 @@ class GuardianProfileResource extends JsonResource
             'occupation' => $this->occupation,
             'employer' => $this->employer,
             'work_phone' => $this->work_phone,
+            'work_phone_dial' => $this->work_phone_dial,
             'education_level_id' => $this->education_level_id,
             'marital_status_id' => $this->marital_status_id,
             'created_at' => $this->created_at,

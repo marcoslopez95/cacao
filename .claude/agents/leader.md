@@ -65,9 +65,26 @@ Cuando delega a un agente, el Leader debe proveer:
 ## Flujo de inicio de feature
 
 Cuando inicia una nueva feature:
-1. Verificar que `specs/{feature}/requirements.md`, `design.md` y `tasks.md` existen y están aprobados por el humano
-2. Delegar a `senior_tester` en modo PRE para la primera task
-3. No delegar al `implementer` hasta que `Acceptance/` exista y los tests estén en rojo
+1. Verificar que `specs/{feature}/requirements.md`, `design.md`, `tasks.md` **y `qa.md`** existen y están aprobados por el humano
+   - Si `qa.md` no existe: detener y avisar al humano — la feature debe pasar por el `analyst` antes de implementarse
+2. Verificar que la última task en `tasks.md` es el **QA Gate** (`qa_manager` verifica todos los UCs de `qa.md`)
+   - Si no existe esa task: agregarla antes de continuar
+3. Delegar a `senior_tester` en modo PRE para la primera task
+4. No delegar al `implementer` hasta que `Acceptance/` exista y los tests estén en rojo
+
+## QA Gate — última task obligatoria
+
+La última task de toda feature es siempre el QA Gate. En lugar del flujo normal de 5 fases, esta task tiene su propio flujo:
+
+```
+QA Gate
+  · Delegar a qa_manager en modo Feature Gate
+  · qa_manager lee specs/{feature}/qa.md y corre todos los UCs como Dusk tests
+  · ✅ todos los UCs en verde → marcar task [x] + marcar feature como completed en feature_list.json
+  · ❌ algún UC falla → documentar como HLZ, reportar al humano, NO marcar completed
+```
+
+El QA Gate no pasa por senior_tester, reviewer ni qa del arnés — es un gate autónomo del qa_manager.
 
 ---
 

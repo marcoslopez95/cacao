@@ -36,6 +36,7 @@ class StoreHealthProfileRequest extends FormRequest
             'insurance_type_id' => ['nullable', 'integer', 'exists:insurance_types,id'],
             'emergency_contact_name' => ['nullable', 'string', 'max:150'],
             'emergency_contact_phone' => ['nullable', 'string', 'max:20'],
+            'emergency_contact_phone_dial' => ['nullable', 'string', 'max:10'],
             'emergency_contact_relation' => ['nullable', 'string', 'max:50'],
         ];
     }

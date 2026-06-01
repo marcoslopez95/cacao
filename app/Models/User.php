@@ -38,7 +38,9 @@ class User extends Authenticatable
         'gender_id',
         'nationality_id',
         'phone_primary',
+        'phone_primary_dial',
         'phone_secondary',
+        'phone_secondary_dial',
         'profile_photo_url',
     ];
 

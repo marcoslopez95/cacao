@@ -85,6 +85,10 @@ class TeamPolicy
      */
     public function delete(User $user, Team $team): bool
     {
+        if ($team->slug === 'admin') {
+            return false;
+        }
+
         return ! $team->is_personal && $user->hasTeamPermission($team, TeamPermission::DeleteTeam);
     }
 }

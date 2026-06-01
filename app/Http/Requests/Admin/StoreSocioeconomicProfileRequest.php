@@ -21,7 +21,7 @@ class StoreSocioeconomicProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'study_date' => ['required', 'date'],
+            'study_date' => ['nullable', 'date'],
             'income_range_id' => ['nullable', 'integer', 'exists:income_ranges,id'],
             'income_source_id' => ['nullable', 'integer', 'exists:income_sources,id'],
             'household_earners' => ['nullable', 'integer', 'min:0', 'max:50'],

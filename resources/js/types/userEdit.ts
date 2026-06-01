@@ -32,7 +32,9 @@ export interface UserEditData {
     gender_id: number | null
     nationality_id: number | null
     phone_primary: string | null
+    phone_primary_dial: string | null
     phone_secondary: string | null
+    phone_secondary_dial: string | null
     profile_photo_url: string | null
     created_at: string | null
 }
@@ -110,6 +112,7 @@ export interface HealthProfileData {
     insurance_type_id: number | null
     emergency_contact_name: string | null
     emergency_contact_phone: string | null
+    emergency_contact_phone_dial: string | null
     emergency_contact_relation: string | null
     created_at: string | null
     updated_at: string | null

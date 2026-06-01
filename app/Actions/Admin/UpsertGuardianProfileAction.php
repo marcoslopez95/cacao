@@ -15,6 +15,7 @@ class UpsertGuardianProfileAction
                 'occupation' => $wrapper->getOccupation(),
                 'employer' => $wrapper->getEmployer(),
                 'work_phone' => $wrapper->getWorkPhone(),
+                'work_phone_dial' => $wrapper->getWorkPhoneDial(),
                 'education_level_id' => $wrapper->getEducationLevelId(),
                 'marital_status_id' => $wrapper->getMaritalStatusId(),
             ]

@@ -41,6 +41,7 @@ const currentPasswordMode = computed(() => props.data.passwordMode ?? 'link')
             :ok="emailOk ? 'Formato válido' : undefined"
         >
             <input
+                dusk="email-input"
                 class="uf-input"
                 type="email"
                 :value="data.email"

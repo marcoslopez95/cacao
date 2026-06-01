@@ -12,8 +12,7 @@
     "status": "completed",
     "current_task": 9,
     "plan": "specs/enrollment-frontend/tasks.md"
-  }
-,
+  },
   {
     "id": "03-demo-seeder",
     "name": "Demo Seeder — datos realistas venezolanos para demo y desarrollo",
@@ -41,8 +40,7 @@
     "status": "completed",
     "current_task": 8,
     "plan": "specs/error-pages/tasks.md"
-  }
-,
+  },
   {
     "id": "07-role-dashboards",
     "name": "Role Dashboards — dashboards funcionales con datos reales para Profesor, Estudiante y Representante",
@@ -63,5 +61,47 @@
     "status": "completed",
     "current_task": 3,
     "plan": "specs/admin-students/tasks.md"
+  },
+  {
+    "id": "10-hlz-29-socioeconomic-fix",
+    "name": "HLZ-29 Fix — study_date nullable en StoreSocioeconomicProfileRequest (500 desde S12)",
+    "status": "completed",
+    "current_task": 2,
+    "plan": "specs/hlz-29-socioeconomic-fix/tasks.md"
+  },
+  {
+    "id": "12-schedule-validation-and-hours-bar",
+    "name": "HLZ-33+34 — Validación 07:00-18:00 en FormRequest + ProfessorHoursBar en EditScheduleModal",
+    "status": "completed",
+    "current_task": 4,
+    "plan": "specs/12-schedule-validation-and-hours-bar/tasks.md"
+  },
+  {
+    "id": "11-hlz-30-31-schedule-fixes",
+    "name": "HLZ-30+31+32 Fix — Toast system unification + migración down() + redirect period_id",
+    "status": "completed",
+    "current_task": 4,
+    "plan": "specs/11-hlz-30-31-schedule-fixes/tasks.md"
+  },
+  {
+    "id": "13-schedule-career-filter",
+    "name": "HLZ-35+36+37 — Filtro carrera server-side + URL persistence + pre-filtro en modals",
+    "status": "completed",
+    "current_task": 8,
+    "plan": "specs/13-schedule-career-filter/tasks.md"
+  },
+  {
+    "id": "14-admin-team-institutional",
+    "name": "Admin Team Institucional — team 'admin' slug fijo + auto-asignación + redirect post-login + policy delete",
+    "status": "completed",
+    "current_task": 6,
+    "plan": "specs/14-admin-team-institutional/tasks.md"
+  },
+  {
+    "id": "15-attendance-module",
+    "name": "Attendance Module — sesiones de clase (regular/makeup/advance) + asistencia por estudiante + portal profesor y admin",
+    "status": "pending",
+    "current_task": 0,
+    "plan": "specs/15-attendance-module/tasks.md"
   }
 ]

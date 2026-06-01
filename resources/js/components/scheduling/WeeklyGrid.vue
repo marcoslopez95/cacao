@@ -88,6 +88,7 @@ function handleDayClick(dayIndex: number, e: MouseEvent): void {
 
         <!-- Calendar grid -->
         <div
+            dusk="weekly-grid"
             class="sch-grid"
             :style="dayMode ? { gridTemplateColumns: '64px 1fr' } : undefined"
         >
@@ -128,6 +129,7 @@ function handleDayClick(dayIndex: number, e: MouseEvent): void {
             <div
                 v-for="i in visibleDays"
                 :key="'c' + i"
+                :dusk="`grid-col-${DAY_KEYS[i]}`"
                 class="sch-day-col"
                 :class="{
                     today:   DAY_KEYS[i] === today,

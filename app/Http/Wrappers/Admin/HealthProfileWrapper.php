@@ -129,6 +129,11 @@ class HealthProfileWrapper extends Collection
         return $this->get('emergency_contact_phone');
     }
 
+    public function getEmergencyContactPhoneDial(): ?string
+    {
+        return $this->get('emergency_contact_phone_dial');
+    }
+
     public function getEmergencyContactRelation(): ?string
     {
         return $this->get('emergency_contact_relation');
