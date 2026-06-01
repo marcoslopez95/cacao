@@ -13,6 +13,7 @@ use App\Http\Requests\Professor\StoreClassSessionRequest;
 use App\Http\Requests\Professor\UpsertAttendanceRequest;
 use App\Http\Resources\Attendance\AttendanceSheetResource;
 use App\Http\Resources\Attendance\ClassSessionResource;
+use App\Http\Resources\Attendance\SectionAttendanceResource;
 use App\Http\Wrappers\Attendance\AttendanceSheetWrapper;
 use App\Http\Wrappers\Attendance\ClassSessionWrapper;
 use App\Models\ClassSession;
@@ -34,27 +35,12 @@ class AttendanceController extends Controller
 
         $sessions = $section->classSessions()
             ->with(['attendanceRecords', 'linkedSession', 'uploadedBy'])
-            ->orderByDesc('held_at')
-            ->orderByDesc('created_at')
-            ->get();
-
-        $period = Period::where('status', PeriodStatus::Active)->first();
+            ->orderByDesc('held_at')->orderByDesc('created_at')->get();
 
         return Inertia::render('professor/attendance/Index', [
-            'section' => [
-                'id' => $section->id,
-                'code' => $section->code,
-                'subject' => $section->subject?->name,
-                'teacher' => $section->mainTeacher?->user?->name,
-                'schedules' => $section->schedules->map(fn ($s) => [
-                    'id' => $s->id,
-                    'day' => $s->day,
-                    'start_time' => $s->start_time,
-                    'end_time' => $s->end_time,
-                ]),
-            ],
+            'section' => new SectionAttendanceResource($section),
             'sessions' => ClassSessionResource::collection($sessions),
-            'period' => $period?->name,
+            'period' => Period::where('status', PeriodStatus::Active)->first()?->name,
         ]);
     }
 
@@ -99,11 +85,7 @@ class AttendanceController extends Controller
         ClassSession $classSession,
         TakeAttendanceAction $action,
     ): RedirectResponse {
-        $wrapper = new AttendanceSheetWrapper(
-            array_merge($request->validated(), ['class_session_id' => $classSession->id])
-        );
-
-        $action->handle($wrapper);
+        $action->handle(new AttendanceSheetWrapper(array_merge($request->validated(), ['class_session_id' => $classSession->id])));
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Asistencia guardada.']);
 

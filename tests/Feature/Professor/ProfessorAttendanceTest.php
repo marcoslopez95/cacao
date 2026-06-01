@@ -41,11 +41,16 @@ function attendanceContext(): array
 
 /**
  * Creates a confirmed enrollment detail for the given section.
+ *
+ * Uses the section's period_id so the enrollment belongs to the same period.
  */
 function confirmedDetail(Section $section): EnrollmentDetail
 {
     $student = Student::factory()->create();
-    $enrollment = Enrollment::factory()->create(['student_id' => $student->id]);
+    $enrollment = Enrollment::factory()->create([
+        'student_id' => $student->id,
+        'period_id' => $section->period_id,
+    ]);
 
     return EnrollmentDetail::factory()->confirmed()->create([
         'enrollment_id' => $enrollment->id,
