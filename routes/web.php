@@ -5,6 +5,7 @@ use App\Http\Controllers\Academic\CareerController;
 use App\Http\Controllers\Academic\PensumController;
 use App\Http\Controllers\Academic\StudentController;
 use App\Http\Controllers\Academic\SubjectController;
+use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\DemographicProfileController;
 use App\Http\Controllers\Admin\FamilyProfileController;
 use App\Http\Controllers\Admin\GradeConfigController;
@@ -163,6 +164,13 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
     Route::post('grade-configs', [GradeConfigController::class, 'store'])->name('grade-configs.store');
     Route::get('grade-configs/{gradeConfig}/edit', [GradeConfigController::class, 'edit'])->name('grade-configs.edit');
     Route::patch('grade-configs/{gradeConfig}', [GradeConfigController::class, 'update'])->name('grade-configs.update');
+
+    // Admin Attendance
+    Route::get('attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('sections/{section}/attendance', [AdminAttendanceController::class, 'sectionIndex'])->name('sections.attendance.index');
+    Route::post('sections/{section}/attendance/sessions', [AdminAttendanceController::class, 'storeSession'])->name('sections.attendance.sessions.store');
+    Route::get('sections/{section}/attendance/sessions/{classSession}', [AdminAttendanceController::class, 'sheet'])->name('sections.attendance.sheet');
+    Route::put('sections/{section}/attendance/sessions/{classSession}', [AdminAttendanceController::class, 'upsertAttendance'])->name('sections.attendance.upsert');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->group(function () {
