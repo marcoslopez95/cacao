@@ -41,6 +41,7 @@ use App\Models\Catalogs\StudyModality;
 use App\Models\Catalogs\TenureType;
 use App\Models\Catalogs\TransferReason;
 use App\Models\Catalogs\TransportType;
+use App\Models\ClassSession;
 use App\Models\Coordination;
 use App\Models\DemographicProfile;
 use App\Models\Enrollment;
@@ -65,6 +66,7 @@ use App\Policies\Academic\CareerCategoryPolicy;
 use App\Policies\Academic\CareerPolicy;
 use App\Policies\Academic\PensumPolicy;
 use App\Policies\Academic\SubjectPolicy;
+use App\Policies\ClassSessionPolicy;
 use App\Policies\CoordinationPolicy;
 use App\Policies\DemographicProfilePolicy;
 use App\Policies\EnrollmentDetailPolicy;
@@ -145,6 +147,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(StudentLanguage::class, StudentLanguagePolicy::class);
         Gate::policy(HealthProfile::class, HealthProfilePolicy::class);
         Gate::policy(HousingProfile::class, HousingProfilePolicy::class);
+        Gate::policy(ClassSession::class, ClassSessionPolicy::class);
     }
 
     /**
