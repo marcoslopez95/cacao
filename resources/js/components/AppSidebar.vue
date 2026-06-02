@@ -21,6 +21,7 @@ import { index as schedulesIndex } from '@/routes/scheduling/schedules'
 import { edit as profileEdit } from '@/routes/profile'
 import { index as enrollmentIndex } from '@/routes/enrollment'
 import { index as professorDashboard } from '@/actions/App/Http/Controllers/Professor/DashboardController'
+import { sections as professorAttendanceSections } from '@/routes/professor/attendance'
 import { index as studentDashboard } from '@/actions/App/Http/Controllers/Student/DashboardController'
 import { index as guardianDashboard } from '@/actions/App/Http/Controllers/Guardian/DashboardController'
 
@@ -51,6 +52,12 @@ const navGroups = computed(() => {
     if (portalRole.value === 'professor') {
         return [
             { label: 'General', items: [{ icon: 'grid', label: 'Dashboard', href: dashboardUrl.value }] },
+            {
+                label: 'Académico',
+                items: [
+                    { icon: 'check', label: 'Asistencia', href: professorAttendanceSections.url() },
+                ],
+            },
             { label: 'Mi cuenta', items: [{ icon: 'settings', label: 'Configuración', href: profileEdit.url() }] },
         ]
     }

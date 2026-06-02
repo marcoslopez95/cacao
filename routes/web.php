@@ -279,6 +279,8 @@ Route::middleware(['auth', 'verified', 'role:Profesor,Coordinador de Area'])
             ->name('grades.remedial.store');
 
         // Attendance
+        Route::get('attendance', [Professor\AttendanceSectionsController::class, 'index'])
+            ->name('attendance.sections');
         Route::get('sections/{section}/attendance', [Professor\AttendanceController::class, 'index'])
             ->name('sections.attendance.index');
         Route::post('sections/{section}/attendance/sessions', [Professor\AttendanceController::class, 'storeSession'])
