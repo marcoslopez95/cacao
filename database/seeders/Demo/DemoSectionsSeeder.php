@@ -80,6 +80,7 @@ class DemoSectionsSeeder extends Seeder
 
             foreach ($sectionCodes as $code) {
                 $classroom = $classrooms[$sectionIndex % $classrooms->count()];
+                $mainTeacher = $professors[$sectionIndex % $professors->count()];
 
                 $section = Section::firstOrCreate(
                     [
@@ -92,8 +93,14 @@ class DemoSectionsSeeder extends Seeder
                         'theory_classroom_id' => $classroom->id,
                         'lab_classroom_id' => null,
                         'capacity' => 30,
+                        'main_teacher_id' => $mainTeacher->id,
                     ],
                 );
+
+                // Update existing sections that were seeded before main_teacher_id was added
+                if ($section->main_teacher_id === null) {
+                    $section->update(['main_teacher_id' => $mainTeacher->id]);
+                }
 
                 $this->seedSchedules($section, $subject->id, $period, $professors, $classrooms, $sectionIndex);
 
