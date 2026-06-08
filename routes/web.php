@@ -167,8 +167,8 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
 
 });
 
+
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
-    // Admin Attendance
     Route::get('attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
     Route::get('sections/{section}/attendance', [AdminAttendanceController::class, 'sectionIndex'])->name('sections.attendance.index');
     Route::post('sections/{section}/attendance/sessions', [AdminAttendanceController::class, 'storeSession'])->name('sections.attendance.sessions.store');
