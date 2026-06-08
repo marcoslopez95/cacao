@@ -62,12 +62,12 @@ jobs:
 #        run: ./vendor/bin/pest --coverage --bail
 #        env:
 #          DB_HOST: 127.0.0.1
-        # Genera coverage/clover.xml (configurado en phpunit.xml)
-        # --bail detiene en el primer fallo
+#        # Genera coverage/clover.xml (configurado en phpunit.xml)
+#        # --bail detiene en el primer fallo
 
       # ── Node + cobertura ─────────────────────────────────────────────────────
 
-      - name: Setup pnpm 9
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 9
