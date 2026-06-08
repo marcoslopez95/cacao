@@ -44,3 +44,12 @@ wayfinder: ## Regenera los tipos TypeScript de Wayfinder
 
 test: ## Corre los tests con Pest
 	$(SAIL) artisan test --compact
+
+sonar: ## Analiza con SonarQube local (requiere SONAR_TOKEN=xxx make sonar)
+	$(SAIL) bin pest --coverage
+	LARAVEL_BYPASS_ENV_CHECK=1 pnpm test:coverage
+	docker run --rm --network=host \
+		-v "$(PWD):/usr/src" \
+		sonarsource/sonar-scanner-cli \
+		-Dsonar.host.url=http://localhost:9000 \
+		-Dsonar.token=$(SONAR_TOKEN)
