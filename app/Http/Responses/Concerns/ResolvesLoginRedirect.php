@@ -18,9 +18,10 @@ trait ResolvesLoginRedirect
 
             if ($targetTeam) {
                 $user->switchTeam($targetTeam);
-            }
+                URL::defaults(['current_team' => $targetTeam->slug]);
 
-            return '/admin/dashboard';
+                return "/{$targetTeam->slug}".Fortify::redirects('login');
+            }
         }
 
         $team = $user?->currentTeam ?? $user?->personalTeam();
