@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
-import Button from '@/components/UI/AppButton.vue';
 import TextLink from '@/components/TextLink.vue';
+import Button from '@/components/UI/AppButton.vue';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
 

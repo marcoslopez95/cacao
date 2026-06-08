@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { UserFormData } from '@/types/userForm'
-import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppToggleCard from '@/components/UI/AppToggleCard.vue'
+import type { UserFormCatalogData } from '@/types/userEdit'
+import type { UserFormData } from '@/types/userForm'
 
-const props = defineProps<{
+defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
     catalogData: UserFormCatalogData

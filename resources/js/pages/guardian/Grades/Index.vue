@@ -8,7 +8,7 @@ type Props = {
     student_name: string
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 defineOptions({
     layout: {
@@ -20,12 +20,18 @@ defineOptions({
 })
 
 function passedColor(passed: boolean | null): string {
-    if (passed === null) return 'color:var(--text-muted)'
+    if (passed === null) {
+return 'color:var(--text-muted)'
+}
+
     return passed ? 'color:#27ae60' : 'color:#c0392b'
 }
 
 function passedLabel(passed: boolean | null): string {
-    if (passed === null) return 'Sin nota definitiva'
+    if (passed === null) {
+return 'Sin nota definitiva'
+}
+
     return passed ? 'Aprobado' : 'Reprobado'
 }
 

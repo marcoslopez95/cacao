@@ -2,11 +2,11 @@
 import { Form } from '@inertiajs/vue3';
 import { ref, useTemplateRef } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
+import Modal from '@/components/feedback/Modal.vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import Button from '@/components/UI/AppButton.vue';
-import Modal from '@/components/feedback/Modal.vue';
 
 const passwordInput = useTemplateRef<InstanceType<typeof PasswordInput>>('passwordInput');
 const showModal = ref(false);

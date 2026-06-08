@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
 import type { ProfessorDashboardProps, TodaySchedule } from '@/types/professor-dashboard'
 
 const page = usePage()
 const userName = computed(() => {
     const name: string = (page.props.auth as { user?: { name?: string } })?.user?.name ?? ''
+
     return name ? name.split(' ')[0] : ''
 })
 
@@ -18,6 +19,7 @@ function formatTime(time: string): string {
     const m = parts[1] ?? '00'
     const ampm = h >= 12 ? 'pm' : 'am'
     const h12 = h % 12 === 0 ? 12 : h % 12
+
     return `${h12}:${m} ${ampm}`
 }
 

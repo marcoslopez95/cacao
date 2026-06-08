@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { ScheduleCollection } from '@/types/scheduling'
 import type { Conflict } from '@/composables/scheduling/useScheduleLayout'
 import { DAY_ABBRS, DAY_KEYS } from '@/composables/scheduling/useScheduleLayout'
+import type { ScheduleCollection } from '@/types/scheduling'
 
 const props = defineProps<{
     schedules: ScheduleCollection

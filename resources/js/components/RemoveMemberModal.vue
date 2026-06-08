@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import Button from '@/components/UI/AppButton.vue';
 import Modal from '@/components/feedback/Modal.vue';
+import Button from '@/components/UI/AppButton.vue';
 import { destroy as destroyMember } from '@/routes/teams/members';
 import type { Team, TeamMember } from '@/types';
 

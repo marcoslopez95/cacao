@@ -6,8 +6,10 @@ const PALETTE = [
 
 export function enrollmentColor(subjectCode: string): string {
     let hash = 0
+
     for (let i = 0; i < subjectCode.length; i++) {
         hash = ((hash * 31) + subjectCode.charCodeAt(i)) >>> 0
     }
+
     return PALETTE[hash % PALETTE.length]
 }

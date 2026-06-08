@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
     paginator: {
@@ -29,29 +29,52 @@ const to = computed(() =>
 function pageRange(): (number | '…')[] {
     const current = props.paginator.current_page
     const total = props.paginator.last_page
-    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+
+    if (total <= 7) {
+return Array.from({ length: total }, (_, i) => i + 1)
+}
+
     const result: (number | '…')[] = [1]
-    if (current > 4) result.push('…')
+
+    if (current > 4) {
+result.push('…')
+}
+
     const start = Math.max(2, current - 1)
     const end = Math.min(total - 1, current + 1)
-    for (let i = start; i <= end; i++) result.push(i)
-    if (current < total - 3) result.push('…')
+
+    for (let i = start; i <= end; i++) {
+result.push(i)
+}
+
+    if (current < total - 3) {
+result.push('…')
+}
+
     result.push(total)
+
     return result
 }
 
 function activeFilters(): Record<string, string | number> {
     const out: Record<string, string | number> = {}
+
     if (props.filters) {
         for (const [k, v] of Object.entries(props.filters)) {
-            if (v !== undefined && v !== '') out[k] = v
+            if (v !== undefined && v !== '') {
+out[k] = v
+}
         }
     }
+
     return out
 }
 
 function go(page: number): void {
-    if (page < 1 || page > props.paginator.last_page) return
+    if (page < 1 || page > props.paginator.last_page) {
+return
+}
+
     router.get(
         props.routeUrl,
         { ...activeFilters(), per_page: props.paginator.per_page, page },

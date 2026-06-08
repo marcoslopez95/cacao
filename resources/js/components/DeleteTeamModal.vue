@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import Modal from '@/components/feedback/Modal.vue';
 import InputError from '@/components/InputError.vue';
 import Button from '@/components/UI/AppButton.vue';
-import Modal from '@/components/feedback/Modal.vue';
 import { destroy } from '@/routes/teams';
 import type { Team } from '@/types';
 

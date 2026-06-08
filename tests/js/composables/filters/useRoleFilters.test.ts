@@ -1,7 +1,7 @@
-import { ref } from 'vue'
 import { describe, it, expect } from 'vitest'
-import type { Role } from '@/types/security'
+import { ref } from 'vue'
 import { useRoleFilters } from '@/composables/filters/useRoleFilters'
+import type { Role } from '@/types/security'
 
 function makeRole(overrides: Partial<Role> = {}): Role {
     return {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
-import InputError from '@/components/InputError.vue'
+import { ref, watch } from 'vue'
 import Modal from '@/components/feedback/Modal.vue'
+import InputError from '@/components/InputError.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { update } from '@/routes/scheduling/sections/school'
 import type { ProfessorForSection, SchoolSection, SchoolSectionClassroom } from '@/types/scheduling'
 
@@ -33,12 +33,17 @@ function close(v: boolean): void {
 watch(
     () => props.open,
     (opened) => {
-        if (opened) { form.value = makeForm() }
+        if (opened) {
+ form.value = makeForm() 
+}
     },
 )
 
 function submit(): void {
-    if (! props.section) { return }
+    if (! props.section) {
+ return 
+}
+
     form.value.patch(update.url({ section: props.section }), { onSuccess: () => close(false) })
 }
 </script>

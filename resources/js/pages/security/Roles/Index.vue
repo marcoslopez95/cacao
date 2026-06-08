@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Badge from '@/components/UI/AppBadge.vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreateRoleModal from '@/components/security/CreateRoleModal.vue'
 import DeleteRoleModal from '@/components/security/DeleteRoleModal.vue'
 import PermissionsModal from '@/components/security/PermissionsModal.vue'
-import { useRolePermissions } from '@/composables/permissions/useRolePermissions'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { useRoleFilters } from '@/composables/filters/useRoleFilters'
+import { useRolePermissions } from '@/composables/permissions/useRolePermissions'
 import { index } from '@/routes/security/roles'
 import type { Role } from '@/types'
 
@@ -51,14 +51,17 @@ const GROUP_ORDER = ['roles', 'users', 'coordinations']
 
 function permChips(permissions: string[]): { key: string; label: string; count: number }[] {
     const counts: Record<string, number> = {}
+
     for (const p of permissions) {
         const prefix = p.split('.')[0]
         counts[prefix] = (counts[prefix] ?? 0) + 1
     }
+
     const keys = [
         ...GROUP_ORDER.filter(k => counts[k]),
         ...Object.keys(counts).filter(k => !GROUP_ORDER.includes(k)),
     ]
+
     return keys.map(k => ({
         key:   k,
         label: GROUP_LABELS[k] ?? (k.charAt(0).toUpperCase() + k.slice(1)),

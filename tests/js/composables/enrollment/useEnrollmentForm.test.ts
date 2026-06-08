@@ -1,6 +1,8 @@
-import { ref } from 'vue'
+import { useHttp, router } from '@inertiajs/vue3'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { ref } from 'vue'
 import type { Ref } from 'vue'
+import { useEnrollmentForm } from '@/composables/enrollment/useEnrollmentForm'
 import type { BackendEnrollment, EnrollmentSelections } from '@/types/enrollment'
 
 // Override @inertiajs/vue3 mock to include useHttp
@@ -12,6 +14,7 @@ vi.mock('@inertiajs/vue3', () => {
         post: vi.fn(),
         delete: vi.fn(),
     }
+
     return {
         useHttp: vi.fn(() => mockHttpInstance),
         router: {
@@ -67,9 +70,6 @@ vi.mock('@/actions/App/Http/Controllers/Enrollment/EnrollmentController', () => 
         confirm: (enrollmentId: number) => ({ url: `/enrollment/${enrollmentId}/confirm` }),
     },
 }))
-
-import { useEnrollmentForm } from '@/composables/enrollment/useEnrollmentForm'
-import { useHttp, router } from '@inertiajs/vue3'
 
 function makeEnrollment(overrides: Partial<BackendEnrollment> = {}): BackendEnrollment {
     return {

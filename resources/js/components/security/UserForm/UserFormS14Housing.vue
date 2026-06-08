@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { UserFormData } from '@/types/userForm'
-import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
+import type { UserFormCatalogData } from '@/types/userEdit'
+import type { UserFormData } from '@/types/userForm'
 
 const props = defineProps<{
     data: UserFormData
@@ -13,7 +13,11 @@ const props = defineProps<{
 const ratio = computed(() => {
     const people = parseFloat(props.data.peopleHome ?? '')
     const rooms = parseFloat(props.data.rooms ?? '')
-    if (!people || !rooms) return null
+
+    if (!people || !rooms) {
+return null
+}
+
     return (people / rooms).toFixed(1)
 })
 

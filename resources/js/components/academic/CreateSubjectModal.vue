@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
-import InputError from '@/components/InputError.vue'
+import { ref, watch } from 'vue'
 import Modal from '@/components/feedback/Modal.vue'
+import InputError from '@/components/InputError.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { store } from '@/routes/academic/subjects'
 import type { Career, Pensum } from '@/types/academic'
 

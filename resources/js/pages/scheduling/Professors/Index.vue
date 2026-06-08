@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Head, setLayoutProps } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Button from '@/components/UI/AppButton.vue'
-import AppBadge from '@/components/UI/AppBadge.vue'
 import CreateProfessorModal from '@/components/scheduling/CreateProfessorModal.vue'
 import DeleteProfessorModal from '@/components/scheduling/DeleteProfessorModal.vue'
 import EditProfessorModal from '@/components/scheduling/EditProfessorModal.vue'
+import AppBadge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { useProfessorForm } from '@/composables/forms/useProfessorForm'
 import { useProfessorPermissions } from '@/composables/permissions/useProfessorPermissions'
 import { index } from '@/routes/scheduling/professors'
@@ -17,7 +17,7 @@ type Props = {
     can: { create: boolean; update: boolean; delete: boolean }
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
 setLayoutProps({
     breadcrumbs: [

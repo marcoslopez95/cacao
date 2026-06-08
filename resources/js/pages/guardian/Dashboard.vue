@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
+import { computed } from 'vue'
 import type { GuardianDashboardProps, GuardianStudent } from '@/types/guardian-dashboard'
 
 const page = usePage()
 const userName = computed(() => {
     const name: string = (page.props.auth as { user?: { name?: string } })?.user?.name ?? ''
+
     return name ? name.split(' ')[0] : ''
 })
 
@@ -21,14 +22,27 @@ const enrollmentLabel = (status: string | null): string => {
         approved: 'Aprobada',
         rejected: 'Rechazada',
     }
+
     return status ? (labels[status] ?? status) : 'Sin inscripción'
 }
 
 const badgeColor = (status: string | null): string => {
-    if (status === 'approved') return 'var(--color-success, #4ade80)'
-    if (status === 'confirmed') return 'var(--color-success, #4ade80)'
-    if (status === 'rejected') return '#f87171'
-    if (status === 'draft') return '#93c5fd'
+    if (status === 'approved') {
+return 'var(--color-success, #4ade80)'
+}
+
+    if (status === 'confirmed') {
+return 'var(--color-success, #4ade80)'
+}
+
+    if (status === 'rejected') {
+return '#f87171'
+}
+
+    if (status === 'draft') {
+return '#93c5fd'
+}
+
     return 'var(--text-muted)'
 }
 

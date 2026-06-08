@@ -41,7 +41,9 @@ createInertiaApp({
             .use(i18n)
             .use(abilitiesPlugin, ability, { useGlobalProperties: true });
 
-        if (el) app.mount(el);
+        if (el) {
+app.mount(el);
+}
 
         return app;
     },

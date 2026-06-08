@@ -11,6 +11,7 @@ const MON_LABELS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep
 const parsed = computed(() => {
     const parts = props.date.split('-').map(Number) // [y, m, d]
     const dt = new Date(parts[0], parts[1] - 1, parts[2])
+
     return {
         dow: DOW_LABELS[dt.getDay()],
         day: parts[2],

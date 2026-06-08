@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreateLapseModal from '@/components/scheduling/CreateLapseModal.vue'
 import DeleteLapseModal from '@/components/scheduling/DeleteLapseModal.vue'
 import EditLapseModal from '@/components/scheduling/EditLapseModal.vue'
+import Button from '@/components/UI/AppButton.vue'
 import type { Lapse, Period } from '@/types/scheduling'
 
-const props = defineProps<{
+defineProps<{
     period: Period
     canCreate: boolean
     canUpdate: boolean

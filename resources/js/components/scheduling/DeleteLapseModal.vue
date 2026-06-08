@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
-import Modal from '@/components/feedback/Modal.vue'
 import { destroy } from '@/actions/App/Http/Controllers/Scheduling/LapseController'
+import Modal from '@/components/feedback/Modal.vue'
+import Button from '@/components/UI/AppButton.vue'
 import type { Lapse, Period } from '@/types/scheduling'
 
 const props = defineProps<{ open: boolean; period: Period; lapse: Lapse }>()

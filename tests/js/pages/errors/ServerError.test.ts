@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import ServerError from '@/pages/errors/ServerError.vue'
 
 beforeEach(() => {

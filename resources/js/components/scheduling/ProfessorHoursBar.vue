@@ -9,8 +9,14 @@ const props = defineProps<{
 const pct = computed(() => Math.min(100, (props.currentHours / props.limitHours) * 100))
 
 const barColor = computed(() => {
-    if (pct.value >= 100) return 'var(--color-danger, #ef4444)'
-    if (pct.value >= 80)  return 'var(--color-warning, #f59e0b)'
+    if (pct.value >= 100) {
+return 'var(--color-danger, #ef4444)'
+}
+
+    if (pct.value >= 80)  {
+return 'var(--color-warning, #f59e0b)'
+}
+
     return 'var(--color-success, #22c55e)'
 })
 </script>

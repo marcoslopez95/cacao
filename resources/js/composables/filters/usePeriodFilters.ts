@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { index } from '@/routes/scheduling/periods'
 import type { Period } from '@/types/scheduling'
 

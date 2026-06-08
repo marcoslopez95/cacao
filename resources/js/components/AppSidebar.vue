@@ -1,29 +1,29 @@
 <script setup lang="ts">
 import { Link, router, usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
+import { index as guardianDashboard } from '@/actions/App/Http/Controllers/Guardian/DashboardController'
+import { index as professorDashboard } from '@/actions/App/Http/Controllers/Professor/DashboardController'
+import { index as studentDashboard } from '@/actions/App/Http/Controllers/Student/DashboardController'
 import Avatar from '@/components/UI/AppAvatar.vue'
 import Icon from '@/components/UI/AppIcon.vue'
 import Isotipo from '@/components/UI/AppIsotipo.vue'
 import { dashboard, logout as logoutRoute } from '@/routes'
-import { index as rolesIndex } from '@/routes/security/roles'
-import { index as usersIndex } from '@/routes/security/users'
-import { index as coordinationsIndex } from '@/routes/security/coordinations'
 import { index as careerCategoriesIndex } from '@/routes/academic/career-categories'
 import { index as careersIndex } from '@/routes/academic/careers'
 import { index as studentsIndex } from '@/routes/academic/students'
+import { index as enrollmentIndex } from '@/routes/enrollment'
 import { index as buildingsIndex } from '@/routes/infrastructure/buildings'
 import { index as classroomsIndex } from '@/routes/infrastructure/classrooms'
+import { sections as professorAttendanceSections } from '@/routes/professor/attendance'
+import { edit as profileEdit } from '@/routes/profile'
 import { index as periodsIndex } from '@/routes/scheduling/periods'
 import { index as professorsIndex } from '@/routes/scheduling/professors'
-import { index as universitySectionsIndex } from '@/routes/scheduling/sections/university'
-import { index as schoolSectionsIndex } from '@/routes/scheduling/sections/school'
 import { index as schedulesIndex } from '@/routes/scheduling/schedules'
-import { edit as profileEdit } from '@/routes/profile'
-import { index as enrollmentIndex } from '@/routes/enrollment'
-import { index as professorDashboard } from '@/actions/App/Http/Controllers/Professor/DashboardController'
-import { sections as professorAttendanceSections } from '@/routes/professor/attendance'
-import { index as studentDashboard } from '@/actions/App/Http/Controllers/Student/DashboardController'
-import { index as guardianDashboard } from '@/actions/App/Http/Controllers/Guardian/DashboardController'
+import { index as schoolSectionsIndex } from '@/routes/scheduling/sections/school'
+import { index as universitySectionsIndex } from '@/routes/scheduling/sections/university'
+import { index as coordinationsIndex } from '@/routes/security/coordinations'
+import { index as rolesIndex } from '@/routes/security/roles'
+import { index as usersIndex } from '@/routes/security/users'
 
 const page = usePage()
 
@@ -31,10 +31,23 @@ const currentUrl = computed(() => page.url)
 
 const portalRole = computed(() => {
     const roles = page.props.auth?.roles ?? []
-    if (roles.includes('Admin')) return 'admin'
-    if (roles.some((r: string) => ['Profesor', 'Coordinador de Area'].includes(r))) return 'professor'
-    if (roles.includes('Estudiante')) return 'student'
-    if (roles.includes('Representante')) return 'guardian'
+
+    if (roles.includes('Admin')) {
+return 'admin'
+}
+
+    if (roles.some((r: string) => ['Profesor', 'Coordinador de Area'].includes(r))) {
+return 'professor'
+}
+
+    if (roles.includes('Estudiante')) {
+return 'student'
+}
+
+    if (roles.includes('Representante')) {
+return 'guardian'
+}
+
     return 'unknown'
 })
 
@@ -42,9 +55,19 @@ const dashboardUrl = computed(() => {
     if (portalRole.value === 'admin' && page.props.currentTeam) {
         return dashboard(page.props.currentTeam.slug).url
     }
-    if (portalRole.value === 'professor') return professorDashboard.url()
-    if (portalRole.value === 'student') return studentDashboard.url()
-    if (portalRole.value === 'guardian') return guardianDashboard.url()
+
+    if (portalRole.value === 'professor') {
+return professorDashboard.url()
+}
+
+    if (portalRole.value === 'student') {
+return studentDashboard.url()
+}
+
+    if (portalRole.value === 'guardian') {
+return guardianDashboard.url()
+}
+
     return '/'
 })
 
@@ -207,6 +230,7 @@ const user = computed(() => page.props.auth?.user)
 
 const initials = computed(() => {
     const name = user.value?.name ?? ''
+
     return name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
 })
 
@@ -214,6 +238,7 @@ function isActive(href: string): boolean {
     if (href === profileEdit.url()) {
         return currentUrl.value.startsWith('/settings/')
     }
+
     return currentUrl.value === href || currentUrl.value.startsWith(href + '/')
 }
 

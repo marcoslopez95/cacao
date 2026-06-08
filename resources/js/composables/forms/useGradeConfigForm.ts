@@ -1,6 +1,6 @@
 import { useForm } from '@inertiajs/vue3'
 import { store, update } from '@/routes/security/grade-configs'
-import type { GradeConfigFormData, GradeSlotFormData, GradeLetterValueFormData, GradeConfig } from '@/types/grade-config'
+import type { GradeConfigFormData, GradeSlotFormData, GradeConfig } from '@/types/grade-config'
 
 const DEFAULT_SLOTS: GradeSlotFormData[] = [
     { name: 'Primer Parcial', weight: 33.33, sort_order: 1, is_remedial: false },
@@ -37,7 +37,9 @@ export function useGradeConfigForm(existing?: GradeConfig) {
 
     function removeSlot(index: number): void {
         form.slots.splice(index, 1)
-        form.slots.forEach((s, i) => { s.sort_order = i + 1 })
+        form.slots.forEach((s, i) => {
+ s.sort_order = i + 1 
+})
     }
 
     function addLetterValue(): void {

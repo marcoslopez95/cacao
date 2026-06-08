@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import Icon from '@/components/UI/AppIcon.vue';
 import SettingsTabs from '@/components/settings/SettingsTabs.vue';
+import Icon from '@/components/UI/AppIcon.vue';
 import { useAppearance } from '@/composables/useAppearance';
 import { edit } from '@/routes/appearance';
 

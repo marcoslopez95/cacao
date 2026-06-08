@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+
+import AppFormField from '@/components/UI/AppFormField.vue'
+import AppRepeatable from '@/components/UI/AppRepeatable.vue'
+import AppToggle from '@/components/UI/AppToggle.vue'
 import type { UserFormData, GuardianItem } from '@/types/userForm'
 import { UF_KINSHIP } from '@/types/userFormCatalogs'
-import AppFormField from '@/components/UI/AppFormField.vue'
-import AppToggle from '@/components/UI/AppToggle.vue'
-import AppRepeatable from '@/components/UI/AppRepeatable.vue'
 
 const props = defineProps<{
     data: UserFormData

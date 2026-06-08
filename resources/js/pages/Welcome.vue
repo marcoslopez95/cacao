@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Head, Link, usePage } from '@inertiajs/vue3'
-import { login, register, dashboard, logout as logoutRoute } from '@/routes'
+import { router } from '@inertiajs/vue3'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { index as guardianDashboard } from '@/actions/App/Http/Controllers/Guardian/DashboardController'
 import { index as professorDashboard } from '@/actions/App/Http/Controllers/Professor/DashboardController'
 import { index as studentDashboard } from '@/actions/App/Http/Controllers/Student/DashboardController'
-import { index as guardianDashboard } from '@/actions/App/Http/Controllers/Guardian/DashboardController'
-import { router } from '@inertiajs/vue3'
 import { useAppearance } from '@/composables/useAppearance'
+import { login, register, dashboard, logout as logoutRoute } from '@/routes'
 
 withDefaults(defineProps<{
     canRegister?: boolean
@@ -17,12 +17,23 @@ const isAuthenticated = computed(() => !!page.props.auth?.user)
 
 const dashboardUrl = computed(() => {
     const roles = page.props.auth?.roles ?? []
+
     if (roles.includes('Admin') && page.props.currentTeam) {
         return dashboard(page.props.currentTeam.slug).url
     }
-    if (roles.some((r: string) => ['Profesor', 'Coordinador de Area'].includes(r))) return professorDashboard.url()
-    if (roles.includes('Estudiante')) return studentDashboard.url()
-    if (roles.includes('Representante')) return guardianDashboard.url()
+
+    if (roles.some((r: string) => ['Profesor', 'Coordinador de Area'].includes(r))) {
+return professorDashboard.url()
+}
+
+    if (roles.includes('Estudiante')) {
+return studentDashboard.url()
+}
+
+    if (roles.includes('Representante')) {
+return guardianDashboard.url()
+}
+
     return '/'
 })
 
@@ -51,11 +62,6 @@ function cycleAppearance() {
     updateAppearance(cycleOrder[(idx + 1) % cycleOrder.length])
 }
 
-const appearanceIcon: Record<AppearanceVal, string> = {
-    light:  'M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5',
-    dark:   'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8',
-    system: 'M4 6h16M4 12h16M4 18h16',
-}
 const appearanceLabel: Record<AppearanceVal, string> = {
     light: 'Modo claro',
     dark:  'Modo oscuro',

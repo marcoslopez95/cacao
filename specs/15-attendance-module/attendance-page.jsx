@@ -21,6 +21,7 @@ function Sidebar({ open, onClose }) {
       <Icon name={icon} size={15} /> {label}
     </button>
   );
+
   return (
     <aside className={`up-sidebar ${open ? 'open' : ''}`}>
       <div className="up-sidebar-brand">
@@ -63,8 +64,12 @@ function Stat({ tone, icon, value, label }) {
 
 // ---- Today highlight ----
 function TodayCard({ session, onOpen }) {
-  if (!session) return null;
+  if (!session) {
+return null;
+}
+
   const dt = parseDate(session.date);
+
   return (
     <div className="att-today">
       <div className="att-today-date">
@@ -112,10 +117,22 @@ function ProfessorView({ tweaks, onOpenRoll, onCreate }) {
 
   const filtered = useMemoMain(() => {
     return all.filter(s => {
-      if (filter === 'pending') return s.status === 'scheduled';
-      if (filter === 'held')    return s.hasRecord;
-      if (filter === 'special') return s.type !== 'regular' || s.status === 'recovered' || s.status === 'advanced';
-      if (filter === 'noprof')  return s.professorPresent === false;
+      if (filter === 'pending') {
+return s.status === 'scheduled';
+}
+
+      if (filter === 'held')    {
+return s.hasRecord;
+}
+
+      if (filter === 'special') {
+return s.type !== 'regular' || s.status === 'recovered' || s.status === 'advanced';
+}
+
+      if (filter === 'noprof')  {
+return s.professorPresent === false;
+}
+
       return true;
     });
   }, [all, filter]);
@@ -128,6 +145,7 @@ function ProfessorView({ tweaks, onOpenRoll, onCreate }) {
     const pct = totalSlots ? Math.round((totalPresent / totalSlots) * 100) : 0;
     const totalAbsent = Object.values(ABSENCE_TOTALS).reduce((a, b) => a + b, 0);
     const pending = all.filter(s => s.status === 'scheduled').length;
+
     return { dadas: recorded.length, pct, totalAbsent, pending };
   }, [all]);
 
@@ -205,7 +223,9 @@ function ProfessorView({ tweaks, onOpenRoll, onCreate }) {
   );
 
   // setLayout proxies the tweak so the in-page switch and the Tweaks panel stay in sync
-  function setLayout(v) { window.__attSetTweak && window.__attSetTweak('listLayout', v); }
+  function setLayout(v) {
+ window.__attSetTweak && window.__attSetTweak('listLayout', v); 
+}
 }
 
 function SectionBanner() {

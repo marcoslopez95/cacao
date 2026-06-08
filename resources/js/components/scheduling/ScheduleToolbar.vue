@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onBeforeUnmount, watch } from 'vue'
+
 import type { ScheduleAvailablePeriod, ScheduleAvailableSection, ScheduleAvailableProfessor } from '@/types/scheduling'
-import { DAY_ABBRS, currentWeekDates } from '@/composables/scheduling/useScheduleLayout'
 
 const props = defineProps<{
     view: 'week' | 'day' | 'list'
@@ -32,8 +32,12 @@ const showFilterPanel = ref(false)
 // Filter panel pending values (applied on "Aplicar")
 const pendingSectionId   = ref<number | null>(props.sectionId)
 const pendingProfessorId = ref<number | null>(props.professorId)
-watch(() => props.sectionId,   (v) => { pendingSectionId.value   = v })
-watch(() => props.professorId, (v) => { pendingProfessorId.value = v })
+watch(() => props.sectionId,   (v) => {
+ pendingSectionId.value   = v 
+})
+watch(() => props.professorId, (v) => {
+ pendingProfessorId.value = v 
+})
 
 // Computed labels
 const activePeriodName  = computed(() => props.periods.find((p) => p.id === props.periodId)?.name ?? null)
@@ -42,7 +46,6 @@ const activeProfName    = computed(() => props.professors.find((p) => p.id === p
 const hasActiveFilters  = computed(() => activePeriodName.value || activeSectionCode.value || activeProfName.value)
 
 // Week range display
-const weekDates   = currentWeekDates()
 const MONTH_NAMES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']
 const weekRange = computed(() => {
     const now = new Date()
@@ -52,6 +55,7 @@ const weekRange = computed(() => {
     const saturday = new Date(monday); saturday.setDate(monday.getDate() + 5)
     const mDay = monday.getDate(); const mMon = MONTH_NAMES[monday.getMonth()]
     const sDay = saturday.getDate(); const sMon = MONTH_NAMES[saturday.getMonth()]
+
     return mMon === sMon
         ? `${mDay}–${sDay} ${sMon} ${monday.getFullYear()}`
         : `${mDay} ${mMon} – ${sDay} ${sMon} ${monday.getFullYear()}`
@@ -84,8 +88,14 @@ function clearAll(): void {
 // Close dropdowns on outside click
 function onDocClick(e: MouseEvent): void {
     const t = e.target as Element
-    if (!t.closest('.period-wrap')) showPeriodDrop.value = false
-    if (!t.closest('.filter-panel-wrap')) showFilterPanel.value = false
+
+    if (!t.closest('.period-wrap')) {
+showPeriodDrop.value = false
+}
+
+    if (!t.closest('.filter-panel-wrap')) {
+showFilterPanel.value = false
+}
 }
 onMounted(()    => document.addEventListener('click', onDocClick))
 onBeforeUnmount(() => document.removeEventListener('click', onDocClick))

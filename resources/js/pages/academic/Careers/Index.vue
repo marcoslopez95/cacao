@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3'
-import { index as pensumsIndex } from '@/routes/academic/pensums'
 import { computed, ref } from 'vue'
-import Badge from '@/components/UI/AppBadge.vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreateCareerModal from '@/components/academic/CreateCareerModal.vue'
 import DeleteCareerModal from '@/components/academic/DeleteCareerModal.vue'
 import EditCareerModal from '@/components/academic/EditCareerModal.vue'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { useCareerPermissions } from '@/composables/permissions/useCareerPermissions'
 import { index } from '@/routes/academic/careers'
+import { index as pensumsIndex } from '@/routes/academic/pensums'
 import type { Career, CareerCategory } from '@/types/academic'
 
 type Props = {

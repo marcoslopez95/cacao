@@ -10,8 +10,14 @@
 const { useState: useStateR, useMemo: useMemoR } = React;
 
 function priorClass(n) {
-  if (n >= 6) return 'danger';
-  if (n >= 3) return 'warn';
+  if (n >= 6) {
+return 'danger';
+}
+
+  if (n >= 3) {
+return 'warn';
+}
+
   return '';
 }
 
@@ -19,7 +25,11 @@ function RollCall({ session, variant = 'toggle', mode = 'prof', showTotals = tru
   // Estado inicial: todos presente (regla — pasar lista parte de presente)
   const [marks, setMarks] = useStateR(() => {
     const m = {};
-    for (const st of ROSTER) m[st.enrollmentDetailId] = 'present';
+
+    for (const st of ROSTER) {
+m[st.enrollmentDetailId] = 'present';
+}
+
     return m;
   });
   const [query, setQuery] = useStateR('');
@@ -27,21 +37,43 @@ function RollCall({ session, variant = 'toggle', mode = 'prof', showTotals = tru
 
   const set = (eid, status) => setMarks(prev => ({ ...prev, [eid]: status }));
   const toggle = (eid) => setMarks(prev => ({ ...prev, [eid]: prev[eid] === 'absent' ? 'present' : 'absent' }));
-  const allPresent = () => { const m = {}; for (const st of ROSTER) m[st.enrollmentDetailId] = 'present'; setMarks(m); };
-  const allAbsent  = () => { const m = {}; for (const st of ROSTER) m[st.enrollmentDetailId] = 'absent';  setMarks(m); };
+  const allPresent = () => {
+ const m = {};
+
+ for (const st of ROSTER) {
+m[st.enrollmentDetailId] = 'present';
+}
+
+ setMarks(m); 
+};
+  const allAbsent  = () => {
+ const m = {};
+
+ for (const st of ROSTER) {
+m[st.enrollmentDetailId] = 'absent';
+}
+
+  setMarks(m); 
+};
 
   const present = Object.values(marks).filter(v => v === 'present').length;
   const absent  = ROSTER.length - present;
 
   const filtered = useMemoR(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return ROSTER;
+
+    if (!q) {
+return ROSTER;
+}
+
     return ROSTER.filter(s => s.name.toLowerCase().includes(q) || s.code.toLowerCase().includes(q));
   }, [query]);
 
   const handleSave = () => {
     setSaved(true);
-    setTimeout(() => { onSave && onSave(marks, mode); }, 900);
+    setTimeout(() => {
+ onSave && onSave(marks, mode); 
+}, 900);
   };
 
   const isAdmin = mode === 'admin';
@@ -134,7 +166,11 @@ function RollCall({ session, variant = 'toggle', mode = 'prof', showTotals = tru
 // ---- Chip de inasistencias previas ----
 function PriorChip({ eid }) {
   const n = ABSENCE_TOTALS[eid] || 0;
-  if (n === 0) return <span className="rc-prior">sin faltas</span>;
+
+  if (n === 0) {
+return <span className="rc-prior">sin faltas</span>;
+}
+
   return (
     <span className={`rc-prior ${priorClass(n)}`}>
       <Icon name="alert" size={9} /> {n} falta{n !== 1 ? 's' : ''} previas
@@ -179,6 +215,7 @@ function FastList({ roster, marks, toggle, showTotals }) {
     <div className="att-rc-fastlist">
       {roster.map((st, i) => {
         const absent = marks[st.enrollmentDetailId] === 'absent';
+
         return (
           <div className={`att-rc-fastrow ${absent ? 'absent' : ''}`} key={st.enrollmentDetailId}
                onClick={() => toggle(st.enrollmentDetailId)}>
@@ -208,6 +245,7 @@ function TileGrid({ roster, marks, toggle, showTotals }) {
       {roster.map((st) => {
         const absent = marks[st.enrollmentDetailId] === 'absent';
         const prior = ABSENCE_TOTALS[st.enrollmentDetailId] || 0;
+
         return (
           <div className={`att-rc-tile ${absent ? 'absent' : ''}`} key={st.enrollmentDetailId}
                onClick={() => toggle(st.enrollmentDetailId)}>

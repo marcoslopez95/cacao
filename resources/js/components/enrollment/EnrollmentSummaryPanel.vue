@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import AppIcon from '@/components/UI/AppIcon.vue'
 import EnrollmentMiniGrid from '@/components/enrollment/EnrollmentMiniGrid.vue'
-import { enrollmentColor } from '@/utils/enrollmentColor'
+import AppIcon from '@/components/UI/AppIcon.vue'
 import type {
     EnrollmentSummary,
     EnrollmentRules,
@@ -9,6 +8,7 @@ import type {
     EnrollmentSubject,
     EnrollmentGhostCandidate,
 } from '@/types/enrollment'
+import { enrollmentColor } from '@/utils/enrollmentColor'
 
 const props = defineProps<{
     summary: EnrollmentSummary

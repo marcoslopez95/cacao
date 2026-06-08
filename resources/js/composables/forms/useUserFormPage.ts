@@ -1,7 +1,7 @@
 import { computed, reactive, ref, watch } from 'vue'
+import type { UserFormData } from '@/types/userForm'
 import type { RoleKey, TabDef } from '@/types/userFormCatalogs'
 import { UF_SECTIONS, UF_TABS } from '@/types/userFormCatalogs'
-import type { UserFormData } from '@/types/userForm'
 
 export type SectionStatus = 'empty' | 'partial' | 'complete' | 'editing'
 type AutosaveStatus = 'idle' | 'saving' | 'saved'
@@ -13,7 +13,9 @@ export interface CompletionResult {
 }
 
 function computeCompletion(data: UserFormData, role: RoleKey | ''): CompletionResult {
-    if (!role) return { pct: 0, sectionsComplete: new Set(), sectionsPartial: new Set() }
+    if (!role) {
+return { pct: 0, sectionsComplete: new Set(), sectionsPartial: new Set() }
+}
 
     const checks: Record<number, string[] | (() => boolean)> = {
         1:  ['firstName', 'lastName', 'docNumber', 'birthDate', 'nationality', 'phone1'],
@@ -46,10 +48,14 @@ function computeCompletion(data: UserFormData, role: RoleKey | ''): CompletionRe
 
     for (const sec of sectionsToCheck) {
         const check = checks[sec]
-        if (!check) continue
+
+        if (!check) {
+continue
+}
 
         if (typeof check === 'function') {
             total++
+
             if (check()) {
                 done++
                 sectionsComplete.add(sec)
@@ -57,13 +63,16 @@ function computeCompletion(data: UserFormData, role: RoleKey | ''): CompletionRe
         } else {
             total += check.length
             let secDone = 0
+
             for (const f of check) {
                 const val = (data as Record<string, unknown>)[f]
+
                 if (val != null && val !== '') {
                     done++
                     secDone++
                 }
             }
+
             if (secDone === check.length) {
                 sectionsComplete.add(sec)
             } else if (secDone > 0) {
@@ -132,9 +141,18 @@ export function useUserFormPage() {
     }
 
     function statusFor(n: number): SectionStatus {
-        if (editingSections.value.has(n)) return 'editing'
-        if (completion.value.sectionsComplete.has(n)) return 'complete'
-        if (completion.value.sectionsPartial.has(n)) return 'partial'
+        if (editingSections.value.has(n)) {
+return 'editing'
+}
+
+        if (completion.value.sectionsComplete.has(n)) {
+return 'complete'
+}
+
+        if (completion.value.sectionsPartial.has(n)) {
+return 'partial'
+}
+
         return 'empty'
     }
 
@@ -147,7 +165,9 @@ export function useUserFormPage() {
             .map(n => document.getElementById(`sec-${n}`))
             .filter((el): el is HTMLElement => el !== null)
 
-        if (!els.length) return () => {}
+        if (!els.length) {
+return () => {}
+}
 
         const obs = new IntersectionObserver(
             entries => {
@@ -158,6 +178,7 @@ export function useUserFormPage() {
                             a.target.getBoundingClientRect().top -
                             b.target.getBoundingClientRect().top,
                     )
+
                 if (visible.length) {
                     activeSection.value = parseInt(visible[0].target.id.replace('sec-', ''))
                 }
@@ -166,6 +187,7 @@ export function useUserFormPage() {
         )
 
         els.forEach(el => obs.observe(el))
+
         return () => obs.disconnect()
     }
 
@@ -177,7 +199,10 @@ export function useUserFormPage() {
     watch(
         formData,
         () => {
-            if (autosaveTimer) clearTimeout(autosaveTimer)
+            if (autosaveTimer) {
+clearTimeout(autosaveTimer)
+}
+
             autosave.value = { status: 'saving', when: null }
             autosaveTimer = setTimeout(() => {
                 autosave.value = { status: 'saved', when: new Date() }

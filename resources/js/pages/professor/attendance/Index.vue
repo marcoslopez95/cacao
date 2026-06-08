@@ -1,17 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { router, setLayoutProps } from '@inertiajs/vue3'
-import type { AttendanceSectionContext, AttendanceRosterEntry, ClassSession } from '@/types/attendance'
-import AppIcon from '@/components/UI/AppIcon.vue'
+import { computed, ref } from 'vue'
+import { sheet } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
 import AttSectionBanner from '@/components/attendance/AttSectionBanner.vue'
 import AttSessionCard from '@/components/attendance/AttSessionCard.vue'
 import AttStatusPill from '@/components/attendance/AttStatusPill.vue'
-import AttTypePill from '@/components/attendance/AttTypePill.vue'
-import AttMiniBar from '@/components/attendance/AttMiniBar.vue'
 import AttTotalsPanel from '@/components/attendance/AttTotalsPanel.vue'
-import { sheet } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
-import { storeSession } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
+import AttTypePill from '@/components/attendance/AttTypePill.vue'
+import AppIcon from '@/components/UI/AppIcon.vue'
 import { useClassSessionForm } from '@/composables/forms/useClassSessionForm'
+import type { AttendanceSectionContext, AttendanceRosterEntry, ClassSession } from '@/types/attendance'
 
 type Props = {
     section: AttendanceSectionContext
@@ -38,6 +36,7 @@ const todayDate = computed(() => {
     const y = TODAY.getFullYear()
     const m = String(TODAY.getMonth() + 1).padStart(2, '0')
     const d = String(TODAY.getDate()).padStart(2, '0')
+
     return `${y}-${m}-${d}`
 })
 
@@ -46,27 +45,30 @@ const MON_ES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', '
 
 function parseDateLocal(iso: string): Date {
     const [y, m, d] = iso.split('-').map(Number)
-    return new Date(y, m - 1, d)
-}
 
-function fmtDate(iso: string): string {
-    const dt = parseDateLocal(iso)
-    return `${dt.getDate()} de ${MON_ES[dt.getMonth()]}`
+    return new Date(y, m - 1, d)
 }
 
 // ---- Today session ----
 const todaySession = computed(() => {
     const scheduled = props.sessions.filter((s) => s.status === 'scheduled')
+
     return scheduled.find((s) => s.heldAt === todayDate.value) ?? scheduled[0] ?? null
 })
 
 const todayDt = computed(() => {
-    if (!todaySession.value?.heldAt) { return null }
+    if (!todaySession.value?.heldAt) {
+ return null 
+}
+
     return parseDateLocal(todaySession.value.heldAt)
 })
 
 function goToTodaySheet(): void {
-    if (!todaySession.value) { return }
+    if (!todaySession.value) {
+ return 
+}
+
     router.visit(
         sheet.url({ section: props.section.id, classSession: todaySession.value.id }),
     )
@@ -80,6 +82,7 @@ const stats = computed(() => {
     const pct = totalSlots ? Math.round((totalPresent / totalSlots) * 100) : 0
     const totalAbsent = props.sessions.reduce((a, s) => a + s.absent, 0)
     const pending = props.sessions.filter((s) => s.status === 'scheduled').length
+
     return { dadas: recorded.length, pct, totalAbsent, pending }
 })
 
@@ -102,11 +105,24 @@ const FILTERS: { key: FilterKey; label: string; dot?: string }[] = [
 
 const filteredSessions = computed(() => {
     const f = activeFilter.value
+
     return props.sessions.filter((s) => {
-        if (f === 'pending') { return s.status === 'scheduled' }
-        if (f === 'held')    { return s.hasRecord }
-        if (f === 'special') { return s.type !== 'regular' || s.status === 'recovered' || s.status === 'advanced' }
-        if (f === 'noprof')  { return s.professorPresent === false }
+        if (f === 'pending') {
+ return s.status === 'scheduled' 
+}
+
+        if (f === 'held')    {
+ return s.hasRecord 
+}
+
+        if (f === 'special') {
+ return s.type !== 'regular' || s.status === 'recovered' || s.status === 'advanced' 
+}
+
+        if (f === 'noprof')  {
+ return s.professorPresent === false 
+}
+
         return true
     })
 })
@@ -116,6 +132,7 @@ function weekKey(iso: string): string {
     const dt = parseDateLocal(iso)
     const onejan = new Date(dt.getFullYear(), 0, 1)
     const week = Math.ceil((((dt.getTime() - onejan.getTime()) / 86400000) + onejan.getDay() + 1) / 7)
+
     return `${dt.getFullYear()}-W${week}`
 }
 
@@ -124,9 +141,14 @@ function weekLabel(sessions: ClassSession[]): string {
         .filter((s) => s.heldAt)
         .map((s) => parseDateLocal(s.heldAt!))
         .sort((a, b) => a.getTime() - b.getTime())
-    if (dates.length === 0) { return '—' }
+
+    if (dates.length === 0) {
+ return '—' 
+}
+
     const a = dates[0]
     const b = dates[dates.length - 1]
+
     return `${a.getDate()} ${MON_ES[a.getMonth()]} – ${b.getDate()} ${MON_ES[b.getMonth()]}`
 }
 
@@ -134,29 +156,54 @@ const agendaGroups = computed(() => {
     const asc = [...filteredSessions.value].sort((a, b) => {
         const ka = a.heldAt ?? ''
         const kb = b.heldAt ?? ''
+
         return kb.localeCompare(ka)
     })
     const groups: { key: string; items: ClassSession[] }[] = []
     const map: Record<string, { key: string; items: ClassSession[] }> = {}
+
     for (const s of asc) {
         const k = s.heldAt ? weekKey(s.heldAt) : 'no-date'
-        if (!map[k]) { map[k] = { key: k, items: [] }; groups.push(map[k]) }
+
+        if (!map[k]) {
+ map[k] = { key: k, items: [] }; groups.push(map[k]) 
+}
+
         map[k].items.push(s)
     }
+
     return groups
 })
 
 function railColor(s: ClassSession): string {
-    if (s.status === 'held')      { return 'var(--success)' }
-    if (s.status === 'scheduled') { return s.heldAt === todayDate.value ? 'var(--accent)' : 'var(--border-strong)' }
-    if (s.status === 'cancelled') { return 'var(--danger)' }
-    if (s.status === 'recovered') { return 'var(--text-muted)' }
-    if (s.status === 'advanced')  { return 'var(--info)' }
+    if (s.status === 'held')      {
+ return 'var(--success)' 
+}
+
+    if (s.status === 'scheduled') {
+ return s.heldAt === todayDate.value ? 'var(--accent)' : 'var(--border-strong)' 
+}
+
+    if (s.status === 'cancelled') {
+ return 'var(--danger)' 
+}
+
+    if (s.status === 'recovered') {
+ return 'var(--text-muted)' 
+}
+
+    if (s.status === 'advanced')  {
+ return 'var(--info)' 
+}
+
     return 'var(--border-strong)'
 }
 
 function goToSheet(s: ClassSession): void {
-    if (!s.hasRecord && s.status !== 'scheduled' && s.status !== 'advanced') { return }
+    if (!s.hasRecord && s.status !== 'scheduled' && s.status !== 'advanced') {
+ return 
+}
+
     router.visit(sheet.url({ section: props.section.id, classSession: s.id }))
 }
 
@@ -196,11 +243,13 @@ function submitNewSession(): void {
 // ---- Table date helpers ----
 function tableDateLabel(iso: string): string {
     const dt = parseDateLocal(iso)
+
     return `${dt.getDate()}/${dt.getMonth() + 1}/${dt.getFullYear()}`
 }
 
 function tableDowLabel(iso: string): string {
     const dt = parseDateLocal(iso)
+
     return DOW_ES[dt.getDay()]
 }
 </script>

@@ -38,6 +38,7 @@ describe('enrollmentColor', () => {
 
     it('always returns a hex color string starting with #', () => {
         const codes = ['MAT101', 'FIS201', 'QUI301', 'EST001']
+
         for (const code of codes) {
             expect(enrollmentColor(code)).toMatch(/^#[0-9A-Fa-f]{6}$/)
         }

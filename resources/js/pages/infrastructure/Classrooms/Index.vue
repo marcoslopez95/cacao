@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Head, setLayoutProps } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Badge from '@/components/UI/AppBadge.vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreateClassroomModal from '@/components/infrastructure/CreateClassroomModal.vue'
 import DeleteClassroomModal from '@/components/infrastructure/DeleteClassroomModal.vue'
 import EditClassroomModal from '@/components/infrastructure/EditClassroomModal.vue'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { useClassroomFilters } from '@/composables/filters/useClassroomFilters'
 import { useClassroomPermissions } from '@/composables/permissions/useClassroomPermissions'
 import type { Building, Classroom } from '@/types/infrastructure'

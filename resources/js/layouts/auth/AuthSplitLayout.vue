@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
-import { home } from '@/routes'
+import { computed } from 'vue'
 import { useAppearance } from '@/composables/useAppearance'
+import { home } from '@/routes'
 
 defineProps<{
     title?: string

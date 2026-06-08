@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Head, setLayoutProps } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreatePeriodModal from '@/components/scheduling/CreatePeriodModal.vue'
 import DeletePeriodModal from '@/components/scheduling/DeletePeriodModal.vue'
 import EditPeriodModal from '@/components/scheduling/EditPeriodModal.vue'
 import LapsesPanel from '@/components/scheduling/LapsesPanel.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { usePeriodFilters } from '@/composables/filters/usePeriodFilters'
 import { usePeriodForm } from '@/composables/forms/usePeriodForm'
 import { usePeriodPermissions } from '@/composables/permissions/usePeriodPermissions'

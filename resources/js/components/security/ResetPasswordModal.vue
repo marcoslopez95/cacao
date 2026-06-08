@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Button from '@/components/UI/AppButton.vue'
 import Modal from '@/components/feedback/Modal.vue'
 import InputError from '@/components/InputError.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { resetPassword } from '@/routes/security/users'
 import type { UserRow } from '@/types'
 
-const props = defineProps<{
+defineProps<{
     open: boolean
     user: UserRow
 }>()
@@ -18,6 +18,7 @@ const passwordMode = ref<'link' | 'manual' | 'random'>('link')
 
 function close(v: boolean): void {
     emit('update:open', v)
+
     if (!v) {
         formKey.value++
         passwordMode.value = 'link'

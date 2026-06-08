@@ -1,5 +1,5 @@
-import { computed, ref } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { computed, ref } from 'vue'
 import { index } from '@/routes/academic/students'
 import type { StudentFilters, StudentLevel } from '@/types/student'
 
@@ -56,11 +56,25 @@ export function useStudentFilters(initial: StudentFilters, perPage: number) {
         sectionLetters.value = []
         quickView.value      = key
 
-        if (key === 'pending')               enrollStatuses.value = ['draft', 'none']
-        if (key === 'newcomers' || key === 'year_1' || key === 'grade_1') academicYears.value = [1]
-        if (key === 'grade_6')               academicYears.value  = [6]
-        if (key === 'year_5')                academicYears.value  = [5]
-        if (key === 'enrolled')              enrollStatuses.value = ['confirmed', 'approved', 'draft']
+        if (key === 'pending')               {
+enrollStatuses.value = ['draft', 'none']
+}
+
+        if (key === 'newcomers' || key === 'year_1' || key === 'grade_1') {
+academicYears.value = [1]
+}
+
+        if (key === 'grade_6')               {
+academicYears.value  = [6]
+}
+
+        if (key === 'year_5')                {
+academicYears.value  = [5]
+}
+
+        if (key === 'enrolled')              {
+enrollStatuses.value = ['confirmed', 'approved', 'draft']
+}
         // 'no_guardian' — no frontend filter available; backend handles count but we can't filter locally
 
         applyFilters({

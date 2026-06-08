@@ -12,7 +12,10 @@ const emit = defineEmits<{
 }>()
 
 const initials = computed(() => {
-    if (!props.name) return ''
+    if (!props.name) {
+return ''
+}
+
     return props.name
         .split(' ')
         .slice(0, 2)

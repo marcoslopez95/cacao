@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import Modal from '@/components/feedback/Modal.vue';
 import InputError from '@/components/InputError.vue';
 import Button from '@/components/UI/AppButton.vue';
-import Modal from '@/components/feedback/Modal.vue';
 import { store as storeInvitation } from '@/routes/teams/invitations';
 import type { RoleOption, Team } from '@/types';
 

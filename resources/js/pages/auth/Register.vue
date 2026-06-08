@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
 import InputError from '@/components/InputError.vue'
 import PasswordInput from '@/components/PasswordInput.vue'
 import TextLink from '@/components/TextLink.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { login } from '@/routes'
 import { store } from '@/routes/register'
 
@@ -22,13 +22,32 @@ defineProps<{
 }>()
 
 function scorePassword(pw: string): number {
-    if (!pw) { return 0; }
+    if (!pw) {
+ return 0; 
+}
+
     let s = 0
-    if (pw.length >= 8) { s++; }
-    if (pw.length >= 12) { s++; }
-    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) { s++; }
-    if (/\d/.test(pw)) { s++; }
-    if (/[^A-Za-z0-9]/.test(pw)) { s++; }
+
+    if (pw.length >= 8) {
+ s++; 
+}
+
+    if (pw.length >= 12) {
+ s++; 
+}
+
+    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) {
+ s++; 
+}
+
+    if (/\d/.test(pw)) {
+ s++; 
+}
+
+    if (/[^A-Za-z0-9]/.test(pw)) {
+ s++; 
+}
+
     return Math.min(s, 4)
 }
 </script>

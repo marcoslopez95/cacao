@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+
 import type { TabDef } from '@/types/userFormCatalogs'
 
 const props = defineProps<{
@@ -15,6 +15,7 @@ function tabState(tb: TabDef): { complete: boolean; hasPartial: boolean } {
     const hasPartial = !complete && tb.sections.some(
         n => props.completion.sectionsComplete.has(n) || props.completion.sectionsPartial.has(n),
     )
+
     return { complete, hasPartial }
 }
 

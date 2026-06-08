@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
 import { Head, useForm } from '@inertiajs/vue3'
 import { router } from '@inertiajs/vue3'
-import { store } from '@/routes/security/users'
-import { index } from '@/routes/security/users'
-import { UF_ROLES } from '@/types/userFormCatalogs'
-import type { RoleKey } from '@/types/userFormCatalogs'
-import type { UserFormData } from '@/types/userForm'
+import { computed, reactive, ref } from 'vue'
 import UserFormRolePicker from '@/components/security/UserForm/UserFormRolePicker.vue'
-import UserFormSection from '@/components/security/UserForm/UserFormSection.vue'
 import UserFormS01Identity from '@/components/security/UserForm/UserFormS01Identity.vue'
 import UserFormS02Credentials from '@/components/security/UserForm/UserFormS02Credentials.vue'
+import UserFormSection from '@/components/security/UserForm/UserFormSection.vue'
+import { store } from '@/routes/security/users'
+import { index } from '@/routes/security/users'
+import type { UserFormData } from '@/types/userForm'
+import { UF_ROLES } from '@/types/userFormCatalogs'
+import type { RoleKey } from '@/types/userFormCatalogs'
 
 defineOptions({
     layout: {

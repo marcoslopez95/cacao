@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { UserFormData } from '@/types/userForm'
-import { UF_ACADEMIC_STATUSES, UF_STUDY_MODALITIES, UF_SHIFTS, UF_ADMISSION, UF_GRADES } from '@/types/userFormCatalogs'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppPillRadios from '@/components/UI/AppPillRadios.vue'
+import type { UserFormData } from '@/types/userForm'
+import { UF_ACADEMIC_STATUSES, UF_STUDY_MODALITIES, UF_SHIFTS, UF_ADMISSION, UF_GRADES } from '@/types/userFormCatalogs'
 
-const props = defineProps<{
+defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
 }>()

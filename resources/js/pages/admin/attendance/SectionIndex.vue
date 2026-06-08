@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { router, setLayoutProps } from '@inertiajs/vue3'
-import type { AttendanceSectionContext, ClassSession } from '@/types/attendance'
-import AppIcon from '@/components/UI/AppIcon.vue'
+import { computed, ref } from 'vue'
+import { sheet as adminSheet, storeSession as adminStoreSession } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
+import { index as adminIndex } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
 import AttSectionBanner from '@/components/attendance/AttSectionBanner.vue'
 import AttSessionCard from '@/components/attendance/AttSessionCard.vue'
 import AttStatusPill from '@/components/attendance/AttStatusPill.vue'
 import AttTypePill from '@/components/attendance/AttTypePill.vue'
-import { sheet as adminSheet, storeSession as adminStoreSession } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
-import { index as adminIndex } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
+import AppIcon from '@/components/UI/AppIcon.vue'
+import type { AttendanceSectionContext, ClassSession } from '@/types/attendance'
 
 type Props = {
     section: AttendanceSectionContext
@@ -29,6 +29,7 @@ setLayoutProps({
 // Normalize sessions — may come as plain array or ResourceCollection
 const allSessions = computed<ClassSession[]>(() => {
     const s = props.sessions
+
     return Array.isArray(s) ? s : (s as { data: ClassSession[] }).data
 })
 
@@ -38,24 +39,27 @@ const todayDate = computed(() => {
     const y = TODAY.getFullYear()
     const m = String(TODAY.getMonth() + 1).padStart(2, '0')
     const d = String(TODAY.getDate()).padStart(2, '0')
+
     return `${y}-${m}-${d}`
 })
 
-const MON_ES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
 const DOW_ES = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado']
 
 function parseDateLocal(iso: string): Date {
     const [y, m, d] = iso.split('-').map(Number)
+
     return new Date(y, m - 1, d)
 }
 
 function tableDateLabel(iso: string): string {
     const dt = parseDateLocal(iso)
+
     return `${dt.getDate()}/${dt.getMonth() + 1}/${dt.getFullYear()}`
 }
 
 function tableDowLabel(iso: string): string {
     const dt = parseDateLocal(iso)
+
     return DOW_ES[dt.getDay()]
 }
 
@@ -67,6 +71,7 @@ const stats = computed(() => {
     const pct = totalSlots ? Math.round((totalPresent / totalSlots) * 100) : 0
     const totalAbsent = allSessions.value.reduce((a, s) => a + s.absent, 0)
     const pending = allSessions.value.filter((s) => s.status === 'scheduled').length
+
     return { dadas: recorded.length, pct, totalAbsent, pending }
 })
 
@@ -87,18 +92,34 @@ const FILTERS: { key: FilterKey; label: string; dot?: string }[] = [
 
 const filteredSessions = computed(() => {
     const f = activeFilter.value
+
     return allSessions.value.filter((s) => {
-        if (f === 'pending') { return s.status === 'scheduled' }
-        if (f === 'held')    { return s.hasRecord }
-        if (f === 'special') { return s.type !== 'regular' || s.status === 'recovered' || s.status === 'advanced' }
-        if (f === 'noprof')  { return s.professorPresent === false }
+        if (f === 'pending') {
+ return s.status === 'scheduled' 
+}
+
+        if (f === 'held')    {
+ return s.hasRecord 
+}
+
+        if (f === 'special') {
+ return s.type !== 'regular' || s.status === 'recovered' || s.status === 'advanced' 
+}
+
+        if (f === 'noprof')  {
+ return s.professorPresent === false 
+}
+
         return true
     })
 })
 
 // ---- Navigation ----
 function goToSheet(s: ClassSession): void {
-    if (!s.hasRecord && s.status !== 'scheduled' && s.status !== 'advanced') { return }
+    if (!s.hasRecord && s.status !== 'scheduled' && s.status !== 'advanced') {
+ return 
+}
+
     router.visit(adminSheet.url({ section: props.section.id, classSession: s.id }))
 }
 
@@ -133,8 +154,12 @@ function submitNewSession(): void {
             held_at: newDate.value || null,
         },
         {
-            onSuccess: () => { creating.value = false; createErrors.value = {}; showCreateModal.value = false },
-            onError: (e) => { creating.value = false; createErrors.value = e },
+            onSuccess: () => {
+ creating.value = false; createErrors.value = {}; showCreateModal.value = false 
+},
+            onError: (e) => {
+ creating.value = false; createErrors.value = e 
+},
         }
     )
 }

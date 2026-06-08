@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { upsertAttendance } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
 import type { AttendanceMarks } from '@/types/attendance'
 
@@ -21,9 +21,13 @@ export function useAdminAttendanceSheetForm(sectionId: number, sessionId: number
                 onSuccess: () => {
                     processing.value = false
                     saved.value = true
-                    setTimeout(() => { saved.value = false }, 3000)
+                    setTimeout(() => {
+ saved.value = false 
+}, 3000)
                 },
-                onError: (e) => { processing.value = false; errors.value = e },
+                onError: (e) => {
+ processing.value = false; errors.value = e 
+},
             }
         )
     }

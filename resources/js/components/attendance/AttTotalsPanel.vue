@@ -22,8 +22,14 @@ const totalAbsences = computed(() => rows.value.reduce((a, r) => a + r.absences,
 const atRisk = computed(() => rows.value.filter((r) => r.absences >= 6).length)
 
 function riskClass(n: number): 'hi' | 'mid' | 'lo' {
-    if (n >= 6) { return 'hi' }
-    if (n >= 3) { return 'mid' }
+    if (n >= 6) {
+ return 'hi' 
+}
+
+    if (n >= 3) {
+ return 'mid' 
+}
+
     return 'lo'
 }
 </script>

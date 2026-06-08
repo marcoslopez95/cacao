@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { Head, setLayoutProps } from '@inertiajs/vue3'
-import WeeklyGrid from '@/components/scheduling/WeeklyGrid.vue'
-import ScheduleListView from '@/components/scheduling/ScheduleListView.vue'
-import ScheduleClusterPopover from '@/components/scheduling/ScheduleClusterPopover.vue'
-import ScheduleStats from '@/components/scheduling/ScheduleStats.vue'
-import ScheduleLegend from '@/components/scheduling/ScheduleLegend.vue'
-import ScheduleConflictsBanner from '@/components/scheduling/ScheduleConflictsBanner.vue'
-import ScheduleToolbar from '@/components/scheduling/ScheduleToolbar.vue'
+import { computed, ref } from 'vue'
 import CreateScheduleModal from '@/components/scheduling/CreateScheduleModal.vue'
-import EditScheduleModal from '@/components/scheduling/EditScheduleModal.vue'
 import DeleteScheduleModal from '@/components/scheduling/DeleteScheduleModal.vue'
+import EditScheduleModal from '@/components/scheduling/EditScheduleModal.vue'
+import ScheduleClusterPopover from '@/components/scheduling/ScheduleClusterPopover.vue'
+import type { PopoverData } from '@/components/scheduling/ScheduleClusterPopover.vue'
+import ScheduleConflictsBanner from '@/components/scheduling/ScheduleConflictsBanner.vue'
+import ScheduleLegend from '@/components/scheduling/ScheduleLegend.vue'
+import ScheduleListView from '@/components/scheduling/ScheduleListView.vue'
+import ScheduleStats from '@/components/scheduling/ScheduleStats.vue'
+import ScheduleToolbar from '@/components/scheduling/ScheduleToolbar.vue'
+import WeeklyGrid from '@/components/scheduling/WeeklyGrid.vue'
 import { useScheduleFilters } from '@/composables/filters/useScheduleFilters'
 import { useSchedulePermissions } from '@/composables/permissions/useSchedulePermissions'
 import { detectConflicts, todayKey, DAY_KEYS } from '@/composables/scheduling/useScheduleLayout'
@@ -25,7 +26,6 @@ import type {
     ScheduleAvailableSubject,
     ScheduleCollection,
 } from '@/types/scheduling'
-import type { PopoverData } from '@/components/scheduling/ScheduleClusterPopover.vue'
 
 type Props = {
     schedules: ScheduleCollection
@@ -66,6 +66,7 @@ const activeLegendCareerIds = computed((): Set<number> => {
     if (!careerIds.value || careerIds.value.length === 0) {
         return new Set(props.careers.map((c) => c.id))
     }
+
     return new Set(careerIds.value)
 })
 
@@ -80,7 +81,11 @@ function toggleCareer(id: number): void {
 // Text search is the only remaining client-side filter
 const filteredSchedules = computed(() => {
     const q = searchQuery.value.toLowerCase().trim()
-    if (!q) return props.schedules
+
+    if (!q) {
+return props.schedules
+}
+
     return props.schedules.filter(
         (s) =>
             s.subject.name.toLowerCase().includes(q) ||

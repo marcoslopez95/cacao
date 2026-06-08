@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 import { Head } from '@inertiajs/vue3'
+import { ref, onMounted } from 'vue'
 
 const incidentId = ref('')
 const copyLabel = ref('Copiar')
@@ -8,6 +8,7 @@ const retrySpinner = ref(false)
 
 onMounted(() => {
     const stored = sessionStorage.getItem('ep_incident')
+
     if (stored) {
         incidentId.value = stored
     } else {
@@ -25,7 +26,9 @@ function handleRetry(): void {
 async function handleCopy(): Promise<void> {
     await navigator.clipboard.writeText(incidentId.value)
     copyLabel.value = 'Copiado'
-    setTimeout(() => { copyLabel.value = 'Copiar' }, 1600)
+    setTimeout(() => {
+ copyLabel.value = 'Copiar' 
+}, 1600)
 }
 </script>
 

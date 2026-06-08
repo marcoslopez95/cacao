@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import { onUnmounted, watch } from 'vue'
 import { Head, router } from '@inertiajs/vue3'
-import type { UserEditProps } from '@/types/userEdit'
-import { useUserEditForm } from '@/composables/forms/useUserEditForm'
-import { index } from '@/routes/security/users'
+import { onUnmounted, watch } from 'vue'
 import UserFormHeader from '@/components/security/UserForm/UserFormHeader.vue'
-import UserFormTabs from '@/components/security/UserForm/UserFormTabs.vue'
-import UserFormSideNav from '@/components/security/UserForm/UserFormSideNav.vue'
-import UserFormSection from '@/components/security/UserForm/UserFormSection.vue'
 import UserFormS01Identity from '@/components/security/UserForm/UserFormS01Identity.vue'
 import UserFormS02Credentials from '@/components/security/UserForm/UserFormS02Credentials.vue'
 import UserFormS03Address from '@/components/security/UserForm/UserFormS03Address.vue'
@@ -25,6 +19,12 @@ import UserFormS14Housing from '@/components/security/UserForm/UserFormS14Housin
 import UserFormS15Guardians from '@/components/security/UserForm/UserFormS15Guardians.vue'
 import UserFormS16GuardianProfile from '@/components/security/UserForm/UserFormS16GuardianProfile.vue'
 import UserFormS17ProfessorProfile from '@/components/security/UserForm/UserFormS17ProfessorProfile.vue'
+import UserFormSection from '@/components/security/UserForm/UserFormSection.vue'
+import UserFormSideNav from '@/components/security/UserForm/UserFormSideNav.vue'
+import UserFormTabs from '@/components/security/UserForm/UserFormTabs.vue'
+import { useUserEditForm } from '@/composables/forms/useUserEditForm'
+import { index } from '@/routes/security/users'
+import type { UserEditProps } from '@/types/userEdit'
 
 const props = defineProps<UserEditProps>()
 
@@ -67,7 +67,11 @@ watch(
     activeTabDef,
     () => {
         cleanupSpy?.()
-        if (!activeTabDef.value) return
+
+        if (!activeTabDef.value) {
+return
+}
+
         setTimeout(() => {
             cleanupSpy = setupScrollSpy(activeTabDef.value!.sections)
         }, 50)

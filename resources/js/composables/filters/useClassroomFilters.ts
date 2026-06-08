@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { index } from '@/routes/infrastructure/classrooms'
 
 export function useClassroomFilters(initialBuildingId: number | null = null) {

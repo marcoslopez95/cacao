@@ -22,7 +22,9 @@ function close(): void {
 }
 
 function onKey(e: KeyboardEvent): void {
-    if (e.key === 'Escape') close()
+    if (e.key === 'Escape') {
+close()
+}
 }
 
 watch(() => props.open, (val) => {

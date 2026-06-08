@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, toRef } from 'vue'
 import { Head, setLayoutProps } from '@inertiajs/vue3'
 import { useMediaQuery } from '@vueuse/core'
-import AppIcon from '@/components/UI/AppIcon.vue'
-import EnrollmentToolbar from '@/components/enrollment/EnrollmentToolbar.vue'
+import { ref, computed, toRef } from 'vue'
 import EnrollmentMateriaRow from '@/components/enrollment/EnrollmentMateriaRow.vue'
 import EnrollmentSummaryPanel from '@/components/enrollment/EnrollmentSummaryPanel.vue'
-import { useEnrollmentState } from '@/composables/enrollment/useEnrollmentState'
+import EnrollmentToolbar from '@/components/enrollment/EnrollmentToolbar.vue'
+import AppIcon from '@/components/UI/AppIcon.vue'
 import { useEnrollmentFilters } from '@/composables/enrollment/useEnrollmentFilters'
 import { useEnrollmentForm } from '@/composables/enrollment/useEnrollmentForm'
 import { useEnrollmentPermissions } from '@/composables/enrollment/useEnrollmentPermissions'
-import { backendToCatalog } from '@/types/enrollment'
+import { useEnrollmentState } from '@/composables/enrollment/useEnrollmentState'
 import { index as enrollmentIndex } from '@/routes/enrollment'
+import { backendToCatalog } from '@/types/enrollment'
 import type {
     BackendEnrollment,
     BackendEnrollmentSubject,
@@ -65,6 +65,7 @@ const selections = ref<EnrollmentSelections>(
             .filter(s => s.selected_section_id !== null)
             .flatMap(s => {
                 const idx = s.sections.findIndex(sec => sec.id === s.selected_section_id)
+
                 return idx >= 0 ? [[s.code, idx]] : []
             })
     )
@@ -83,13 +84,15 @@ const { summary, creditsPct, creditsStatus, findConflict } =
     useEnrollmentState(
         subjects.value,
         selections,
-        fn => { selections.value = fn(selections.value) },
+        fn => {
+ selections.value = fn(selections.value) 
+},
     )
 
 const enrollmentRef = toRef(props, 'enrollment')
 const { canConfirm, isReadOnly } = useEnrollmentPermissions(enrollmentRef, props.can)
 
-const { addSubject, removeSubject, confirmEnrollment, isLoading, error, clearError } =
+const { addSubject, removeSubject, confirmEnrollment, error, clearError } =
     useEnrollmentForm(enrollmentRef, selections, isReadOnly)
 
 // ---------------------------------------------------------------------------
@@ -98,26 +101,36 @@ const { addSubject, removeSubject, confirmEnrollment, isLoading, error, clearErr
 
 function toggleExpanded(code: string): void {
     const next = new Set(expanded.value)
+
     if (next.has(code)) {
         next.delete(code)
     } else {
         next.add(code)
     }
+
     expanded.value = next
 }
 
 function handleSelect(code: string, sectionIdx: number): void {
-    if (isReadOnly.value) return
+    if (isReadOnly.value) {
+return
+}
+
     const subject = subjects.value.find(s => s.code === code)
     const section = subject?.sections[sectionIdx]
+
     if (! subject?.id || ! section?.id) {
         return
     }
+
     void addSubject(subject.id, section.id, code, sectionIdx)
 }
 
 function handleUnselect(code: string): void {
-    if (isReadOnly.value) return
+    if (isReadOnly.value) {
+return
+}
+
     void removeSubject(code)
 }
 

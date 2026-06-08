@@ -1,6 +1,6 @@
+import { useHttp, router } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 import type { Ref, ComputedRef } from 'vue'
-import { useHttp, router } from '@inertiajs/vue3'
 import EnrollmentController from '@/actions/App/Http/Controllers/Enrollment/EnrollmentController'
 import type { BackendEnrollment, EnrollmentSelections } from '@/types/enrollment'
 
@@ -47,6 +47,7 @@ export function useEnrollmentForm(
         addHttp.post(EnrollmentController.addDetail(enrollment.value.id).url, {
             onSuccess: (response: Record<string, unknown>) => {
                 selections.value = { ...selections.value, [subjectCode]: sectionIdx }
+
                 if (typeof response.id === 'number') {
                     detailIds.value[subjectCode] = response.id
                 }
@@ -63,6 +64,7 @@ export function useEnrollmentForm(
         }
 
         const detailId = detailIds.value[subjectCode]
+
         if (! detailId) {
             return
         }

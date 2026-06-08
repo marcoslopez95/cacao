@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { edit as appearanceEdit } from '@/routes/appearance';
 import { edit as profileEdit } from '@/routes/profile';
 import { edit as securityEdit } from '@/routes/security';
-import { edit as appearanceEdit } from '@/routes/appearance';
 
 const url = computed(() => usePage().url);
 </script>

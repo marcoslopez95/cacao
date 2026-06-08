@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
-import type { StudentDashboardProps, StudentTodaySchedule } from '@/types/student-dashboard'
+import { computed } from 'vue'
 import { index as enrollmentIndex } from '@/routes/enrollment'
+import type { StudentDashboardProps, StudentTodaySchedule } from '@/types/student-dashboard'
 
 const page = usePage()
 const userName = computed(() => {
     const name: string = (page.props.auth as { user?: { name?: string } })?.user?.name ?? ''
+
     return name ? name.split(' ')[0] : ''
 })
 
@@ -16,6 +17,7 @@ const pensumDisplay = computed(() => {
     if (props.uc_pensum === 0) {
         return '—'
     }
+
     return `${props.uc_aprobadas} / ${props.uc_pensum} UC`
 })
 
@@ -26,6 +28,7 @@ function formatTime(time: string): string {
     const m = parts[1] ?? '00'
     const ampm = h >= 12 ? 'pm' : 'am'
     const h12 = h % 12 === 0 ? 12 : h % 12
+
     return `${h12}:${m} ${ampm}`
 }
 

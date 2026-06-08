@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
-import InputError from '@/components/InputError.vue'
+import { computed, ref, watch } from 'vue'
 import Modal from '@/components/feedback/Modal.vue'
+import InputError from '@/components/InputError.vue'
 import ProfessorHoursBar from '@/components/scheduling/ProfessorHoursBar.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { store } from '@/routes/scheduling/schedules'
 import type {
     ScheduleAvailableClassroom,
@@ -63,7 +63,10 @@ const selectedProfessor = computed(() =>
 )
 
 const visibleSections = computed(() => {
-    if (props.activeCareerIds.length === 0) return props.sections
+    if (props.activeCareerIds.length === 0) {
+return props.sections
+}
+
     return props.sections.filter(
         (s) => s.careerId != null && props.activeCareerIds.includes(s.careerId),
     )

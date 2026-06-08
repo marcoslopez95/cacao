@@ -9,16 +9,21 @@ const { useState: useStateP, useMemo: useMemoP } = React;
 // ---- pills ----
 function StatusPill({ status }) {
   const s = SESSION_STATUS[status];
+
   return <span className={`att-pill ${s.tone}`}><span className="pdot" />{s.label}</span>;
 }
 function TypePill({ type }) {
-  if (type === 'regular') return null;
+  if (type === 'regular') {
+return null;
+}
+
   return <span className={`att-pill type ${type}`}>{SESSION_TYPE[type].label}</span>;
 }
 
 // ---- attendance bar ----
 function AttendanceBar({ present, absent }) {
   const total = present + absent || 1;
+
   return (
     <div className="att-bar-wrap">
       <div className="att-bar">
@@ -36,6 +41,7 @@ function AttendanceBar({ present, absent }) {
 // ---- date block ----
 function DateBlock({ iso }) {
   const dt = parseDate(iso);
+
   return (
     <div className="att-card-date">
       <div className="d-dow">{dowShort(iso)}</div>
@@ -47,7 +53,10 @@ function DateBlock({ iso }) {
 
 // ---- linked session note ----
 function LinkedNote({ session }) {
-  if (!session.linked) return null;
+  if (!session.linked) {
+return null;
+}
+
   if (session.type === 'makeup') {
     return (
       <div className="att-link-note">
@@ -56,6 +65,7 @@ function LinkedNote({ session }) {
       </div>
     );
   }
+
   if (session.type === 'advance') {
     return (
       <div className="att-link-note">
@@ -64,6 +74,7 @@ function LinkedNote({ session }) {
       </div>
     );
   }
+
   // regular recovered/advanced referencing its special session
   if (session.status === 'recovered') {
     return (
@@ -73,6 +84,7 @@ function LinkedNote({ session }) {
       </div>
     );
   }
+
   if (session.status === 'advanced') {
     return (
       <div className="att-link-note">
@@ -81,6 +93,7 @@ function LinkedNote({ session }) {
       </div>
     );
   }
+
   return null;
 }
 
@@ -134,11 +147,15 @@ function SessionCard({ session, onOpen }) {
           {recorded ? `${session.present + session.absent} registros` : `${ROSTER.length} estudiantes`}
         </span>
         {pending ? (
-          <button className="att-card-cta" onClick={(e) => { e.stopPropagation(); onOpen(session); }}>
+          <button className="att-card-cta" onClick={(e) => {
+ e.stopPropagation(); onOpen(session); 
+}}>
             Pasar lista <Icon name="arrowRight" size={14} />
           </button>
         ) : recorded ? (
-          <button className="att-card-cta ghost" onClick={(e) => { e.stopPropagation(); onOpen(session); }}>
+          <button className="att-card-cta ghost" onClick={(e) => {
+ e.stopPropagation(); onOpen(session); 
+}}>
             Ver / editar <Icon name="chevronRight" size={14} />
           </button>
         ) : (
@@ -169,6 +186,7 @@ function SessionsTable({ sessions, onOpen }) {
         <tbody>
           {sessions.map(s => {
             const total = s.present + s.absent || 1;
+
             return (
               <tr key={s.id} onClick={() => (s.hasRecord || s.status === 'scheduled') && onOpen(s)}>
                 <td>
@@ -197,9 +215,13 @@ function SessionsTable({ sessions, onOpen }) {
                 </td>
                 <td className="t-right">
                   {s.status === 'scheduled'
-                    ? <button className="att-card-cta" onClick={(e) => { e.stopPropagation(); onOpen(s); }}>Pasar lista <Icon name="arrowRight" size={13} /></button>
+                    ? <button className="att-card-cta" onClick={(e) => {
+ e.stopPropagation(); onOpen(s); 
+}}>Pasar lista <Icon name="arrowRight" size={13} /></button>
                     : s.hasRecord
-                      ? <button className="att-card-cta ghost" onClick={(e) => { e.stopPropagation(); onOpen(s); }}>Ver <Icon name="chevronRight" size={13} /></button>
+                      ? <button className="att-card-cta ghost" onClick={(e) => {
+ e.stopPropagation(); onOpen(s); 
+}}>Ver <Icon name="chevronRight" size={13} /></button>
                       : <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>—</span>}
                 </td>
               </tr>
@@ -218,11 +240,13 @@ function weekKey(iso) {
   const d = parseDate(iso);
   const onejan = new Date(d.getFullYear(), 0, 1);
   const week = Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+
   return `${d.getFullYear()}-W${week}`;
 }
 function weekLabel(sessions) {
   const dates = sessions.map(s => parseDate(s.date)).sort((a, b) => a - b);
   const a = dates[0], b = dates[dates.length - 1];
+
   return `${a.getDate()} ${MESES[a.getMonth()]} – ${b.getDate()} ${MESES[b.getMonth()]}`;
 }
 function SessionsAgenda({ sessions, onOpen }) {
@@ -230,20 +254,41 @@ function SessionsAgenda({ sessions, onOpen }) {
     const asc = sessions.slice().sort((a, b) => b.date.localeCompare(a.date));
     const groups = [];
     const map = {};
+
     for (const s of asc) {
       const k = weekKey(s.date);
-      if (!map[k]) { map[k] = { key: k, items: [] }; groups.push(map[k]); }
+
+      if (!map[k]) {
+ map[k] = { key: k, items: [] }; groups.push(map[k]); 
+}
+
       map[k].items.push(s);
     }
+
     return groups;
   }, [sessions]);
 
   const railColor = (s) => {
-    if (s.status === 'held') return 'var(--success)';
-    if (s.status === 'scheduled') return isToday(s.date) ? 'var(--accent)' : 'var(--border-strong)';
-    if (s.status === 'cancelled') return 'var(--danger)';
-    if (s.status === 'recovered') return 'var(--text-muted)';
-    if (s.status === 'advanced') return 'var(--info)';
+    if (s.status === 'held') {
+return 'var(--success)';
+}
+
+    if (s.status === 'scheduled') {
+return isToday(s.date) ? 'var(--accent)' : 'var(--border-strong)';
+}
+
+    if (s.status === 'cancelled') {
+return 'var(--danger)';
+}
+
+    if (s.status === 'recovered') {
+return 'var(--text-muted)';
+}
+
+    if (s.status === 'advanced') {
+return 'var(--info)';
+}
+
     return 'var(--border-strong)';
   };
 
@@ -254,6 +299,7 @@ function SessionsAgenda({ sessions, onOpen }) {
           <div className="att-agenda-whead">Semana del {weekLabel(g.items)}</div>
           {g.items.map(s => {
             const total = s.present + s.absent || 1;
+
             return (
               <div className={`att-agenda-row ${isToday(s.date) ? 'today' : ''}`} key={s.id}
                    onClick={() => (s.hasRecord || s.status === 'scheduled') && onOpen(s)}>
@@ -282,7 +328,9 @@ function SessionsAgenda({ sessions, onOpen }) {
                       </div>
                     </div>
                   ) : s.status === 'scheduled' ? (
-                    <button className="att-card-cta" onClick={(e) => { e.stopPropagation(); onOpen(s); }}>Pasar lista <Icon name="arrowRight" size={13} /></button>
+                    <button className="att-card-cta" onClick={(e) => {
+ e.stopPropagation(); onOpen(s); 
+}}>Pasar lista <Icon name="arrowRight" size={13} /></button>
                   ) : <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>—</span>}
                 </div>
               </div>

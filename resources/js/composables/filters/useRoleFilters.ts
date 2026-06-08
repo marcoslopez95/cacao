@@ -6,7 +6,11 @@ export function useRoleFilters(roles: () => Role[]) {
 
     const filteredRoles = computed(() => {
         const q = search.value.trim().toLowerCase()
-        if (!q) { return roles() }
+
+        if (!q) {
+ return roles() 
+}
+
         return roles().filter(r => r.name.toLowerCase().includes(q))
     })
 

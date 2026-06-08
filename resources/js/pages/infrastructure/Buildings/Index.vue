@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreateBuildingModal from '@/components/infrastructure/CreateBuildingModal.vue'
 import DeleteBuildingModal from '@/components/infrastructure/DeleteBuildingModal.vue'
 import EditBuildingModal from '@/components/infrastructure/EditBuildingModal.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { useBuildingPermissions } from '@/composables/permissions/useBuildingPermissions'
 import { index } from '@/routes/infrastructure/buildings'
 import type { Building } from '@/types/infrastructure'

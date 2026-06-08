@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
 import Modal from '@/components/feedback/Modal.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { destroy } from '@/routes/security/roles'
 import type { Role } from '@/types'
 

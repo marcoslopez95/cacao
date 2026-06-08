@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { router } from '@inertiajs/vue3'
-import type { ClassSession } from '@/types/attendance'
-import AppIcon from '@/components/UI/AppIcon.vue'
-import AttDateBlock from '@/components/attendance/AttDateBlock.vue'
+import { computed } from 'vue'
+import { sheet } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
 import AttBar from '@/components/attendance/AttBar.vue'
+import AttDateBlock from '@/components/attendance/AttDateBlock.vue'
 import AttStatusPill from '@/components/attendance/AttStatusPill.vue'
 import AttTypePill from '@/components/attendance/AttTypePill.vue'
-import { sheet } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
+import AppIcon from '@/components/UI/AppIcon.vue'
+import type { ClassSession } from '@/types/attendance'
 
 const props = defineProps<{
     session: ClassSession
@@ -22,7 +22,10 @@ const isClickable = computed(
 )
 
 function goToSheet(): void {
-    if (!isClickable.value) { return }
+    if (!isClickable.value) {
+ return 
+}
+
     router.visit(sheet.url({ section: props.session.sectionId, classSession: props.session.id }))
 }
 
@@ -32,17 +35,31 @@ function stopAndGoToSheet(e: Event): void {
 }
 
 const linkedLabel = computed(() => {
-    if (!props.session.linkedSession) { return null }
+    if (!props.session.linkedSession) {
+ return null 
+}
+
     const linked = props.session.linkedSession
     const parts = linked.date.split('-').map(Number)
-    const dt = new Date(parts[0], parts[1] - 1, parts[2])
     const MON = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
     const formatted = `${parts[2]} de ${MON[parts[1] - 1]}`
 
-    if (props.session.type === 'makeup') { return `Recupera la sesión cancelada del ${formatted}` }
-    if (props.session.type === 'advance') { return `Adelanta la clase del ${formatted} · asistencia copiada` }
-    if (props.session.status === 'recovered') { return `Recuperada el ${formatted} (sesión especial)` }
-    if (props.session.status === 'advanced') { return `Dictada por adelantado el ${formatted}` }
+    if (props.session.type === 'makeup') {
+ return `Recupera la sesión cancelada del ${formatted}` 
+}
+
+    if (props.session.type === 'advance') {
+ return `Adelanta la clase del ${formatted} · asistencia copiada` 
+}
+
+    if (props.session.status === 'recovered') {
+ return `Recuperada el ${formatted} (sesión especial)` 
+}
+
+    if (props.session.status === 'advanced') {
+ return `Dictada por adelantado el ${formatted}` 
+}
+
     return null
 })
 </script>

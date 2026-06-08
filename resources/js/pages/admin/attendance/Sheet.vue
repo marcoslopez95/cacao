@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { router, setLayoutProps } from '@inertiajs/vue3'
-import type { AttendanceSheet, AttendanceMarks, AttendanceStatus } from '@/types/attendance'
-import { useAdminAttendanceSheetForm } from '@/composables/forms/useAdminAttendanceSheetForm'
+import { computed, ref } from 'vue'
 import { sectionIndex as adminSectionIndex } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
 import AppIcon from '@/components/UI/AppIcon.vue'
+import { useAdminAttendanceSheetForm } from '@/composables/forms/useAdminAttendanceSheetForm'
+import type { AttendanceSheet, AttendanceMarks, AttendanceStatus } from '@/types/attendance'
 
 // ---- Props ----------------------------------------------------------------
 
@@ -49,13 +49,20 @@ const presentCount = computed(
 )
 const absentCount = computed(() => props.sheet.roster.length - presentCount.value)
 const attendancePct = computed(() => {
-    if (props.sheet.roster.length === 0) { return 100 }
+    if (props.sheet.roster.length === 0) {
+ return 100 
+}
+
     return Math.round((presentCount.value / props.sheet.roster.length) * 100)
 })
 
 const filteredRoster = computed(() => {
     const q = query.value.trim().toLowerCase()
-    if (!q) { return props.sheet.roster }
+
+    if (!q) {
+ return props.sheet.roster 
+}
+
     return props.sheet.roster.filter(
         (st) =>
             st.name.toLowerCase().includes(q) ||
@@ -99,19 +106,29 @@ const DOW_ES = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes',
 function fmtDateLong(iso: string): string {
     const [y, m, d] = iso.split('-').map(Number)
     const dt = new Date(y, m - 1, d)
+
     return `${DOW_ES[dt.getDay()]} ${d} de ${MON_ES[m - 1]} de ${y}`
 }
 
 // ---- PriorChip helper ------------------------------------------------------
 
 function priorClass(n: number): string {
-    if (n >= 6) { return 'danger' }
-    if (n >= 3) { return 'warn' }
+    if (n >= 6) {
+ return 'danger' 
+}
+
+    if (n >= 3) {
+ return 'warn' 
+}
+
     return ''
 }
 
 function priorLabel(n: number): string {
-    if (n === 0) { return 'sin faltas' }
+    if (n === 0) {
+ return 'sin faltas' 
+}
+
     return `${n} falta${n !== 1 ? 's' : ''} previas`
 }
 </script>

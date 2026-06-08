@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, setLayoutProps } from '@inertiajs/vue3'
 import { computed } from 'vue'
-import { index } from '@/routes/security/grade-configs'
 import { useGradeConfigForm } from '@/composables/forms/useGradeConfigForm'
+import { index } from '@/routes/security/grade-configs'
 import type { GradeConfig } from '@/types/grade-config'
 
 type Props = {

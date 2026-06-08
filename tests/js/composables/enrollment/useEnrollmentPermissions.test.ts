@@ -1,8 +1,8 @@
-import { ref } from 'vue'
 import { describe, it, expect, beforeEach } from 'vitest'
+import { ref } from 'vue'
 import type { Ref } from 'vue'
-import type { BackendEnrollment } from '@/types/enrollment'
 import { useEnrollmentPermissions } from '@/composables/enrollment/useEnrollmentPermissions'
+import type { BackendEnrollment } from '@/types/enrollment'
 
 function makeEnrollment(
     status: BackendEnrollment['status'] = 'draft',

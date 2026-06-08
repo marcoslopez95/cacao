@@ -16,7 +16,10 @@ export function useEnrollmentState(
     setSelections: (fn: (prev: EnrollmentSelections) => EnrollmentSelections) => void,
 ) {
     function slotsOverlap(a: EnrollmentSlot, b: EnrollmentSlot): boolean {
-        if (a.day !== b.day) return false
+        if (a.day !== b.day) {
+return false
+}
+
         return toMinutes(a.start) < toMinutes(b.end) && toMinutes(b.start) < toMinutes(a.end)
     }
 
@@ -24,12 +27,22 @@ export function useEnrollmentState(
         candidate: EnrollmentSection,
         ownCode: string,
     ): EnrollmentConflict | null {
-        if (!candidate.slots.length) return null
+        if (!candidate.slots.length) {
+return null
+}
+
         for (const [subjectCode, secIdx] of Object.entries(selections.value)) {
-            if (subjectCode === ownCode) continue
+            if (subjectCode === ownCode) {
+continue
+}
+
             const subject = subjects.find(s => s.code === subjectCode)
             const section = subject?.sections[secIdx]
-            if (!section?.slots.length) continue
+
+            if (!section?.slots.length) {
+continue
+}
+
             for (const a of candidate.slots) {
                 for (const b of section.slots) {
                     if (slotsOverlap(a, b)) {
@@ -38,6 +51,7 @@ export function useEnrollmentState(
                 }
             }
         }
+
         return null
     }
 
@@ -51,16 +65,32 @@ export function useEnrollmentState(
     const summary = computed<EnrollmentSummary>(() => {
         let credits = 0, hours = 0, scheduled = 0, pending = 0
         const items = []
+
         for (const [code, secIdx] of Object.entries(selections.value)) {
             const subject = subjects.find(s => s.code === code)
-            if (!subject) continue
+
+            if (!subject) {
+continue
+}
+
             const section = subject.sections[secIdx]
-            if (!section) continue
+
+            if (!section) {
+continue
+}
+
             credits += subject.credits
             hours += slotHours(section.slots)
-            section.noSchedule ? pending++ : scheduled++
+
+            if (section.noSchedule) {
+ pending++ 
+} else {
+ scheduled++ 
+}
+
             items.push({ subject, section, sectionIdx: secIdx })
         }
+
         return { credits, hours, scheduled, pending, count: items.length, items }
     })
 
@@ -70,8 +100,15 @@ export function useEnrollmentState(
 
     const creditsStatus = computed<'low' | 'ok' | 'high'>(() => {
         const c = summary.value.credits
-        if (c > 24) return 'high'
-        if (c < 12) return 'low'
+
+        if (c > 24) {
+return 'high'
+}
+
+        if (c < 12) {
+return 'low'
+}
+
         return 'ok'
     })
 
@@ -83,6 +120,7 @@ export function useEnrollmentState(
         setSelections(prev => {
             const next = { ...prev }
             delete next[subjectCode]
+
             return next
         })
     }

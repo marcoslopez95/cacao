@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { index } from '@/routes/scheduling/sections/university'
 
 export function useUniversitySectionFilters(

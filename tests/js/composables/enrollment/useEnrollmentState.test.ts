@@ -1,7 +1,7 @@
-import { ref } from 'vue'
 import { describe, it, expect } from 'vitest'
-import type { EnrollmentSubject, EnrollmentSection, EnrollmentSelections } from '@/types/enrollment'
+import { ref } from 'vue'
 import { useEnrollmentState } from '@/composables/enrollment/useEnrollmentState'
+import type { EnrollmentSubject, EnrollmentSection, EnrollmentSelections } from '@/types/enrollment'
 
 const noSlotSection: EnrollmentSection = {
     id: 1,
@@ -137,7 +137,9 @@ describe('useEnrollmentState — creditsStatus', () => {
             sections: [{ ...noSlotSection, id: i + 10, code: String(i) }],
         }))
         const selectionMap: EnrollmentSelections = {}
-        heavySubjects.forEach(s => { selectionMap[s.code] = 0 })
+        heavySubjects.forEach(s => {
+ selectionMap[s.code] = 0 
+})
         const selections = ref<EnrollmentSelections>(selectionMap) // 15 credits total
         const { creditsStatus } = useEnrollmentState(heavySubjects, selections, () => {})
         expect(creditsStatus.value).toBe('ok')
@@ -165,7 +167,9 @@ describe('useEnrollmentState — creditsPct', () => {
             sections: [{ ...noSlotSection, id: i + 20, code: String(i) }],
         }))
         const selectionMap: EnrollmentSelections = {}
-        tooManySubjects.forEach(s => { selectionMap[s.code] = 0 })
+        tooManySubjects.forEach(s => {
+ selectionMap[s.code] = 0 
+})
         const selections = ref<EnrollmentSelections>(selectionMap) // 28 credits
         const { creditsPct } = useEnrollmentState(tooManySubjects, selections, () => {})
         expect(creditsPct.value).toBe(100)
@@ -212,7 +216,9 @@ describe('useEnrollmentState — select / unselect', () => {
     it('select calls setSelections with updated map', () => {
         const selections = ref<EnrollmentSelections>({})
         let capturedFn: ((prev: EnrollmentSelections) => EnrollmentSelections) | null = null
-        const { select } = useEnrollmentState([mat101], selections, fn => { capturedFn = fn })
+        const { select } = useEnrollmentState([mat101], selections, fn => {
+ capturedFn = fn 
+})
         select('MAT101', 0)
         expect(capturedFn).not.toBeNull()
         const result = capturedFn!({})
@@ -222,7 +228,9 @@ describe('useEnrollmentState — select / unselect', () => {
     it('unselect calls setSelections and removes the key', () => {
         const selections = ref<EnrollmentSelections>({ MAT101: 0 })
         let capturedFn: ((prev: EnrollmentSelections) => EnrollmentSelections) | null = null
-        const { unselect } = useEnrollmentState([mat101], selections, fn => { capturedFn = fn })
+        const { unselect } = useEnrollmentState([mat101], selections, fn => {
+ capturedFn = fn 
+})
         unselect('MAT101')
         expect(capturedFn).not.toBeNull()
         const result = capturedFn!({ MAT101: 0 })

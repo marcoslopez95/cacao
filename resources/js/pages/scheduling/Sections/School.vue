@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Head, setLayoutProps } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreateSchoolSectionModal from '@/components/scheduling/CreateSchoolSectionModal.vue'
 import DeleteSchoolSectionModal from '@/components/scheduling/DeleteSchoolSectionModal.vue'
 import EditSchoolSectionModal from '@/components/scheduling/EditSchoolSectionModal.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { useSchoolSectionFilters } from '@/composables/filters/useSchoolSectionFilters'
 import { useSchoolSectionForm } from '@/composables/forms/useSchoolSectionForm'
 import { useSectionPermissions } from '@/composables/permissions/useSectionPermissions'

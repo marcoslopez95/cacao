@@ -5,7 +5,7 @@ import CreateTeamModal from '@/components/CreateTeamModal.vue';
 import { switchMethod } from '@/routes/teams';
 import type { Team } from '@/types';
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         inHeader?: boolean;
     }>(),
@@ -26,8 +26,6 @@ const updateIsMobile = () => {
 const currentTeam = computed(() => page.props.currentTeam);
 const teams = computed(() => page.props.teams ?? []);
 const isOpen = ref(false);
-const createModalOpen = ref(false);
-
 const switchTeam = (team: Team) => {
     const previousTeamSlug = currentTeam.value?.slug;
     isOpen.value = false;

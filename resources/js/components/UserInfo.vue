@@ -9,7 +9,7 @@ type Props = {
     team?: Team | null;
 };
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
     showEmail: false,
     team: null,
 });

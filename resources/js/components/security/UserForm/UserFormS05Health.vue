@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { UserFormData } from '@/types/userForm'
-import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
-import AppToggleCard from '@/components/UI/AppToggleCard.vue'
 import AppTelInput from '@/components/UI/AppTelInput.vue'
+import AppToggleCard from '@/components/UI/AppToggleCard.vue'
+import type { UserFormCatalogData } from '@/types/userEdit'
+import type { UserFormData } from '@/types/userForm'
 
 const props = defineProps<{
     data: UserFormData
@@ -15,7 +15,11 @@ const props = defineProps<{
 const imc = computed(() => {
     const w = parseFloat(props.data.weight ?? '')
     const h = parseFloat(props.data.height ?? '') / 100
-    if (!w || !h) return null
+
+    if (!w || !h) {
+return null
+}
+
     return (w / (h * h)).toFixed(1)
 })
 </script>

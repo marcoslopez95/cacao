@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Head, router, setLayoutProps } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Badge from '@/components/UI/AppBadge.vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreatePensumModal from '@/components/academic/CreatePensumModal.vue'
 import DeletePensumModal from '@/components/academic/DeletePensumModal.vue'
 import EditPensumModal from '@/components/academic/EditPensumModal.vue'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { usePensumForm } from '@/composables/forms/usePensumForm'
 import { usePensumPermissions } from '@/composables/permissions/usePensumPermissions'
 import { index as careersIndex } from '@/routes/academic/careers'

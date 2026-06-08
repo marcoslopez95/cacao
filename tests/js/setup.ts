@@ -1,5 +1,5 @@
-import { ref } from 'vue';
 import { vi } from 'vitest';
+import { ref } from 'vue';
 
 // Mock @inertiajs/vue3
 vi.mock('@inertiajs/vue3', () => ({

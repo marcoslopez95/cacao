@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Head, setLayoutProps } from '@inertiajs/vue3'
 import { computed, ref } from 'vue'
-import Badge from '@/components/UI/AppBadge.vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreateSubjectModal from '@/components/academic/CreateSubjectModal.vue'
 import DeleteSubjectModal from '@/components/academic/DeleteSubjectModal.vue'
 import EditSubjectModal from '@/components/academic/EditSubjectModal.vue'
 import PrerequisitesModal from '@/components/academic/PrerequisitesModal.vue'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { useSubjectPermissions } from '@/composables/permissions/useSubjectPermissions'
 import { index as careersIndex } from '@/routes/academic/careers'
 import { index as pensumsIndex } from '@/routes/academic/pensums'
@@ -49,11 +49,13 @@ const filteredSubjects = computed(() => {
     if (selectedPeriod.value === null) {
         return props.subjects
     }
+
     return props.subjects.filter((s) => s.periodNumber === selectedPeriod.value)
 })
 
 const periods = computed(() => {
     const count = props.pensum.totalPeriods
+
     return Array.from({ length: count }, (_, i) => i + 1)
 })
 

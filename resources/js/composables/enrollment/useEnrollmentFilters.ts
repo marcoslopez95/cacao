@@ -12,16 +12,30 @@ export function useEnrollmentFilters(subjects: EnrollmentSubject[]) {
 
     const filteredSubjects = computed(() =>
         subjects.filter(m => {
-            if (m.completed && filters.value.hideCompleted) return false
-            if (filters.value.type !== 'all' && m.type !== filters.value.type) return false
-            if (filters.value.recommendedOnly && !m.recommendedTrim) return false
-            if (filters.value.prereqsOnly && !m.prereqsOk) return false
+            if (m.completed && filters.value.hideCompleted) {
+return false
+}
+
+            if (filters.value.type !== 'all' && m.type !== filters.value.type) {
+return false
+}
+
+            if (filters.value.recommendedOnly && !m.recommendedTrim) {
+return false
+}
+
+            if (filters.value.prereqsOnly && !m.prereqsOk) {
+return false
+}
+
             if (search.value) {
                 const q = search.value.toLowerCase()
+
                 if (!m.name.toLowerCase().includes(q) && !m.code.toLowerCase().includes(q)) {
                     return false
                 }
             }
+
             return true
         }),
     )

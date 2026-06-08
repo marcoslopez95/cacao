@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { Schedule } from '@/types/scheduling'
 import type { Conflict } from '@/composables/scheduling/useScheduleLayout'
 import { scheduleColor, formatDuration, formatMinutes, DAY_LABELS } from '@/composables/scheduling/useScheduleLayout'
+import type { Schedule } from '@/types/scheduling'
 
 export type PopoverData =
     | { kind: 'event';     schedule: Schedule; conflict?: Conflict }
     | { kind: 'cluster';   dayIndex: number; startMin: number; endMin: number; schedules: Schedule[] }
     | { kind: 'conflicts'; schedules: Schedule[] }
 
-const props = defineProps<{
+defineProps<{
     data: PopoverData | null
     conflicts: Map<number, Conflict>
 }>()
@@ -24,7 +24,10 @@ function initials(name: string): string {
 }
 
 function conflictExplain(c: Conflict | undefined): string {
-    if (!c) return ''
+    if (!c) {
+return ''
+}
+
     return c.type === 'professor'
         ? `${c.reason}`
         : c.reason

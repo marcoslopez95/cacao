@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Badge from '@/components/UI/AppBadge.vue'
-import Button from '@/components/UI/AppButton.vue'
-import Pagination from '@/components/UI/AppPagination.vue'
 import AssignCoordinatorModal from '@/components/security/AssignCoordinatorModal.vue'
 import CoordinationHistoryModal from '@/components/security/CoordinationHistoryModal.vue'
 import CreateCoordinationModal from '@/components/security/CreateCoordinationModal.vue'
 import DeleteCoordinationModal from '@/components/security/DeleteCoordinationModal.vue'
 import EditCoordinationModal from '@/components/security/EditCoordinationModal.vue'
-import { useCoordinationPermissions } from '@/composables/permissions/useCoordinationPermissions'
+import Badge from '@/components/UI/AppBadge.vue'
+import Button from '@/components/UI/AppButton.vue'
+import Pagination from '@/components/UI/AppPagination.vue'
 import { useCoordinationFilters } from '@/composables/filters/useCoordinationFilters'
+import { useCoordinationPermissions } from '@/composables/permissions/useCoordinationPermissions'
 import { index } from '@/routes/security/coordinations'
 import type { CoordinationCollection, CoordinationRow } from '@/types/security'
 
@@ -46,11 +46,13 @@ const deletingCoordination  = ref<CoordinationRow | null>(null)
 
 function typeLabel(type: string): string {
     const labels: Record<string, string> = { career: 'Carrera', grade: 'Año escolar', academic: 'Académica' }
+
     return labels[type] ?? type
 }
 
 function levelLabel(level: string): string {
     const labels: Record<string, string> = { university: 'Universitario', secondary: 'Media / Básica' }
+
     return labels[level] ?? level
 }
 </script>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { usePage } from '@inertiajs/vue3'
-import StatCard from '@/components/UI/AppStatCard.vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import Badge from '@/components/UI/AppBadge.vue'
 import Button from '@/components/UI/AppButton.vue'
+import StatCard from '@/components/UI/AppStatCard.vue'
 
 const page = usePage()
 const user = computed(() => page.props.auth?.user)
@@ -42,17 +42,21 @@ function updateNow(): void {
     nowDecimal.value = d.getHours() + d.getMinutes() / 60
 }
 
-onMounted(() => { updateNow(); timer = setInterval(updateNow, 60_000) })
+onMounted(() => {
+ updateNow(); timer = setInterval(updateNow, 60_000) 
+})
 onUnmounted(() => clearInterval(timer))
 
 function slotStyle(s: Slot): Record<string, string> {
     const left = ((s.start - RANGE_START) / RANGE_HOURS) * 100
     const width = ((s.end - s.start) / RANGE_HOURS) * 100
+
     return { left: `${left}%`, width: `${width}%` }
 }
 
 const nowPct = computed(() => {
     const pct = ((nowDecimal.value - RANGE_START) / RANGE_HOURS) * 100
+
     return Math.min(Math.max(pct, 0), 100)
 })
 

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Head, Link } from '@inertiajs/vue3'
-import Pagination from '@/components/UI/AppPagination.vue'
+import { computed } from 'vue'
+import { edit as editUser } from '@/actions/App/Http/Controllers/Security/UserController'
 import Button from '@/components/UI/AppButton.vue'
 import AppIcon from '@/components/UI/AppIcon.vue'
+import Pagination from '@/components/UI/AppPagination.vue'
 import { useStudentFilters } from '@/composables/filters/useStudentFilters'
 import { index, show as showStudent } from '@/routes/academic/students'
-import { edit as editUser } from '@/actions/App/Http/Controllers/Security/UserController'
 import type { StudentCollection, StudentFilters, StudentLevel, StudentListItem } from '@/types/student'
 
 type Props = {
@@ -95,8 +95,14 @@ const ENROLL_OPTIONS = [
 ]
 
 const yearOptions = computed<number[]>(() => {
-    if (level.value === 'primary')   return Array.from({ length: 6 }, (_, i) => i + 1)
-    if (level.value === 'secondary') return Array.from({ length: 5 }, (_, i) => i + 1)
+    if (level.value === 'primary')   {
+return Array.from({ length: 6 }, (_, i) => i + 1)
+}
+
+    if (level.value === 'secondary') {
+return Array.from({ length: 5 }, (_, i) => i + 1)
+}
+
     return Array.from({ length: 10 }, (_, i) => i + 1)
 })
 
@@ -136,40 +142,79 @@ function clearAll(): void {
 
 function avatarInitials(name: string): string {
     const parts = name.trim().split(/\s+/)
+
     return ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase()
 }
 
 function enrollLabel(s: StudentListItem): string {
-    if (!s.enrollment_status)                                                       return 'Sin inscribir'
-    if (s.enrollment_status === 'confirmed' || s.enrollment_status === 'approved') return 'Confirmada'
-    if (s.enrollment_status === 'draft')                                            return 'Pendiente'
-    if (s.enrollment_status === 'rejected')                                         return 'Rechazada'
+    if (!s.enrollment_status)                                                       {
+return 'Sin inscribir'
+}
+
+    if (s.enrollment_status === 'confirmed' || s.enrollment_status === 'approved') {
+return 'Confirmada'
+}
+
+    if (s.enrollment_status === 'draft')                                            {
+return 'Pendiente'
+}
+
+    if (s.enrollment_status === 'rejected')                                         {
+return 'Rechazada'
+}
+
     return '—'
 }
 
 function enrollClass(s: StudentListItem): string {
-    if (!s.enrollment_status)                                                       return 'enroll-none'
-    if (s.enrollment_status === 'confirmed' || s.enrollment_status === 'approved') return 'enroll-ok'
-    if (s.enrollment_status === 'draft')                                            return 'enroll-warn'
-    if (s.enrollment_status === 'rejected')                                         return 'enroll-danger'
+    if (!s.enrollment_status)                                                       {
+return 'enroll-none'
+}
+
+    if (s.enrollment_status === 'confirmed' || s.enrollment_status === 'approved') {
+return 'enroll-ok'
+}
+
+    if (s.enrollment_status === 'draft')                                            {
+return 'enroll-warn'
+}
+
+    if (s.enrollment_status === 'rejected')                                         {
+return 'enroll-danger'
+}
+
     return 'enroll-none'
 }
 
 function levelPillColor(lvl: 'university' | 'primary' | 'secondary'): string {
-    if (lvl === 'primary')    return '#2E7D5C'
-    if (lvl === 'secondary')  return '#7C5A3A'
+    if (lvl === 'primary')    {
+return '#2E7D5C'
+}
+
+    if (lvl === 'secondary')  {
+return '#7C5A3A'
+}
+
     return '#C8521A'
 }
 
 function levelLabel(lvl: 'university' | 'primary' | 'secondary'): string {
-    if (lvl === 'primary')   return 'Primaria'
-    if (lvl === 'secondary') return 'Bachillerato'
+    if (lvl === 'primary')   {
+return 'Primaria'
+}
+
+    if (lvl === 'secondary') {
+return 'Bachillerato'
+}
+
     return 'Universitario'
 }
 
 // ── Filter toggles ────────────────────────────────────────
 
-function isCareerSelected(id: number): boolean { return careerIds.value.includes(id) }
+function isCareerSelected(id: number): boolean {
+ return careerIds.value.includes(id) 
+}
 function toggleCareer(id: number): void {
     careerIds.value = isCareerSelected(id)
         ? careerIds.value.filter(c => c !== id)
@@ -177,7 +222,9 @@ function toggleCareer(id: number): void {
     applyFilters()
 }
 
-function isYearSelected(y: number): boolean { return academicYears.value.includes(y) }
+function isYearSelected(y: number): boolean {
+ return academicYears.value.includes(y) 
+}
 function toggleYear(y: number): void {
     academicYears.value = isYearSelected(y)
         ? academicYears.value.filter(v => v !== y)
@@ -185,7 +232,9 @@ function toggleYear(y: number): void {
     applyFilters()
 }
 
-function isStatusSelected(v: string): boolean { return enrollStatuses.value.includes(v) }
+function isStatusSelected(v: string): boolean {
+ return enrollStatuses.value.includes(v) 
+}
 function toggleStatus(v: string): void {
     enrollStatuses.value = isStatusSelected(v)
         ? enrollStatuses.value.filter(s => s !== v)
@@ -193,7 +242,9 @@ function toggleStatus(v: string): void {
     applyFilters()
 }
 
-function isLetterSelected(l: string): boolean { return sectionLetters.value.includes(l) }
+function isLetterSelected(l: string): boolean {
+ return sectionLetters.value.includes(l) 
+}
 function toggleSectionLetter(l: string): void {
     sectionLetters.value = isLetterSelected(l)
         ? sectionLetters.value.filter(s => s !== l)

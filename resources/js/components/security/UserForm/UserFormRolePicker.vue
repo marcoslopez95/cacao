@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { ref } from 'vue'
+import { index } from '@/routes/security/users'
 import type { RoleKey } from '@/types/userFormCatalogs'
 import { UF_ROLES, ROLE_SECTION_COUNT } from '@/types/userFormCatalogs'
-import { index } from '@/routes/security/users'
 
 const emit = defineEmits<{ pick: [RoleKey] }>()
 
@@ -14,7 +14,9 @@ function select(key: RoleKey): void {
 }
 
 function confirm(): void {
-    if (selectedRole.value) emit('pick', selectedRole.value)
+    if (selectedRole.value) {
+emit('pick', selectedRole.value)
+}
 }
 
 const ROLE_KEYS: RoleKey[] = ['admin', 'student', 'professor', 'guardian']

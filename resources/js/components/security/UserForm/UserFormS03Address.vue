@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UserFormData, AddressItem } from '@/types/userForm'
-import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
-import AppToggle from '@/components/UI/AppToggle.vue'
 import AppRepeatable from '@/components/UI/AppRepeatable.vue'
+import AppToggle from '@/components/UI/AppToggle.vue'
+import type { UserFormCatalogData } from '@/types/userEdit'
+import type { UserFormData, AddressItem } from '@/types/userForm'
 
 const props = defineProps<{
     data: UserFormData
@@ -13,7 +13,11 @@ const props = defineProps<{
 
 function statesForAddress(index: number) {
     const countryId = props.data.addresses?.[index]?.country_id
-    if (!countryId) return []
+
+    if (!countryId) {
+return []
+}
+
     return props.catalogData.states.filter(s => s.country_id === countryId)
 }
 

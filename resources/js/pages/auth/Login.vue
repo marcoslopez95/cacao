@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { Form, Head, setLayoutProps } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
+import { ref } from 'vue'
 import InputError from '@/components/InputError.vue'
 import TextLink from '@/components/TextLink.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { register } from '@/routes'
 import { store } from '@/routes/login'
 import { request } from '@/routes/password'

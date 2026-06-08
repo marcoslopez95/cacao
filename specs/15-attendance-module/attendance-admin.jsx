@@ -112,6 +112,7 @@ const ADMIN_QUEUE = [
 
 function AdminCard({ item, onUpload }) {
   const dt = parseDate(item.date);
+
   return (
     <div className="att-card clickable" onClick={() => onUpload(item)} style={{ '--sec-color': item.careerColor }}>
       <div className="att-card-top">
@@ -138,7 +139,9 @@ function AdminCard({ item, onUpload }) {
       </div>
       <div className="att-card-foot">
         <span className="foot-meta">{item.students} estudiantes</span>
-        <button className="att-card-cta" onClick={(e) => { e.stopPropagation(); onUpload(item); }}>
+        <button className="att-card-cta" onClick={(e) => {
+ e.stopPropagation(); onUpload(item); 
+}}>
           <Icon name="upload" size={13} /> Subir asistencia
         </button>
       </div>
@@ -150,7 +153,11 @@ function AdminView({ onUpload }) {
   const [query, setQuery] = useStateA('');
   const filtered = useMemoA(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return ADMIN_QUEUE;
+
+    if (!q) {
+return ADMIN_QUEUE;
+}
+
     return ADMIN_QUEUE.filter(i => (i.subject + i.prof + i.code + i.cohort).toLowerCase().includes(q));
   }, [query]);
 

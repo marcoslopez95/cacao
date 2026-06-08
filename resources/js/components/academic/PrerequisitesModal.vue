@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
+import { computed, ref, watch } from 'vue'
 import Modal from '@/components/feedback/Modal.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { sync } from '@/routes/academic/subjects/prerequisites'
 import type { Career, Pensum, Subject } from '@/types/academic'
 
@@ -35,12 +35,15 @@ const eligibleSubjects = computed(() =>
 
 const subjectsByPeriod = computed(() => {
     const groups: Record<number, Subject[]> = {}
+
     for (const s of eligibleSubjects.value) {
         if (!groups[s.periodNumber]) {
             groups[s.periodNumber] = []
         }
+
         groups[s.periodNumber].push(s)
     }
+
     return groups
 })
 

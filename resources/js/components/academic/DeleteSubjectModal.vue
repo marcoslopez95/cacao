@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
 import Modal from '@/components/feedback/Modal.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { destroy } from '@/routes/academic/subjects'
 import type { Career, Pensum, Subject } from '@/types/academic'
 

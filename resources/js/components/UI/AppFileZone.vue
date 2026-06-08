@@ -14,7 +14,10 @@ function handleClick(): void {
 function handleDrop(e: DragEvent): void {
     e.preventDefault()
     const file = e.dataTransfer?.files?.[0]
-    if (file) emit('pick', file.name)
+
+    if (file) {
+emit('pick', file.name)
+}
 }
 </script>
 

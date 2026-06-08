@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import AppIcon from '@/components/UI/AppIcon.vue'
-import { enrollmentColor } from '@/utils/enrollmentColor'
 import type { EnrollmentSection, EnrollmentConflict } from '@/types/enrollment'
+import { enrollmentColor } from '@/utils/enrollmentColor'
 
 const DAY_ABBRS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 
@@ -32,17 +32,31 @@ const fillPct = computed(() =>
 )
 const fillState = computed(() => {
     const ratio = props.section.enrolled / props.section.capacity
-    if (ratio >= 1) return 'full'
-    if (ratio > 0.9) return 'high'
-    if (ratio > 0.7) return 'mid'
+
+    if (ratio >= 1) {
+return 'full'
+}
+
+    if (ratio > 0.9) {
+return 'high'
+}
+
+    if (ratio > 0.7) {
+return 'mid'
+}
+
     return 'low'
 })
 
 const cuposLeft = computed(() => props.section.capacity - props.section.enrolled)
 
 const conflictTitle = computed(() => {
-    if (!props.conflict) return ''
+    if (!props.conflict) {
+return ''
+}
+
     const { subject, section, slotB } = props.conflict
+
     return `Choca con ${subject.code} (${section.code}) · ${DAY_ABBRS[slotB.day]} ${slotB.start.slice(0, 5)}–${slotB.end.slice(0, 5)}`
 })
 </script>

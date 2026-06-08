@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
-import Button from '@/components/UI/AppButton.vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
+import Button from '@/components/UI/AppButton.vue';
 import { store } from '@/routes/password/confirm';
 
 defineOptions({

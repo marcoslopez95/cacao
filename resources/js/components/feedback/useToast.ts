@@ -23,11 +23,18 @@ let nextId = 0
 
 function dismiss(id: number): void {
     const item = state.toasts.find(t => t.id === id)
-    if (!item) return
+
+    if (!item) {
+return
+}
+
     item.leaving = true
     setTimeout(() => {
         const idx = state.toasts.findIndex(t => t.id === id)
-        if (idx !== -1) state.toasts.splice(idx, 1)
+
+        if (idx !== -1) {
+state.toasts.splice(idx, 1)
+}
     }, 160)
 }
 
@@ -41,6 +48,7 @@ function toast(opts: ToastOptions): void {
         leaving: false,
         action: opts.action,
     })
+
     if (opts.duration !== 0) {
         setTimeout(() => dismiss(id), opts.duration ?? 4000)
     }

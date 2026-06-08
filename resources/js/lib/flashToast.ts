@@ -1,5 +1,6 @@
 import { router } from '@inertiajs/vue3';
-import { useToast, type ToastVariant } from '@/components/feedback/useToast';
+import { useToast  } from '@/components/feedback/useToast';
+import type {ToastVariant} from '@/components/feedback/useToast';
 import type { FlashToast } from '@/types/ui';
 
 const TYPE_MAP: Record<FlashToast['type'], ToastVariant> = {

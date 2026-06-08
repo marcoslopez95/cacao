@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Button from '@/components/UI/AppButton.vue'
-import InputError from '@/components/InputError.vue'
 import Modal from '@/components/feedback/Modal.vue'
+import InputError from '@/components/InputError.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { update } from '@/routes/academic/careers'
 import type { Career, CareerCategory } from '@/types/academic'
 
-const props = defineProps<{
+defineProps<{
     open: boolean
     career: Career
     categories: CareerCategory[]
@@ -19,6 +19,7 @@ const formKey = ref(0)
 
 function close(v: boolean): void {
     emit('update:open', v)
+
     if (!v) {
         formKey.value++
     }

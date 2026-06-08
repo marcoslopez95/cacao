@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import type { EnrollmentSubject, EnrollmentSection } from '@/types/enrollment'
 import { useEnrollmentFilters } from '@/composables/enrollment/useEnrollmentFilters'
+import type { EnrollmentSubject, EnrollmentSection } from '@/types/enrollment'
 
 const defaultSection: EnrollmentSection = {
     code: 'A',

@@ -8,8 +8,8 @@ import {
     layoutDaySchedules, minutesToPx,
     todayKey, nowMinutes, currentWeekDates, formatMinutes,
 } from '@/composables/scheduling/useScheduleLayout'
-import type { Schedule, ScheduleCollection } from '@/types/scheduling'
 import type { Conflict } from '@/composables/scheduling/useScheduleLayout'
+import type { Schedule, ScheduleCollection } from '@/types/scheduling'
 
 const props = defineProps<{
     schedules: ScheduleCollection
@@ -35,7 +35,11 @@ const hours    = Array.from({ length: HOUR_END - HOUR_START + 1 }, (_, i) => HOU
 const nowMin   = ref(nowMinutes())
 
 let ticker: ReturnType<typeof setInterval>
-onMounted(()    => { ticker = setInterval(() => { nowMin.value = nowMinutes() }, 60_000) })
+onMounted(()    => {
+ ticker = setInterval(() => {
+ nowMin.value = nowMinutes() 
+}, 60_000) 
+})
 onBeforeUnmount(() => clearInterval(ticker))
 
 const visibleDays = computed(() =>
@@ -49,7 +53,10 @@ function schedulesForDay(i: number): Schedule[] {
 }
 
 function handleDayClick(dayIndex: number, e: MouseEvent): void {
-    if (!props.canUpdate) return
+    if (!props.canUpdate) {
+return
+}
+
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
     const clickY = e.clientY - rect.top
     const totalMin = Math.floor((clickY / PX_PER_HOUR) * 60) + HOUR_START * 60

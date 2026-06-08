@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Schedule, ScheduleCollection } from '@/types/scheduling'
 import type { Conflict } from '@/composables/scheduling/useScheduleLayout'
 import { DAY_KEYS, DAY_LABELS, scheduleColor, formatDuration, todayKey } from '@/composables/scheduling/useScheduleLayout'
+import type { Schedule, ScheduleCollection } from '@/types/scheduling'
 
 const props = defineProps<{
     schedules: ScheduleCollection

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { UserFormData } from '@/types/userForm'
-import type { UserFormCatalogData } from '@/types/userEdit'
-import AppFormField from '@/components/UI/AppFormField.vue'
-import AppDocInput from '@/components/UI/AppDocInput.vue'
-import AppTelInput from '@/components/UI/AppTelInput.vue'
 import AppAvatarUpload from '@/components/UI/AppAvatarUpload.vue'
+import AppDocInput from '@/components/UI/AppDocInput.vue'
+import AppFormField from '@/components/UI/AppFormField.vue'
+import AppTelInput from '@/components/UI/AppTelInput.vue'
+import type { UserFormCatalogData } from '@/types/userEdit'
+import type { UserFormData } from '@/types/userForm'
 
 const props = withDefaults(defineProps<{
     data: UserFormData

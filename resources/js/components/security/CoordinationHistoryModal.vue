@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { index as assignmentsIndex } from '@/actions/App/Http/Controllers/Security/CoordinationAssignmentController'
+import Modal from '@/components/feedback/Modal.vue'
 import Badge from '@/components/UI/AppBadge.vue'
 import Button from '@/components/UI/AppButton.vue'
-import Modal from '@/components/feedback/Modal.vue'
 import type { CoordinationAssignment, CoordinationRow } from '@/types/security'
-import { index as assignmentsIndex } from '@/actions/App/Http/Controllers/Security/CoordinationAssignmentController'
 
 const props = defineProps<{
     open: boolean
@@ -21,19 +21,24 @@ watch(
     async (isOpen) => {
         if (!isOpen) {
             assignments.value = []
+
             return
         }
 
         loading.value = true
+
         try {
             const res = await fetch(assignmentsIndex.url(props.coordination), {
                 headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 credentials: 'same-origin',
             })
+
             if (!res.ok) {
                 assignments.value = []
+
                 return
             }
+
             assignments.value = await res.json()
         } finally {
             loading.value = false

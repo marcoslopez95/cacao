@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
-import InputError from '@/components/InputError.vue'
+import { computed, ref, watch } from 'vue'
 import Modal from '@/components/feedback/Modal.vue'
+import InputError from '@/components/InputError.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { store } from '@/routes/scheduling/sections/university'
 import type { AvailablePeriod, ClassroomForSection, SubjectForSection } from '@/types/scheduling'
 
@@ -29,12 +29,18 @@ function makeForm() {
 const form = ref(makeForm())
 
 const selectedPeriodType = computed(() => {
-    if (! form.value.period_id) { return null }
+    if (! form.value.period_id) {
+ return null 
+}
+
     return props.periods.find((p) => p.id === form.value.period_id)?.type ?? null
 })
 
 const filteredSubjects = computed(() => {
-    if (! selectedPeriodType.value) { return props.subjects }
+    if (! selectedPeriodType.value) {
+ return props.subjects 
+}
+
     return props.subjects.filter((s) => s.pensumPeriodType === selectedPeriodType.value)
 })
 

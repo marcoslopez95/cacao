@@ -40,7 +40,12 @@ const ROSTER_NAMES = [
 
 function seedRand(seed) {
   let s = seed;
-  return () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+
+  return () => {
+ s = (s * 9301 + 49297) % 233280;
+
+ return s / 233280; 
+};
 }
 
 // Algunos estudiantes con patrón de inasistencia más alto (índices)
@@ -48,6 +53,7 @@ const CHRONIC = { 3: 0.42, 9: 0.30, 17: 0.34, 23: 0.26, 6: 0.22 };
 
 const ROSTER = ROSTER_NAMES.map((name, i) => {
   const parts = name.split(' ');
+
   return {
     enrollmentDetailId: 4001 + i,
     studentId: 9001 + i,
@@ -109,19 +115,23 @@ function buildRecords() {
 
   for (const s of recorded) {
     const rec = {};
+
     for (const st of ROSTER) {
       // Camila (demo) casi siempre presente
       const rate = st.enrollmentDetailId === 4001 ? 0.03 : st.absentRate;
       rec[st.enrollmentDetailId] = rnd() < rate ? 'absent' : 'present';
     }
+
     records[s.id] = rec;
   }
 
   // Regla 4: la sesión advance copia su asistencia a la regular vinculada (#14)
   const advance = RAW_SESSIONS.find(s => s.type === 'advance');
+
   if (advance && advance.linkedSessionId && records[advance.id]) {
     records[advance.linkedSessionId] = { ...records[advance.id] };
   }
+
   return records;
 }
 
@@ -130,17 +140,29 @@ const ATTENDANCE = buildRecords();
 // Totales de inasistencia por estudiante (regla 7)
 function computeAbsenceTotals() {
   const totals = {};
-  for (const st of ROSTER) totals[st.enrollmentDetailId] = 0;
+
+  for (const st of ROSTER) {
+totals[st.enrollmentDetailId] = 0;
+}
+
   // Evitar doble conteo: advanced copió de advance → contar solo una vez.
   // Contamos por sesión registrada EXCEPTO la advance (su copia vive en la #14).
   const counted = Object.keys(ATTENDANCE).filter(id => {
     const s = RAW_SESSIONS.find(x => x.id === Number(id));
+
     return s && s.type !== 'advance';
   });
+
   for (const sid of counted) {
     const rec = ATTENDANCE[sid];
-    for (const eid in rec) if (rec[eid] === 'absent') totals[eid]++;
+
+    for (const eid in rec) {
+if (rec[eid] === 'absent') {
+totals[eid]++;
+}
+}
   }
+
   return totals;
 }
 
@@ -148,6 +170,7 @@ const ABSENCE_TOTALS = computeAbsenceTotals();
 // Nº de sesiones contadas para el denominador
 const SESSIONS_COUNTED = Object.keys(ATTENDANCE).filter(id => {
   const s = RAW_SESSIONS.find(x => x.id === Number(id));
+
   return s && s.type !== 'advance';
 }).length;
 
@@ -172,20 +195,31 @@ const DOW_FULL = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','S�
 
 function parseDate(iso) {
   const [y, m, d] = iso.split('-').map(Number);
+
   return new Date(y, m - 1, d);
 }
 function fmtDate(iso) {
   const dt = parseDate(iso);
+
   return `${dt.getDate()} ${MESES[dt.getMonth()]}`;
 }
 function fmtDateLong(iso) {
   const dt = parseDate(iso);
+
   return `${DOW_FULL[dt.getDay()]} ${dt.getDate()} de ${['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][dt.getMonth()]}, ${dt.getFullYear()}`;
 }
-function dowShort(iso) { return DOW[parseDate(iso).getDay()]; }
-function isPast(iso)   { return iso < TODAY; }
-function isToday(iso)  { return iso === TODAY; }
-function isFuture(iso) { return iso > TODAY; }
+function dowShort(iso) {
+ return DOW[parseDate(iso).getDay()]; 
+}
+function isPast(iso)   {
+ return iso < TODAY; 
+}
+function isToday(iso)  {
+ return iso === TODAY; 
+}
+function isFuture(iso) {
+ return iso > TODAY; 
+}
 
 // Sesión enriquecida con datos de asistencia y vínculos resueltos
 function enrichSession(s) {
@@ -193,6 +227,7 @@ function enrichSession(s) {
   const present = rec ? Object.values(rec).filter(v => v === 'present').length : 0;
   const absent  = rec ? Object.values(rec).filter(v => v === 'absent').length : 0;
   const linked  = s.linkedSessionId ? RAW_SESSIONS.find(x => x.id === s.linkedSessionId) : null;
+
   return { ...s, present, absent, hasRecord: !!rec, linked };
 }
 

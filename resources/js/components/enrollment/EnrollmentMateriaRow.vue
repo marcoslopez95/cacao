@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import AppIcon from '@/components/UI/AppIcon.vue'
 import EnrollmentSectionCard from '@/components/enrollment/EnrollmentSectionCard.vue'
-import { enrollmentColor } from '@/utils/enrollmentColor'
+import AppIcon from '@/components/UI/AppIcon.vue'
 import type {
     EnrollmentSubject,
     EnrollmentSelections,
@@ -10,6 +9,7 @@ import type {
     EnrollmentGhostCandidate,
     EnrollmentSection,
 } from '@/types/enrollment'
+import { enrollmentColor } from '@/utils/enrollmentColor'
 
 const DAY_ABBRS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
 
@@ -52,16 +52,25 @@ const anyAvailable = computed(() =>
 )
 
 const statusText = computed(() => {
-    if (blocked.value) return null
+    if (blocked.value) {
+return null
+}
+
     if (isSelected.value && selectedSection.value) {
         const sec = selectedSection.value
         const slots = sec.noSchedule
             ? 'sin horario aún'
             : sec.slots.map(sl => `${DAY_ABBRS[sl.day]} ${sl.start.slice(0, 5)}`).join(', ')
+
         return `Sección ${sec.code} · ${slots}`
     }
-    if (!anyAvailable.value) return 'Sin opciones libres ahora'
+
+    if (!anyAvailable.value) {
+return 'Sin opciones libres ahora'
+}
+
     const n = props.subject.sections.length
+
     return `${n} sección${n === 1 ? '' : 'es'} disponible${n === 1 ? '' : 's'}`
 })
 </script>

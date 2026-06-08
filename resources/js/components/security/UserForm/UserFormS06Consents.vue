@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UserFormData } from '@/types/userForm'
 
-const props = defineProps<{
+defineProps<{
     data: UserFormData
     setField: <K extends keyof UserFormData>(key: K, value: UserFormData[K]) => void
 }>()

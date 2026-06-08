@@ -34,7 +34,9 @@ function onInput(): void {
 function onSuccess(): void {
     isDirty.value = false;
     isSaved.value = true;
-    setTimeout(() => { isSaved.value = false; }, 2400);
+    setTimeout(() => {
+ isSaved.value = false; 
+}, 2400);
 }
 </script>
 

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { UserFormData } from '@/types/userForm'
 import AppFormField from '@/components/UI/AppFormField.vue'
 import AppPasswordInput from '@/components/UI/AppPasswordInput.vue'
 import AppPasswordStrength from '@/components/UI/AppPasswordStrength.vue'
 import AppPillRadios from '@/components/UI/AppPillRadios.vue'
+import type { UserFormData } from '@/types/userForm'
 
 const props = defineProps<{
     data: UserFormData

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreateCareerCategoryModal from '@/components/academic/CreateCareerCategoryModal.vue'
 import DeleteCareerCategoryModal from '@/components/academic/DeleteCareerCategoryModal.vue'
 import EditCareerCategoryModal from '@/components/academic/EditCareerCategoryModal.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { useCareerCategoryPermissions } from '@/composables/permissions/useCareerCategoryPermissions'
 import { index } from '@/routes/academic/career-categories'
 import type { CareerCategory } from '@/types/academic'

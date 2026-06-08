@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Head, Link, setLayoutProps } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
-import { sheet as sheetRoute } from '@/routes/professor/grades'
 import { useGradeEntryForm } from '@/composables/forms/useGradeEntryForm'
-import type { SectionGradeSheet, GradeEntry, GradeSheetStudent } from '@/types/grade-entry'
+import { sheet as sheetRoute } from '@/routes/professor/grades'
+import type { SectionGradeSheet, GradeEntry } from '@/types/grade-entry'
 
 type Lapse = { id: number; name: string }
 
@@ -36,13 +36,21 @@ const remedialSlot = computed(() => props.sheet.slots.find(s => s.is_remedial) ?
 
 function studentFinalGrade(student: SectionGradeSheet['students'][0]): number | null {
     const slots = nonRemedialSlots.value
-    if (slots.some(s => !getEntry(student, s.id)?.value)) return null
+
+    if (slots.some(s => !getEntry(student, s.id)?.value)) {
+return null
+}
+
     return slots.reduce((sum, s) => sum + Number(getEntry(student, s.id)!.value) * Number(s.weight) / 100, 0)
 }
 
 function studentPassed(student: SectionGradeSheet['students'][0]): boolean | null {
     const grade = studentFinalGrade(student)
-    if (grade === null) return null
+
+    if (grade === null) {
+return null
+}
+
     return grade >= props.sheet.passing_value
 }
 
@@ -54,7 +62,10 @@ function startEdit(enrollmentDetailId: number, slotId: number, currentValue: str
 
 async function commitEdit(enrollmentDetailId: number, slotId: number): Promise<void> {
     const key = cellKey(enrollmentDetailId, slotId, props.current_lapse_id)
-    if (editingCell.value !== key) return
+
+    if (editingCell.value !== key) {
+return
+}
 
     editingCell.value = null
 
@@ -69,9 +80,19 @@ async function commitEdit(enrollmentDetailId: number, slotId: number): Promise<v
 
 function stateIcon(key: string): string {
     const s = saveStates.value[key]
-    if (s === 'saving') return '⟳'
-    if (s === 'saved') return '✓'
-    if (s === 'error') return '!'
+
+    if (s === 'saving') {
+return '⟳'
+}
+
+    if (s === 'saved') {
+return '✓'
+}
+
+    if (s === 'error') {
+return '!'
+}
+
     return ''
 }
 

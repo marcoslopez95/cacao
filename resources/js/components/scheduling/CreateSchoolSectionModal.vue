@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import Button from '@/components/UI/AppButton.vue'
-import InputError from '@/components/InputError.vue'
+import { computed, ref, watch } from 'vue'
 import Modal from '@/components/feedback/Modal.vue'
+import InputError from '@/components/InputError.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { store } from '@/routes/scheduling/sections/school'
 import type { AvailablePeriod, PensumForSection, ProfessorForSection, SchoolSectionClassroom } from '@/types/scheduling'
 
@@ -33,7 +33,10 @@ const form = ref(makeForm())
 const selectedPensum = computed(() => props.pensums.find((p) => p.id === form.value.pensum_id) ?? null)
 
 const gradeOptions = computed(() => {
-    if (! selectedPensum.value) { return [] }
+    if (! selectedPensum.value) {
+ return [] 
+}
+
     return Array.from({ length: selectedPensum.value.totalPeriods }, (_, i) => i + 1)
 })
 
@@ -44,13 +47,17 @@ function close(v: boolean): void {
 watch(
     () => props.open,
     (opened) => {
-        if (opened) { form.value = makeForm() }
+        if (opened) {
+ form.value = makeForm() 
+}
     },
 )
 
 watch(
     () => form.value.pensum_id,
-    () => { form.value.grade = null },
+    () => {
+ form.value.grade = null 
+},
 )
 
 function submit(): void {

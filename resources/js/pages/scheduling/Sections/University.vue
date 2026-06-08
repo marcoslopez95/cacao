@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { Head, setLayoutProps } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Button from '@/components/UI/AppButton.vue'
 import CreateUniversitySectionModal from '@/components/scheduling/CreateUniversitySectionModal.vue'
 import DeleteSectionModal from '@/components/scheduling/DeleteSectionModal.vue'
 import EditUniversitySectionModal from '@/components/scheduling/EditUniversitySectionModal.vue'
+import Button from '@/components/UI/AppButton.vue'
 import { useUniversitySectionFilters } from '@/composables/filters/useUniversitySectionFilters'
 import { useUniversitySectionForm } from '@/composables/forms/useUniversitySectionForm'
 import { useSectionPermissions } from '@/composables/permissions/useSectionPermissions'

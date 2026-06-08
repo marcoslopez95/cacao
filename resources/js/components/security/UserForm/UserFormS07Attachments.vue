@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import AppFileZone from '@/components/UI/AppFileZone.vue'
+import AppFormField from '@/components/UI/AppFormField.vue'
+import AppRepeatable from '@/components/UI/AppRepeatable.vue'
+import AppToggle from '@/components/UI/AppToggle.vue'
 import type { UserFormData, AttachmentItem } from '@/types/userForm'
 import { UF_ATTACH_TYPES } from '@/types/userFormCatalogs'
-import AppFormField from '@/components/UI/AppFormField.vue'
-import AppToggle from '@/components/UI/AppToggle.vue'
-import AppRepeatable from '@/components/UI/AppRepeatable.vue'
-import AppFileZone from '@/components/UI/AppFileZone.vue'
 
 const props = defineProps<{
     data: UserFormData

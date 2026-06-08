@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
-import Button from '@/components/UI/AppButton.vue'
-import InputError from '@/components/InputError.vue'
-import Modal from '@/components/feedback/Modal.vue'
 import { store } from '@/actions/App/Http/Controllers/Scheduling/LapseController'
+import Modal from '@/components/feedback/Modal.vue'
+import InputError from '@/components/InputError.vue'
+import Button from '@/components/UI/AppButton.vue'
 import type { Period } from '@/types/scheduling'
 
 const props = defineProps<{ open: boolean; period: Period }>()
@@ -26,6 +26,7 @@ let form = makeForm()
 
 function close(v: boolean): void {
     emit('update:open', v)
+
     if (!v) {
         form = makeForm()
         formKey.value++

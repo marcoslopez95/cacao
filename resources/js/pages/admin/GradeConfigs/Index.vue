@@ -21,7 +21,10 @@ defineOptions({
 })
 
 function scaleLabel(config: GradeConfig): string {
-    if (config.scale_type === 'letter') return 'Letras (A–F)'
+    if (config.scale_type === 'letter') {
+return 'Letras (A–F)'
+}
+
     return `${config.scale_min} – ${config.scale_max}`
 }
 </script>

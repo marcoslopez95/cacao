@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { index } from '@/routes/scheduling/schedules'
 
 export function useScheduleFilters(
@@ -15,10 +15,22 @@ export function useScheduleFilters(
 
     function applyFilters(): void {
         const query: Record<string, string | number | string[]> = {}
-        if (periodId.value)    query.period_id    = periodId.value
-        if (sectionId.value)   query.section_id   = sectionId.value
-        if (professorId.value) query.professor_id = professorId.value
-        if (careerIds.value?.length) query.career_ids = careerIds.value.map(String)
+
+        if (periodId.value)    {
+query.period_id    = periodId.value
+}
+
+        if (sectionId.value)   {
+query.section_id   = sectionId.value
+}
+
+        if (professorId.value) {
+query.professor_id = professorId.value
+}
+
+        if (careerIds.value?.length) {
+query.career_ids = careerIds.value.map(String)
+}
 
         router.get(index.url(), query, { preserveState: true, replace: true })
     }

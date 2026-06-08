@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { ScheduleAvailableCareer } from '@/types/scheduling'
 import { careerColor } from '@/composables/scheduling/useScheduleLayout'
+import type { ScheduleAvailableCareer } from '@/types/scheduling'
 
 const props = defineProps<{
     careers: ScheduleAvailableCareer[]

@@ -1,5 +1,5 @@
-import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { ref } from 'vue'
 import { storeSession } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
 
 export function useClassSessionForm(sectionId: number) {
@@ -17,8 +17,12 @@ export function useClassSessionForm(sectionId: number) {
             storeSession.url({ section: sectionId }),
             data,
             {
-                onSuccess: () => { processing.value = false; errors.value = {} },
-                onError: (e) => { processing.value = false; errors.value = e },
+                onSuccess: () => {
+ processing.value = false; errors.value = {} 
+},
+                onError: (e) => {
+ processing.value = false; errors.value = e 
+},
             }
         )
     }

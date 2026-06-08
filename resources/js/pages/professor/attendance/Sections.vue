@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { setLayoutProps } from '@inertiajs/vue3'
 import { router } from '@inertiajs/vue3'
-import AppIcon from '@/components/UI/AppIcon.vue'
 import { index as attendanceIndex } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
+import AppIcon from '@/components/UI/AppIcon.vue'
 
 type SectionSummary = {
     id: number

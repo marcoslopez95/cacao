@@ -52,18 +52,40 @@ function onSuccess(): void {
     isDirty.value = false;
     isSaved.value = true;
     newPasswordValue.value = '';
-    setTimeout(() => { isSaved.value = false; }, 2400);
+    setTimeout(() => {
+ isSaved.value = false; 
+}, 2400);
 }
 
 const pwStrengthScore = computed((): number => {
     const pw = newPasswordValue.value;
-    if (!pw) return 0;
+
+    if (!pw) {
+return 0;
+}
+
     let s = 0;
-    if (pw.length >= 8) s++;
-    if (pw.length >= 12) s++;
-    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) s++;
-    if (/\d/.test(pw)) s++;
-    if (/[^A-Za-z0-9]/.test(pw)) s++;
+
+    if (pw.length >= 8) {
+s++;
+}
+
+    if (pw.length >= 12) {
+s++;
+}
+
+    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) {
+s++;
+}
+
+    if (/\d/.test(pw)) {
+s++;
+}
+
+    if (/[^A-Za-z0-9]/.test(pw)) {
+s++;
+}
+
     return s;
 });
 

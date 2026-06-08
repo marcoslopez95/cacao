@@ -69,21 +69,32 @@ watch([() => props.open, () => props.role.id], ([open]) => {
 const groupedAll = computed<Record<string, string[]>>(() => {
     const GROUP_ORDER = ['roles', 'users', 'coordinations']
     const groups: Record<string, string[]> = {}
+
     for (const p of props.permissions) {
         const prefix = p.split('.')[0]
-        if (!groups[prefix]) groups[prefix] = []
+
+        if (!groups[prefix]) {
+groups[prefix] = []
+}
+
         groups[prefix].push(p)
     }
+
     const orderedKeys = [
         ...GROUP_ORDER.filter(k => groups[k]),
         ...Object.keys(groups).filter(k => !GROUP_ORDER.includes(k)),
     ]
+
     return Object.fromEntries(orderedKeys.map(k => [k, groups[k]]))
 })
 
 const filteredGroups = computed<Record<string, string[]>>(() => {
     const q = search.value.trim().toLowerCase()
-    if (!q) return groupedAll.value
+
+    if (!q) {
+return groupedAll.value
+}
+
     return Object.fromEntries(
         Object.entries(groupedAll.value)
             .map(([prefix, perms]) => [
@@ -101,43 +112,67 @@ const filteredGroups = computed<Record<string, string[]>>(() => {
 const totalSelected = computed(() => form.permissions.length)
 
 const hasChanges = computed(() => {
-    if (form.permissions.length !== props.role.permissions.length) return true
+    if (form.permissions.length !== props.role.permissions.length) {
+return true
+}
+
     const orig = new Set(props.role.permissions)
+
     return form.permissions.some(p => !orig.has(p))
 })
 
 // ── Actions ────────────────────────────────────────────────────
 function toggle(code: string): void {
     const idx = form.permissions.indexOf(code)
-    if (idx === -1) form.permissions.push(code)
-    else form.permissions.splice(idx, 1)
+
+    if (idx === -1) {
+form.permissions.push(code)
+} else {
+form.permissions.splice(idx, 1)
+}
 }
 
 function toggleGroup(groupPerms: string[]): void {
     const allChecked = groupPerms.every(p => form.permissions.includes(p))
+
     if (allChecked) {
         form.permissions = form.permissions.filter(p => !groupPerms.includes(p))
     } else {
         for (const p of groupPerms) {
-            if (!form.permissions.includes(p)) form.permissions.push(p)
+            if (!form.permissions.includes(p)) {
+form.permissions.push(p)
+}
         }
     }
 }
 
-function selectAll(): void { form.permissions = [...props.permissions] }
-function clearAll(): void  { form.permissions = [] }
+function selectAll(): void {
+ form.permissions = [...props.permissions] 
+}
+function clearAll(): void  {
+ form.permissions = [] 
+}
 
-function close(): void { emit('update:open', false) }
+function close(): void {
+ emit('update:open', false) 
+}
 
 function submit(): void {
     form.patch(update.url(props.role), { onSuccess: close })
 }
 
 // ESC key
-function onKey(e: KeyboardEvent): void { if (e.key === 'Escape') close() }
+function onKey(e: KeyboardEvent): void {
+ if (e.key === 'Escape') {
+close()
+} 
+}
 watch(() => props.open, val => {
-    if (val) document.addEventListener('keydown', onKey)
-    else     document.removeEventListener('keydown', onKey)
+    if (val) {
+document.addEventListener('keydown', onKey)
+} else     {
+document.removeEventListener('keydown', onKey)
+}
 }, { immediate: true })
 onUnmounted(() => document.removeEventListener('keydown', onKey))
 </script>

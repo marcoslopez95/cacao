@@ -1,7 +1,7 @@
-import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
-import { upsert as upsertEntry } from '@/routes/professor/grades/entries'
+import { ref } from 'vue'
 import { publish as publishSlot } from '@/routes/professor/grades'
+import { upsert as upsertEntry } from '@/routes/professor/grades/entries'
 import { store as enableRemedialRoute } from '@/routes/professor/grades/remedial'
 import type { GradeEntry } from '@/types/grade-entry'
 
@@ -34,7 +34,9 @@ export function useGradeEntryForm(sectionId: number) {
                     preserveScroll: true,
                     onSuccess: () => {
                         saveStates.value[key] = 'saved'
-                        setTimeout(() => { saveStates.value[key] = 'idle' }, 1500)
+                        setTimeout(() => {
+ saveStates.value[key] = 'idle' 
+}, 1500)
                         resolve(null)
                     },
                     onError: () => {

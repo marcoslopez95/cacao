@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { router, setLayoutProps } from '@inertiajs/vue3'
-import type { ClassSession } from '@/types/attendance'
-import AppIcon from '@/components/UI/AppIcon.vue'
+import { computed, ref } from 'vue'
+import { sheet as adminSheet } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
 import AttDateBlock from '@/components/attendance/AttDateBlock.vue'
 import AttStatusPill from '@/components/attendance/AttStatusPill.vue'
-import { sheet as adminSheet } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
+import AppIcon from '@/components/UI/AppIcon.vue'
+import type { ClassSession } from '@/types/attendance'
 
 type AdminSession = ClassSession & {
     subject?: string | null
@@ -34,6 +34,7 @@ setLayoutProps({
 // Normalize — the backend returns ResourceCollection which wraps in { data: [] }
 const sessions = computed<AdminSession[]>(() => {
     const ps = props.pending_sessions
+
     return Array.isArray(ps) ? ps : (ps as { data: AdminSession[] }).data
 })
 
@@ -44,7 +45,11 @@ const query = ref('')
 
 const filtered = computed(() => {
     const q = query.value.trim().toLowerCase()
-    if (!q) { return sessions.value }
+
+    if (!q) {
+ return sessions.value 
+}
+
     return sessions.value.filter((s) => {
         const fields = [
             s.topic,
@@ -53,6 +58,7 @@ const filtered = computed(() => {
             s.career,
             s.teacherName,
         ]
+
         return fields.some((f) => (f ?? '').toLowerCase().includes(q))
     })
 })
@@ -63,11 +69,13 @@ const DOW_ES = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
 
 function parseDateLocal(iso: string): Date {
     const [y, m, d] = iso.split('-').map(Number)
+
     return new Date(y, m - 1, d)
 }
 
 function fmtDate(iso: string): string {
     const dt = parseDateLocal(iso)
+
     return `${dt.getDate()} de ${MON_ES[dt.getMonth()]}`
 }
 

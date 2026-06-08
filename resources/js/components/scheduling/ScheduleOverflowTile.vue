@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Schedule } from '@/types/scheduling'
 import {
     scheduleColor,
     minutesToPx,
     PX_PER_HOUR,
     formatMinutes,
 } from '@/composables/scheduling/useScheduleLayout'
+import type { Schedule } from '@/types/scheduling'
 
 const props = defineProps<{
     schedules: Schedule[]

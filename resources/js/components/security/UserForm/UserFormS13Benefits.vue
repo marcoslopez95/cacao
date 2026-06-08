@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { UserFormData, BenefitItem } from '@/types/userForm'
-import type { UserFormCatalogData } from '@/types/userEdit'
 import AppFormField from '@/components/UI/AppFormField.vue'
-import AppToggle from '@/components/UI/AppToggle.vue'
 import AppRepeatable from '@/components/UI/AppRepeatable.vue'
+import AppToggle from '@/components/UI/AppToggle.vue'
+import type { UserFormCatalogData } from '@/types/userEdit'
+import type { UserFormData, BenefitItem } from '@/types/userForm'
 
 const props = defineProps<{
     data: UserFormData

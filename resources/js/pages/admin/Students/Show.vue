@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { Link, Head } from '@inertiajs/vue3'
-import { index as studentsIndex } from '@/routes/academic/students'
+import { computed } from 'vue'
 import { edit as editUser } from '@/actions/App/Http/Controllers/Security/UserController'
+import { index as studentsIndex } from '@/routes/academic/students'
 import type { StudentShowData } from '@/types/studentShow'
 
 const props = defineProps<{
@@ -29,6 +29,7 @@ const educationalLevelLabel = computed<string>(() => {
         primary: 'Primaria',
         secondary: 'Bachillerato',
     }
+
     return map[props.student.educational_level] ?? props.student.educational_level
 })
 
@@ -39,6 +40,7 @@ const enrollmentStatusLabel = (status: string | null): string => {
         approved: 'Aprobada',
         rejected: 'Rechazada',
     }
+
     return status ? (map[status] ?? status) : '—'
 }
 </script>

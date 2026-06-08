@@ -1,24 +1,24 @@
-import { computed, reactive, ref } from 'vue'
 import { useHttp } from '@inertiajs/vue3'
+import { computed, reactive, ref } from 'vue'
+import type { SectionStatus } from '@/composables/forms/useUserFormPage'
+import { upsert as upsertStaffProfile } from '@/routes/academic/professors/staff-profile'
+import { upsert as upsertGuardianProfile } from '@/routes/security/guardians/profile'
+import { upsert as upsertBackground } from '@/routes/security/students/background'
+import { store as storeBenefit, destroy as destroyBenefit } from '@/routes/security/students/benefits'
+import { upsert as upsertFamily } from '@/routes/security/students/family-profile'
+import { upsert as upsertHousing } from '@/routes/security/students/housing-profile'
+import { sync as syncHousingServices } from '@/routes/security/students/housing-profile/services'
+import { store as storeLanguage, destroy as destroyLanguage } from '@/routes/security/students/languages'
+import { upsert as upsertSocioeconomic } from '@/routes/security/students/socioeconomic-profile'
+import { store as storeAddress, update as updateAddress, destroy as destroyAddress } from '@/routes/security/users/addresses'
+import { update as updateCredentials } from '@/routes/security/users/credentials'
+import { upsert as upsertDemographic } from '@/routes/security/users/demographic-profile'
+import { upsert as upsertHealth } from '@/routes/security/users/health-profile'
+import { update as updateIdentity } from '@/routes/security/users/identity'
 import type { UserEditProps } from '@/types/userEdit'
 import type { UserFormData } from '@/types/userForm'
 import { UF_SECTIONS, UF_TABS } from '@/types/userFormCatalogs'
 import type { RoleKey, TabDef } from '@/types/userFormCatalogs'
-import type { SectionStatus } from '@/composables/forms/useUserFormPage'
-import { update as updateIdentity } from '@/routes/security/users/identity'
-import { update as updateCredentials } from '@/routes/security/users/credentials'
-import { store as storeAddress, update as updateAddress, destroy as destroyAddress } from '@/routes/security/users/addresses'
-import { upsert as upsertDemographic } from '@/routes/security/users/demographic-profile'
-import { upsert as upsertHealth } from '@/routes/security/users/health-profile'
-import { upsert as upsertBackground } from '@/routes/security/students/background'
-import { store as storeLanguage, destroy as destroyLanguage } from '@/routes/security/students/languages'
-import { upsert as upsertFamily } from '@/routes/security/students/family-profile'
-import { upsert as upsertSocioeconomic } from '@/routes/security/students/socioeconomic-profile'
-import { store as storeBenefit, destroy as destroyBenefit } from '@/routes/security/students/benefits'
-import { upsert as upsertHousing } from '@/routes/security/students/housing-profile'
-import { sync as syncHousingServices } from '@/routes/security/students/housing-profile/services'
-import { upsert as upsertGuardianProfile } from '@/routes/security/guardians/profile'
-import { upsert as upsertStaffProfile } from '@/routes/academic/professors/staff-profile'
 
 export function useUserEditForm(props: UserEditProps) {
     const roleKey = (props.user.roles[0] ?? '') as RoleKey | ''
@@ -41,6 +41,7 @@ export function useUserEditForm(props: UserEditProps) {
     const completion = computed(() => {
         const total = tabs.value.flatMap(t => t.sections).length
         const done  = savedSections.value.size
+
         return {
             pct: total > 0 ? Math.round((done / total) * 100) : 0,
             sectionsComplete: savedSections.value,
@@ -57,8 +58,14 @@ export function useUserEditForm(props: UserEditProps) {
     const http = useHttp()
 
     function statusFor(n: number): SectionStatus {
-        if (editingSections.value.has(n)) return 'editing'
-        if (savedSections.value.has(n)) return 'complete'
+        if (editingSections.value.has(n)) {
+return 'editing'
+}
+
+        if (savedSections.value.has(n)) {
+return 'complete'
+}
+
         return 'empty'
     }
 
@@ -66,6 +73,7 @@ export function useUserEditForm(props: UserEditProps) {
         saving.value = n
         errors.value[n] = {}
         autosave.value = { status: 'saving', when: null }
+
         try {
             await (handlers[n] ?? (() => Promise.resolve()))()
             savedSections.value = new Set([...savedSections.value, n])
@@ -110,13 +118,16 @@ export function useUserEditForm(props: UserEditProps) {
             .map(n => document.getElementById(`sec-${n}`))
             .filter((el): el is HTMLElement => el !== null)
 
-        if (!els.length) return () => {}
+        if (!els.length) {
+return () => {}
+}
 
         const obs = new IntersectionObserver(
             entries => {
                 const visible = entries
                     .filter(e => e.isIntersecting)
                     .sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top)
+
                 if (visible.length) {
                     activeSection.value = parseInt(visible[0].target.id.replace('sec-', ''))
                 }
@@ -125,6 +136,7 @@ export function useUserEditForm(props: UserEditProps) {
         )
 
         els.forEach(el => obs.observe(el))
+
         return () => obs.disconnect()
     }
 
@@ -143,9 +155,11 @@ export function useUserEditForm(props: UserEditProps) {
         for (const addr of newItems) {
             await http.transform(() => addressPayload(addr)).post(storeAddress({ user: userId }).url)
         }
+
         for (const addr of existingItems) {
             await http.transform(() => addressPayload(addr)).put(updateAddress({ user: userId, address: addr.__id }).url)
         }
+
         for (const id of deletedIds) {
             await http.transform(() => ({})).delete(destroyAddress({ user: userId, address: id }).url)
         }
@@ -193,7 +207,10 @@ export function useUserEditForm(props: UserEditProps) {
     }
 
     async function saveBackground(): Promise<void> {
-        if (!props.student) return
+        if (!props.student) {
+return
+}
+
         await http.transform(() => ({
             // S8 fields (academic status fields live on students table, handled separately)
             previous_institution:       formData.prevInstitution       ?? null,
@@ -212,7 +229,10 @@ export function useUserEditForm(props: UserEditProps) {
     }
 
     async function saveLanguages(): Promise<void> {
-        if (!props.student) return
+        if (!props.student) {
+return
+}
+
         const studentId  = props.student.id
         // Track by language_id (pivot has no auto-increment id — id is always null)
         const savedIds   = new Set(props.student.languages.map(l => l.language_id).filter((id): id is number => id !== null))
@@ -222,6 +242,7 @@ export function useUserEditForm(props: UserEditProps) {
         for (const id of [...savedIds].filter(id => !currentIds.has(id))) {
             await http.transform(() => ({})).delete(destroyLanguage({ student: studentId, language: id }).url)
         }
+
         for (const lang of current.filter(l => l.language_id != null && !savedIds.has(l.language_id as number))) {
             await http.transform(() => ({
                 language_id:       lang.language_id,
@@ -232,7 +253,10 @@ export function useUserEditForm(props: UserEditProps) {
     }
 
     async function saveFamily(): Promise<void> {
-        if (!props.student) return
+        if (!props.student) {
+return
+}
+
         await http.transform(() => ({
             guardian_marital_status_id: formData.repMaritalId    ?? null,
             children_count:             formData.repChildren      ? Number(formData.repChildren)  : null,
@@ -245,7 +269,10 @@ export function useUserEditForm(props: UserEditProps) {
     }
 
     async function saveSocioeconomic(): Promise<void> {
-        if (!props.student) return
+        if (!props.student) {
+return
+}
+
         await http.transform(() => ({
             income_range_id:           formData.incomeRangeId    ?? null,
             income_source_id:          formData.incomeSourceId   ?? null,
@@ -263,7 +290,10 @@ export function useUserEditForm(props: UserEditProps) {
     }
 
     async function saveBenefits(): Promise<void> {
-        if (!props.student) return
+        if (!props.student) {
+return
+}
+
         const studentId = props.student.id
         // Track by benefit_id (catalog FK — pivot has no auto-increment id)
         const savedIds  = new Set(props.student.benefits.map(b => b.benefit_id).filter((id): id is number => id !== null))
@@ -273,6 +303,7 @@ export function useUserEditForm(props: UserEditProps) {
         for (const id of [...savedIds].filter(id => !currentIds.has(id))) {
             await http.transform(() => ({})).delete(destroyBenefit({ student: studentId, benefit: id }).url)
         }
+
         for (const b of current.filter(b => b.benefit_id != null && !savedIds.has(b.benefit_id as number))) {
             await http.transform(() => ({
                 is_active: b.active ?? true,
@@ -283,7 +314,10 @@ export function useUserEditForm(props: UserEditProps) {
     }
 
     async function saveHousing(): Promise<void> {
-        if (!props.student) return
+        if (!props.student) {
+return
+}
+
         const studentId = props.student.id
         await http.transform(() => ({
             housing_type_id:          formData.housingId      ?? null,
@@ -296,15 +330,31 @@ export function useUserEditForm(props: UserEditProps) {
             transport_type_id:        formData.transportId    ?? null,
         })).put(upsertHousing({ student: studentId }).url)
         const services: string[] = []
-        if (formData.svc_water) services.push('potable_water')
-        if (formData.svc_elec)  services.push('electricity')
-        if (formData.svc_gas)   services.push('gas')
-        if (formData.svc_inet)  services.push('internet')
+
+        if (formData.svc_water) {
+services.push('potable_water')
+}
+
+        if (formData.svc_elec)  {
+services.push('electricity')
+}
+
+        if (formData.svc_gas)   {
+services.push('gas')
+}
+
+        if (formData.svc_inet)  {
+services.push('internet')
+}
+
         await http.transform(() => ({ services })).patch(syncHousingServices({ student: studentId }).url)
     }
 
     async function saveGuardianProfile(): Promise<void> {
-        if (!props.guardian) return
+        if (!props.guardian) {
+return
+}
+
         await http.transform(() => ({
             occupation:          formData.occupation         ?? null,
             employer:            formData.employer           ?? null,
@@ -316,7 +366,10 @@ export function useUserEditForm(props: UserEditProps) {
     }
 
     async function saveStaffProfile(): Promise<void> {
-        if (!props.professor) return
+        if (!props.professor) {
+return
+}
+
         await http.transform(() => ({
             employee_code:              formData.empCode         ?? null,
             academic_title:             formData.degree          ?? null,
@@ -419,22 +472,63 @@ function addressPayload(addr: { country_id?: number; state_id?: number; line1?: 
 function initialSavedSections(props: UserEditProps): number[] {
     const saved: number[] = []
     saved.push(1, 2)
-    if (props.addresses.length)       saved.push(3)
-    if (props.demographicProfile)     saved.push(4)
-    if (props.healthProfile)          saved.push(5)
-    if (props.consent)                saved.push(6)
-    if (props.documents.length)       saved.push(7)
+
+    if (props.addresses.length)       {
+saved.push(3)
+}
+
+    if (props.demographicProfile)     {
+saved.push(4)
+}
+
+    if (props.healthProfile)          {
+saved.push(5)
+}
+
+    if (props.consent)                {
+saved.push(6)
+}
+
+    if (props.documents.length)       {
+saved.push(7)
+}
+
     if (props.student) {
         const s = props.student
-        if (s.background)             saved.push(8, 9)
-        if (s.languages.length)       saved.push(10)
-        if (s.familyProfile)          saved.push(11)
-        if (s.socioeconomicProfile)   saved.push(12)
-        if (s.benefits.length)        saved.push(13)
-        if (s.housingProfile)         saved.push(14)
+
+        if (s.background)             {
+saved.push(8, 9)
+}
+
+        if (s.languages.length)       {
+saved.push(10)
+}
+
+        if (s.familyProfile)          {
+saved.push(11)
+}
+
+        if (s.socioeconomicProfile)   {
+saved.push(12)
+}
+
+        if (s.benefits.length)        {
+saved.push(13)
+}
+
+        if (s.housingProfile)         {
+saved.push(14)
+}
     }
-    if (props.guardian?.profile)      saved.push(16)
-    if (props.professor?.staffProfile) saved.push(17)
+
+    if (props.guardian?.profile)      {
+saved.push(16)
+}
+
+    if (props.professor?.staffProfile) {
+saved.push(17)
+}
+
     return saved
 }
 
@@ -523,6 +617,7 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
 
     if (props.student) {
         const s = props.student
+
         if (s.background) {
             const b = s.background
             d.prevInstitution        = b.previous_institution             ?? undefined
@@ -538,12 +633,14 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
             d.motherEduId            = b.mother_education_level_id        ?? undefined
             d.fatherEduId            = b.father_education_level_id        ?? undefined
         }
+
         d.languages = s.languages.map(l => ({
             __id:              l.language_id ?? Date.now(),
             language_id:       l.language_id       ?? undefined,
             language_level_id: l.language_level_id ?? undefined,
             mother:            l.is_mother_tongue,
         }))
+
         if (s.familyProfile) {
             const f = s.familyProfile
             d.repChildren       = f.children_count?.toString()      ?? undefined
@@ -555,6 +652,7 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
             d.livingId        = f.living_arrangement_id      ?? undefined
             d.householdHeadId = f.household_head_type_id     ?? undefined
         }
+
         if (s.socioeconomicProfile) {
             const e = s.socioeconomicProfile
             d.contributors        = e.household_earners?.toString() ?? undefined
@@ -571,6 +669,7 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
             d.employmentTypeId = e.employment_type_id      ?? undefined
             d.socioDate        = e.study_date?.substring(0, 10) ?? undefined
         }
+
         d.benefits = s.benefits.map(b => ({
             __id:       b.benefit_id ?? 0,
             benefit_id: b.benefit_id ?? undefined,
@@ -578,6 +677,7 @@ function buildInitialFormData(props: UserEditProps): UserFormData {
             start:      b.since      ?? undefined,
             end:        b.until      ?? undefined,
         }))
+
         if (s.housingProfile) {
             const h = s.housingProfile
             d.rooms        = h.room_count?.toString()            ?? undefined

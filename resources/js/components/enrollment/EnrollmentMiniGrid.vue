@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { toMinutes } from '@/composables/scheduling/useScheduleLayout'
-import { enrollmentColor } from '@/utils/enrollmentColor'
 import type {
     EnrollmentSelections,
     EnrollmentSubject,
     EnrollmentGhostCandidate,
 } from '@/types/enrollment'
+import { enrollmentColor } from '@/utils/enrollmentColor'
 
 const HOUR_START = 7
 const HOUR_END = 20
@@ -44,11 +44,20 @@ interface MiniEvt {
 
 const events = computed<MiniEvt[]>(() => {
     const result: MiniEvt[] = []
+
     for (const [code, secIdx] of Object.entries(props.selections)) {
         const subject = props.subjects.find(s => s.code === code)
-        if (!subject) continue
+
+        if (!subject) {
+continue
+}
+
         const section = subject.sections[secIdx]
-        if (!section?.slots.length) continue
+
+        if (!section?.slots.length) {
+continue
+}
+
         for (const slot of section.slots) {
             result.push({
                 key: `${code}-${slot.day}`,
@@ -62,8 +71,10 @@ const events = computed<MiniEvt[]>(() => {
             })
         }
     }
+
     if (props.ghostCandidate?.section.slots.length) {
         const g = props.ghostCandidate
+
         for (const slot of g.section.slots) {
             result.push({
                 key: `ghost-${slot.day}`,
@@ -77,6 +88,7 @@ const events = computed<MiniEvt[]>(() => {
             })
         }
     }
+
     return result
 })
 
