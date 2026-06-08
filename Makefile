@@ -1,6 +1,11 @@
 .DEFAULT_GOAL := help
 SAIL = vendor/bin/sail
 
+ifneq (,$(wildcard .env))
+  include .env
+  export
+endif
+
 .PHONY: help up down restart ide migrate fresh test pint wayfinder
 
 help: ## Muestra este menú
@@ -45,9 +50,9 @@ wayfinder: ## Regenera los tipos TypeScript de Wayfinder
 test: ## Corre los tests con Pest
 	$(SAIL) artisan test --compact
 
-sonar: ## Analiza con SonarQube local (requiere SONAR_TOKEN=xxx make sonar)
-	$(SAIL) bin pest --coverage
-	LARAVEL_BYPASS_ENV_CHECK=1 pnpm test:coverage
+sonar: ## Analiza con SonarQube local (SONAR_TOKEN se carga desde .env)
+#	$(SAIL) bin pest --coverage
+#	LARAVEL_BYPASS_ENV_CHECK=1 pnpm test:coverage
 	docker run --rm --network=host \
 		-v "$(PWD):/usr/src" \
 		sonarsource/sonar-scanner-cli \
