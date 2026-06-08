@@ -45,6 +45,7 @@ class UserFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function ($user) {
+            $user->refresh(); // resolve PostgreSQL generated 'name' column before using it
             $team = Team::factory()->personal()->create([
                 'name' => $user->name."'s Team",
             ]);
