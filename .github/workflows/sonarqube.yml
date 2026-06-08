@@ -1,0 +1,79 @@
+# Análisis de calidad de código con SonarQube Community Build + branch plugin.
+# Se ejecuta en cada PR. Requiere los secrets SONAR_TOKEN y SONAR_HOST_URL.
+# Los parámetros del PR (rama, base, número) se detectan automáticamente del evento.
+
+name: SonarQube
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+# Cancela el análisis anterior si se hace push mientras uno está en curso
+concurrency:
+  group: sonar-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  sonar:
+    name: Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      # fetch-depth: 0 es obligatorio — SonarQube necesita el historial completo
+      # para calcular código nuevo, blame y métricas de rama
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # ── PHP + cobertura ──────────────────────────────────────────────────────
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_sqlite, sqlite3
+          coverage: xdebug
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run Pest with Clover coverage
+        run: ./vendor/bin/pest --coverage
+        # Genera coverage/clover.xml (configurado en phpunit.xml)
+
+      # ── Node + cobertura ─────────────────────────────────────────────────────
+
+      - name: Setup pnpm 9
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install Node dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Vitest with lcov coverage
+        run: pnpm test:coverage
+        # Genera coverage/lcov.info (configurado en vite.config.ts)
+
+      # ── Análisis SonarQube ───────────────────────────────────────────────────
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        # Lee sonar-project.properties de la raíz.
+        # En eventos pull_request, el action auto-inyecta:
+        #   sonar.pullrequest.key, sonar.pullrequest.branch, sonar.pullrequest.base

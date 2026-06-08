@@ -1,0 +1,3 @@
+# Los JARs no se versionan; cada desarrollador los descarga localmente.
+# Ver docker/sonarqube/README.md para instrucciones de descarga.
+*.jar

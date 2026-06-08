@@ -1,6 +1,6 @@
 {
-  "pid": 598382,
+  "pid": 101849,
   "version": "0.9.6",
   "socketPath": "/var/www/cacao/.codegraph/daemon.sock",
-  "startedAt": 1780324181048
+  "startedAt": 1780935340179
 }

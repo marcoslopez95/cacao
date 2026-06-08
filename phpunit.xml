@@ -12,6 +12,12 @@
             <directory>tests/Feature</directory>
         </testsuite>
     </testsuites>
+    <coverage>
+        <report>
+            <!-- Clover consumido por SonarQube (sonar.php.coverage.reportPaths) -->
+            <clover outputFile="coverage/clover.xml"/>
+        </report>
+    </coverage>
     <source>
         <include>
             <directory>app</directory>

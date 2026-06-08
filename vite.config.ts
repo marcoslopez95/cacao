@@ -29,5 +29,17 @@ export default defineConfig({
         environment: 'jsdom',
         setupFiles: ['tests/js/setup.ts'],
         include: ['tests/js/**/*.test.ts'],
+        coverage: {
+            provider: 'v8',
+            // lcov consumido por SonarQube (sonar.javascript.lcov.reportPaths)
+            reporter: ['lcov', 'text'],
+            reportsDirectory: 'coverage',
+            include: ['resources/js/**/*.{ts,vue}'],
+            exclude: [
+                'resources/js/app.ts',
+                'resources/js/actions/**',
+                'resources/js/routes/**',
+            ],
+        },
     },
 });
