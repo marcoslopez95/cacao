@@ -21,12 +21,15 @@ use App\Models\Period;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->withoutVite();
+    Role::findOrCreate('Admin', 'web');
     $this->admin = User::factory()->create();
+    $this->admin->assignRole('Admin');
 });
 
 // ---------------------------------------------------------------------------

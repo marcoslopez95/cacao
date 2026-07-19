@@ -30,7 +30,7 @@ const props = defineProps<{
 
 setLayoutProps({
     breadcrumbs: [
-        { title: 'Estudiante', href: '#' },
+        { title: props.rules.student_name || 'Estudiante', href: '#' },
         { title: 'Inscripción', href: enrollmentIndex.url() },
     ],
 })

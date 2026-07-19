@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\Demo\DemoAcademicHistorySeeder;
 use Database\Seeders\Demo\DemoAcademicSeeder;
 use Database\Seeders\Demo\DemoEnrollmentSeeder;
 use Database\Seeders\Demo\DemoInfrastructureSeeder;
@@ -30,6 +31,7 @@ class DemoSeeder extends Seeder
             DemoStudentsSeeder::class,
             DemoSectionsSeeder::class,
             DemoEnrollmentSeeder::class,
+            DemoAcademicHistorySeeder::class,
             DemoProfilesSeeder::class,
         ]);
     }

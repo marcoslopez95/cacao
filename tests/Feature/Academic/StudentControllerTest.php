@@ -16,11 +16,13 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->withoutVite();
+    Role::findOrCreate('Admin', 'web');
 });
 
 // ---------------------------------------------------------------------------
@@ -32,8 +34,8 @@ test('unauthenticated user is redirected to login', function () {
         ->assertRedirect('/login');
 });
 
-test('authenticated user can access the students index', function () {
-    $this->actingAs(User::factory()->create())
+test('authenticated admin can access the students index', function () {
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -45,6 +47,23 @@ test('authenticated user can access the students index', function () {
         );
 });
 
+test('authenticated non-admin user gets 403 on the students index', function () {
+    Role::findOrCreate('Profesor', 'web');
+
+    $this->actingAs(User::factory()->create()->assignRole('Profesor'))
+        ->get('/academic/students')
+        ->assertForbidden();
+});
+
+test('authenticated non-admin user gets 403 on the students show route', function () {
+    Role::findOrCreate('Estudiante', 'web');
+    $student = Student::factory()->create();
+
+    $this->actingAs(User::factory()->create()->assignRole('Estudiante'))
+        ->get("/academic/students/{$student->id}")
+        ->assertForbidden();
+});
+
 // ---------------------------------------------------------------------------
 // Listing
 // ---------------------------------------------------------------------------
@@ -53,7 +72,7 @@ test('students are listed with user and career data', function () {
     $pensum = Pensum::factory()->for(Career::factory())->create();
     $student = Student::factory()->create(['current_pensum_id' => $pensum->id]);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -82,7 +101,7 @@ test('search by name returns matching students only', function () {
     $other = Student::factory()->create();
     $other->user->update(['first_name' => 'Pedro', 'last_name' => 'González']);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?search=camila')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -97,7 +116,7 @@ test('search by email returns matching students only', function () {
 
     Student::factory()->count(3)->create();
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?search=unique.test.email')
         ->assertOk()
         ->assertInertia(fn ($page) => $page->has('students.data', 1));
@@ -118,7 +137,7 @@ test('career_id filter returns only students in that career', function () {
     Student::factory()->create(['current_pensum_id' => $pensumA->id]);
     Student::factory()->create(['current_pensum_id' => $pensumB->id]);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get("/academic/students?career_id[]={$careerA->id}")
         ->assertOk()
         ->assertInertia(fn ($page) => $page->has('students.data', 2));
@@ -133,7 +152,7 @@ test('academic_year filter returns only students in that year', function () {
     Student::factory()->create(['academic_year' => 1]);
     Student::factory()->create(['academic_year' => 3]);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?academic_year[]=1')
         ->assertOk()
         ->assertInertia(fn ($page) => $page->has('students.data', 2));
@@ -164,7 +183,7 @@ test('enrollment_status confirmed returns students with confirmed enrollment for
         'status' => EnrollmentStatus::Draft,
     ]);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?enrollment_status[]=confirmed')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -188,7 +207,7 @@ test('enrollment_status none returns students without enrollment for active peri
 
     $noEnrollment = Student::factory()->create();
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?enrollment_status[]=none')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -205,7 +224,7 @@ test('quick counts include all and newcomers', function () {
     Student::factory()->count(3)->create(['academic_year' => 1]);
     Student::factory()->count(2)->create(['academic_year' => 2]);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -223,7 +242,7 @@ test('quick counts include all and newcomers', function () {
 test('per_page parameter controls page size', function () {
     Student::factory()->count(30)->create();
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?per_page=10')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -242,7 +261,7 @@ it('filters by educational level primary', function () {
     Student::factory()->secondary()->create();
     Student::factory()->create(['educational_level' => EducationalLevel::University]);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?level=primary')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -256,7 +275,7 @@ it('filters by educational level secondary', function () {
     Student::factory()->secondary()->create();
     Student::factory()->create(['educational_level' => EducationalLevel::University]);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?level=secondary')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -270,7 +289,7 @@ it('filters by educational level university', function () {
     Student::factory()->secondary()->create();
     Student::factory()->create(['educational_level' => EducationalLevel::University]);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?level=university')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -291,7 +310,7 @@ it('includes guardian_name and guardian_relation keys in student list row', func
     $student = Student::factory()->primary()->create();
     $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?level=primary')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -343,7 +362,7 @@ it('includes section grade and letter when student has school enrollment', funct
         'subject_id' => $subject->id,
     ]);
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students?level=primary')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
@@ -359,7 +378,7 @@ it('includes no_guardian in quick counts', function () {
     Student::factory()->count(2)->withGuardian()->create();
     Student::factory()->count(3)->create(); // no guardian
 
-    $this->actingAs(User::factory()->create())
+    $this->actingAs(User::factory()->create()->assignRole('Admin'))
         ->get('/academic/students')
         ->assertOk()
         ->assertInertia(fn ($page) => $page

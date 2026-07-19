@@ -87,7 +87,13 @@ class UserController extends Controller
 
         $actor = $request->user();
 
-        $query = User::query()->with('roles:id,name');
+        $query = User::query()->with([
+            'roles:id,name',
+            'student:id,user_id,educational_level',
+            'student.guardians:id',
+            'guardian:id,user_id',
+            'guardian.students:id',
+        ]);
 
         $query->when($request->input('search'), fn ($q, $s) => $q
             ->where('name', 'ilike', "%{$s}%")

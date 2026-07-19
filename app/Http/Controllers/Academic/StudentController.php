@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers\Academic;
 
+use App\Enums\GradeVisibility;
 use App\Enums\PeriodStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Academic\StudentListResource;
 use App\Http\Resources\Academic\StudentShowResource;
+use App\Http\Resources\Student\GradeCardResource;
 use App\Models\Career;
+use App\Models\Enrollment;
 use App\Models\Period;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -30,10 +34,30 @@ class StudentController extends Controller
             'guardians' => fn ($q) => $q->withPivot(['kinship_type_id', 'is_primary', 'is_emergency_contact']),
             'guardians.user',
             'enrollments.period',
+            'enrollments.details.subject',
+            'enrollments.details.gradeEntries.children',
         ]);
 
         return Inertia::render('admin/Students/Show', [
             'student' => (new StudentShowResource($student))->resolve(),
+        ]);
+    }
+
+    /**
+     * Display the grade breakdown of a single enrollment, always in
+     * real-time visibility — the admin sees every grade regardless of the
+     * team's publication policy.
+     */
+    public function showEnrollment(Student $student, Enrollment $enrollment): Response
+    {
+        abort_unless($enrollment->student_id === $student->id, 404);
+        Gate::authorize('view', $enrollment);
+
+        $enrollment->load(['period', 'details.subject', 'details.gradeEntries.children']);
+
+        return Inertia::render('admin/Students/EnrollmentGrades', [
+            'student' => ['id' => $student->id, 'name' => $student->user->name],
+            'grades' => (new GradeCardResource($enrollment, GradeVisibility::RealTime))->toArray(request()),
         ]);
     }
 

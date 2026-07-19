@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Enums\DayOfWeek;
 use App\Enums\PeriodStatus;
 use App\Http\Controllers\Controller;
+use App\Models\Catalogs\KinshipType;
 use App\Models\Period;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -39,6 +40,18 @@ class DashboardController extends Controller
 
         $ucPensum = $student->pensum?->subjects()->sum('credits_uc') ?? 0;
 
+        $kinshipNames = KinshipType::pluck('name', 'id');
+
+        $guardians = $student->guardians()->with('user')->get()
+            ->sortByDesc(fn ($guardian) => (int) $guardian->pivot->is_primary)
+            ->map(fn ($guardian) => [
+                'name' => $guardian->user->name,
+                'email' => $guardian->user->email,
+                'phone' => $guardian->user->phone_primary,
+                'kinship' => $kinshipNames->get($guardian->pivot->kinship_type_id),
+                'is_primary' => (bool) $guardian->pivot->is_primary,
+            ])->values();
+
         $todaySchedules = $enrollment
             ? $enrollment->details->flatMap(fn ($detail) => $detail->section->schedules->map(fn ($schedule) => [
                 'subject_name' => $detail->section->subject->name,
@@ -64,6 +77,7 @@ class DashboardController extends Controller
             'uc_aprobadas' => 0,
             'today_label' => $todayLabel,
             'today_schedules' => $todaySchedules,
+            'guardians' => $guardians,
         ]);
     }
 }

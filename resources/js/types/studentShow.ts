@@ -20,6 +20,7 @@ export interface EnrollmentHistoryItem {
     status: 'draft' | 'confirmed' | 'approved' | 'rejected' | null
     uc_inscritas: number
     uc_disponibles: number
+    period_average: string | null
 }
 
 export interface StudentShowData {

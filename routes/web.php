@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Academic\CareerCategoryController;
 use App\Http\Controllers\Academic\CareerController;
+use App\Http\Controllers\Academic\GuardianController as AcademicGuardianController;
 use App\Http\Controllers\Academic\PensumController;
 use App\Http\Controllers\Academic\StudentController;
 use App\Http\Controllers\Academic\SubjectController;
@@ -167,7 +168,6 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
 
 });
 
-
 Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('attendance', [AdminAttendanceController::class, 'index'])->name('attendance.index');
     Route::get('sections/{section}/attendance', [AdminAttendanceController::class, 'sectionIndex'])->name('sections.attendance.index');
@@ -177,8 +177,15 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
 });
 
 Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->group(function () {
-    Route::get('students/{student}', [StudentController::class, 'show'])->name('students.show');
-    Route::get('students', [StudentController::class, 'index'])->name('students.index');
+    Route::middleware(['role:Admin'])->group(function () {
+        Route::get('students/{student}', [StudentController::class, 'show'])->name('students.show');
+        Route::get('students', [StudentController::class, 'index'])->name('students.index');
+        Route::get('students/{student}/enrollments/{enrollment}', [StudentController::class, 'showEnrollment'])
+            ->name('students.enrollments.show');
+
+        Route::get('guardians/{guardian}', [AcademicGuardianController::class, 'show'])->name('guardians.show');
+        Route::get('guardians', [AcademicGuardianController::class, 'index'])->name('guardians.index');
+    });
 
     Route::put('professors/{professor}/staff-profile', [StaffProfileController::class, 'upsert'])
         ->name('professors.staff-profile.upsert');

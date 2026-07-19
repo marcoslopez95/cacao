@@ -1,12 +1,12 @@
 # Current Progress
 
-**Last updated:** 2026-05-26
+**Last updated:** 2026-07-11
 
 ---
 
 ## Active Feature
 
-Ninguna — todas las features completadas.
+`demo-seeder-realism` sigue in progress (trabajo previo, sin commitear) — expande DemoSeeder: representantes 1-6 estudiantes, currículum de bachillerato, estados de inscripción variados, historial académico completo. Ver `specs/demo-seeder-realism/`.
 
 ---
 
@@ -14,6 +14,11 @@ Ninguna — todas las features completadas.
 
 | # | Feature | Status | Depends on | HLZs |
 |---|---------|--------|------------|------|
+| 22 | `student-enrollment-grades` | **DONE** | student-academic-show | — |
+| 21 | `demo-seeder-realism` | **IN PROGRESS** | — | — |
+| 20 | `guardian-enrollment-entry` | **DONE** | — | — |
+| 19 | `student-guardian-view` | **DONE** | guardian-student-relations | — |
+| 18 | `guardian-student-relations` | **DONE** | — | — |
 | 0 | `catalogs` | **DONE** | — | — |
 | 1 | `user-profiles` | **DONE** | catalogs | — |
 | 2 | `role-profiles` | **DONE** | catalogs, user-profiles | — |
@@ -33,7 +38,7 @@ Ninguna — todas las features completadas.
 | 16 | `user-edit-student-sections-fix` | **DONE** | — | HLZ-11, HLZ-12, HLZ-13 |
 | 17 | `user-edit-s01-identity-fix` | **DONE** | — | HLZ-27 (CRÍTICO), HLZ-28 (CRÍTICO) |
 
-**Próxima:** sin features pendientes en la queue.
+**Próxima:** `demo-seeder-realism` sigue in progress (trabajo previo sin commitear).
 
 ---
 
@@ -69,6 +74,11 @@ Ninguna — todas las features completadas.
 | user-edit-health-fix | buildInitialFormData() lee blood_type_id (ID plano); save preserva IDs (HLZ-10, HLZ-15) |
 | user-edit-student-sections-fix | S11/S12/S14 migrados a ID-based; 3 secciones, 10+ catálogos nuevos (HLZ-11, HLZ-12, HLZ-13) |
 | user-edit-s01-identity-fix | 8 campos S01 expuestos+persistidos; catálogos dinámicos; AppDocInput refactorizado; 13 acceptance tests (HLZ-27, HLZ-28) |
+| guardian-student-relations | Índice/Show académico de Representantes + columna "Relación" en security/Users/Index.vue |
+| student-guardian-view | Card "Mi representante" en student/Dashboard.vue |
+| guardian-enrollment-entry | CTA en guardian/Dashboard.vue para inscribir estudiantes a cargo; breadcrumb dinámico en enrollment/Index.vue |
+| student-enrollment-grades | Detalle de notas por inscripción (admin), columna "Promedio del periodo", "Promedio acumulado" calculado real. Fix de bug preexistente en GradeConfigResolver (primaria/bachillerato nunca calculaban nota final). Ruta de detalle restringida a role:Admin tras revisión 4R. |
+| guardian-student-relations | Índice/Show de Representantes con estudiantes a cargo; columna "Relación" en Usuarios; solicitud directa (no HLZ) |
 
 ---
 
@@ -110,3 +120,4 @@ Ninguna — todas las features completadas.
 - **Prioridad sugerida:** `user-edit-professor-s17-fix` primero (HLZ-20 es crash 500 CRITICO).
 - HLZ-26 (`workDial` cosmético) marcado como `deferred` — sin feature asignada, no afecta datos.
 - `user-edit-student-sections-fix` es el cambio más grande (3 secciones, 10+ catálogos nuevos, 3 componentes Vue).
+- Los tests `tests/Browser/*` (Pest/Dusk) fallan con `net::ERR_CONNECTION_REFUSED` en este sandbox aunque el contenedor Selenium está `Up` — problema preexistente del entorno (confirmado con `EnrollmentFlowTest.php`, sin tocar, fallando igual), no relacionado a ningún feature específico.

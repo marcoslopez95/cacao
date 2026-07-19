@@ -10,6 +10,7 @@ import Isotipo from '@/components/UI/AppIsotipo.vue'
 import { dashboard, logout as logoutRoute } from '@/routes'
 import { index as careerCategoriesIndex } from '@/routes/academic/career-categories'
 import { index as careersIndex } from '@/routes/academic/careers'
+import { index as guardiansIndex } from '@/routes/academic/guardians'
 import { index as studentsIndex } from '@/routes/academic/students'
 import { index as enrollmentIndex } from '@/routes/enrollment'
 import { index as buildingsIndex } from '@/routes/infrastructure/buildings'
@@ -167,6 +168,7 @@ const navGroups = computed(() => {
 
         if (page.props.auth?.roles?.includes('Admin')) {
             academicItems.push({ icon: 'graduation-cap', label: 'Estudiantes', href: studentsIndex.url() })
+            academicItems.push({ icon: 'users', label: 'Representantes', href: guardiansIndex.url() })
         }
 
         if (academicItems.length) {

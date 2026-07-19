@@ -1,6 +1,46 @@
 {
   "features": [
     {
+      "id": "student-enrollment-grades",
+      "name": "Student Enrollment Grades",
+      "status": "completed",
+      "spec": "specs/student-enrollment-grades/",
+      "depends_on": ["student-academic-show"],
+      "description": "Detalle de notas por materia por inscripción en /academic/students/{student} (reusa el cálculo de nota final de GradeCardResource extraído a servicio compartido), columna 'Promedio del periodo' en el historial de inscripciones, y 'Promedio acumulado' calculado en vez de leído de la columna estática students.cumulative_gpa."
+    },
+    {
+      "id": "demo-seeder-realism",
+      "name": "Demo Seeder Realism",
+      "status": "in_progress",
+      "spec": "specs/demo-seeder-realism/",
+      "depends_on": [],
+      "description": "Representantes con 1-6 estudiantes a cargo, currículum de bachillerato (pensum/materias/secciones escolares), estados de inscripción variados (sin/a medias/completa) y backfill de historial académico (enrollments+notas de períodos anteriores) según el semestre/año real de cada estudiante."
+    },
+    {
+      "id": "guardian-enrollment-entry",
+      "name": "Guardian Enrollment Entry",
+      "status": "completed",
+      "spec": "specs/guardian-enrollment-entry/",
+      "depends_on": [],
+      "description": "Botón CTA en guardian/Dashboard.vue para que el representante inscriba a sus estudiantes a cargo (backend ya soportaba student_id + EnrollmentPolicy); breadcrumb dinámico con nombre del estudiante en enrollment/Index.vue."
+    },
+    {
+      "id": "student-guardian-view",
+      "name": "Student Guardian View",
+      "status": "completed",
+      "spec": "specs/student-guardian-view/",
+      "depends_on": ["guardian-student-relations"],
+      "description": "Card 'Mi representante' en student/Dashboard.vue mostrando los representantes vinculados al estudiante autenticado."
+    },
+    {
+      "id": "guardian-student-relations",
+      "name": "Guardian ↔ Student Relations",
+      "status": "completed",
+      "spec": "specs/guardian-student-relations/",
+      "depends_on": [],
+      "description": "Índice/Show académico de Representantes con sus estudiantes a cargo, y columna 'Relación' en security/Users/Index.vue (link a representantes/estudiantes según rol)."
+    },
+    {
       "id": "admin-students",
       "name": "Admin Students Index",
       "status": "completed",

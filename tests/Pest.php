@@ -31,6 +31,10 @@ pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Unit/Enrollment');
 
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
+    ->in('Unit/Grade');
+
 /*
 |--------------------------------------------------------------------------
 | Expectations

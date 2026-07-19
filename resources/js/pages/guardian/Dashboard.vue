@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
+import { index as enrollmentIndex } from '@/routes/enrollment'
 import type { GuardianDashboardProps, GuardianStudent } from '@/types/guardian-dashboard'
 
 const page = usePage()
@@ -48,6 +49,18 @@ return '#93c5fd'
 
 const levelLabel = (level: string): string =>
     level === 'university' ? 'Universitario' : 'Escolar'
+
+const enrollmentCtaLabel = (status: string | null): string => {
+    if (status === null) {
+return 'Inscribir'
+}
+
+    if (status === 'draft') {
+return 'Continuar inscripción'
+}
+
+    return 'Ver inscripción'
+}
 </script>
 
 <template>
@@ -109,22 +122,43 @@ const levelLabel = (level: string): string =>
                                 <template v-if="student.pensum_name"> · {{ student.pensum_name }}</template>
                             </div>
                         </div>
-                        <span
-                            :style="{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                height: '22px',
-                                padding: '0 10px',
-                                borderRadius: '999px',
-                                fontSize: 'var(--text-xs)',
-                                fontWeight: '600',
-                                background: badgeColor(student.enrollment_status) + '22',
-                                color: badgeColor(student.enrollment_status),
-                                border: '1px solid ' + badgeColor(student.enrollment_status) + '55',
-                            }"
-                        >
-                            {{ enrollmentLabel(student.enrollment_status) }}
-                        </span>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span
+                                :style="{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    height: '22px',
+                                    padding: '0 10px',
+                                    borderRadius: '999px',
+                                    fontSize: 'var(--text-xs)',
+                                    fontWeight: '600',
+                                    background: badgeColor(student.enrollment_status) + '22',
+                                    color: badgeColor(student.enrollment_status),
+                                    border: '1px solid ' + badgeColor(student.enrollment_status) + '55',
+                                }"
+                            >
+                                {{ enrollmentLabel(student.enrollment_status) }}
+                            </span>
+                            <Link
+                                dusk="guardian-enroll-btn"
+                                :href="enrollmentIndex.url({ query: { student_id: student.id } })"
+                                style="
+                                    display:inline-flex;
+                                    align-items:center;
+                                    gap:4px;
+                                    background:var(--accent);
+                                    color:#fff;
+                                    font-size:var(--text-xs);
+                                    font-weight:600;
+                                    padding:6px 12px;
+                                    border-radius:var(--radius-md);
+                                    text-decoration:none;
+                                    white-space:nowrap;
+                                "
+                            >
+                                {{ enrollmentCtaLabel(student.enrollment_status) }} →
+                            </Link>
+                        </div>
                     </div>
 
                     <!-- Card body -->

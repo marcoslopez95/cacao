@@ -18,6 +18,11 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'active' => $this->active,
             'roles' => $this->whenLoaded('roles', fn () => $this->roles->pluck('name')->values()),
+            'student_level' => $this->whenLoaded('student', fn () => $this->student?->educational_level?->label()),
+            'student_id' => $this->whenLoaded('student', fn () => $this->student?->id),
+            'guardians_count' => $this->whenLoaded('student', fn () => $this->student?->guardians->count()),
+            'guardian_id' => $this->whenLoaded('guardian', fn () => $this->guardian?->id),
+            'students_count' => $this->whenLoaded('guardian', fn () => $this->guardian?->students->count()),
             'created_at' => $this->created_at?->toDateString(),
         ];
     }

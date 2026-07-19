@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, usePage } from '@inertiajs/vue3'
+import { Head, Link, usePage } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import CreateUserModal from '@/components/security/CreateUserModal.vue'
 import DeactivateUserModal from '@/components/security/DeactivateUserModal.vue'
@@ -12,6 +12,8 @@ import Button from '@/components/UI/AppButton.vue'
 import Pagination from '@/components/UI/AppPagination.vue'
 import { useUserFilters } from '@/composables/filters/useUserFilters'
 import { useUserPermissions } from '@/composables/permissions/useUserPermissions'
+import { show as showGuardian } from '@/routes/academic/guardians'
+import { show as showStudent } from '@/routes/academic/students'
 import { index } from '@/routes/security/users'
 import type { UserCollection, UserRow } from '@/types'
 
@@ -111,6 +113,8 @@ const authId = (usePage().props as any).auth?.user?.id
                     <tr>
                         <th>Usuario</th>
                         <th>Roles</th>
+                        <th>Nivel</th>
+                        <th>Relación</th>
                         <th>Estado</th>
                         <th>Creado</th>
                         <th style="text-align:right;">Acciones</th>
@@ -138,6 +142,23 @@ const authId = (usePage().props as any).auth?.user?.id
                                 >{{ role }}</Badge>
                                 <span v-if="!user.roles.length" style="color:var(--text-muted);font-style:italic;font-size:var(--text-sm);">Sin rol</span>
                             </div>
+                        </td>
+                        <td>
+                            <Badge v-if="user.student_level" variant="neutral">{{ user.student_level }}</Badge>
+                            <span v-else style="color:var(--text-muted);font-style:italic;font-size:var(--text-sm);">—</span>
+                        </td>
+                        <td>
+                            <Link
+                                v-if="user.student_id && user.guardians_count"
+                                :href="showStudent({ student: user.student_id }).url"
+                                style="color:var(--accent);font-size:var(--text-sm);text-decoration:none;"
+                            >Representantes ({{ user.guardians_count }})</Link>
+                            <Link
+                                v-else-if="user.guardian_id && user.students_count"
+                                :href="showGuardian({ guardian: user.guardian_id }).url"
+                                style="color:var(--accent);font-size:var(--text-sm);text-decoration:none;"
+                            >Estudiantes ({{ user.students_count }})</Link>
+                            <span v-else style="color:var(--text-muted);font-style:italic;font-size:var(--text-sm);">—</span>
                         </td>
                         <td>
                             <Badge :variant="user.active ? 'success' : 'neutral'" dot>
@@ -178,7 +199,7 @@ const authId = (usePage().props as any).auth?.user?.id
                         </td>
                     </tr>
                     <tr v-if="!props.users.data.length">
-                        <td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px 16px;">
+                        <td colspan="7" style="text-align:center;color:var(--text-muted);padding:32px 16px;">
                             No hay usuarios que coincidan con los filtros
                         </td>
                     </tr>

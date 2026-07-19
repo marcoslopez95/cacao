@@ -6,7 +6,9 @@ use App\Enums\ClassroomType;
 use App\Enums\DayOfWeek;
 use App\Enums\ScheduleSessionType;
 use App\Enums\SectionType;
+use App\Models\Career;
 use App\Models\Classroom;
+use App\Models\Pensum;
 use App\Models\Period;
 use App\Models\Professor;
 use App\Models\Schedule;
@@ -14,6 +16,7 @@ use App\Models\Section;
 use App\Models\Subject;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class DemoSectionsSeeder extends Seeder
 {
@@ -67,18 +70,16 @@ class DemoSectionsSeeder extends Seeder
             return;
         }
 
-        $subjects = Subject::whereIn('period_number', [1, 2])
+        // Semesters currently being studied by some cohort: academic_year (1-4) × 2.
+        $subjects = Subject::whereIn('period_number', [2, 4, 6, 8])
+            ->whereHas('pensum', fn ($q) => $q->where('period_type', 'semester'))
             ->orderBy('code')
             ->get();
 
         $sectionIndex = 0;
 
         foreach ($subjects as $subject) {
-            $sectionCodes = $subject->period_number === 1
-                ? ['A', 'B']
-                : ['A'];
-
-            foreach ($sectionCodes as $code) {
+            foreach (['A'] as $code) {
                 $classroom = $classrooms[$sectionIndex % $classrooms->count()];
                 $mainTeacher = $professors[$sectionIndex % $professors->count()];
 
@@ -105,6 +106,66 @@ class DemoSectionsSeeder extends Seeder
                 $this->seedSchedules($section, $subject->id, $period, $professors, $classrooms, $sectionIndex);
 
                 $sectionIndex++;
+            }
+        }
+
+        $this->seedSchoolSections($professors, $classrooms);
+    }
+
+    /**
+     * Create one `SectionType::School` section per school year (grade) for the
+     * current school year, attaching the mandatory subjects of that grade.
+     *
+     * @param  Collection<int, Professor>  $professors
+     * @param  Collection<int, Classroom>  $classrooms
+     */
+    private function seedSchoolSections(Collection $professors, Collection $classrooms): void
+    {
+        $schoolPeriod = Period::where('name', '2025-2026')->first();
+        $schoolCareer = Career::where('code', 'BACH')->first();
+
+        if (! $schoolPeriod || ! $schoolCareer) {
+            return;
+        }
+
+        $pensum = Pensum::where('career_id', $schoolCareer->id)->where('is_active', true)->first();
+
+        if (! $pensum) {
+            return;
+        }
+
+        for ($grade = 1; $grade <= $pensum->total_periods; $grade++) {
+            $classroom = $classrooms[$grade % $classrooms->count()];
+            $mainTeacher = $professors[$grade % $professors->count()];
+
+            $section = Section::firstOrCreate(
+                [
+                    'period_id' => $schoolPeriod->id,
+                    'pensum_id' => $pensum->id,
+                    'grade' => $grade,
+                    'letter' => 'A',
+                ],
+                [
+                    'type' => SectionType::School,
+                    'subject_id' => null,
+                    'code' => $grade.'A',
+                    'capacity' => 30,
+                    'main_teacher_id' => $mainTeacher->id,
+                    'classroom_id' => $classroom->id,
+                ],
+            );
+
+            $subjectIds = Subject::where('pensum_id', $pensum->id)
+                ->where('period_number', $grade)
+                ->pluck('id');
+
+            if ($subjectIds->isNotEmpty()) {
+                DB::table('section_subjects')->insertOrIgnore(
+                    $subjectIds->map(fn (int $subjectId) => [
+                        'section_id' => $section->id,
+                        'subject_id' => $subjectId,
+                    ])->all()
+                );
             }
         }
     }

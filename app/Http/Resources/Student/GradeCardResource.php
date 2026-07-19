@@ -4,17 +4,25 @@ namespace App\Http\Resources\Student;
 
 use App\Enums\GradeVisibility;
 use App\Models\Enrollment;
-use App\Models\GradeConfig;
+use App\Services\Grade\FinalGradeCalculator;
+use App\Services\Grade\GradeConfigResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class GradeCardResource extends JsonResource
 {
+    private readonly FinalGradeCalculator $finalGradeCalculator;
+
+    private readonly GradeConfigResolver $gradeConfigResolver;
+
     public function __construct(
         private readonly Enrollment $enrollment,
         private readonly GradeVisibility $visibility,
     ) {
         parent::__construct($enrollment);
+
+        $this->finalGradeCalculator = new FinalGradeCalculator;
+        $this->gradeConfigResolver = new GradeConfigResolver;
     }
 
     /**
@@ -30,7 +38,7 @@ class GradeCardResource extends JsonResource
         ])->get();
 
         $subjects = $details->map(function ($detail) {
-            $config = $this->resolveConfig($detail);
+            $config = $this->gradeConfigResolver->resolveForDetail($detail);
 
             if ($config === null) {
                 return null;
@@ -58,7 +66,7 @@ class GradeCardResource extends JsonResource
                 ];
             });
 
-            $finalGrade = $this->calculateFinalGrade($slotData->toArray(), $config);
+            $finalGrade = $this->finalGradeCalculator->calculate($slotData->toArray(), $config);
 
             return [
                 'enrollment_detail_id' => $detail->id,
@@ -76,51 +84,5 @@ class GradeCardResource extends JsonResource
             'period' => $this->enrollment->period?->name ?? '—',
             'subjects' => $subjects,
         ];
-    }
-
-    /**
-     * @param  array<int, array<string, mixed>>  $slotData
-     */
-    private function calculateFinalGrade(array $slotData, GradeConfig $config): ?string
-    {
-        $nonRemedial = array_filter($slotData, fn ($s) => ! $s['is_remedial']);
-        $allHaveValues = ! empty($nonRemedial) && collect($nonRemedial)->every(fn ($s) => $s['value'] !== null);
-
-        if (! $allHaveValues) {
-            return null;
-        }
-
-        $definitiva = collect($nonRemedial)->sum(
-            fn ($s) => (float) $s['value'] * (float) $s['weight'] / 100
-        );
-
-        $remedialSlot = collect($slotData)->firstWhere('is_remedial', true);
-        if ($remedialSlot && $remedialSlot['value'] !== null) {
-            $definitiva = max($definitiva, (float) $remedialSlot['value']);
-        }
-
-        return (string) round($definitiva, 2);
-    }
-
-    private function resolveConfig($detail): ?GradeConfig
-    {
-        $level = $detail->enrollment->student->educational_level ?? 'university';
-        $periodId = $detail->enrollment->period_id;
-
-        if ($periodId) {
-            $config = GradeConfig::with('slots')
-                ->where('level', $level)
-                ->where('period_id', $periodId)
-                ->first();
-
-            if ($config) {
-                return $config;
-            }
-        }
-
-        return GradeConfig::with('slots')
-            ->where('level', $level)
-            ->whereNull('period_id')
-            ->first();
     }
 }

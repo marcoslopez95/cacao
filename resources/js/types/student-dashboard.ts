@@ -7,6 +7,14 @@ export interface StudentTodaySchedule {
   is_current: boolean
 }
 
+export interface StudentGuardianSummary {
+  name: string
+  email: string
+  phone: string | null
+  kinship: string | null
+  is_primary: boolean
+}
+
 export interface StudentDashboardProps {
   period: { name: string } | null
   enrollment: { id: number; status: string; uc_inscritas: number } | null
@@ -15,4 +23,5 @@ export interface StudentDashboardProps {
   uc_aprobadas: number
   today_label: string
   today_schedules: StudentTodaySchedule[]
+  guardians: StudentGuardianSummary[]
 }

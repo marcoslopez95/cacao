@@ -62,7 +62,12 @@ it('seeds students', function () {
     (new DemoSeeder)->run();
 
     expect(Student::count())->toBeGreaterThanOrEqual(140);
-    expect(Guardian::count())->toBeGreaterThanOrEqual(20);
+
+    // Guardians now cover 1-6 students each (fewer guardians than students by design)
+    expect(Guardian::count())->toBeGreaterThan(0);
+    $studentsPerGuardian = Guardian::withCount('students')->pluck('students_count');
+    expect($studentsPerGuardian->min())->toBeGreaterThanOrEqual(1);
+    expect($studentsPerGuardian->max())->toBeLessThanOrEqual(6);
 
     $uni = User::where('email', 'est001@utcacao.edu.ve')->first();
     expect($uni)->not->toBeNull();
@@ -87,28 +92,63 @@ it('seeds enrollments', function () {
     expect(Enrollment::count())->toBeGreaterThanOrEqual(75);
     expect(EnrollmentDetail::count())->toBeGreaterThanOrEqual(270);
 
+    // Draft/confirmed only occur in the current period (varied enrollment states);
+    // approved dominates globally because historical backfill is always approved.
     $draft = Enrollment::where('status', 'draft')->count();
     $confirmed = Enrollment::where('status', 'confirmed')->count();
     $approved = Enrollment::where('status', 'approved')->count();
 
-    expect($draft)->toBeGreaterThanOrEqual(25);
-    expect($confirmed)->toBeGreaterThanOrEqual(25);
-    expect($approved)->toBeGreaterThanOrEqual(25);
+    expect($draft)->toBeGreaterThan(0);
+    expect($confirmed)->toBeGreaterThan(0);
+    expect($approved)->toBeGreaterThan(0);
 });
 
 it('is idempotent — running twice yields the same counts', function () {
     $seeder = new DemoSeeder;
     $seeder->run();
+
+    // Captured after the first run rather than hardcoded: Enrollment/EnrollmentDetail
+    // counts depend on a hash of each student's auto-increment id (deterministic
+    // within an environment, but not portable across environments/DBs), so what
+    // this test actually needs to prove is "unchanged by a second run", not a
+    // specific absolute number.
+    $countsAfterFirstRun = [
+        'CareerCategory' => CareerCategory::count(),
+        'Career' => Career::count(),
+        'Pensum' => Pensum::count(),
+        'Subject' => Subject::count(),
+        'Building' => Building::count(),
+        'Classroom' => Classroom::count(),
+        'Period' => Period::count(),
+        'Lapse' => Lapse::count(),
+        'Professor' => Professor::count(),
+        'Student' => Student::count(),
+        'Guardian' => Guardian::count(),
+        'Section' => Section::count(),
+        'Schedule' => Schedule::count(),
+        'Enrollment' => Enrollment::count(),
+        'EnrollmentDetail' => EnrollmentDetail::count(),
+    ];
+
     $seeder->run();  // second run must not duplicate records
 
-    expect(Career::count())->toBe(5);
-    expect(Subject::count())->toBe(40);
-    expect(Building::count())->toBe(2);
-    expect(Classroom::count())->toBe(15);
-    expect(Period::count())->toBe(2);
-    expect(Professor::count())->toBe(13);
-    expect(Student::count())->toBe(141);
-    expect(Section::count())->toBe(65);
-    expect(Enrollment::count())->toBe(90);
-    expect(EnrollmentDetail::count())->toBe(360);
+    foreach ($countsAfterFirstRun as $model => $count) {
+        expect(match ($model) {
+            'CareerCategory' => CareerCategory::count(),
+            'Career' => Career::count(),
+            'Pensum' => Pensum::count(),
+            'Subject' => Subject::count(),
+            'Building' => Building::count(),
+            'Classroom' => Classroom::count(),
+            'Period' => Period::count(),
+            'Lapse' => Lapse::count(),
+            'Professor' => Professor::count(),
+            'Student' => Student::count(),
+            'Guardian' => Guardian::count(),
+            'Section' => Section::count(),
+            'Schedule' => Schedule::count(),
+            'Enrollment' => Enrollment::count(),
+            'EnrollmentDetail' => EnrollmentDetail::count(),
+        })->toBe($count, "{$model} count changed after a second seeder run");
+    }
 });

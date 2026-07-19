@@ -9,6 +9,7 @@ use App\Models\Pensum;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -21,6 +22,26 @@ class DemoStudentsSeeder extends Seeder
      * @var array<int, string>
      */
     private const CAREER_CODES = ['INF', 'CIV', 'CON', 'ADM', 'EDU'];
+
+    private const SCHOOL_CAREER_CODE = 'BACH';
+
+    private const SCHOOL_PENSUM_NAME = 'Pensum Bachillerato 2020';
+
+    /**
+     * Kinship type codes eligible for a secondary student's guardian link.
+     *
+     * @var array<int, string>
+     */
+    private const KINSHIP_CODES = ['father', 'mother', 'legal_guardian', 'grandparent', 'uncle', 'other'];
+
+    /**
+     * Fixed batch sizes (1-6 students per guardian) summing to 20 secondary students.
+     * Fixed (not random) so re-seeding stays idempotent — a random count per run
+     * would leave stray guardians with 0 students once a re-run draws a smaller batch count.
+     *
+     * @var array<int, int>
+     */
+    private const GUARDIAN_BATCH_SIZES = [6, 5, 4, 2, 2, 1];
 
     /**
      * Seed student accounts and guardian assignments.
@@ -76,14 +97,31 @@ class DemoStudentsSeeder extends Seeder
         }
     }
 
+    /**
+     * Assigns the 20 secondary students to a pool of guardians. Guardians are
+     * created in batches of random size (1-6 students each) instead of a
+     * fixed 1:1 mapping, and the kinship type varies per link.
+     */
     private function seedSecondaryStudentsWithGuardians(Role $estudianteRole, Role $representanteRole): void
     {
-        // 20 secondary students paired with 20 guardians (rep01–rep20, sec01–sec20)
-        for ($i = 1; $i <= 20; $i++) {
-            $num = sprintf('%02d', $i);
+        $schoolCareer = Career::where('code', self::SCHOOL_CAREER_CODE)->firstOrFail();
+        $schoolPensum = Pensum::where('career_id', $schoolCareer->id)
+            ->where('name', self::SCHOOL_PENSUM_NAME)
+            ->firstOrFail();
 
-            // Create guardian user first
-            $repEmail = "rep{$num}@utcacao.edu.ve";
+        /** @var Collection<string, int> $kinshipTypeIds */
+        $kinshipTypeIds = DB::table('kinship_types')
+            ->whereIn('code', self::KINSHIP_CODES)
+            ->pluck('id', 'code');
+
+        $batchSizes = self::GUARDIAN_BATCH_SIZES;
+
+        $studentNum = 1;
+
+        foreach ($batchSizes as $batchIndex => $batchSize) {
+            $repNum = sprintf('%02d', $batchIndex + 1);
+            $repEmail = "rep{$repNum}@utcacao.edu.ve";
+
             $repUser = User::firstOrCreate(
                 ['email' => $repEmail],
                 [
@@ -98,38 +136,51 @@ class DemoStudentsSeeder extends Seeder
 
             $guardian = Guardian::firstOrCreate(['user_id' => $repUser->id]);
 
-            // academic_year: 4 students per year (years 1–5)
-            $academicYear = (int) ceil($i / 4);
+            for ($i = 0; $i < $batchSize; $i++) {
+                $num = sprintf('%02d', $studentNum);
 
-            $secEmail = "sec{$num}@utcacao.edu.ve";
-            $secUser = User::firstOrCreate(
-                ['email' => $secEmail],
-                [
-                    'first_name' => fake()->firstName(),
-                    'last_name' => fake()->lastName().' '.fake()->lastName(),
-                    'password' => Hash::make('password'),
-                    'email_verified_at' => now(),
-                ],
-            );
+                // academic_year: 4 students per year (years 1–5)
+                $academicYear = (int) ceil($studentNum / 4);
 
-            $secUser->syncRoles([$estudianteRole->name]);
+                $secEmail = "sec{$num}@utcacao.edu.ve";
+                $secUser = User::firstOrCreate(
+                    ['email' => $secEmail],
+                    [
+                        'first_name' => fake()->firstName(),
+                        'last_name' => fake()->lastName().' '.fake()->lastName(),
+                        'password' => Hash::make('password'),
+                        'email_verified_at' => now(),
+                    ],
+                );
 
-            $student = Student::firstOrCreate(
-                ['user_id' => $secUser->id],
-                [
-                    'educational_level' => EducationalLevel::Secondary,
-                    'current_pensum_id' => null,
-                    'academic_year' => $academicYear,
-                ],
-            );
+                $secUser->syncRoles([$estudianteRole->name]);
 
-            // Attach guardian via pivot (only when first created)
-            if ($student->wasRecentlyCreated) {
-                $student->guardians()->attach($guardian->id, [
-                    'kinship_type_id' => DB::table('kinship_types')->where('code', 'mother')->value('id'),
-                    'is_primary' => true,
-                    'is_emergency_contact' => true,
-                ]);
+                $student = Student::firstOrCreate(
+                    ['user_id' => $secUser->id],
+                    [
+                        'educational_level' => EducationalLevel::Secondary,
+                        'current_pensum_id' => $schoolPensum->id,
+                        'academic_year' => $academicYear,
+                    ],
+                );
+
+                // Backfill for students created before the school pensum existed.
+                if ($student->current_pensum_id === null) {
+                    $student->update(['current_pensum_id' => $schoolPensum->id]);
+                }
+
+                // Attach guardian via pivot (only when first created)
+                if ($student->wasRecentlyCreated) {
+                    $kinshipCode = fake()->randomElement(self::KINSHIP_CODES);
+
+                    $student->guardians()->attach($guardian->id, [
+                        'kinship_type_id' => $kinshipTypeIds[$kinshipCode],
+                        'is_primary' => true,
+                        'is_emergency_contact' => true,
+                    ]);
+                }
+
+                $studentNum++;
             }
         }
     }

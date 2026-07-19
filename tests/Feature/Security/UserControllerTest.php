@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Catalogs\KinshipType;
+use App\Models\Guardian;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -80,6 +83,64 @@ test('index filters by status active only returns active users', function () {
         ->get('/security/users?status=active')
         ->assertOk()
         ->assertInertia(fn ($page) => $page->where('users.meta.total', 2)); // actor + 1 active user
+});
+
+test('index exposes student educational level', function () {
+    $student = Student::factory()->secondary()->create();
+
+    $this->actingAs(userWithUserPerm('users.view'))
+        ->get('/security/users')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where(
+                'users.data',
+                fn ($users) => collect($users)->firstWhere('id', $student->user_id)['student_level'] === 'Secundaria'
+            )
+        );
+});
+
+test('index exposes student_id and guardians_count for a student user', function () {
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    $student = Student::factory()->create();
+    $guardian = Guardian::factory()->create();
+    $student->guardians()->attach($guardian->id, [
+        'kinship_type_id' => $kinship->id,
+        'is_primary' => true,
+        'is_emergency_contact' => false,
+    ]);
+
+    $this->actingAs(userWithUserPerm('users.view'))
+        ->get('/security/users')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('users.data', function ($users) use ($student) {
+                $row = collect($users)->firstWhere('id', $student->user_id);
+
+                return $row['student_id'] === $student->id && $row['guardians_count'] === 1;
+            })
+        );
+});
+
+test('index exposes guardian_id and students_count for a guardian user', function () {
+    $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
+    $guardian = Guardian::factory()->create();
+    $student = Student::factory()->create();
+    $student->guardians()->attach($guardian->id, [
+        'kinship_type_id' => $kinship->id,
+        'is_primary' => true,
+        'is_emergency_contact' => false,
+    ]);
+
+    $this->actingAs(userWithUserPerm('users.view'))
+        ->get('/security/users')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('users.data', function ($users) use ($guardian) {
+                $row = collect($users)->firstWhere('id', $guardian->user_id);
+
+                return $row['guardian_id'] === $guardian->id && $row['students_count'] === 1;
+            })
+        );
 });
 
 // ---------------------------------------------------------------------------

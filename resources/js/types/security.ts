@@ -20,6 +20,11 @@ export type UserRow = {
     email: string;
     active: boolean;
     roles: string[];
+    student_level: string | null;
+    student_id: number | null;
+    guardians_count: number | null;
+    guardian_id: number | null;
+    students_count: number | null;
     created_at: string;
 };
 

@@ -91,6 +91,50 @@ function timeRange(item: StudentTodaySchedule): string {
             </div>
         </div>
 
+        <!-- Mi representante -->
+        <template v-if="props.guardians.length">
+            <div>
+                <div style="font-size:var(--text-xs);font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">
+                    {{ props.guardians.length > 1 ? 'Mis representantes' : 'Mi representante' }}
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                    <div
+                        v-for="guardian in props.guardians"
+                        :key="guardian.email"
+                        style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;"
+                    >
+                        <div>
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                                <span style="font-size:var(--text-base);font-weight:600;color:var(--text-primary);">
+                                    {{ guardian.name }}
+                                </span>
+                                <span
+                                    v-if="guardian.is_primary"
+                                    class="badge badge-accent"
+                                    style="font-size:10px;height:18px;padding:0 7px;font-weight:700;letter-spacing:0.04em;"
+                                >
+                                    PRINCIPAL
+                                </span>
+                            </div>
+                            <div style="font-size:var(--text-sm);color:var(--text-muted);">
+                                {{ guardian.kinship ?? '—' }}
+                            </div>
+                        </div>
+
+                        <div style="text-align:right;">
+                            <div style="font-size:var(--text-sm);color:var(--text-secondary);font-weight:500;">
+                                {{ guardian.email }}
+                            </div>
+                            <div v-if="guardian.phone" style="font-size:var(--text-xs);color:var(--text-muted);">
+                                {{ guardian.phone }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
         <!-- CTA banner — no active enrollment -->
         <template v-if="props.enrollment === null">
             <div

@@ -3,6 +3,7 @@ import { Link, Head } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import { edit as editUser } from '@/actions/App/Http/Controllers/Security/UserController'
 import { index as studentsIndex } from '@/routes/academic/students'
+import { show as showEnrollment } from '@/routes/academic/students/enrollments'
 import type { StudentShowData } from '@/types/studentShow'
 
 const props = defineProps<{
@@ -52,10 +53,10 @@ const enrollmentStatusLabel = (status: string | null): string => {
         <!-- ── Header ──────────────────────────────────────────── -->
         <div class="flex items-start justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-semibold text-tinta tracking-tight">{{ student.name }}</h1>
-                <p class="mt-1 text-sm text-gris">
+                <h1 class="text-2xl font-semibold text-[var(--text-primary)] tracking-tight">{{ student.name }}</h1>
+                <p class="mt-1 text-sm text-[var(--text-muted)]">
                     {{ educationalLevelLabel }}
-                    <span v-if="student.academic_status" class="ml-2 text-gris-light">· {{ student.academic_status }}</span>
+                    <span v-if="student.academic_status" class="ml-2 text-[var(--text-secondary)]">· {{ student.academic_status }}</span>
                 </p>
             </div>
             <div class="flex gap-2 shrink-0">
@@ -75,134 +76,145 @@ const enrollmentStatusLabel = (status: string | null): string => {
         </div>
 
         <!-- ── Identidad ──────────────────────────────────────── -->
-        <section class="rounded-xl border border-gris-borde bg-white p-5">
-            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gris">Identidad</h2>
+        <section class="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5">
+            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Identidad</h2>
             <dl class="grid grid-cols-2 gap-x-8 gap-y-3 text-sm sm:grid-cols-4">
                 <div>
-                    <dt class="text-gris">Correo electrónico</dt>
-                    <dd class="mt-0.5 font-medium text-tinta">{{ student.email }}</dd>
+                    <dt class="text-[var(--text-muted)]">Correo electrónico</dt>
+                    <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.email }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gris">Cédula</dt>
-                    <dd class="mt-0.5 font-medium text-tinta">{{ student.cedula ?? '—' }}</dd>
+                    <dt class="text-[var(--text-muted)]">Cédula</dt>
+                    <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.cedula ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gris">Código de estudiante</dt>
-                    <dd class="mt-0.5 font-medium text-tinta">{{ student.student_code ?? '—' }}</dd>
+                    <dt class="text-[var(--text-muted)]">Código de estudiante</dt>
+                    <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.student_code ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gris">Fecha de ingreso</dt>
-                    <dd class="mt-0.5 font-medium text-tinta">{{ student.enrollment_date ?? '—' }}</dd>
+                    <dt class="text-[var(--text-muted)]">Fecha de ingreso</dt>
+                    <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.enrollment_date ?? '—' }}</dd>
                 </div>
             </dl>
         </section>
 
         <!-- ── Carrera y Pensum ───────────────────────────────── -->
-        <section class="rounded-xl border border-gris-borde bg-white p-5">
-            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gris">Carrera y Pensum</h2>
+        <section class="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5">
+            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Carrera y Pensum</h2>
             <dl class="grid grid-cols-2 gap-x-8 gap-y-3 text-sm sm:grid-cols-4">
                 <div>
-                    <dt class="text-gris">Carrera</dt>
-                    <dd class="mt-0.5 font-medium text-tinta">{{ student.career_name ?? '—' }}</dd>
+                    <dt class="text-[var(--text-muted)]">Carrera</dt>
+                    <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.career_name ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gris">Pensum</dt>
-                    <dd class="mt-0.5 font-medium text-tinta">{{ student.pensum_name ?? '—' }}</dd>
+                    <dt class="text-[var(--text-muted)]">Pensum</dt>
+                    <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.pensum_name ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gris">Año académico</dt>
-                    <dd class="mt-0.5 font-medium text-tinta">{{ student.academic_year ?? '—' }}</dd>
+                    <dt class="text-[var(--text-muted)]">Año académico</dt>
+                    <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.academic_year ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gris">Modalidad</dt>
-                    <dd class="mt-0.5 font-medium text-tinta">{{ student.modality ?? '—' }}</dd>
+                    <dt class="text-[var(--text-muted)]">Modalidad</dt>
+                    <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.modality ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gris">Turno</dt>
-                    <dd class="mt-0.5 font-medium text-tinta">{{ student.shift ?? '—' }}</dd>
+                    <dt class="text-[var(--text-muted)]">Turno</dt>
+                    <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.shift ?? '—' }}</dd>
                 </div>
                 <div>
-                    <dt class="text-gris">Promedio acumulado</dt>
-                    <dd class="mt-0.5 font-medium text-tinta">{{ student.cumulative_gpa ?? '—' }}</dd>
+                    <dt class="text-[var(--text-muted)]">Promedio acumulado</dt>
+                    <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.cumulative_gpa ?? '—' }}</dd>
                 </div>
             </dl>
         </section>
 
         <!-- ── Inscripción activa ─────────────────────────────── -->
-        <section class="rounded-xl border border-gris-borde bg-white p-5">
-            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gris">Inscripción activa</h2>
+        <section class="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5">
+            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Inscripción activa</h2>
             <template v-if="student.active_enrollment">
                 <dl class="grid grid-cols-2 gap-x-8 gap-y-3 text-sm sm:grid-cols-4">
                     <div>
-                        <dt class="text-gris">Período</dt>
-                        <dd class="mt-0.5 font-medium text-tinta">{{ student.active_enrollment.period_name }}</dd>
+                        <dt class="text-[var(--text-muted)]">Período</dt>
+                        <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.active_enrollment.period_name }}</dd>
                     </div>
                     <div>
-                        <dt class="text-gris">Estado</dt>
-                        <dd class="mt-0.5 font-medium text-tinta">{{ enrollmentStatusLabel(student.active_enrollment.status) }}</dd>
+                        <dt class="text-[var(--text-muted)]">Estado</dt>
+                        <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ enrollmentStatusLabel(student.active_enrollment.status) }}</dd>
                     </div>
                     <div>
-                        <dt class="text-gris">UC inscritas</dt>
-                        <dd class="mt-0.5 font-medium text-tinta">{{ student.active_enrollment.uc_inscritas }}</dd>
+                        <dt class="text-[var(--text-muted)]">UC inscritas</dt>
+                        <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.active_enrollment.uc_inscritas }}</dd>
                     </div>
                     <div>
-                        <dt class="text-gris">UC disponibles</dt>
-                        <dd class="mt-0.5 font-medium text-tinta">{{ student.active_enrollment.uc_disponibles }}</dd>
+                        <dt class="text-[var(--text-muted)]">UC disponibles</dt>
+                        <dd class="mt-0.5 font-medium text-[var(--text-primary)]">{{ student.active_enrollment.uc_disponibles }}</dd>
                     </div>
                 </dl>
             </template>
-            <p v-else class="text-sm text-gris">Sin inscripción en el período activo.</p>
+            <p v-else class="text-sm text-[var(--text-muted)]">Sin inscripción en el período activo.</p>
         </section>
 
         <!-- ── Representantes (solo primaria y bachillerato) ──── -->
-        <section v-if="isSchoolLevel" class="rounded-xl border border-gris-borde bg-white p-5">
-            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gris">Representantes</h2>
+        <section v-if="isSchoolLevel" class="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5">
+            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Representantes</h2>
             <template v-if="student.guardians.length > 0">
-                <ul class="divide-y divide-gris-borde">
+                <ul class="divide-y divide-[var(--border)]">
                     <li
                         v-for="guardian in student.guardians"
                         :key="guardian.id"
                         class="flex items-center justify-between py-3 text-sm"
                     >
                         <div>
-                            <span class="font-medium text-tinta">{{ guardian.name }}</span>
-                            <span v-if="guardian.primary" class="ml-2 text-xs text-terracota">Principal</span>
+                            <span class="font-medium text-[var(--text-primary)]">{{ guardian.name }}</span>
+                            <span v-if="guardian.primary" class="ml-2 text-xs text-[var(--accent)]">Principal</span>
                         </div>
-                        <span class="text-gris">{{ guardian.email }}</span>
+                        <span class="text-[var(--text-muted)]">{{ guardian.email }}</span>
                     </li>
                 </ul>
             </template>
-            <p v-else class="text-sm text-gris">Sin representantes registrados.</p>
+            <p v-else class="text-sm text-[var(--text-muted)]">Sin representantes registrados.</p>
         </section>
 
         <!-- ── Historial de inscripciones ─────────────────────── -->
-        <section class="rounded-xl border border-gris-borde bg-white p-5">
-            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-gris">Historial de inscripciones</h2>
+        <section class="rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-5">
+            <h2 class="mb-4 text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)]">Historial de inscripciones</h2>
             <template v-if="student.enrollments.length > 0">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="border-b border-gris-borde text-left text-xs uppercase tracking-wider text-gris">
+                        <tr class="border-b border-[var(--border)] text-left text-xs uppercase tracking-wider text-[var(--text-muted)]">
                             <th class="pb-2 pr-4">Período</th>
                             <th class="pb-2 pr-4">Estado</th>
                             <th class="pb-2 pr-4">UC inscritas</th>
-                            <th class="pb-2">UC disponibles</th>
+                            <th class="pb-2 pr-4">UC disponibles</th>
+                            <th class="pb-2 pr-4">Promedio del periodo</th>
+                            <th class="pb-2"></th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gris-borde">
+                    <tbody class="divide-y divide-[var(--border)]">
                         <tr
                             v-for="enrollment in student.enrollments"
                             :key="enrollment.id"
-                            class="text-tinta"
+                            class="text-[var(--text-primary)]"
                         >
                             <td class="py-2.5 pr-4">{{ enrollment.period_name ?? '—' }}</td>
                             <td class="py-2.5 pr-4">{{ enrollmentStatusLabel(enrollment.status) }}</td>
                             <td class="py-2.5 pr-4">{{ enrollment.uc_inscritas }}</td>
-                            <td class="py-2.5">{{ enrollment.uc_disponibles }}</td>
+                            <td class="py-2.5 pr-4">{{ enrollment.uc_disponibles }}</td>
+                            <td class="py-2.5 pr-4">{{ enrollment.period_average ?? '—' }}</td>
+                            <td class="py-2.5">
+                                <Link
+                                    :href="showEnrollment.url({ student: student.id, enrollment: enrollment.id })"
+                                    class="text-sm font-medium text-[var(--accent)] hover:underline"
+                                >
+                                    Ver detalle
+                                </Link>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </template>
-            <p v-else class="text-sm text-gris">Sin historial de inscripciones.</p>
+            <p v-else class="text-sm text-[var(--text-muted)]">Sin historial de inscripciones.</p>
         </section>
     </div>
 </template>
