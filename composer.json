@@ -18,11 +18,11 @@
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
         "spatie/laravel-permission": "^7.3",
-        "symfony/yaml": "^7.4"
+        "symfony/yaml": "^7.4",
+        "fakerphp/faker": "^1.24"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.7",
-        "fakerphp/faker": "^1.24",
         "laravel/boost": "^2.2",
         "laravel/dusk": "^8.6",
         "laravel/pail": "^1.2.5",
