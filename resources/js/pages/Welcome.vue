@@ -383,11 +383,11 @@ const appearanceLabel: Record<AppearanceVal, string> = {
                         ]"
                         :key="step.n"
                         class="p-7 relative"
-                        :style="`background:var(--bg-surface);${i < 3 ? 'border-right:1px solid var(--border);' : ''}`"
+                        :style="`background:color-mix(in srgb,var(--bg-page) 8%,transparent);${i < 3 ? 'border-right:1px solid color-mix(in srgb,var(--bg-page) 12%,transparent);' : ''}`"
                     >
                         <div class="inline-flex items-center justify-center w-9 h-9 rounded-full font-mono text-[14px] font-semibold mb-5 border" style="color:var(--accent);border-color:var(--accent);">{{ step.n }}</div>
-                        <h3 class="text-[17px] font-semibold tracking-[-0.01em] mb-2">{{ step.t }}</h3>
-                        <p class="text-[13px] leading-[1.55]" style="color:var(--text-secondary);">{{ step.d }}</p>
+                        <h3 class="text-[17px] font-semibold tracking-[-0.01em] mb-2" style="color:var(--bg-page);">{{ step.t }}</h3>
+                        <p class="text-[13px] leading-[1.55]" style="color:color-mix(in srgb,var(--bg-page) 65%,transparent);">{{ step.d }}</p>
                     </div>
                 </div>
             </div>
