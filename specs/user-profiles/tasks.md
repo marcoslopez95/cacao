@@ -7,12 +7,14 @@
 
 ## Overall Progress
 
-- [ ] Task 1 — Extend `users` table: new columns + GENERATED `name` + data migration
-- [ ] Task 2 — Update `User` model (SoftDeletes, new fillable, uuid boot, new relations)
-- [ ] Task 3 — Fortify actions + registration form update (first_name / last_name)
-- [ ] Task 4 — `user_addresses` migration + model + pipeline (Request, Wrapper, Action, Resource)
-- [ ] Task 5 — `user_documents` migration + model + pipeline (Request, Wrapper, Action, Resource)
-- [ ] Task 6 — Pest feature tests
+- [x] Task 1 — Extend `users` table: new columns + GENERATED `name` + data migration
+- [x] Task 2 — Update `User` model (SoftDeletes, new fillable, uuid boot, new relations)
+- [x] Task 3 — Fortify actions + registration form update (first_name / last_name)
+- [x] Task 4 — `user_addresses` migration + model + pipeline (Request, Wrapper, Action, Resource)
+- [x] Task 5 — `user_documents` migration + model + pipeline (Request, Wrapper, Action, Resource)
+- [x] Task 6 — Pest feature tests
+
+**Reconciliado 2026-08-30**: código verificado como implementado (11 tests en verde), tracking nunca se había sincronizado.
 
 ---
 

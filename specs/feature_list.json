@@ -103,7 +103,7 @@
     {
       "id": "catalogs",
       "name": "Catalogs (Geographic + System)",
-      "status": "pending",
+      "status": "completed",
       "spec": "specs/catalogs/",
       "depends_on": [],
       "description": "All lookup tables: Venezuelan geographic hierarchy (countries/states/municipalities/parishes) + 36 system catalog tables. Prerequisite for all profile arneses."
@@ -111,7 +111,7 @@
     {
       "id": "user-profiles",
       "name": "User Profiles",
-      "status": "pending",
+      "status": "completed",
       "spec": "specs/user-profiles/",
       "depends_on": ["catalogs"],
       "description": "Extend users with first_name/last_name (GENERATED name), document, phone, photo, soft deletes. Add user_addresses and user_documents."
@@ -119,7 +119,7 @@
     {
       "id": "role-profiles",
       "name": "Role Profiles",
-      "status": "pending",
+      "status": "completed",
       "spec": "specs/role-profiles/",
       "depends_on": ["catalogs", "user-profiles"],
       "description": "Extend students with academic fields + student_guardians pivot (migrates guardian_id). Add guardian_profiles and staff_profiles."
