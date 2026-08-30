@@ -6,6 +6,7 @@ use App\Models\Guardian;
 use App\Models\Period;
 use App\Models\Professor;
 use App\Models\Student;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -142,6 +143,23 @@ test('student dashboard shows active enrollment data when enrollment exists', fu
             ->has('enrollment')
             ->whereNot('enrollment', null)
             ->where('enrollment.uc_inscritas', 12)
+        );
+});
+
+test('student dashboard returns 200 on sunday with no school-day label', function () {
+    $this->travelTo(Carbon::parse('2024-01-07 09:00:00'));
+
+    $student = Student::factory()->create();
+    $user = $student->user;
+
+    $this->withoutVite()
+        ->actingAs($user)
+        ->get(route('student.dashboard'))
+        ->assertSuccessful()
+        ->assertInertia(fn ($page) => $page
+            ->component('student/Dashboard')
+            ->where('today_label', 'Domingo')
+            ->where('today_schedules', [])
         );
 });
 

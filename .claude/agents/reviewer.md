@@ -93,7 +93,7 @@ Acción requerida: corregir los problemas listados y reportar al leader para re-
 
 ## Reglas inamovibles
 
-- **NO corre tests** — responsabilidad del `senior_tester`
+- **NO corre tests** — responsabilidad del `tester`
 - **NO verifica arquitectura** (FormRequest→Wrapper→Action→Resource) — el implementer la sigue por CLAUDE.md
 - **NO modifica código** — solo lee y reporta
 - NO aprueba si queda un solo problema sin resolver
