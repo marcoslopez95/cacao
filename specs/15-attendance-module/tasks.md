@@ -4,17 +4,18 @@
 
 ---
 
-- [ ] Task 1 — Migraciones: `class_sessions` (type, status, topic, professor_present, linked_session_id, uploaded_by_id) + `attendance_records` (UNIQUE constraint)
-- [ ] Task 2 — Enums: `ClassSessionType`, `ClassSessionStatus`, `AttendanceStatus` + Modelos `ClassSession` y `AttendanceRecord` con relaciones completas (section, schedule, linkedSession, uploadedBy, attendanceRecords) + relaciones inversas en `Section`, `EnrollmentDetail`, `Schedule`
-- [ ] Task 3 — `ClassSessionPolicy`: profesor solo accede a sus secciones; admin/coordinador acceden a todo
-- [ ] Task 4 — Actions base: `CreateClassSessionAction` + `TakeAttendanceAction` (upsert con unicidad)
-- [ ] Task 5 — Actions de vínculo: `CreateMakeupSessionAction` (crea makeup + marca linked como `recovered`) + `CreateAdvanceSessionAction` (crea advance + marca linked como `advanced` + copia attendance_records)
-- [ ] Task 6 — Backend profesor: `Professor\AttendanceController` (index sesiones, storeSession, upsertAttendance) + FormRequests + `ClassSessionResource` + `AttendanceSheetResource`
-- [ ] Task 7 — Backend admin: `Admin\AttendanceController` (index, storeSession, upsertAttendance) + FormRequests — con `professor_present: false` por defecto
-- [ ] Task 8 — Rutas: `/professor/sections/{section}/attendance/*` + `/admin/sections/{section}/attendance/*` + Wayfinder regenerado
-- [ ] Task 9 — Types TypeScript: interfaces en `resources/js/types/classSession.ts` + `resources/js/types/attendanceRecord.ts` + composables `resources/js/composables/forms/useClassSessionForm.ts` (create/store/upsertAttendance) + `resources/js/composables/forms/useAttendanceSheetForm.ts` (marks map Presente/Ausente, save). Tipos clave: `ClassSession { id, date, type: 'regular'|'makeup'|'advance', status: 'scheduled'|'held'|'cancelled'|'recovered'|'advanced', topic, professorPresent, uploadedBy?, linked?: ClassSession, present, absent, hasRecord }`. `AttendanceRecord { enrollmentDetailId, studentId, name, initials, code, status: 'present'|'absent' }`. `AttendanceSheet { session: ClassSession, roster: AttendanceRecord[], absenceTotals: Record<number,number>, sessionsCounted: number }`. `ClassSessionCollection` = colección paginada de sesiones.
+- [x] Task 1 — Migraciones: `class_sessions` (type, status, topic, professor_present, linked_session_id, uploaded_by_id) + `attendance_records` (UNIQUE constraint)
+- [x] Task 2 — Enums: `ClassSessionType`, `ClassSessionStatus`, `AttendanceStatus` + Modelos `ClassSession` y `AttendanceRecord` con relaciones completas (section, schedule, linkedSession, uploadedBy, attendanceRecords) + relaciones inversas en `Section`, `EnrollmentDetail`, `Schedule`
+- [x] Task 3 — `ClassSessionPolicy`: profesor solo accede a sus secciones; admin/coordinador acceden a todo
+- [x] Task 4 — Actions base: `CreateClassSessionAction` + `TakeAttendanceAction` (upsert con unicidad)
+- [x] Task 5 — Actions de vínculo: `CreateMakeupSessionAction` (crea makeup + marca linked como `recovered`) + `CreateAdvanceSessionAction` (crea advance + marca linked como `advanced` + copia attendance_records)
+- [x] Task 6 — Backend profesor: `Professor\AttendanceController` (index sesiones, storeSession, upsertAttendance) + FormRequests + `ClassSessionResource` + `AttendanceSheetResource`
+- [x] Task 7 — Backend admin: `Admin\AttendanceController` (index, storeSession, upsertAttendance) + FormRequests — con `professor_present: false` por defecto
+- [x] Task 8 — Rutas: `/professor/sections/{section}/attendance/*` + `/admin/sections/{section}/attendance/*` + Wayfinder regenerado
+- [x] Task 9 — Types TypeScript: interfaces en `resources/js/types/classSession.ts` + `resources/js/types/attendanceRecord.ts` + composables `resources/js/composables/forms/useClassSessionForm.ts` (create/store/upsertAttendance) + `resources/js/composables/forms/useAttendanceSheetForm.ts` (marks map Presente/Ausente, save). Tipos clave: `ClassSession { id, date, type: 'regular'|'makeup'|'advance', status: 'scheduled'|'held'|'cancelled'|'recovered'|'advanced', topic, professorPresent, uploadedBy?, linked?: ClassSession, present, absent, hasRecord }`. `AttendanceRecord { enrollmentDetailId, studentId, name, initials, code, status: 'present'|'absent' }`. `AttendanceSheet { session: ClassSession, roster: AttendanceRecord[], absenceTotals: Record<number,number>, sessionsCounted: number }`. `ClassSessionCollection` = colección paginada de sesiones.
+  - **Divergencia documentada:** los tipos quedaron consolidados en un único `resources/js/types/attendance.ts` en vez de dos archivos separados. Funcionalmente completo, verificado por auditoría 2026-08-30.
 
-- [ ] Task 10 — Componentes UI compartidos de asistencia (`resources/js/components/attendance/`):
+- [x] Task 10 — Componentes UI compartidos de asistencia (`resources/js/components/attendance/`):
   - `AttStatusPill.vue` — pill de status con dot: `ok` (Dada), `warn` (Pendiente), `danger` (Cancelada), `neutral` (Recuperada), `info` (Adelantada). `font-size: 10.5px, font-weight: 600, border-radius: pill, height 20px`. Dot de 6px con `background: currentColor`.
   - `AttTypePill.vue` — pill de tipo solo para `makeup`/`advance` (regular = null). Borde outline con color info (makeup) o warning (advance).
   - `AttDateBlock.vue` — bloque de fecha: DOW arriba 9px uppercase muted, número 19px 700, mes 9px uppercase muted. `width: 46px, border-radius: md, border: 1px solid border`. Fondo header `bg-surface-2`.
@@ -22,7 +23,7 @@
   - `AttMiniBar.vue` — variante tabla: `height 6px`, sin leyenda, solo texto `NP · NA` en mono 11px debajo.
   - `AttSectionBanner.vue` — banner de contexto de sección: barra izquierda 4px con `--sec-color` (careerColor), badge cuadrado con cohort (fondo color 12% opacity), info (subject + code mono + meta: career/schedule/room/roster count), avatar del profesor con iniciales. `padding 16px 20px, border-radius lg, margin-bottom 20px`. Responsive: apila en <820px.
 
-- [ ] Task 11 — `resources/js/pages/professor/attendance/Index.vue` — página principal del profesor:
+- [x] Task 11 — `resources/js/pages/professor/attendance/Index.vue` — página principal del profesor:
   - **TodayCard** (si hay sesión `scheduled` hoy): bloque con columna izquierda `bg-accent` (DOW/número/mes en papel), cuerpo (tag "Clase de hoy · pendiente" con pulse dot animado terracota + título sesión + meta hora/aula/roster), acción derecha (mini-avatares solapados + botón `btn-primary btn-lg` "Pasar lista"). `border: 1px solid accent 40%, border-radius lg, margin-bottom 24px`.
   - **Stats row** (4 tiles `att-stat`): ① Sesiones registradas (ok: bg success-bg, icon check) ② Asistencia promedio % (neutral) ③ Inasistencias del período (danger) ④ Sesiones por dar (warn). Cada tile: `bg-surface, border, border-radius lg, display flex, gap 14px`. Ícono 38px cuadrado `border-radius md`. Valor 24px 600 tabular-nums. Label 11.5px muted. Grid 4→2→1 columnas.
   - **ViewBar**: tabs con borde inferior acento (Sesiones | Inasistencias con contadores pill mono), layout-switcher 3 botones (cards/table/agenda) con activo bg-surface + shadow-xs, botón "Nueva sesión" `btn-primary btn-md`. Flex row, flex-wrap.
@@ -34,7 +35,8 @@
   - **EmptyState**: ícono 52px `bg-surface-2 border-radius-md` + title 15px + desc 13px. Centrado, padding 56px.
   - Filtrado reactivo: `all/pending/held/special/noprof`. `pending` = status scheduled. `held` = hasRecord. `special` = type !== regular OR status recovered/advanced. `noprof` = professorPresent false.
 
-- [ ] Task 12 — `resources/js/pages/professor/attendance/Sheet.vue` — pantalla completa pasar lista + modal nueva sesión:
+- [x] Task 12 — `resources/js/pages/professor/attendance/Sheet.vue` — pantalla completa pasar lista + modal nueva sesión:
+  - **Divergencia documentada:** `CreateSessionModal` no quedó como componente separado — vive inline dentro de `Index.vue`. Funcionalmente completo, verificado por auditoría 2026-08-30.
   - **Sheet.vue** full-screen (`position fixed inset-0 z-70 bg-page flex-col, animation fadeIn 180ms`):
     - **Topbar** (`bg-surface border-bottom, padding 12px 24px, flex gap 16px`): botón "Volver" (`border border-radius-md, padding 7px 12px, font-size 13px`) + títulos (topic 16px 600 + badge "Subida administrativa" `bg-warning-bg color-warning-fg font-size 11px` si modo admin + sub con fecha/materia/hora 12px muted) + contadores Presente/Ausente (`bg-surface-2 border border-radius-md, n 20px 700 tabular-nums, l 10px uppercase muted`). Contador Presente: `n color success`. Ausente: `n color danger`.
     - **Body** (`flex-1 overflow-y-auto padding 22px 24px 120px`): banner admin info si modo admin. Progress bar `6px bg-sunken fill accent transition-width 200ms` + texto "N estudiantes" + bulk actions ("Todos presente" / "Todos ausente") + búsqueda (`height 40px, padding-left 38px con icon absolute, focus border-accent ring 3px`).
@@ -50,12 +52,12 @@
     - **Form grid** 2 cols: Sección (select) · Fecha (date input) · Inicio (time) · Fin (time). Para makeup/advance: selector "Sesión vinculada" full-width. Tema (text, opcional). Inputs `height 38px border-strong border-radius-md font-size 13px, focus: border-accent ring 3px`.
     - **Hint bar** (solo para makeup/advance): `bg-info-bg border info 28% border-radius-md padding 11px 13px`, icon info + texto explicativo 12px `color-info-fg`.
 
-- [ ] Task 13 — `resources/js/components/attendance/AttTotalsPanel.vue` — panel inasistencias acumuladas (tab "Inasistencias" del profesor):
+- [x] Task 13 — `resources/js/components/attendance/AttTotalsPanel.vue` — panel inasistencias acumuladas (tab "Inasistencias" del profesor):
   - Header: título "Inasistencias acumuladas" 15px 600 + sub "Total de faltas por estudiante en N sesiones…" 12px muted + leyenda: 3 dots (`bg-success` 0-2 · `bg-warning` 3-5 · `bg-danger` 6+ con "en riesgo (N)").
   - Roster ordenado desc por ausencias: grid 4 cols (`34px auto 150px 80px`). Avatar 32px circular `bg-accent 12% border-accent 22%`. Name 13px 500 + badge "riesgo" inline `10px uppercase bg-danger-bg color-danger-fg padding 1px 6px border-radius-sm`. Code mono 11px muted. Track `height 8px border-radius-pill fill: lo=success / mid=warning / hi=danger`. Count `13px 600 tabular-nums / .of color-muted 11px`. `hi: color-danger`, `mid: color-warning-fg`. Hover: `bg-surface-2`.
   - Responsive: track se oculta en <820px, grid pasa a 3 cols.
 
-- [ ] Task 14 — `resources/js/pages/admin/attendance/Index.vue` — vista de coordinación:
+- [x] Task 14 — `resources/js/pages/admin/attendance/Index.vue` — vista de coordinación:
   - **Banner admin warning**: `bg-warning-bg border-warning-30% border-radius-lg padding 14px 16px margin-bottom 20px`. Icono info 16px + texto "Subida administrativa de asistencia..." 12.5px. Explica que `professor_present = false`.
   - **ViewBar**: tab "Pendientes de registrar" con conteo. Sin layout-switcher (siempre cards).
   - **Search**: `max-width 380px height 40px`. Filtra por subject/prof/code/cohort.
@@ -63,4 +65,4 @@
   - **EmptyState** ("Todo al día"): ícono check + título + desc.
   - Clic en card → abre `Sheet.vue` en modo admin: banner "Estás registrando como Coordinación / Admin" visible, `professor_present = false`, sin opción de cambiar. La sesión queda guardada con `professorPresent: false`.
 
-- [ ] Task 15 — QA Gate: qa_manager verifica todos los UCs de `specs/15-attendance-module/qa.md` en verde
+- [x] Task 15 — QA Gate: qa_manager verifica todos los UCs de `specs/15-attendance-module/qa.md` en verde (5/5 UCs vía Dusk, tras corrección de HLZ-38/39/40/41 por el implementer; 87 tests Pest en verde)
