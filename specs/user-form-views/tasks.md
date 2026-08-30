@@ -1,5 +1,7 @@
 # Tasks — User Form Views
 
+**Reconciliado 2026-08-30**: Tasks 01-21 verificadas como implementadas (build TS limpio). Task 22 es el único gap real — checklist de QA visual manual en browser, nunca ejecutado. No se marca [x] por auditoría, requiere verificación humana real.
+
 **Feature:** `05-user-form-views`
 **Scope:** Frontend only — Vue UI sin conexión a backend
 **Depends on:** ninguno

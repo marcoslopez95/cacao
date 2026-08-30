@@ -642,6 +642,8 @@ El formulario de edición de usuario tiene 17 secciones organizadas en tabs por 
 
 **Columnas expuestas en `UserEditResource`:** `document_type_id`, `document_number`, `birth_date`, `gender_id`, `nationality_id`, `phone_primary`, `phone_secondary`, `profile_photo_url`
 
+**Última verificación:** 2026-08-30 ✅ (13/13 tests pasan — `IdentityS01AcceptanceTest.php`)
+
 **Test Dusk:** `tests/Browser/Security/UserEditS01S04IdentityTest.php` (UC-S01-02) ✅  
 **Feature de origen:** ad-hoc  
 **Última verificación:** 2026-05-28 ✅ (Dusk test pasa — gender_id y nationality_id pre-llenados en selects)

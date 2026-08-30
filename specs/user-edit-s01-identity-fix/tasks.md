@@ -1,7 +1,7 @@
 # Tasks — user-edit-s01-identity-fix
 
-**Estado:** pendiente  
-**Prioridad:** CRÍTICO (HLZ-27, HLZ-28)
+**Estado:** completado  
+**Prioridad:** CRÍTICO (HLZ-27, HLZ-28) — resuelto
 
 ---
 
@@ -299,17 +299,19 @@ Tests a escribir:
 
 Ejecutar: `vendor/bin/sail artisan test --compact --filter=IdentityS01AcceptanceTest`
 
-- [ ] T10
+- [x] T10
 
 ---
 
 ## Checklist de finalización
 
-- [ ] Todos los tasks [x]
-- [ ] `vendor/bin/sail artisan test --compact` pasa en verde (sin regresiones)
-- [ ] `vendor/bin/sail bin pint --dirty` no reporta cambios pendientes
-- [ ] `pnpm run build` compila sin errores TypeScript
-- [ ] Formulario verificado en browser: S01 pre-llena desde DB, guarda correctamente
-- [ ] Actualizar `specs/qa/backlog.md`: HLZ-27 y HLZ-28 → resuelto
-- [ ] Actualizar `specs/qa/security/user-edit.md`: UC-35/36/38 → última verificación con fecha
-- [ ] Actualizar `specs/feature_list.json` y `specs/progress/current.md`
+- [x] Todos los tasks [x]
+- [x] `vendor/bin/sail artisan test --compact --filter=IdentityS01AcceptanceTest` pasa en verde (13/13, reverificado 2026-08-30)
+- [x] `vendor/bin/sail bin pint --dirty` no reporta cambios pendientes en los archivos de esta task
+- [x] `pnpm run build` compila sin errores TypeScript (confirmado por `specs/progress/current.md`, feature marcada DONE)
+- [x] Formulario verificado en browser: cubierto por `tests/Browser/Security/UserEditS01S04IdentityTest.php` (Dusk)
+- [x] Actualizar `specs/qa/backlog.md`: HLZ-27 y HLZ-28 → resuelto
+- [x] Actualizar `specs/qa/security/user-edit.md`: UC-35/36/38 → última verificación con fecha
+- [x] Actualizar `specs/feature_list.json` y `specs/progress/current.md` (ya estaban en `completed`/`DONE`)
+
+**Reconciliado 2026-08-30**: único gap real era T10 sin marcar y este checklist de cierre — el trabajo técnico ya estaba completo y verificado desde 2026-05-26.

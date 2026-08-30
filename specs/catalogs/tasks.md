@@ -7,14 +7,16 @@
 
 ## Overall Progress
 
-- [ ] Task 1 — Geographic catalogs: migrations, models, seed data files, seeders
-- [ ] Task 2 — User/profile catalogs: genders, document_types, geographic_zones, attachment_document_types
-- [ ] Task 3 — Academic catalogs: education_levels, academic_statuses, study_modalities, academic_shifts, admission_types, school_grades
-- [ ] Task 4 — HR/staff catalogs: contract_types, dedication_types, employment_statuses
-- [ ] Task 5 — Social/demographic catalogs: kinship_types, marital_statuses, institution_types, transfer_reasons, digital_levels, language_levels, languages, living_arrangements, household_head_types, religions
-- [ ] Task 6 — Socioeconomic/health catalogs: income_ranges, income_sources, employment_types, institutional_benefits, housing_types, tenure_types, construction_materials, basic_services, commute_times, transport_types, disability_types, insurance_types, blood_types
-- [ ] Task 7 — Base Catalog model + CatalogObserver + CatalogsSeeder orchestrator
-- [ ] Task 8 — Pest feature tests
+- [x] Task 1 — Geographic catalogs: migrations, models, seed data files, seeders
+- [x] Task 2 — User/profile catalogs: genders, document_types, geographic_zones, attachment_document_types
+- [x] Task 3 — Academic catalogs: education_levels, academic_statuses, study_modalities, academic_shifts, admission_types, school_grades
+- [x] Task 4 — HR/staff catalogs: contract_types, dedication_types, employment_statuses
+- [x] Task 5 — Social/demographic catalogs: kinship_types, marital_statuses, institution_types, transfer_reasons, digital_levels, language_levels, languages, living_arrangements, household_head_types, religions
+- [x] Task 6 — Socioeconomic/health catalogs: income_ranges, income_sources, employment_types, institutional_benefits, housing_types, tenure_types, construction_materials, basic_services, commute_times, transport_types, disability_types, insurance_types, blood_types
+- [x] Task 7 — Base Catalog model + CatalogObserver + CatalogsSeeder orchestrator
+- [x] Task 8 — Pest feature tests
+
+**Reconciliado 2026-08-30**: código verificado como implementado (45 tests en verde), tracking nunca se había sincronizado.
 
 ---
 

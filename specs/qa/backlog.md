@@ -698,7 +698,7 @@ d.coordSince = p.coordinator_since  ?? undefined   // igual
 
 ---
 
-## HLZ-27 — S01 Identidad: campos de identidad extendida no se cargan ni se persisten
+## HLZ-27 — S01 Identidad: campos de identidad extendida no se cargan ni se persisten (RESUELTO)
 
 **Fecha:** 2026-05-26  
 **Dominio:** security / users  
@@ -737,7 +737,7 @@ El formulario S01 muestra como editables: documento (tipo + número), fecha de n
 
 ---
 
-## HLZ-28 — S01 Identidad: mismatch de tipos entre catálogos estáticos y FKs de DB
+## HLZ-28 — S01 Identidad: mismatch de tipos entre catálogos estáticos y FKs de DB (RESUELTO)
 
 **Fecha:** 2026-05-26  
 **Dominio:** security / users / catalog  

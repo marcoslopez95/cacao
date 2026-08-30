@@ -7,13 +7,15 @@
 
 ## Overall Progress
 
-- [ ] Task 1 — Extend `students` table: new profile columns + DB constraints
-- [ ] Task 2 — Create `student_guardians` pivot + data migration of `guardian_id`
-- [ ] Task 3 — Update `Student` and `Guardian` models; update factories + DemoStudentsSeeder
-- [ ] Task 4 — `guardian_profiles` migration + model + pipeline
-- [ ] Task 5 — Drop obsolete `guardians.name` / `guardians.relation` columns
-- [ ] Task 6 — `staff_profiles` migration + model + pipeline
-- [ ] Task 7 — Pest feature tests
+- [x] Task 1 — Extend `students` table: new profile columns + DB constraints
+- [x] Task 2 — Create `student_guardians` pivot + data migration of `guardian_id`
+- [x] Task 3 — Update `Student` and `Guardian` models; update factories + DemoStudentsSeeder
+- [x] Task 4 — `guardian_profiles` migration + model + pipeline
+- [x] Task 5 — Drop obsolete `guardians.name` / `guardians.relation` columns
+- [x] Task 6 — `staff_profiles` migration + model + pipeline
+- [x] Task 7 — Pest feature tests
+
+**Reconciliado 2026-08-30**: código verificado como implementado (25 tests en verde), tracking nunca se había sincronizado. Divergencia menor: `GuardianProfilePolicy` no existe como archivo separado (Task 4 lo pedía), la autorización funciona por otro mecanismo y los tests de permisos pasan igual.
 
 ---
 
