@@ -126,8 +126,8 @@ test('index only shows scheduled sessions with past held_at and no attendance re
         ->get(route('admin.attendance.index'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->has('pending_sessions.data', 1)
-            ->has('pending_sessions.data.0', fn ($s) => $s
+            ->has('pending_sessions', 1)
+            ->has('pending_sessions.0', fn ($s) => $s
                 ->where('id', $pendingSession->id)
                 ->etc()
             )
@@ -154,7 +154,7 @@ test('index excludes sessions that already have attendance records', function ()
         ->get(route('admin.attendance.index'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->has('pending_sessions.data', 0)
+            ->has('pending_sessions', 0)
         );
 });
 
@@ -171,13 +171,13 @@ test('pending sessions include enriched section data (subject, cohort, career, t
         ->get(route('admin.attendance.index'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->has('pending_sessions.data', 1)
-            ->has('pending_sessions.data.0', fn ($s) => $s
+            ->has('pending_sessions', 1)
+            ->has('pending_sessions.0', fn ($s) => $s
                 ->has('subject')
                 ->has('cohort')
                 ->has('career')
-                ->has('teacher_name')
-                ->has('career_color')
+                ->has('teacherName')
+                ->has('careerColor')
                 ->where('topic', 'Clase de prueba')
                 ->etc()
             )

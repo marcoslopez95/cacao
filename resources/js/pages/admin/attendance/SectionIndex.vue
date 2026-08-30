@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { router, setLayoutProps } from '@inertiajs/vue3'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { sheet as adminSheet, storeSession as adminStoreSession } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
 import { index as adminIndex } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
 import AttSectionBanner from '@/components/attendance/AttSectionBanner.vue'
@@ -132,11 +132,30 @@ type SessionType = 'regular' | 'makeup' | 'advance'
 const newSessionType = ref<SessionType>('regular')
 const newTopic = ref('')
 const newDate = ref('')
+const newLinkedSessionId = ref<number | null>(null)
+
+// Candidate sessions to link when creating a makeup (cancelled) or advance (future scheduled) session
+const candidateSessions = computed<ClassSession[]>(() => {
+    if (newSessionType.value === 'makeup') {
+        return allSessions.value.filter((s) => s.status === 'cancelled')
+    }
+
+    if (newSessionType.value === 'advance') {
+        return allSessions.value.filter((s) => s.status === 'scheduled' && (s.heldAt ?? '') > todayDate.value)
+    }
+
+    return []
+})
+
+watch(newSessionType, () => {
+    newLinkedSessionId.value = null
+})
 
 function openCreateModal(): void {
     newSessionType.value = 'regular'
     newTopic.value = ''
     newDate.value = todayDate.value
+    newLinkedSessionId.value = null
     showCreateModal.value = true
 }
 
@@ -150,15 +169,16 @@ function submitNewSession(): void {
         adminStoreSession.url({ section: props.section.id }),
         {
             type: newSessionType.value,
+            linked_session_id: newSessionType.value === 'regular' ? null : newLinkedSessionId.value,
             topic: newTopic.value.trim() || null,
             held_at: newDate.value || null,
         },
         {
             onSuccess: () => {
- creating.value = false; createErrors.value = {}; showCreateModal.value = false 
+ creating.value = false; createErrors.value = {}; showCreateModal.value = false
 },
             onError: (e) => {
- creating.value = false; createErrors.value = e 
+ creating.value = false; createErrors.value = e
 },
         }
     )
@@ -239,6 +259,7 @@ function submitNewSession(): void {
             </div>
 
             <button
+                dusk="new-session-btn"
                 class="inline-flex items-center gap-1.5 font-semibold rounded-lg px-3 py-2"
                 style="background: var(--accent); color: var(--accent-fg); font-size: 13px;"
                 @click="openCreateModal"
@@ -398,6 +419,7 @@ function submitNewSession(): void {
                                         { value: 'advance', name: 'Adelanto', desc: 'Anticipa una sesión futura' },
                                     ]"
                                     :key="opt.value"
+                                    :dusk="`session-type-${opt.value}`"
                                     :class="['flex flex-col gap-1 text-left p-3 rounded-lg border-[1.5px] cursor-pointer font-inherit transition-all',
                                              newSessionType === opt.value ? 'border-[var(--accent)] bg-[var(--accent-soft)]' : 'border-[var(--border)] bg-[var(--bg-surface)]']"
                                     style="font-family: inherit;"
@@ -415,6 +437,7 @@ function submitNewSession(): void {
                                 Fecha
                             </label>
                             <input
+                                dusk="new-session-date"
                                 v-model="newDate"
                                 type="date"
                                 class="w-full rounded-lg px-3"
@@ -425,12 +448,54 @@ function submitNewSession(): void {
                             </p>
                         </div>
 
+                        <!-- Linked session selector (makeup/advance only) -->
+                        <div
+                            v-if="newSessionType !== 'regular'"
+                            class="flex flex-col gap-1.5"
+                        >
+                            <label class="font-medium" style="font-size: 12.5px; color: var(--text-primary);">
+                                Sesión vinculada
+                            </label>
+                            <select
+                                dusk="linked-session-select"
+                                v-model.number="newLinkedSessionId"
+                                class="w-full rounded-lg px-3"
+                                style="height: 38px; border: 1px solid var(--border-strong); background: var(--bg-surface); color: var(--text-primary); font-size: 13px; font-family: inherit;"
+                            >
+                                <option :value="null" disabled>Selecciona una sesión…</option>
+                                <option
+                                    v-for="cs in candidateSessions"
+                                    :key="cs.id"
+                                    :value="cs.id"
+                                >
+                                    {{ cs.heldAt ?? 'Sin fecha' }} — {{ cs.topic || 'Sin tema' }}
+                                </option>
+                            </select>
+                            <p v-if="createErrors.linked_session_id" style="font-size: 12px; color: var(--danger); margin: 0;">
+                                {{ createErrors.linked_session_id }}
+                            </p>
+
+                            <!-- Hint bar -->
+                            <div
+                                class="flex items-start gap-2"
+                                style="background: var(--info-bg, rgba(59,130,246,0.08)); border: 1px solid color-mix(in srgb, var(--info, #3B82F6) 28%, transparent); border-radius: var(--radius-md); padding: 11px 13px; margin-top: 4px;"
+                            >
+                                <AppIcon name="info" :size="14" style="color: var(--info-fg, var(--info, #3B82F6)); flex-shrink: 0; margin-top: 1px;" />
+                                <span style="font-size: 12px; color: var(--info-fg, var(--info, #3B82F6));">
+                                    {{ newSessionType === 'makeup'
+                                        ? 'Elegí la sesión cancelada que se está recuperando. Quedará marcada como "Recuperada".'
+                                        : 'Elegí la sesión futura que se está adelantando. Quedará marcada como "Adelantada" y su asistencia se copiará automáticamente.' }}
+                                </span>
+                            </div>
+                        </div>
+
                         <!-- Topic field -->
                         <div class="flex flex-col gap-1.5">
                             <label class="font-medium" style="font-size: 12.5px; color: var(--text-primary);">
                                 Tema <span style="color: var(--text-muted); font-weight: 400;">(opcional)</span>
                             </label>
                             <input
+                                dusk="new-session-topic"
                                 v-model="newTopic"
                                 type="text"
                                 placeholder="Ej. Funciones de orden superior"
@@ -456,6 +521,7 @@ function submitNewSession(): void {
                             Cancelar
                         </button>
                         <button
+                            dusk="new-session-submit"
                             :disabled="creating"
                             class="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-semibold"
                             style="background: var(--accent); color: var(--accent-fg); border: 0; cursor: pointer; font-size: 13.5px; font-family: inherit;"

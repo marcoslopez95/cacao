@@ -25,10 +25,14 @@ setLayoutProps({
 
 // ---- State ----------------------------------------------------------------
 
-/** Initialize every student as 'present' — start present, mark absent */
+/**
+ * Initialize marks from the roster's real recorded status when available (reopening an
+ * already-held session must not silently overwrite saved absences); students without a
+ * record yet default to 'present' per the "start present, mark absent" rule.
+ */
 const marks = ref<AttendanceMarks>(
     Object.fromEntries(
-        props.sheet.roster.map((st) => [st.enrollmentDetailId, 'present' as AttendanceStatus]),
+        props.sheet.roster.map((st) => [st.enrollmentDetailId, st.status ?? ('present' as AttendanceStatus)]),
     ),
 )
 
@@ -266,12 +270,14 @@ function priorLabel(n: number): string {
                         </div>
                         <div class="rc-seg">
                             <button
+                                :dusk="`mark-present-${st.enrollmentDetailId}`"
                                 :class="['present', marks[st.enrollmentDetailId] === 'present' && 'on']"
                                 @click="setMark(st.enrollmentDetailId, 'present')"
                             >
                                 <AppIcon name="check" :size="13" /> Presente
                             </button>
                             <button
+                                :dusk="`mark-absent-${st.enrollmentDetailId}`"
                                 :class="['absent', marks[st.enrollmentDetailId] === 'absent' && 'on']"
                                 @click="setMark(st.enrollmentDetailId, 'absent')"
                             >
@@ -378,6 +384,7 @@ function priorLabel(n: number): string {
                     Cancelar
                 </button>
                 <button
+                    dusk="save-attendance"
                     class="btn btn-primary btn-md"
                     :disabled="processing"
                     @click="handleSave"
@@ -390,7 +397,7 @@ function priorLabel(n: number): string {
         </div>
 
         <!-- ===== Toast ===== -->
-        <div v-if="saved" class="att-toast">
+        <div v-if="saved" dusk="attendance-toast" class="att-toast">
             <AppIcon name="check" :size="16" />
             Asistencia guardada · sesión marcada como dada
         </div>

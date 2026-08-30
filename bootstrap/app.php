@@ -36,6 +36,19 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->json(['message' => $e->getMessage()], 422);
         });
 
+        // Defensive fallback: CreateMakeupSessionAction/CreateAdvanceSessionAction throw
+        // InvalidArgumentException when linked_session_id is missing. The FormRequest
+        // rules already validate this (required_if:type,makeup,advance) — this handler
+        // only guards against edge cases that slip past validation, converting the
+        // exception into a 422 with an inline error instead of a raw 500.
+        $exceptions->render(function (InvalidArgumentException $e, Request $request) {
+            if ($request->header('X-Inertia')) {
+                return back()->withErrors(['linked_session_id' => $e->getMessage()]);
+            }
+
+            return response()->json(['message' => $e->getMessage()], 422);
+        });
+
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
             return match ($response->getStatusCode()) {
                 401 => Inertia::render('errors/AccessDenied', ['status' => 401])

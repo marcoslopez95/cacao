@@ -100,8 +100,8 @@
   {
     "id": "15-attendance-module",
     "name": "Attendance Module — sesiones de clase (regular/makeup/advance) + asistencia por estudiante + portal profesor y admin",
-    "status": "pending",
-    "current_task": 0,
+    "status": "completed",
+    "current_task": 15,
     "plan": "specs/15-attendance-module/tasks.md"
   }
 ]

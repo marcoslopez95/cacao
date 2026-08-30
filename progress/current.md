@@ -1,22 +1,29 @@
-# Feature activa: `15-attendance-module`
+# Feature anterior completada
 
+**Feature:** `15-attendance-module`
 **Plan:** `specs/15-attendance-module/tasks.md`
-**Estado:** PENDIENTE — 0/12 tasks completadas
+**Estado:** COMPLETADA — 15/15 tasks completadas (reconciliado 2026-08-30 vía auditoría, código ya estaba implementado y commiteado pero tasks.md/feature_list.json no se habían sincronizado)
 
 ## Tareas
 
-- [ ] Task 1 — Migraciones: `class_sessions` + `attendance_records`
-- [ ] Task 2 — Enums + Modelos `ClassSession` y `AttendanceRecord` con relaciones
-- [ ] Task 3 — `ClassSessionPolicy` + `AttendancePolicy`
-- [ ] Task 4 — Actions base: `CreateClassSessionAction` + `TakeAttendanceAction`
-- [ ] Task 5 — Actions de vínculo: `CreateMakeupSessionAction` + `CreateAdvanceSessionAction`
-- [ ] Task 6 — Backend profesor: `Professor\AttendanceController` + FormRequests + Resources
-- [ ] Task 7 — Backend admin: `Admin\AttendanceController` + FormRequests
-- [ ] Task 8 — Rutas + Wayfinder regenerado
-- [ ] Task 9 — Types TypeScript + composables
-- [ ] Task 10 — Frontend profesor: Index.vue + Sheet.vue
-- [ ] Task 11 — Frontend admin: Index.vue
-- [ ] Task 12 — QA Gate
+- [x] Task 1 — Migraciones: `class_sessions` + `attendance_records`
+- [x] Task 2 — Enums + Modelos `ClassSession` y `AttendanceRecord` con relaciones
+- [x] Task 3 — `ClassSessionPolicy`
+- [x] Task 4 — Actions base: `CreateClassSessionAction` + `TakeAttendanceAction`
+- [x] Task 5 — Actions de vínculo: `CreateMakeupSessionAction` + `CreateAdvanceSessionAction`
+- [x] Task 6 — Backend profesor: `Professor\AttendanceController` + FormRequests + Resources
+- [x] Task 7 — Backend admin: `Admin\AttendanceController` + FormRequests
+- [x] Task 8 — Rutas + Wayfinder regenerado
+- [x] Task 9 — Types TypeScript + composables (divergencia: consolidados en `attendance.ts`)
+- [x] Task 10 — Componentes UI compartidos de asistencia
+- [x] Task 11 — Frontend profesor: Index.vue
+- [x] Task 12 — Frontend profesor: Sheet.vue + modal (divergencia: modal inline en Index.vue)
+- [x] Task 13 — AttTotalsPanel.vue
+- [x] Task 14 — Frontend admin: Index.vue
+- [x] Task 15 — QA Gate: primer intento (2026-08-30) rechazado por Dusk (0/5 UCs — HLZ-38/39/40/41). `implementer` corrigió los 4 hallazgos, `reviewer` aprobó sin observaciones, `tester` re-corrió el gate: **5/5 UCs en verde vía Dusk** (`tests/Browser/Attendance/AttendanceQATest.php`, 36 assertions) + 87 tests Pest en verde. Feature marcada `completed` en `feature_list.json`.
+
+## Deuda técnica documentada (no bloqueante)
+- `class_sessions.linked_session_id` usa `nullOnDelete()` en vez de `RESTRICT` (contradice convención FK RESTRICT del proyecto), cambiado deliberadamente en commit `9143cf6` por ciclo de FK, sin documentar como excepción formal.
 
 ---
 

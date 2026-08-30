@@ -19,18 +19,18 @@ class ClassSessionResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'section_id' => $this->section_id,
+            'sectionId' => $this->section_id,
             'type' => $this->type->value,
-            'type_label' => $this->type->label(),
+            'typeLabel' => $this->type->label(),
             'status' => $this->status->value,
-            'status_label' => $this->status->label(),
-            'professor_present' => $this->professor_present,
-            'uploaded_by' => ! $this->professor_present && $this->uploadedBy
+            'statusLabel' => $this->status->label(),
+            'professorPresent' => $this->professor_present,
+            'uploadedBy' => ! $this->professor_present && $this->uploadedBy
                 ? $this->uploadedBy->name
                 : null,
             'topic' => $this->topic,
-            'held_at' => $this->held_at?->format('Y-m-d'),
-            'linked_session' => $this->linkedSession ? [
+            'heldAt' => $this->held_at?->format('Y-m-d'),
+            'linkedSession' => $this->linkedSession ? [
                 'id' => $this->linkedSession->id,
                 'date' => $this->linkedSession->held_at?->format('Y-m-d'),
                 'topic' => $this->linkedSession->topic,
@@ -38,7 +38,7 @@ class ClassSessionResource extends JsonResource
             ] : null,
             'present' => $records->filter(fn ($r) => $r->status === AttendanceStatus::Present)->count(),
             'absent' => $records->filter(fn ($r) => $r->status === AttendanceStatus::Absent)->count(),
-            'has_record' => $records->isNotEmpty(),
+            'hasRecord' => $records->isNotEmpty(),
         ];
     }
 }

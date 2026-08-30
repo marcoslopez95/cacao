@@ -6,22 +6,27 @@ export function useClassSessionForm(sectionId: number) {
     const processing = ref(false)
     const errors = ref<Record<string, string>>({})
 
-    function create(data: {
-        type: 'regular' | 'makeup' | 'advance'
-        linked_session_id?: number | null
-        topic?: string | null
-        held_at?: string | null
-    }): void {
+    function create(
+        data: {
+            type: 'regular' | 'makeup' | 'advance'
+            linked_session_id?: number | null
+            topic?: string | null
+            held_at?: string | null
+        },
+        onSuccess?: () => void,
+    ): void {
         processing.value = true
         router.post(
             storeSession.url({ section: sectionId }),
             data,
             {
                 onSuccess: () => {
- processing.value = false; errors.value = {} 
-},
+                    processing.value = false
+                    errors.value = {}
+                    onSuccess?.()
+                },
                 onError: (e) => {
- processing.value = false; errors.value = e 
+ processing.value = false; errors.value = e
 },
             }
         )
