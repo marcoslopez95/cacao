@@ -107,13 +107,13 @@ test('attendance index returns correct session structure', function () {
         ->get(route('professor.sections.attendance.index', $section))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->has('sessions.data', 1)
-            ->has('sessions.data.0', fn ($s) => $s
+            ->has('sessions', 1)
+            ->has('sessions.0', fn ($s) => $s
                 ->where('id', $session->id)
                 ->where('type', 'regular')
                 ->where('status', 'scheduled')
                 ->where('topic', 'Derivadas')
-                ->where('has_record', false)
+                ->where('hasRecord', false)
                 ->etc()
             )
         );
@@ -234,8 +234,8 @@ test('professor can view the attendance sheet for a session in their section', f
             ->has('sheet')
             ->has('sheet.session')
             ->has('sheet.roster')
-            ->has('sheet.absence_totals')
-            ->has('sheet.sessions_counted')
+            ->has('sheet.absenceTotals')
+            ->has('sheet.sessionsCounted')
         );
 });
 
@@ -313,10 +313,10 @@ test('sheet absence_totals counts absences from held and advanced sessions only'
         ->get(route('professor.sections.attendance.sheet', [$section, $currentSession]))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->has('sheet.absence_totals', fn ($totals) => $totals
+            ->has('sheet.absenceTotals', fn ($totals) => $totals
                 ->where((string) $detail->id, 2) // held + recovered both count
             )
-            ->where('sheet.sessions_counted', 2) // held + recovered
+            ->where('sheet.sessionsCounted', 2) // held + recovered
         );
 });
 

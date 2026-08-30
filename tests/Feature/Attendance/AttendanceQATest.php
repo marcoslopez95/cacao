@@ -481,10 +481,10 @@ test('UC-QA-04: absence totals count only held, recovered and advanced — verif
     $summary = AttendanceSheetResource::summaryForSection($section);
 
     // 3 sessions counted (held + recovered + advanced)
-    expect($summary['sessions_counted'])->toBe(3);
+    expect($summary['sessionsCounted'])->toBe(3);
 
     // 3 absences for detailB
-    expect($summary['absence_totals'][$detailB->id] ?? 0)->toBe(3);
+    expect($summary['absenceTotals'][$detailB->id] ?? 0)->toBe(3);
 });
 
 // ---------------------------------------------------------------------------

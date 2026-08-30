@@ -43,7 +43,7 @@ class AttendanceController extends Controller
             ->get();
 
         return Inertia::render('admin/attendance/Index', [
-            'pending_sessions' => AdminPendingSessionResource::collection($pendingSessions),
+            'pending_sessions' => AdminPendingSessionResource::collection($pendingSessions)->toArray($request),
         ]);
     }
 
@@ -58,8 +58,8 @@ class AttendanceController extends Controller
             ->orderByDesc('held_at')->orderByDesc('created_at')->get();
 
         return Inertia::render('admin/attendance/SectionIndex', [
-            'section' => new SectionAttendanceResource($section),
-            'sessions' => ClassSessionResource::collection($sessions),
+            'section' => (new SectionAttendanceResource($section))->toArray($request),
+            'sessions' => ClassSessionResource::collection($sessions)->toArray($request),
         ]);
     }
 

@@ -155,6 +155,7 @@ const linkedLabel = computed(() => {
 
             <button
                 v-if="session.status === 'scheduled'"
+                :dusk="`session-cta-${session.id}`"
                 class="att-card-cta"
                 @click="stopAndGoToSheet"
             >
@@ -164,6 +165,7 @@ const linkedLabel = computed(() => {
 
             <button
                 v-else-if="session.hasRecord"
+                :dusk="`session-cta-${session.id}`"
                 class="att-card-cta ghost"
                 @click="stopAndGoToSheet"
             >

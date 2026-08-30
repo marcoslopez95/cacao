@@ -79,7 +79,10 @@ function riskClass(n: number): 'hi' | 'mid' | 'lo' {
             </div>
 
             <!-- Conteo numérico -->
-            <div :class="['att-roster-count', riskClass(r.absences) === 'hi' ? 'hi' : riskClass(r.absences) === 'mid' ? 'mid' : '']">
+            <div
+                :dusk="`absence-count-${r.enrollmentDetailId}`"
+                :class="['att-roster-count', riskClass(r.absences) === 'hi' ? 'hi' : riskClass(r.absences) === 'mid' ? 'mid' : '']"
+            >
                 {{ r.absences }}<span class="of"> / {{ sessionsCounted }}</span>
             </div>
         </div>

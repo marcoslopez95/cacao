@@ -36,12 +36,12 @@ class AttendanceController extends Controller
         $summary = AttendanceSheetResource::summaryForSection($section);
 
         return Inertia::render('professor/attendance/Index', [
-            'section' => new SectionAttendanceResource($section),
-            'sessions' => ClassSessionResource::collection($sessions),
+            'section' => (new SectionAttendanceResource($section))->toArray($request),
+            'sessions' => ClassSessionResource::collection($sessions)->toArray($request),
             'period' => $periodName,
             'roster' => $summary['roster'],
-            'absenceTotals' => $summary['absence_totals'],
-            'sessionsCounted' => $summary['sessions_counted'],
+            'absenceTotals' => $summary['absenceTotals'],
+            'sessionsCounted' => $summary['sessionsCounted'],
         ]);
     }
 
@@ -78,7 +78,7 @@ class AttendanceController extends Controller
 
         return Inertia::render('professor/attendance/Sheet', [
             'sheet' => (new AttendanceSheetResource($classSession))->toArray($request),
-            'section' => new SectionAttendanceResource($section),
+            'section' => (new SectionAttendanceResource($section))->toArray($request),
         ]);
     }
 

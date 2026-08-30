@@ -18,7 +18,7 @@ class AttendanceSheetResource extends JsonResource
     /**
      * Build roster, absence totals, and session count for a section's totals panel.
      *
-     * @return array{roster: list<array<string, mixed>>, absence_totals: array<int, int>, sessions_counted: int}
+     * @return array{roster: list<array<string, mixed>>, absenceTotals: array<int, int>, sessionsCounted: int}
      */
     public static function summaryForSection(Section $section): array
     {
@@ -54,8 +54,8 @@ class AttendanceSheetResource extends JsonResource
             $initials = mb_strtoupper(mb_substr($firstName, 0, 1).mb_substr($lastName, 0, 1));
 
             return [
-                'enrollment_detail_id' => $detail->id,
-                'student_id' => $student->id,
+                'enrollmentDetailId' => $detail->id,
+                'studentId' => $student->id,
                 'name' => trim($firstName.' '.$lastName),
                 'initials' => $initials,
                 'code' => $user->document_number ?? (string) $student->id,
@@ -65,8 +65,8 @@ class AttendanceSheetResource extends JsonResource
 
         return [
             'roster' => $roster,
-            'absence_totals' => $absenceTotals,
-            'sessions_counted' => $sessionsCounted,
+            'absenceTotals' => $absenceTotals,
+            'sessionsCounted' => $sessionsCounted,
         ];
     }
 
@@ -124,8 +124,8 @@ class AttendanceSheetResource extends JsonResource
             );
 
             return [
-                'enrollment_detail_id' => $detail->id,
-                'student_id' => $student->id,
+                'enrollmentDetailId' => $detail->id,
+                'studentId' => $student->id,
                 'name' => trim($firstName.' '.$lastName),
                 'initials' => $initials,
                 'code' => $user->document_number ?? (string) $student->id,
@@ -136,8 +136,8 @@ class AttendanceSheetResource extends JsonResource
         return [
             'session' => (new ClassSessionResource($session->load(['attendanceRecords', 'linkedSession', 'uploadedBy'])))->toArray($request),
             'roster' => $roster,
-            'absence_totals' => $absenceTotals,
-            'sessions_counted' => $sessionsCounted,
+            'absenceTotals' => $absenceTotals,
+            'sessionsCounted' => $sessionsCounted,
         ];
     }
 }

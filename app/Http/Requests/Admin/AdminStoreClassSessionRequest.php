@@ -22,7 +22,7 @@ class AdminStoreClassSessionRequest extends FormRequest
     {
         return [
             'type' => ['required', Rule::in(['regular', 'makeup', 'advance'])],
-            'linked_session_id' => ['nullable', 'integer', 'exists:class_sessions,id'],
+            'linked_session_id' => ['nullable', 'required_if:type,makeup,advance', 'integer', 'exists:class_sessions,id'],
             'topic' => ['nullable', 'string', 'max:255'],
             'held_at' => ['nullable', 'date'],
         ];
