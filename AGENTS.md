@@ -10,9 +10,10 @@
 | Rol | Archivo | Responsabilidad |
 |-----|---------|----------------|
 | `leader` | `.claude/agents/leader.md` | Orquesta el trabajo. Lee `feature_list.json` y `progress/current.md`. Delega al agente correcto. **Nunca toca código de la aplicación.** |
-| `spec_author` | `.claude/agents/spec_author.md` | Escribe/actualiza specs en `specs/{feature}/`. Genera `requirements.md`, `design.md`, `tasks.md`. Espera aprobación humana antes de que el implementer arranque. |
+| `analyst` | `.claude/agents/analyst.md` | Brainstorming con el humano → escribe `requirements.md`, `design.md`, `tasks.md` y `qa.md` en `specs/{feature}/`. Espera aprobación humana antes de que el implementer arranque. |
 | `implementer` | `.claude/agents/implementer.md` | Ejecuta `tasks.md` línea por línea. Crea código de la aplicación. Sigue la arquitectura de `CLAUDE.md` sin excepciones. |
 | `reviewer` | `.claude/agents/reviewer.md` | Verifica implementación contra `tasks.md` y `CHECKPOINTS.md`. Reporta pasa/falla con evidencia (archivo + línea). **Nunca arregla código.** |
+| `tester` | `.claude/agents/tester.md` | Testing Pest + Dusk en 4 modos: `pre` (contrato antes de codear), `task-gate` (gate por task), `feature-gate` (QA Gate de la feature), `audit` (auditoría ad-hoc invocada directo por el humano). |
 
 ---
 
@@ -20,13 +21,15 @@
 
 ```
 feature_list.json
-    → leader lee estado → spec_author escribe specs
+    → leader lee estado → analyst escribe specs (requirements/design/tasks/qa)
     → aprobación humana ← PUNTO DE CONTROL OBLIGATORIO
+    → tester [pre] define el contrato de tests
     → implementer ejecuta task a task
     → reviewer verifica cada task
+    → tester [task-gate] revisa tests + corre suites + verifica UCs
     → si pasa: leader actualiza progress/, implementer continúa con siguiente task
-    → si falla: leader reporta hallazgos → implementer corrige → reviewer re-verifica
-    → todas las tasks [x] → leader marca feature como completed en feature_list.json
+    → si falla: leader reporta hallazgos → implementer corrige → reviewer/tester re-verifican
+    → última task: tester [feature-gate] verifica todos los UCs → leader marca feature como completed
 ```
 
 ---
@@ -84,7 +87,7 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.3
+- php - 8.5
 - inertiajs/inertia-laravel (INERTIA_LARAVEL) - v3
 - laravel/fortify (FORTIFY) - v1
 - laravel/framework (LARAVEL) - v13
@@ -98,8 +101,8 @@ This application is a Laravel application and its main Laravel ecosystems packag
 - laravel/pail (PAIL) - v1
 - laravel/pint (PINT) - v1
 - laravel/sail (SAIL) - v1
-- pestphp/pest (PEST) - v4
-- phpunit/phpunit (PHPUNIT) - v12
+- pestphp/pest (PEST) - v5
+- phpunit/phpunit (PHPUNIT) - v13
 - @inertiajs/vue3 (INERTIA_VUE) - v3
 - tailwindcss (TAILWINDCSS) - v4
 - vue (VUE) - v3
@@ -115,7 +118,7 @@ This project has domain-specific skills available. You MUST activate the relevan
 - `laravel-best-practices` — Apply this skill whenever writing, reviewing, or refactoring Laravel PHP code. This includes creating or modifying controllers, models, migrations, form requests, policies, jobs, scheduled commands, service classes, and Eloquent queries. Triggers for N+1 and query performance issues, caching strategies, authorization and security patterns, validation, error handling, queue and job configuration, route definitions, and architectural decisions. Also use for Laravel code reviews and refactoring existing Laravel code to follow best practices. Covers any task involving Laravel backend PHP code patterns.
 - `configure-nightwatch` — Configures Laravel Nightwatch data collection, sampling rates, filtering rules, and redaction policies. Use when setting up Nightwatch, managing data volume, protecting sensitive data (PII), or optimizing event collection for production workloads.
 - `wayfinder-development` — Use this skill for Laravel Wayfinder which auto-generates typed functions for Laravel controllers and routes. ALWAYS use this skill when frontend code needs to call backend routes or controller actions. Trigger when: connecting any React/Vue/Svelte/Inertia frontend to Laravel controllers, routes, building end-to-end features with both frontend and backend, wiring up forms or links to backend endpoints, fixing route-related TypeScript errors, importing from @/actions or @/routes, or running wayfinder:generate. Use Wayfinder route functions instead of hardcoded URLs. Covers: wayfinder() vite plugin, .url()/.get()/.post()/.form(), query params, route model binding, tree-shaking. Do not use for backend-only task
-- `pest-testing` — Use this skill for Pest PHP testing in Laravel projects only. Trigger whenever any test is being written, edited, fixed, or refactored — including fixing tests that broke after a code change, adding assertions, converting PHPUnit to Pest, adding datasets, and TDD workflows. Always activate when the user asks how to write something in Pest, mentions test files or directories (tests/Feature, tests/Unit, tests/Browser), or needs browser testing, smoke testing multiple pages for JS errors, or architecture tests. Covers: test()/it()/expect() syntax, datasets, mocking, browser testing (visit/click/fill), smoke testing, arch(), Livewire component tests, RefreshDatabase, and all Pest 4 features. Do not use for factories, seeders, migrations, controllers, models, or non-test PHP code.
+- `pest-testing` — Use this skill for Pest PHP testing in Laravel projects only. Trigger whenever any test is being written, edited, fixed, or refactored — including fixing tests that broke after a code change, adding assertions, converting PHPUnit to Pest, adding datasets, and TDD workflows. Always activate when the user asks how to write something in Pest, mentions test files or directories (tests/Feature, tests/Unit, tests/Browser), or needs browser testing, smoke testing multiple pages for JS errors, architecture tests, or faster test runs with Test Impact Analysis. Covers: test()/it()/expect() syntax, datasets, mocking, browser testing (visit/click/fill), smoke testing, arch(), Livewire component tests, RefreshDatabase, Tia (--tia), sharding, and all Pest 5 features. Do not use for factories, seeders, migrations, controllers, models, or non-test PHP code.
 - `inertia-vue-development` — Develops Inertia.js v3 Vue client-side applications. Activates when creating Vue pages, forms, or navigation; using <Link>, <Form>, useForm, useHttp, setLayoutProps, or router; working with deferred props, prefetching, optimistic updates, instant visits, or polling; or when user mentions Vue with Inertia, Vue pages, Vue forms, or Vue navigation.
 - `tailwindcss-development` — Always invoke when the user's message includes 'tailwind' in any form. Also invoke for: building responsive grid layouts (multi-column card grids, product grids), flex/grid page structures (dashboards with sidebars, fixed topbars, mobile-toggle navs), styling UI components (cards, tables, navbars, pricing sections, forms, inputs, badges), adding dark mode variants, fixing spacing or typography, and Tailwind v3/v4 work. The core use case: writing or fixing Tailwind utility classes in HTML templates (Blade, JSX, Vue). Skip for backend PHP logic, database queries, API routes, JavaScript with no HTML/CSS component, CSS file audits, build tool configuration, and vanilla CSS.
 

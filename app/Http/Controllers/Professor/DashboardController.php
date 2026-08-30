@@ -25,7 +25,7 @@ class DashboardController extends Controller
 
         $now = now();
         $todayValue = strtolower($now->format('l'));
-        $todayLabel = DayOfWeek::from($todayValue)->label();
+        $todayLabel = DayOfWeek::tryFrom($todayValue)?->label() ?? 'Domingo';
         $currentTime = $now->format('H:i:s');
 
         $sections = $period

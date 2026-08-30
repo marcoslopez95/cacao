@@ -118,7 +118,7 @@ Antes de escribir ningún archivo, presentar:
 - Task 1 — [descripción concisa con criterio de done]
 - Task 2 — [descripción]
 - ...
-- Task N — QA Gate: qa_manager verifica todos los UCs del qa.md en verde
+- Task N — QA Gate: tester en modo feature-gate verifica todos los UCs del qa.md en verde
 
 ¿Apruebas este mapa o hay algo que ajustar?
 ```
@@ -148,11 +148,11 @@ Con el mapa aprobado, escribir los siguientes archivos:
 - Cada task con criterio de done explícito
 - **La última task SIEMPRE es:**
   ```
-  - [ ] Task N — QA Gate: qa_manager verifica todos los UCs de specs/{feature-id}/qa.md en verde
+  - [ ] Task N — QA Gate: tester en modo feature-gate verifica todos los UCs de specs/{feature-id}/qa.md en verde
   ```
 
 ### `specs/{feature-id}/qa.md`
-Contrato QA del feature — base para los tests Dusk del `senior_tester` y el QA Gate final:
+Contrato QA del feature — base para los tests Dusk del `tester` y el QA Gate final:
 
 ```markdown
 # QA Spec — {nombre del feature}

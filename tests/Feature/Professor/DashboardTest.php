@@ -5,6 +5,7 @@ use App\Models\Period;
 use App\Models\Professor;
 use App\Models\Section;
 use App\Models\Student;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -87,6 +88,23 @@ test('professor dashboard returns empty today_schedules when no sections exist',
         ->assertSuccessful()
         ->assertInertia(fn ($page) => $page
             ->component('professor/Dashboard')
+            ->where('today_schedules', [])
+        );
+});
+
+test('professor dashboard returns 200 on sunday with no school-day label', function () {
+    $this->travelTo(Carbon::parse('2024-01-07 09:00:00'));
+
+    $professor = Professor::factory()->create();
+    $user = $professor->user;
+
+    $this->withoutVite()
+        ->actingAs($user)
+        ->get(route('professor.dashboard'))
+        ->assertSuccessful()
+        ->assertInertia(fn ($page) => $page
+            ->component('professor/Dashboard')
+            ->where('today_label', 'Domingo')
             ->where('today_schedules', [])
         );
 });

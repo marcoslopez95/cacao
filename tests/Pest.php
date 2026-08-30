@@ -8,6 +8,8 @@ pest()->extend(DuskTestCase::class)
 //  ->use(Illuminate\Foundation\Testing\DatabaseMigrations::class)
     ->in('Browser');
 
+pest()->tia()->defaultBranch('master');
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
