@@ -10,6 +10,7 @@
 use App\Enums\AttendanceStatus;
 use App\Enums\ClassSessionStatus;
 use App\Enums\ClassSessionType;
+use App\Enums\DayOfWeek;
 use App\Http\Resources\Attendance\AttendanceSheetResource;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
@@ -17,10 +18,12 @@ use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\Period;
 use App\Models\Professor;
+use App\Models\Schedule;
 use App\Models\Section;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -36,6 +39,28 @@ beforeEach(function () {
     Role::firstOrCreate(['name' => 'Admin', 'guard_name' => 'web']);
     Role::firstOrCreate(['name' => 'Profesor', 'guard_name' => 'web']);
 });
+
+afterEach(function () {
+    Carbon::setTestNow();
+});
+
+/**
+ * Creates a real Schedule for the section and freezes "now" to a moment that falls inside it
+ * (feature 20-attendance-scheduling-and-recovery: ClassSessionPolicy now requires a Regular
+ * session's create/takeAttendance to happen within a real Schedule window). Anchored on
+ * 2024-01-01, a known Monday, so it doesn't depend on the real day the suite runs on.
+ */
+function qaWithinScheduleWindow(Section $section): void
+{
+    Schedule::factory()->create([
+        'section_id' => $section->id,
+        'day_of_week' => DayOfWeek::Monday,
+        'start_time' => '08:00:00',
+        'end_time' => '09:00:00',
+    ]);
+
+    Carbon::setTestNow(Carbon::parse('2024-01-01 08:30:00'));
+}
 
 /**
  * Creates an Admin user.
@@ -96,6 +121,8 @@ test('UC-QA-01: profesor creates regular session then submits attendance — ses
         'professor_user' => $professorUser,
         'section' => $section,
     ] = qaProfessorSection();
+
+    qaWithinScheduleWindow($section);
 
     $detailA = qaConfirmedDetail($section);
     $detailB = qaConfirmedDetail($section);

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3'
 import { computed } from 'vue'
-import { sheet } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
+import { cancelSession as adminCancelSession, sheet as adminSheet } from '@/actions/App/Http/Controllers/Admin/AttendanceController'
+import { cancelSession as professorCancelSession, sheet as professorSheet } from '@/actions/App/Http/Controllers/Professor/AttendanceController'
 import AttBar from '@/components/attendance/AttBar.vue'
 import AttDateBlock from '@/components/attendance/AttDateBlock.vue'
 import AttStatusPill from '@/components/attendance/AttStatusPill.vue'
@@ -9,11 +10,20 @@ import AttTypePill from '@/components/attendance/AttTypePill.vue'
 import AppIcon from '@/components/UI/AppIcon.vue'
 import type { ClassSession } from '@/types/attendance'
 
-const props = defineProps<{
-    session: ClassSession
-    rosterCount: number
-    todayDate: string
-}>()
+const props = withDefaults(
+    defineProps<{
+        session: ClassSession
+        rosterCount: number
+        todayDate: string
+        variant?: 'professor' | 'admin'
+    }>(),
+    {
+        variant: 'professor',
+    },
+)
+
+const sheet = computed(() => (props.variant === 'admin' ? adminSheet : professorSheet))
+const cancelSession = computed(() => (props.variant === 'admin' ? adminCancelSession : professorCancelSession))
 
 const isToday = computed(() => props.session.heldAt === props.todayDate)
 
@@ -21,17 +31,31 @@ const isClickable = computed(
     () => props.session.hasRecord || props.session.status === 'scheduled' || props.session.status === 'advanced',
 )
 
+const isCancellable = computed(
+    () => props.session.status === 'scheduled' || props.session.status === 'held',
+)
+
 function goToSheet(): void {
     if (!isClickable.value) {
- return 
+ return
 }
 
-    router.visit(sheet.url({ section: props.session.sectionId, classSession: props.session.id }))
+    router.visit(sheet.value.url({ section: props.session.sectionId, classSession: props.session.id }))
 }
 
 function stopAndGoToSheet(e: Event): void {
     e.stopPropagation()
     goToSheet()
+}
+
+function cancelClassSession(e: Event): void {
+    e.stopPropagation()
+
+    if (!confirm('¿Cancelar esta sesión? Esta acción no se puede deshacer.')) {
+        return
+    }
+
+    router.patch(cancelSession.value.url({ section: props.session.sectionId, classSession: props.session.id }))
 }
 
 const linkedLabel = computed(() => {
@@ -153,27 +177,40 @@ const linkedLabel = computed(() => {
                 {{ session.hasRecord ? `${session.present + session.absent} registros` : `${rosterCount} estudiantes` }}
             </span>
 
-            <button
-                v-if="session.status === 'scheduled'"
-                :dusk="`session-cta-${session.id}`"
-                class="att-card-cta"
-                @click="stopAndGoToSheet"
-            >
-                Pasar lista
-                <AppIcon name="arrowRight" :size="14" />
-            </button>
+            <div class="flex items-center gap-2">
+                <button
+                    v-if="isCancellable"
+                    :dusk="`cancel-session-${session.id}`"
+                    class="att-card-cta ghost"
+                    style="color: var(--danger);"
+                    @click="cancelClassSession"
+                >
+                    Cancelar
+                    <AppIcon name="x" :size="14" />
+                </button>
 
-            <button
-                v-else-if="session.hasRecord"
-                :dusk="`session-cta-${session.id}`"
-                class="att-card-cta ghost"
-                @click="stopAndGoToSheet"
-            >
-                Ver / editar
-                <AppIcon name="chevronRight" :size="14" />
-            </button>
+                <button
+                    v-if="session.status === 'scheduled'"
+                    :dusk="`session-cta-${session.id}`"
+                    class="att-card-cta"
+                    @click="stopAndGoToSheet"
+                >
+                    Pasar lista
+                    <AppIcon name="arrowRight" :size="14" />
+                </button>
 
-            <span v-else class="foot-meta">—</span>
+                <button
+                    v-else-if="session.hasRecord"
+                    :dusk="`session-cta-${session.id}`"
+                    class="att-card-cta ghost"
+                    @click="stopAndGoToSheet"
+                >
+                    Ver / editar
+                    <AppIcon name="chevronRight" :size="14" />
+                </button>
+
+                <span v-else-if="!isCancellable" class="foot-meta">—</span>
+            </div>
         </div>
     </div>
 </template>

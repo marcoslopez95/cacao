@@ -174,6 +174,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::post('sections/{section}/attendance/sessions', [AdminAttendanceController::class, 'storeSession'])->name('sections.attendance.sessions.store');
     Route::get('sections/{section}/attendance/sessions/{classSession}', [AdminAttendanceController::class, 'sheet'])->name('sections.attendance.sheet');
     Route::put('sections/{section}/attendance/sessions/{classSession}', [AdminAttendanceController::class, 'upsertAttendance'])->name('sections.attendance.upsert');
+    Route::patch('sections/{section}/attendance/sessions/{classSession}/cancel', [AdminAttendanceController::class, 'cancelSession'])->name('sections.attendance.sessions.cancel');
 });
 
 Route::middleware(['auth', 'verified'])->prefix('academic')->name('academic.')->group(function () {
@@ -296,6 +297,8 @@ Route::middleware(['auth', 'verified', 'role:Profesor,Coordinador de Area'])
             ->name('sections.attendance.sheet');
         Route::put('sections/{section}/attendance/sessions/{classSession}', [Professor\AttendanceController::class, 'upsertAttendance'])
             ->name('sections.attendance.upsert');
+        Route::patch('sections/{section}/attendance/sessions/{classSession}/cancel', [Professor\AttendanceController::class, 'cancelSession'])
+            ->name('sections.attendance.sessions.cancel');
     });
 
 Route::middleware(['auth', 'verified', 'role:Estudiante'])

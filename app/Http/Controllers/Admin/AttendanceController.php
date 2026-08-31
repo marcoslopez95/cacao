@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Attendance\CancelClassSessionAction;
 use App\Actions\Attendance\CreateAdvanceSessionAction;
 use App\Actions\Attendance\CreateClassSessionAction;
 use App\Actions\Attendance\CreateMakeupSessionAction;
@@ -112,5 +113,14 @@ class AttendanceController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Asistencia guardada.']);
 
         return to_route('admin.sections.attendance.sheet', [$section, $classSession]);
+    }
+
+    public function cancelSession(Section $section, ClassSession $classSession, CancelClassSessionAction $action): RedirectResponse
+    {
+        Gate::authorize('cancel', $classSession);
+        $action->handle($classSession);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Sesión cancelada.']);
+
+        return to_route('admin.sections.attendance.index', $section);
     }
 }

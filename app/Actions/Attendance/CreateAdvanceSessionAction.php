@@ -6,6 +6,7 @@ use App\Enums\ClassSessionStatus;
 use App\Enums\ClassSessionType;
 use App\Http\Wrappers\Attendance\ClassSessionWrapper;
 use App\Models\ClassSession;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
 class CreateAdvanceSessionAction
@@ -16,6 +17,14 @@ class CreateAdvanceSessionAction
 
         if ($linkedSessionId === null) {
             throw new InvalidArgumentException('linked_session_id is required to create an advance session.');
+        }
+
+        $linkedSession = ClassSession::find($linkedSessionId);
+
+        if ($linkedSession !== null && $linkedSession->status === ClassSessionStatus::Advanced) {
+            throw ValidationException::withMessages([
+                'linked_session_id' => ['Esta sesión ya fue adelantada.'],
+            ]);
         }
 
         $newSession = ClassSession::create([

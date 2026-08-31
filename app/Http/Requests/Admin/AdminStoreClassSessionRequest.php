@@ -12,7 +12,7 @@ class AdminStoreClassSessionRequest extends FormRequest
     {
         $section = $this->route('section');
 
-        return $this->user()?->can('create', [ClassSession::class, $section]) ?? false;
+        return $this->user()?->can('create', [ClassSession::class, $section, $this->input('type')]) ?? false;
     }
 
     /**

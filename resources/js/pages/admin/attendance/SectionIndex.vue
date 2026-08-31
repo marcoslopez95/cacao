@@ -297,6 +297,7 @@ function submitNewSession(): void {
                 :session="s"
                 :roster-count="section.rosterCount"
                 :today-date="todayDate"
+                variant="admin"
                 @click="goToSheet(s)"
             />
         </div>

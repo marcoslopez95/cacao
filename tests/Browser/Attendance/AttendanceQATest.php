@@ -35,16 +35,30 @@
  *   `required_if:type,makeup,advance` en los FormRequests y un handler global en
  *   `bootstrap/app.php` que convierte `InvalidArgumentException` en 422/back-with-errors.
  * - HLZ-41: `Sheet.vue` (profesor y admin) inicializa `marks` desde `roster[].status` real.
+ *
+ * REGRESIÓN 2026-08-31 (feature 20-attendance-scheduling-and-recovery, task-gate): tras el guard
+ * horario nuevo en `ClassSessionPolicy` (crear/pasar-lista sobre sesiones `Regular` exige que el
+ * momento actual caiga dentro de un `Schedule` real de la sección), UC-QA-01 empezó a fallar con
+ * 403 porque `attProfessorSection()` no crea ningún `Schedule` para la sección. Confirmado en vivo
+ * (`console log`: "403 (Forbidden)" en `POST .../attendance/sessions`, ningún `ClassSession`
+ * creado). Fix: `attWithinScheduleWindow()` crea un `Schedule` real cubriendo TODO el día de hoy
+ * (00:00:00–23:59:59) para el día de la semana real — no se puede usar `Carbon::setTestNow()` como
+ * en los tests Pest porque el browser Dusk golpea el servidor real en un proceso separado del
+ * proceso de test (mismo motivo por el que `DatabaseMigrations` es obligatorio en vez de
+ * `RefreshDatabase`). Ventana de día completo en vez de una franja horaria estrecha para no
+ * depender de la hora exacta en que corre la suite.
  */
 
 use App\Enums\ClassSessionStatus;
 use App\Enums\ClassSessionType;
+use App\Enums\DayOfWeek;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
 use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\Period;
 use App\Models\Professor;
+use App\Models\Schedule;
 use App\Models\Section;
 use App\Models\Student;
 use App\Models\User;
@@ -104,6 +118,28 @@ function attProfessorSection(): array
 }
 
 /**
+ * Crea un Schedule real que cubre todo el horario académico posible de hoy (día de la semana real
+ * + ventana 07:00:00–18:00:00, el máximo permitido por los check constraints de la tabla
+ * `schedules`: `schedules_start_min_check` / `schedules_end_max_check`) para que el guard horario
+ * de `ClassSessionPolicy` (feature 20) no rechace crear ni pasar lista sobre sesiones `Regular` en
+ * esta sección. Ver nota en el docblock superior. Si la suite corre fuera de ese rango horario
+ * real (ej. de madrugada), esta sección seguiría "fuera de horario" tanto para la app real como
+ * para el test — limitación de negocio preexistente (sin clases fuera de 07:00–18:00), no un bug
+ * de este fixture.
+ */
+function attWithinScheduleWindow(Section $section): void
+{
+    $today = DayOfWeek::tryFrom(strtolower(now()->format('l')));
+
+    Schedule::factory()->create([
+        'section_id' => $section->id,
+        'day_of_week' => $today ?? DayOfWeek::Monday,
+        'start_time' => '07:00:00',
+        'end_time' => '18:00:00',
+    ]);
+}
+
+/**
  * Inscribe un estudiante en la sección y devuelve un EnrollmentDetail confirmado
  * (requisito para aparecer en el roster de asistencia).
  */
@@ -130,6 +166,8 @@ test('UC-QA-01: profesor crea sesión regular y pasa asistencia — DB persiste 
         'professor_user' => $professorUser,
         'section' => $section,
     ] = attProfessorSection();
+
+    attWithinScheduleWindow($section);
 
     $detailA = attConfirmedDetail($section); // se deja "present" (valor por defecto de la hoja)
     $detailB = attConfirmedDetail($section); // se marca "absent" explícitamente

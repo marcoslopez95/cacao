@@ -3,6 +3,7 @@
 use App\Enums\AttendanceStatus;
 use App\Enums\ClassSessionStatus;
 use App\Enums\ClassSessionType;
+use App\Enums\DayOfWeek;
 use App\Enums\EnrollmentDetailStatus;
 use App\Models\AttendanceRecord;
 use App\Models\ClassSession;
@@ -10,9 +11,11 @@ use App\Models\Enrollment;
 use App\Models\EnrollmentDetail;
 use App\Models\Period;
 use App\Models\Professor;
+use App\Models\Schedule;
 use App\Models\Section;
 use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Spatie\Permission\PermissionRegistrar;
 
 uses(RefreshDatabase::class);
@@ -22,8 +25,17 @@ beforeEach(function () {
     app(PermissionRegistrar::class)->forgetCachedPermissions();
 });
 
+afterEach(function () {
+    Carbon::setTestNow();
+});
+
 /**
  * Creates a base context: professor owns the section.
+ *
+ * Also creates a real Schedule for the section and freezes "now" to a moment inside it
+ * (feature 20-attendance-scheduling-and-recovery: ClassSessionPolicy requires a Regular
+ * session's create/takeAttendance to happen within a real Schedule window). Anchored on
+ * 2024-01-01, a known Monday, so it doesn't depend on the real day the suite runs on.
  *
  * @return array{professor: Professor, section: Section}
  */
@@ -35,6 +47,15 @@ function attendanceContext(): array
         'period_id' => $period->id,
         'main_teacher_id' => $professor->id,
     ]);
+
+    Schedule::factory()->create([
+        'section_id' => $section->id,
+        'day_of_week' => DayOfWeek::Monday,
+        'start_time' => '08:00:00',
+        'end_time' => '09:00:00',
+    ]);
+
+    Carbon::setTestNow(Carbon::parse('2024-01-01 08:30:00'));
 
     return compact('professor', 'section', 'period');
 }
