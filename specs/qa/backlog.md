@@ -1000,3 +1000,78 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 **Feature:** `16-enrollment-level-guard-and-period-fix`
 **Verificación:** `EnrollmentController::index()` resuelve `Period::where('status', Active)->where('type', ...)` condicionado a `PeriodType::Semester` (university) o `PeriodType::Year` (primary/secondary). `buildRules()` usa el `Lapse` vigente por fecha cuando el período es `Year`, en vez de `"{academic_year}er trimestre"` hardcodeado. Adicionalmente se agregó `Subject::schoolSections(): BelongsToMany` y `BuildEnrollmentCatalogAction::handle()` combina `sections` + `schoolSections` (ver `design.md`, "Corrección al diseño 2026-08-30") — sin este cambio el fix de período por sí solo no cerraba el catálogo vacío. Tests: `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentPeriodResolutionAcceptanceTest.php`, `EnrollmentSchoolCatalogAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-03,UC-QA-05` — todos en verde.
 **Prioridad:** CRÍTICA (bloquea el 100% de la inscripción de Primaria/Bachillerato, incluso para el representante)
+
+---
+
+## HLZ-44 — Ninguna restricción horaria/de fecha al crear sesiones o pasar asistencia como profesor
+
+**Fecha:** 2026-08-31
+**Dominio:** professor / attendance
+**UC relacionado:** UC-A02, UC-A03 en specs/qa/attendance/professor-attendance.md
+**Descripción:**
+Ni `ClassSessionPolicy` (viewAny/create/update/takeAttendance), ni `StoreClassSessionRequest`, ni ninguna Action de asistencia validan la fecha/hora de una sesión contra el horario real (`Schedule`) de la sección. Confirmado en vivo: se creó una sesión "Regular" con fecha ~3.5 meses en el futuro y el sistema la etiquetó de inmediato como "CLASE DE HOY", permitiendo pasar lista sin ningún bloqueo. Al guardar la asistencia, `held_at` se sobrescribió silenciosamente con la fecha real del servidor, descartando la fecha originalmente elegida. La columna `schedule_id` que `specs/15-attendance-module/design.md` documenta como parte del diseño nunca se implementó en la migración real, así que ni siquiera existe el vínculo estructural necesario para construir esta validación. El cálculo de "es la clase actual" sí existe, pero solo a nivel de presentación (`Professor\DashboardController::index()`, campo `is_current`), nunca reutilizado para autorización.
+
+**Evidencia:**
+- `app/Policies/ClassSessionPolicy.php` — los 4 métodos solo comparan `section->main_teacher_id`, sin fecha/hora
+- `app/Http/Requests/Professor/StoreClassSessionRequest.php` — sin regla de fecha/hora
+- `app/Actions/Attendance/TakeAttendanceAction.php:31` — `held_at` sobrescrito con `today()` al guardar, descartando la fecha original de la sesión
+- `database/migrations/2026_06_01_171450_create_class_sessions_table.php` — sin columna `schedule_id`, pese a que `specs/15-attendance-module/design.md:36` la documenta
+- `app/Http/Controllers/Professor/DashboardController.php:59-60` — el criterio de "es la clase actual" (`$currentTime >= start_time && <= end_time`) existe pero solo para el badge visual, nunca para autorizar
+
+**Acción sugerida:**
+1. Agregar `schedule_id` real a `class_sessions` (tal como documenta `design.md`) para vincular cada sesión a un horario concreto.
+2. Reutilizar el cálculo de ventana horaria de `Professor\DashboardController` en `ClassSessionPolicy::takeAttendance` (y opcionalmente `create`), para autorizar solo si la sesión corresponde al horario/franja vigente.
+3. Decidir con el humano si la restricción debe ser dura (403) o blanda (advertencia + permiso de forzar con auditoría).
+4. Test: profesor intenta pasar lista/crear sesión fuera de su horario real → debe rechazarse o marcarse explícitamente como excepcional, no aceptarse en silencio.
+
+**Estado:** pendiente
+**Prioridad:** ALTA
+
+---
+
+## HLZ-45 — Doble "Adelanto" sobre la misma sesión futura corrompe silenciosamente la asistencia copiada
+
+**Fecha:** 2026-08-31
+**Dominio:** professor / attendance
+**UC relacionado:** UC-A05, UC-A06 en specs/qa/attendance/professor-attendance.md
+**Descripción:**
+`specs/15-attendance-module/requirements.md` documenta explícitamente la validación esperada: "Crear advance vinculado a una sesión que ya está marcada `advanced`" → "Validación: 'Esta sesión ya fue adelantada'". Esa validación no existe en `CreateAdvanceSessionAction::handle()` — a diferencia de `CreateMakeupSessionAction::handle()`, que sí valida contra sesiones ya `Recovered` y lanza `ValidationException`. El único freno existente es un filtro de presentación: una vez que una sesión pasa a `advanced`, el selector "Sesión vinculada" de la UI deja de ofrecerla como candidata — pero el backend acepta igual una petición directa con ese `linked_session_id`. Confirmado en vivo (IDs reales): sesión target `id=7` (futura, 2027-01-03); "Adelanto #1" (`id=8`) vinculado a 7 vía UI marcó a un estudiante ausente, copiado correctamente a la sesión 7; segundo adelanto ("Adelanto #2", `id=9`) creado enviando la petición directamente al backend (`POST .../attendance/sessions` con `linked_session_id=7`, saltando el filtro de la UI) — aceptado sin error, sesión 7 vuelta a marcar `advanced` con su `linked_session_id` interno reapuntado de 8 a 9. Al pasar lista en "Adelanto #2" con un patrón de asistencia distinto, la copia hacia la sesión 7 pisó silenciosamente los registros que había dejado "Adelanto #1", sin ningún conflicto ni aviso — la sesión 7 terminó reflejando solo la asistencia del último adelanto guardado.
+
+**Evidencia:**
+- `app/Actions/Attendance/CreateAdvanceSessionAction.php` — sin ningún guard de estado sobre la sesión vinculada (contrastar con `CreateMakeupSessionAction.php`, que sí valida `status === Recovered`)
+- `app/Actions/Attendance/TakeAttendanceAction.php::maybeCopyRecordsToLinkedSession()` — usa `updateOrCreate` sobre `(class_session_id, enrollment_detail_id)` (único por migración de `attendance_records`), por lo que cada copia pisa en el lugar el registro anterior sin detectar conflicto
+- `specs/15-attendance-module/requirements.md`, tabla "Casos de error" — describe la validación esperada, no implementada
+- Reproducción en vivo con sesiones reales `id=7,8,9` y capturas de pantalla de la asistencia de la sesión 7 antes/después de guardar el segundo adelanto
+
+**Acción sugerida:**
+1. Portar a `CreateAdvanceSessionAction::handle()` el mismo patrón de guard que ya existe en `CreateMakeupSessionAction::handle()` (rechazar con `ValidationException` si la sesión vinculada ya está `advanced`).
+2. Evaluar una restricción adicional a nivel de dominio (no solo filtro de UI) para que un `linked_session_id` no pueda ser destino de más de un `advance`/`makeup` activo a la vez.
+3. Test: crear un adelanto vinculado a una sesión ya `advanced` vía request directo (no solo vía UI) → debe responder con error de validación.
+4. Test: si llegaran a coexistir dos adelantos sobre el mismo target, pasar lista en ambos no debería perder silenciosamente los registros del primero sin dejar rastro.
+
+**Estado:** pendiente
+**Prioridad:** CRÍTICA (corrupción de datos de asistencia sin ningún aviso al usuario, reproducida en vivo con datos reales)
+
+---
+
+## HLZ-46 — El flujo de "Recuperación" es inalcanzable en la práctica: nada en el código pone una sesión en `status: cancelled`
+
+**Fecha:** 2026-08-31
+**Dominio:** professor / attendance
+**UC relacionado:** UC-A07 en specs/qa/attendance/professor-attendance.md
+**Descripción:**
+El selector "Sesión vinculada" del tipo "Recuperación" ("Elegí la sesión cancelada que se está recuperando") aparece siempre vacío, para cualquier sección, sin importar cuántas sesiones existan. Se buscó en todo `app/` y `routes/web.php` cualquier código que asigne `status: cancelled` a una `class_session` — no existe ninguno. Ni `Professor\AttendanceController` ni `Admin\AttendanceController` (ambos con los mismos 4 endpoints: index/storeSession/sheet/upsertAttendance) exponen una acción de cancelación. `CreateMakeupSessionAction` está correctamente implementado asumiendo que existirán sesiones `cancelled`, pero el paso previo que las genera nunca se construyó — el propio test Dusk de recuperación (`specs/15-attendance-module/qa.md`) arranca de una sesión `cancelled` sembrada directamente en base de datos, no de un flujo real de la aplicación.
+
+**Evidencia:**
+- Búsqueda de "cancel" (insensible a mayúsculas) en `app/` y `routes/web.php`: cero resultados de código que asigne `status: cancelled`
+- `specs/15-attendance-module/design.md:61-63` — documenta el flujo "Cancelada" como paso previo, sin controller/route/action que lo implemente
+- `specs/15-attendance-module/qa.md:36` — precondición del test Dusk de recuperación sembrada directamente en DB, no alcanzada por un flujo real
+- Reproducción en vivo: selector de Recuperación vacío en Microeconomía, con 4 sesiones ya existentes de distintos tipos/estados
+
+**Acción sugerida:**
+1. Implementar la acción de cancelar sesión (Profesor y/o Admin/Coordinador) que transicione `scheduled` → `cancelled` — es el prerequisito real que falta para que Recuperación sea usable.
+2. Confirmar con `cacao_dev` si esto fue pospuesto deliberadamente o si hay otra vía prevista para llegar a `cancelled` no encontrada en esta revisión.
+3. Una vez exista el flujo de cancelación, volver a probar en vivo el selector de Recuperación (hoy no se pudo ejercitar ningún UC de este tipo por falta de datos alcanzables).
+
+**Estado:** pendiente
+**Prioridad:** ALTA
