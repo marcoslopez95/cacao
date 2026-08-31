@@ -39,7 +39,7 @@ test('guardian dashboard returns students array with one entry per representado'
     $user = $guardian->user;
 
     $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
-    Student::factory()->count(2)->create()->each(
+    Student::factory()->secondary()->count(2)->create()->each(
         fn ($s) => $s->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false])
     );
 
@@ -74,7 +74,7 @@ test('guardian dashboard student entry has nota_promedio and inasistencias as nu
     $user = $guardian->user;
 
     $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
-    $student = Student::factory()->create();
+    $student = Student::factory()->secondary()->create();
     $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $this->withoutVite()

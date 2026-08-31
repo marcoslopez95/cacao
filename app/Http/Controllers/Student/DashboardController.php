@@ -30,8 +30,9 @@ class DashboardController extends Controller
             ? $student->enrollments()
                 ->where('period_id', $period->id)
                 ->with([
-                    'details.section.subject',
-                    'details.section.schedules' => fn ($q) => $q->where('day_of_week', $todayValue)
+                    'details.section',
+                    'confirmedDetails.section.subject',
+                    'confirmedDetails.section.schedules' => fn ($q) => $q->where('day_of_week', $todayValue)
                         ->with('classroom')
                         ->orderBy('start_time'),
                 ])
@@ -53,7 +54,7 @@ class DashboardController extends Controller
             ])->values();
 
         $todaySchedules = $enrollment
-            ? $enrollment->details->flatMap(fn ($detail) => $detail->section->schedules->map(fn ($schedule) => [
+            ? $enrollment->confirmedDetails->flatMap(fn ($detail) => $detail->section->schedules->map(fn ($schedule) => [
                 'subject_name' => $detail->section->subject->name,
                 'section_code' => $detail->section->code,
                 'classroom_name' => $schedule->classroom?->name ?? '—',
@@ -66,6 +67,9 @@ class DashboardController extends Controller
             : collect();
 
         return Inertia::render('student/Dashboard', [
+            'student' => [
+                'educational_level' => $student->educational_level->value,
+            ],
             'period' => $period ? ['name' => $period->name] : null,
             'enrollment' => $enrollment ? [
                 'id' => $enrollment->id,

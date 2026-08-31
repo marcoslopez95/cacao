@@ -6,9 +6,11 @@ use App\Actions\Enrollment\AddEnrollmentDetailAction;
 use App\Actions\Enrollment\BuildEnrollmentCatalogAction;
 use App\Actions\Enrollment\ConfirmEnrollmentAction;
 use App\Actions\Enrollment\CreateEnrollmentAction;
+use App\Enums\EducationalLevel;
 use App\Enums\EnrollmentDetailStatus;
 use App\Enums\EnrollmentStatus;
 use App\Enums\PeriodStatus;
+use App\Enums\PeriodType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Enrollment\StoreEnrollmentDetailRequest;
 use App\Http\Requests\Enrollment\StoreEnrollmentRequest;
@@ -37,7 +39,15 @@ class EnrollmentController extends Controller
         $user = $request->user();
         $student = $this->resolveStudent($user, $request->integer('student_id') ?: null);
 
-        $period = Period::where('status', PeriodStatus::Active)->first();
+        Gate::authorize('create', [Enrollment::class, $student]);
+
+        $period = $student
+            ? Period::where('status', PeriodStatus::Active)
+                ->where('type', $student->educational_level === EducationalLevel::University
+                    ? PeriodType::Semester
+                    : PeriodType::Year)
+                ->first()
+            : null;
 
         if (! $period || ! $student?->current_pensum_id) {
             return Inertia::render('enrollment/Index', [
@@ -196,6 +206,17 @@ class EnrollmentController extends Controller
 
     private function buildRules(?Period $period, ?Student $student): array
     {
+        $periodLabel = $student?->academic_year ? "{$student->academic_year}er trimestre" : '';
+
+        if ($period?->type === PeriodType::Year) {
+            $lapse = $period->lapses()
+                ->whereDate('start_date', '<=', now())
+                ->whereDate('end_date', '>=', now())
+                ->first();
+
+            $periodLabel = $lapse?->name ?? $periodLabel;
+        }
+
         return [
             'period' => $period?->name,
             'deadline' => null,
@@ -205,7 +226,7 @@ class EnrollmentController extends Controller
             'student_name' => $student?->user?->name ?? '',
             'student_code' => $student?->user?->email ?? '',
             'career' => $student?->pensum?->career?->name ?? '',
-            'trimester' => $student?->academic_year ? "{$student->academic_year}er trimestre" : '',
+            'trimester' => $periodLabel,
         ];
     }
 }

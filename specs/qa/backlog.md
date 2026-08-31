@@ -312,8 +312,8 @@ Los botones **Ver perfil** (ojo) y **Editar** (lápiz) en la tabla de `http://lo
 **Feature:** `student-academic-show`
 **UCs documentados en:** `specs/qa/academic/student-show.md`
 
-**Estado:** pendiente  
-**Prioridad:** MEDIA (funcionalidad esperada por usuarios admin)
+**Estado:** resuelto (verificado 2026-08-30, no requirió feature nueva)
+**Verificación:** `specs/student-academic-show/tasks.md` tiene las 12 tasks marcadas `[x]` — ruta `academic.students.show`, `StudentShowResource`, `Show.vue` y botones Editar/Ver wireados en `Index.vue`. El backlog no se había actualizado cuando se implementó.
 
 ---
 
@@ -605,8 +605,8 @@ Al recargar la página, `data.workDial` es `undefined`, por lo que el componente
 - **Opción A — Aceptar como diseño:** Documentar que `workDial` siempre vale `'+58'` por defecto. Si la institución es venezolana, esto es correcto en el 99% de los casos. No requiere acción.
 - **Opción B — Agregar columna `work_phone_dial`:** Agregar `work_phone_dial VARCHAR(10) DEFAULT '+58'` a `guardian_profiles`, persistirlo en `StoreGuardianProfileRequest`, `GuardianProfileWrapper`, `UpsertGuardianProfileAction`, y leerlo en `buildInitialFormData()`.
 
-**Estado:** pendiente  
-**Prioridad:** BAJA (cosmético — el número de teléfono persiste correctamente; solo el indicativo se resetea a +58)
+**Estado:** resuelto (verificado 2026-08-30, no requirió feature nueva)
+**Verificación:** la migración `2026_05_30_224853_add_work_phone_dial_to_guardian_profiles_table.php` (Opción B) ya está en el repo y completamente wireada: `GuardianProfile::$fillable`, `StoreGuardianProfileRequest`, `GuardianProfileWrapper::getWorkPhoneDial()`, `UpsertGuardianProfileAction`, `GuardianProfileResource` y `useUserEditForm.ts` (`workDial` ↔ `work_phone_dial`) leen/escriben el campo de punta a punta. El backlog no se había actualizado cuando se implementó.
 
 ---
 
@@ -840,3 +840,150 @@ Consecuencia: cada vez que se ejecuta `php artisan migrate:fresh --seed` (o el s
 **Fecha de resolución:** 2026-05-26  
 **Feature:** user-seeder-subrecord-fix  
 **Verificación:** `UserSeeder::run()` llama `ensureSubRecord()` / `firstOrCreate` después de `syncRoles()`. `migrate:fresh --seed` crea automáticamente filas en `professors` y `students` para los usuarios demo. Acceptance tests RF-01 a RF-04 pasan (6 tests). `users:fix-orphan-records` ya no es necesario post-seed.
+
+---
+
+## HLZ-38 — Inscripción: falta guard de nivel educativo, permite auto-inscripción a estudiantes no universitarios
+
+**Fecha:** 2026-08-30  
+**Dominio:** enrollment / policy  
+**UC relacionado:** UC-E06, UC-E07 en specs/qa/enrollment/student-enrollment.md  
+**Descripción:**
+Regla de negocio confirmada con el humano: solo estudiantes de nivel `university` deben poder autoinscribirse; estudiantes `primary`/`secondary` dependen exclusivamente de su representante. El código actual no aplica esta restricción en ningún punto: ni `EnrollmentPolicy::create()`, ni `EnrollmentController::resolveStudent()`, ni `StoreEnrollmentRequest`, ni ninguna Action del módulo consultan `Student::educational_level`. Un estudiante con rol `Estudiante` y `educational_level = primary` o `secondary` puede ejecutar `POST /enrollment`, `POST /enrollment/{id}/detail` y `POST /enrollment/{id}/confirm` sobre sí mismo exactamente igual que un universitario. El dashboard del estudiante (`student/Dashboard.vue`) muestra el mismo CTA "Ir a inscripciones →" sin condicionar por nivel.
+
+**Evidencia:**
+- `app/Policies/EnrollmentPolicy.php:49` — `create()` sin `$student` explícito: `return $user->student()->exists() || $user->guardian()->exists();` — no verifica nivel
+- `app/Http/Controllers/Enrollment/EnrollmentController.php:173-195` (`resolveStudent`) — sin referencia a `educational_level`
+- `app/Http/Requests/Enrollment/StoreEnrollmentRequest.php` — sin regla de nivel
+- `specs/guardian-enrollment-entry/design.md:44-46` — asume el backend de self-enrollment como correcto y no agrega el guard
+- `grep -r educational_level app/` sin coincidencias en ningún archivo del módulo enrollment
+
+**Acción sugerida:**
+1. Agregar validación en `EnrollmentPolicy::create()` (rama sin `$student` explícito): si `$user->student->educational_level !== EducationalLevel::University`, denegar.
+2. Verificar también la rama con `$student` explícito (guardian inscribiendo): permitir solo si `$student->educational_level !== EducationalLevel::University` (redundante si HLZ-40 restringe el vínculo en origen, pero defensivo).
+3. Ocultar o deshabilitar el CTA "Ir a inscripciones" en `student/Dashboard.vue` cuando el estudiante autenticado no sea universitario, con mensaje explicativo ("Tu representante debe inscribirte").
+4. Test: estudiante `primary`/`secondary` intentando `POST /enrollment` → 403; estudiante `university` → 200/201 (regresión).
+
+**Estado:** pendiente  
+**Prioridad:** ALTA (regla de negocio de acceso — afecta la integridad del flujo de inscripción por nivel)
+
+---
+
+## HLZ-39 — Horario del estudiante ("Hoy"): no filtra por EnrollmentDetail::status confirmed
+
+**Fecha:** 2026-08-30  
+**Dominio:** academic / student-schedule  
+**UC relacionado:** UC-SS02 en specs/qa/academic/student-schedule.md  
+**Descripción:**
+El widget "Hoy" del dashboard del estudiante (`student/Dashboard.vue`) muestra las clases del día actual a partir de `Enrollment::details` (relación sin scope), en lugar de `Enrollment::confirmedDetails()` (scope ya existente en el modelo, `status = confirmed`). Como consecuencia, un estudiante puede ver en su horario materias que todavía están en estado `draft` (agregadas pero no confirmadas) o incluso `rejected`, mezcladas indistintamente con las `confirmed`.
+
+**Evidencia:**
+- `app/Http/Controllers/Student/DashboardController.php:32-38` — `with(['details.section...'])`, sin filtro de status
+- `app/Http/Controllers/Student/DashboardController.php:56` — `$enrollment->details->flatMap(...)` — usa la colección sin scope
+- `app/Models/Enrollment.php:44-52` — `confirmedDetails()` existe y no se usa aquí
+- `app/Enums/EnrollmentDetailStatus.php` — `Draft`, `Confirmed`, `Rejected`
+
+**Acción sugerida:**
+1. Cambiar `DashboardController::index()` para cargar `confirmedDetails.section...` en vez de `details.section...`, o filtrar la colección resultante por `status === EnrollmentDetailStatus::Confirmed` antes de construir `today_schedules`.
+2. Test: estudiante con un `EnrollmentDetail` en `draft` y otro en `confirmed` el mismo día → `today_schedules` solo incluye el `confirmed`.
+3. Test de regresión: estudiante con todos los details `confirmed` → sin cambios de comportamiento.
+
+**Estado:** pendiente  
+**Prioridad:** ALTA (dato incorrecto mostrado al estudiante — puede llevarlo a asistir a una clase que no está realmente confirmada)
+
+---
+
+## HLZ-40 — Vínculo guardian↔estudiante sin restricción de nivel educativo (universitario)
+
+**Fecha:** 2026-08-30  
+**Dominio:** guardian / security / data integrity  
+**UC relacionado:** UC-G06 en specs/qa/guardian/dashboard.md  
+**Descripción:**
+Regla de negocio confirmada con el humano: los estudiantes universitarios no tienen representante legal con acceso al sistema — esa figura solo aplica a primaria/secundaria. El código actual no tiene ningún guard que lo garantice: la relación `Guardian::students()` / `Student::guardians()` (tabla pivote `student_guardians`) no valida `educational_level` en ningún punto (modelo, migración, Policy, controller). Si un `Student` con `educational_level = university` llegara a estar vinculado a un `Guardian` (vía seed, importación manual o una feature futura de gestión del vínculo), el sistema lo mostraría en `/guardian/dashboard`, permitiría ver sus notas en `/guardian/grades`, y permitiría inscribirlo vía `/enrollment?student_id=`, sin ningún rechazo.
+
+**Evidencia:**
+- `app/Models/Guardian.php:27-31` (`students()`) y `app/Models/Student.php:67-75` (`guardians()`, `primaryGuardian()`) — sin condición de nivel
+- `database/migrations/2026_05_24_173000_create_student_guardians_and_migrate_guardian_id.php:12-21` — sin constraint relacionado
+- `app/Policies/GuardianPolicy.php` — solo cubre `update()` del propio registro Guardian, no valida nivel de los estudiantes vinculados
+- No se encontró ningún Action/Controller en `app/` que haga `attach()`/`sync()` sobre `student_guardians` en producción — el vínculo parece gestionarse fuera del código auditado (seed o DB directa), lo que hace más importante el guard a nivel de modelo/lectura
+
+**Acción sugerida:**
+1. Decidir con el humano dónde vive el guard: ¿al crear el vínculo (si/cuando exista una UI de gestión), o como filtro defensivo en `Guardian::students()` / en los controllers de `/guardian/*` (excluir estudiantes `university` de los resultados aunque el pivote los tenga)?
+2. Mínimo defensivo recomendado: en `Guardian\DashboardController` y `Guardian\GradeController`, filtrar `$guardian->students()->where('educational_level', '!=', EducationalLevel::University)`.
+3. Test: guardian vinculado (vía factory/pivote directo) a un estudiante `university` → no aparece en `/guardian/dashboard` ni es accesible vía `/guardian/grades?student_id=`.
+
+**Estado:** pendiente  
+**Prioridad:** MEDIA (no hay evidencia de que ocurra hoy en datos reales, pero no hay ningún guard que lo impida — riesgo de integridad de datos)
+
+---
+
+## HLZ-41 — `Guardian\GradeController` solo muestra el primer estudiante vinculado — sin selector para representantes con 2+ estudiantes
+
+**Fecha:** 2026-08-30  
+**Dominio:** guardian / grades  
+**UC relacionado:** UC-G10 en specs/qa/guardian/dashboard.md  
+**Descripción:**
+`Guardian\GradeController::index()` resuelve el estudiante objetivo con `$guardian->students()->first()`, sin aceptar un parámetro `student_id` como sí lo hace `Enrollment\EnrollmentController::resolveStudent()`. Un representante con 2 o más estudiantes vinculados (hermanos, por ejemplo) solo puede ver las notas del primero — no hay forma de cambiar de estudiante desde `/guardian/grades`, a pesar de que el dashboard (`/guardian/dashboard`) sí lista a todos.
+
+**Evidencia:**
+- `app/Http/Controllers/Guardian/GradeController.php:24` — `$student = $guardian->students()->first();`
+- `app/Http/Controllers/Enrollment/EnrollmentController.php:181-192` — patrón ya existente de `?student_id=` validado contra `guardian->students()->find()`, reutilizable como referencia
+
+**Acción sugerida:**
+1. Aceptar `?student_id=` en `GET /guardian/grades`, validado contra `$guardian->students()->find($studentId)`, con `abort(403)` si no pertenece — mismo patrón que `EnrollmentController::resolveStudent()`.
+2. Sin `student_id`: mantener el fallback al primero (compatibilidad).
+3. Agregar selector de estudiante en `guardian/Grades/Index.vue` cuando el representante tenga 2+ estudiantes vinculados.
+4. Test: representante con 2 estudiantes, `GET /guardian/grades?student_id={segundo}` → muestra notas del segundo, no del primero.
+
+**Estado:** pendiente  
+**Prioridad:** MEDIA (afecta solo a representantes con múltiples estudiantes — funcionalidad ausente, no corrupción de datos)
+
+---
+
+## HLZ-42 — Dashboard del estudiante crashea con 500 cualquier domingo, para cualquier estudiante
+
+**Fecha:** 2026-08-30
+**Dominio:** student / dashboard
+**UC relacionado:** UC-SS01, UC-SS03 en specs/qa/academic/student-schedule.md
+**Descripción:**
+`Student\DashboardController::index()` calcula el día de hoy con `strtolower(now()->format('l'))` y lo convierte con `DayOfWeek::from($todayValue)`. El enum `App\Enums\DayOfWeek` solo define los casos `Monday`..`Saturday` (sin `Sunday`). Cualquier domingo, `DayOfWeek::from('sunday')` lanza un `ValueError` sin ningún try/catch, tumbando con 500 la carga completa del dashboard del estudiante — no solo el widget de horario, también período, inscripción, UC del pensum y representantes, porque todo se resuelve en el mismo método antes del `return`. Confirmado en vivo el 2026-08-30 (domingo) con tres cuentas distintas (universitarias y escolar); también aparece repetidas veces en el log en corridas de test anteriores, así que no es una regresión de hoy.
+
+**Evidencia:**
+- `app/Http/Controllers/Student/DashboardController.php:26` — `DayOfWeek::from($todayValue)->label()`, sin `tryFrom` ni try/catch
+- `app/Enums/DayOfWeek.php:7-12` — solo `Monday`..`Saturday`, sin `Sunday`
+- `storage/logs/laravel.log:310640` — `[2026-08-30 21:07:18] local.ERROR: "sunday" is not a valid backing value for enum App\Enums\DayOfWeek {"userId":57...` con traza completa apuntando a `DashboardController.php:26`
+- Mismo error repetido con distintos `userId` en corridas de test previas (ej. `testing.ERROR` a las 18:34:29 del mismo día)
+
+**Acción sugerida:**
+1. Cambiar `DayOfWeek::from($todayValue)` por `DayOfWeek::tryFrom($todayValue)` y tratar `null` como "sin clases hoy" (mismo estado vacío que ya cubre UC-SS03), en vez de dejar que la excepción se propague.
+2. Test de regresión: mockear `now()` a un domingo y verificar que `GET /student/dashboard` responde 200 con `today_schedules` vacío, en vez de 500.
+3. Revisar si conviene además envolver todo el bloque de cálculo de horario en try/catch defensivo, dado que ya causó un crash total del dashboard por un dato aparentemente menor.
+
+**Estado:** pendiente
+**Prioridad:** CRÍTICA (crash total del portal del estudiante, reproducible al 100% cualquier domingo)
+
+---
+
+## HLZ-43 — Catálogo de inscripción siempre vacío para estudiantes no universitarios por resolución incorrecta del período activo
+
+**Fecha:** 2026-08-30
+**Dominio:** enrollment / scheduling
+**UC relacionado:** UC-E01, UC-E02, UC-E08 en specs/qa/enrollment/student-enrollment.md
+**Descripción:**
+`EnrollmentController::index()` resuelve el período activo con `Period::where('status', PeriodStatus::Active)->first()`, sin filtrar por `type` de período ni por `Student::educational_level`. Actualmente coexisten dos períodos con estado "Activo" en `/scheduling/periods`: `2026-I` (tipo Semestral, universitario) y `2025-2026` (tipo Anual con 3 Lapsos, escolar). `first()` siempre devuelve `2026-I`. `BuildEnrollmentCatalogAction::handle()` luego filtra las secciones de cada materia del pensum con `->where('period_id', $period->id)` — es decir, contra el id de `2026-I`. Pero todas las Secciones Escolares (`/scheduling/sections/school`) están creadas bajo períodos anuales (`2021-2022`..`2025-2026`), ninguna bajo `2026-I`. Resultado: catálogo vacío ("0 materias") para cualquier estudiante `primary`/`secondary`, sea que la inscripción la intente el estudiante mismo o su representante — no es un problema de datos faltantes puntuales, es que el sistema no puede resolver el período correcto para estos niveles mientras período Anual y Semestral corran en paralelo (que es el diseño esperado del calendario). Confirmado en vivo con `sec16`/`rep04` (Bachillerato): 0 materias con cualquier combinación de filtros; contrastado con un estudiante universitario (`est041`), que sí ve 6 materias y completa la inscripción sin problema.
+
+**Evidencia:**
+- `app/Http/Controllers/Enrollment/EnrollmentController.php:40` — `Period::where('status', PeriodStatus::Active)->first()`, sin condicionar por nivel/tipo
+- `app/Actions/Enrollment/BuildEnrollmentCatalogAction.php:25` — `->where('period_id', $period->id)` sobre las secciones del pensum
+- `/scheduling/sections/school` — 9 secciones de Bachillerato, todas en períodos anuales, ninguna en `2026-I`
+- `/scheduling/periods` — `2026-I` (Semestral) y `2025-2026` (Anual) simultáneamente "Activo"
+- Bonus, mismo origen: `EnrollmentController::buildRules()` línea 208 hardcodea `"{$student->academic_year}er trimestre"` para el label del período, incluso cuando el período real del estudiante es Anual/Lapso, no Trimestral — se ve en la UI como "PERÍODO 2026-I · 4TO TRIMESTRE" para un estudiante de Bachillerato
+
+**Acción sugerida:**
+1. Resolver el período según `Student::educational_level`: universitarios contra el período `Semester` activo, `primary`/`secondary` contra el período `Year` activo (y, dentro de este, el Lapso vigente por fecha).
+2. Ajustar `buildRules()` para reflejar el `type` real del período del estudiante en vez de asumir "trimestre" siempre.
+3. Test: estudiante `secondary` con secciones escolares creadas en el período `Year` activo → catálogo no vacío, puede completar inscripción igual que un universitario.
+4. Test de regresión: estudiante `university` sigue viendo su catálogo normalmente contra el período `Semester`.
+
+**Estado:** pendiente
+**Prioridad:** CRÍTICA (bloquea el 100% de la inscripción de Primaria/Bachillerato, incluso para el representante)

@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3'
-import type { StudentGradeCard, StudentGradeSubject, StudentGradeSlot } from '@/types/grade-entry'
+import { Head, router } from '@inertiajs/vue3'
+import { index as gradesIndex } from '@/routes/guardian/grades'
+import type { StudentGradeSubject, StudentGradeSlot } from '@/types/grade-entry'
+import type { GuardianGradesProps } from '@/types/guardian-grades'
 
-type Props = {
-    grades: StudentGradeCard | null
-    period: string | null
-    student_name: string
+defineProps<GuardianGradesProps>()
+
+function onStudentChange(event: Event): void {
+    const studentId = (event.target as HTMLSelectElement).value
+
+    router.get(gradesIndex.url(), { student_id: studentId }, { preserveState: true, replace: true })
 }
-
-defineProps<Props>()
 
 defineOptions({
     layout: {
@@ -51,6 +53,26 @@ function visibleSlots(subject: StudentGradeSubject): StudentGradeSlot[] {
             <p v-if="period" style="font-size:var(--text-sm);color:var(--text-muted);margin:0;">
                 {{ period }}
             </p>
+        </div>
+
+        <div v-if="students.length > 1">
+            <label
+                for="guardian-grades-student-select"
+                style="display:block;font-size:var(--text-xs);color:var(--text-muted);margin-bottom:4px;"
+            >
+                Estudiante
+            </label>
+            <select
+                id="guardian-grades-student-select"
+                dusk="guardian-grades-student-select"
+                :value="student_id"
+                style="font-size:var(--text-sm);padding:8px 12px;border:1px solid var(--color-borde);border-radius:6px;background:white;color:var(--text-primary);"
+                @change="onStudentChange"
+            >
+                <option v-for="s in students" :key="s.id" :value="s.id">
+                    {{ s.name }}
+                </option>
+            </select>
         </div>
 
         <div v-if="!grades" style="text-align:center;padding:48px 24px;color:var(--text-muted);">

@@ -73,7 +73,7 @@ test('guardian can access enrollment index for assigned student', function () {
 
     $guardian = Guardian::factory()->create();
     $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
-    $student = Student::factory()->create();
+    $student = Student::factory()->secondary()->create();
     $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $this->actingAs($guardian->user)
@@ -109,12 +109,12 @@ test('student can create enrollment for active period', function () {
 });
 
 test('guardian can create enrollment for assigned student', function () {
-    Period::factory()->active()->create();
+    Period::factory()->year()->active()->create();
 
     $pensum = Pensum::factory()->create();
     $guardian = Guardian::factory()->create();
     $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Outro', 'active' => true, 'sort_order' => 99]);
-    $student = Student::factory()->create(['current_pensum_id' => $pensum->id]);
+    $student = Student::factory()->secondary()->create(['current_pensum_id' => $pensum->id]);
     $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
 
     $this->actingAs($guardian->user)

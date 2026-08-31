@@ -33,6 +33,22 @@ function makeStudentWithPensumAndSection(): array
     return compact('period', 'pensum', 'subject', 'section', 'student');
 }
 
+// Guardian-enrolled students must be non-University after the level guard fix (HLZ-38):
+// a guardian linked to a University student now gets 403. This helper mirrors
+// makeStudentWithPensumAndSection() but resolves an Active Year period (matching a
+// secondary/primary student) instead of the default Semester period.
+function makeSecondaryStudentWithPensumAndSection(): array
+{
+    $period = Period::factory()->year()->active()->create();
+    $pensum = Pensum::factory()->create();
+    $subject = Subject::factory()->create(['pensum_id' => $pensum->id, 'period_number' => 1]);
+    $section = Section::factory()->create(['subject_id' => $subject->id, 'period_id' => $period->id, 'capacity' => 30]);
+    Schedule::factory()->create(['section_id' => $section->id, 'subject_id' => $subject->id]);
+    $student = Student::factory()->secondary()->create(['current_pensum_id' => $pensum->id, 'academic_year' => 1]);
+
+    return compact('period', 'pensum', 'subject', 'section', 'student');
+}
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -84,7 +100,7 @@ test('student with no pensum sees empty catalog', function () {
 
 test('guardian sees enrollment for assigned student via student_id param', function () {
     $this->withoutVite();
-    ['student' => $student] = makeStudentWithPensumAndSection();
+    ['student' => $student] = makeSecondaryStudentWithPensumAndSection();
     $guardian = Guardian::factory()->create();
     $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
     $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);
@@ -100,7 +116,7 @@ test('guardian sees enrollment for assigned student via student_id param', funct
 
 test('guardian without student_id sees first assigned student', function () {
     $this->withoutVite();
-    ['student' => $student] = makeStudentWithPensumAndSection();
+    ['student' => $student] = makeSecondaryStudentWithPensumAndSection();
     $guardian = Guardian::factory()->create();
     $kinship = KinshipType::firstOrCreate(['code' => 'other'], ['name' => 'Otro', 'active' => true, 'sort_order' => 99]);
     $student->guardians()->attach($guardian->id, ['kinship_type_id' => $kinship->id, 'is_primary' => true, 'is_emergency_contact' => false]);

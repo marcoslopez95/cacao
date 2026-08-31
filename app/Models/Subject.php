@@ -45,4 +45,9 @@ class Subject extends Model
     {
         return $this->hasMany(Section::class);
     }
+
+    public function schoolSections(): BelongsToMany
+    {
+        return $this->belongsToMany(Section::class, 'section_subjects');
+    }
 }

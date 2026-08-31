@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\EducationalLevel;
 use App\Models\Enrollment;
 use App\Models\Student;
 use App\Models\User;
@@ -36,17 +37,28 @@ class EnrollmentPolicy
 
     /**
      * Determine whether the user can create enrollments.
-     * When $student is provided, checks that the guardian owns that student.
+     *
+     * Branches on who the acting user is, not merely on whether $student is
+     * provided: the caller (e.g. EnrollmentController::index()) always resolves
+     * a $student, including for self-enrollment, so a self-enrolling student
+     * must never fall into the guardian-ownership branch below.
+     * When the acting user is a guardian, checks that they own $student.
      */
     public function create(User $user, ?Student $student = null): bool
     {
-        if ($student) {
-            return $user->guardian?->students()
-                ->where('id', $student->id)
-                ->exists() ?? false;
+        if ($user->student) {
+            return $user->student->educational_level === EducationalLevel::University;
         }
 
-        return $user->student()->exists() || $user->guardian()->exists();
+        if ($user->guardian && $student) {
+            $isOwnedByGuardian = $user->guardian->students()
+                ->where('id', $student->id)
+                ->exists();
+
+            return $isOwnedByGuardian && $student->educational_level !== EducationalLevel::University;
+        }
+
+        return false;
     }
 
     /**

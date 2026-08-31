@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Guardian;
 
+use App\Enums\EducationalLevel;
 use App\Enums\GradeVisibility;
 use App\Enums\PeriodStatus;
 use App\Http\Controllers\Controller;
@@ -21,8 +22,15 @@ class GradeController extends Controller
 
         abort_unless($guardian !== null, 404);
 
-        $student = $guardian->students()->first();
-        abort_unless($student !== null, 404);
+        $eligibleStudents = $guardian->students()->where('educational_level', '!=', EducationalLevel::University);
+
+        if ($studentId = $request->integer('student_id')) {
+            $student = (clone $eligibleStudents)->find($studentId);
+            abort_if(! $student, 403);
+        } else {
+            $student = (clone $eligibleStudents)->first();
+            abort_unless($student !== null, 404);
+        }
 
         $period = Period::where('status', PeriodStatus::Active)->first();
         $team = $user->currentTeam;
@@ -41,6 +49,12 @@ class GradeController extends Controller
                 : null,
             'period' => $period?->name,
             'student_name' => $student->user->name,
+            'student_id' => $student->id,
+            'students' => (clone $eligibleStudents)
+                ->with('user:id,name')
+                ->get()
+                ->map(fn ($s) => ['id' => $s->id, 'name' => $s->user->name])
+                ->values(),
         ]);
     }
 }

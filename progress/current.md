@@ -1,8 +1,37 @@
-# Feature anterior completada
+# Feature activa: `16-enrollment-level-guard-and-period-fix`
+
+**Plan:** `specs/16-enrollment-level-guard-and-period-fix/tasks.md`
+**Estado:** PENDIENTE — 0/8 tasks completadas
+
+Prioridad decidida con el usuario (2026-08-30): atacar primero el backlog de QA crítico
+(HLZ-38, HLZ-43, HLZ-39, HLZ-42, HLZ-40, HLZ-41) antes de continuar con `15-attendance-module`,
+que queda en cola sin empezar.
+
+## Tareas
+
+- [ ] Task 1 — `EnrollmentPolicy::create()`: guard de `educational_level`
+- [ ] Task 2 — `EnrollmentController::index()`: Gate::authorize + resolución de período por tipo
+- [ ] Task 3 — `buildRules()`: label del Lapso vigente
+- [ ] Task 4 — `student/Dashboard.vue`: ocultar CTA de inscripción para no-universitarios
+- [ ] Task 5 — Tests Feature RF-01 a RF-05
+- [ ] Task 6 — Test suite en verde
+- [ ] Task 7 — Pint
+- [ ] Task 8 — QA Gate
+
+## Cola de features (orden acordado)
+
+1. `16-enrollment-level-guard-and-period-fix` — activa (arriba)
+2. `17-student-dashboard-schedule-fix` — HLZ-39+42, pendiente
+3. `18-guardian-grades-multi-student` — HLZ-40+41, pendiente
+4. `15-attendance-module` — ya no aplica, ver nota abajo
+
+---
+
+## Feature anterior completada (fuera de esta sesión, mergeada vía PR)
 
 **Feature:** `15-attendance-module`
 **Plan:** `specs/15-attendance-module/tasks.md`
-**Estado:** COMPLETADA — 15/15 tasks completadas (reconciliado 2026-08-30 vía auditoría, código ya estaba implementado y commiteado pero tasks.md/feature_list.json no se habían sincronizado)
+**Estado:** COMPLETADA — 15/15 tasks completadas (mergeada por PR #4/#5 mientras esta sesión trabajaba en las specs 16-18; reconciliada 2026-08-30, `feature_list.json` y `tasks.md` ya reflejaban el código implementado)
 
 ## Tareas
 
@@ -20,7 +49,7 @@
 - [x] Task 12 — Frontend profesor: Sheet.vue + modal (divergencia: modal inline en Index.vue)
 - [x] Task 13 — AttTotalsPanel.vue
 - [x] Task 14 — Frontend admin: Index.vue
-- [x] Task 15 — QA Gate: primer intento (2026-08-30) rechazado por Dusk (0/5 UCs — HLZ-38/39/40/41). `implementer` corrigió los 4 hallazgos, `reviewer` aprobó sin observaciones, `tester` re-corrió el gate: **5/5 UCs en verde vía Dusk** (`tests/Browser/Attendance/AttendanceQATest.php`, 36 assertions) + 87 tests Pest en verde. Feature marcada `completed` en `feature_list.json`.
+- [x] Task 15 — QA Gate: primer intento (2026-08-30) rechazado por Dusk (0/5 UCs). `implementer` corrigió 4 hallazgos documentados en `specs/15-attendance-module/qa.md` como "HLZ-38/39/40/41" — **⚠️ estos son números locales a esa feature, reutilizados por error/desconocimiento y NO tienen ninguna relación con HLZ-38/39/40/41 de `specs/qa/backlog.md`** (que son los que cubren las specs 16-18 de esta sesión: guard de nivel en inscripción, horario confirmado, vínculo guardian-universitario, selector multi-estudiante). `reviewer` aprobó, `tester` re-corrió el gate: **5/5 UCs en verde vía Dusk** (`tests/Browser/Attendance/AttendanceQATest.php`, 36 assertions) + 87 tests Pest en verde. Feature marcada `completed` en `feature_list.json`.
 
 ## Deuda técnica documentada (no bloqueante)
 - `class_sessions.linked_session_id` usa `nullOnDelete()` en vez de `RESTRICT` (contradice convención FK RESTRICT del proyecto), cambiado deliberadamente en commit `9143cf6` por ciclo de FK, sin documentar como excepción formal.

@@ -16,6 +16,7 @@ export interface StudentGuardianSummary {
 }
 
 export interface StudentDashboardProps {
+  student: { educational_level: string }
   period: { name: string } | null
   enrollment: { id: number; status: string; uc_inscritas: number } | null
   subjects_count: number

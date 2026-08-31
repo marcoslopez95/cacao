@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Guardian;
 
+use App\Enums\EducationalLevel;
 use App\Enums\PeriodStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Period;
@@ -20,7 +21,9 @@ class DashboardController extends Controller
 
         $period = Period::where('status', PeriodStatus::Active)->first();
 
-        $studentsQuery = $guardian->students()->with(['user:id,name', 'pensum']);
+        $studentsQuery = $guardian->students()
+            ->where('educational_level', '!=', EducationalLevel::University)
+            ->with(['user:id,name', 'pensum']);
 
         if ($period) {
             $studentsQuery->with([

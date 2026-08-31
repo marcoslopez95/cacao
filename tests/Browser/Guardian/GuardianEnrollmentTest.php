@@ -21,7 +21,7 @@ beforeEach(function () {
 test('guardian can enroll their student from the dashboard cta', function () {
     Period::factory()->active()->create();
     $pensum = Pensum::factory()->create();
-    $student = Student::factory()->create([
+    $student = Student::factory()->secondary()->create([
         'current_pensum_id' => $pensum->id,
         'academic_year' => 1,
     ]);

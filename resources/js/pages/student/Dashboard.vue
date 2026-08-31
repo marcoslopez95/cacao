@@ -13,6 +13,8 @@ const userName = computed(() => {
 
 const props = defineProps<StudentDashboardProps>()
 
+const isUniversityStudent = computed(() => props.student.educational_level === 'university')
+
 const pensumDisplay = computed(() => {
     if (props.uc_pensum === 0) {
         return '—'
@@ -156,10 +158,16 @@ function timeRange(item: StudentTodaySchedule): string {
                         No tienes inscripción activa para este período
                     </div>
                     <div style="font-size:var(--text-sm);color:var(--text-muted);">
-                        Accede al módulo de inscripciones para iniciar el proceso.
+                        <template v-if="isUniversityStudent">
+                            Accede al módulo de inscripciones para iniciar el proceso.
+                        </template>
+                        <template v-else>
+                            Tu representante debe inscribirte.
+                        </template>
                     </div>
                 </div>
                 <Link
+                    v-if="isUniversityStudent"
                     :href="enrollmentIndex.url()"
                     style="
                         display:inline-flex;
