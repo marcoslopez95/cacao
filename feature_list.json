@@ -124,5 +124,19 @@
     "status": "completed",
     "current_task": 10,
     "plan": "specs/18-guardian-grades-multi-student/tasks.md"
+  },
+  {
+    "id": "19-attendance-advance-guard-fix",
+    "name": "HLZ-45 — Guard contra doble Adelanto sobre la misma sesion (corrupcion silenciosa de asistencia)",
+    "status": "completed",
+    "current_task": 6,
+    "plan": "specs/19-attendance-advance-guard-fix/tasks.md"
+  },
+  {
+    "id": "20-attendance-scheduling-and-recovery",
+    "name": "HLZ-44+46 — Restriccion horaria dura en sesiones regulares + flujo de cancelar sesion (prerequisito de Recuperacion)",
+    "status": "completed",
+    "current_task": 10,
+    "plan": "specs/20-attendance-scheduling-and-recovery/tasks.md"
   }
 ]

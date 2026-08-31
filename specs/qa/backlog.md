@@ -1024,7 +1024,9 @@ Ni `ClassSessionPolicy` (viewAny/create/update/takeAttendance), ni `StoreClassSe
 3. Decidir con el humano si la restricción debe ser dura (403) o blanda (advertencia + permiso de forzar con auditoría).
 4. Test: profesor intenta pasar lista/crear sesión fuera de su horario real → debe rechazarse o marcarse explícitamente como excepcional, no aceptarse en silencio.
 
-**Estado:** pendiente
+**Resolución (2026-08-31, feature `20-attendance-scheduling-and-recovery`):** guard agregado en `ClassSessionPolicy::create()` y `ClassSessionPolicy::takeAttendance()` — para sesiones `type=regular`, exige que el momento actual (día de la semana + hora) caiga dentro de algún `Schedule` real de la sección (`isWithinScheduleWindow()`); responde 403 fuera de esa ventana. Sesiones `makeup`/`advance` quedan exentas por decisión de negocio (RF-03), sin cambio de comportamiento. Aplica también al flujo Admin (`AdminStoreClassSessionRequest::authorize()` ahora pasa `type` al Policy). Se decidió restricción dura (403), no blanda. `schedule_id` en `class_sessions` quedó explícitamente fuera de alcance — la ventana se valida contra los `Schedule` de la `Section` directamente. Verificado en `tests/Feature/AttendanceSchedulingAndRecovery/Acceptance/ScheduleWindowGuardTest.php` (12 tests: RF-01 crear, RF-02 pasar lista, bordes inclusivos, RF-03 regresión Makeup/Advance, RF-04 flujo Admin) y Dusk `AttendanceSchedulingAndRecoveryTest.php::UC-QA-01`. El efecto secundario de `held_at` sobrescrito en `TakeAttendanceAction` (mencionado en la descripción original) queda fuera del alcance de este fix — no formaba parte de los RF acordados con el humano.
+
+**Estado:** resuelto
 **Prioridad:** ALTA
 
 ---
@@ -1049,7 +1051,9 @@ Ni `ClassSessionPolicy` (viewAny/create/update/takeAttendance), ni `StoreClassSe
 3. Test: crear un adelanto vinculado a una sesión ya `advanced` vía request directo (no solo vía UI) → debe responder con error de validación.
 4. Test: si llegaran a coexistir dos adelantos sobre el mismo target, pasar lista en ambos no debería perder silenciosamente los registros del primero sin dejar rastro.
 
-**Estado:** pendiente
+**Resolución (2026-08-31, feature `19-attendance-advance-guard-fix`):** guard portado a `CreateAdvanceSessionAction::handle()` — rechaza con `ValidationException` ("Esta sesión ya fue adelantada.") si `linked_session_id` ya tiene `status === Advanced`. Verificado en `tests/Feature/AttendanceAdvanceGuardFix/Acceptance/AdvanceGuardTest.php` (5 tests: Action, HTTP JSON 422, HTTP form/Inertia bypass de UI, 2 regresiones de camino feliz) y regresión Dusk `AttendanceQATest.php::UC-QA-03`. El punto 2 de la acción sugerida (restricción de dominio contra múltiples advance/makeup activos concurrentes sobre el mismo target) queda fuera del alcance de este fix — el guard de estado ya cierra la ruta de corrupción descrita.
+
+**Estado:** resuelto
 **Prioridad:** CRÍTICA (corrupción de datos de asistencia sin ningún aviso al usuario, reproducida en vivo con datos reales)
 
 ---
@@ -1073,5 +1077,7 @@ El selector "Sesión vinculada" del tipo "Recuperación" ("Elegí la sesión can
 2. Confirmar con `cacao_dev` si esto fue pospuesto deliberadamente o si hay otra vía prevista para llegar a `cancelled` no encontrada en esta revisión.
 3. Una vez exista el flujo de cancelación, volver a probar en vivo el selector de Recuperación (hoy no se pudo ejercitar ningún UC de este tipo por falta de datos alcanzables).
 
-**Estado:** pendiente
+**Resolución (2026-08-31, feature `20-attendance-scheduling-and-recovery`):** implementado `App\Actions\Attendance\CancelClassSessionAction::handle()` — transiciona `scheduled`/`held` a `cancelled` (rechaza con `ValidationException` 422 "Esta sesión no se puede cancelar." si ya está `cancelled`/`advanced`/`recovered`); cancelar una sesión `held` preserva sus `AttendanceRecord` existentes. Expuesto vía `PATCH .../attendance/sessions/{classSession}/cancel` en ambos controllers (Profesor y Admin), autorizado por `ClassSessionPolicy::cancel()` (mismo patrón dueño-de-sección + `Gate::before` para Admin). Una vez cancelada, la sesión aparece como candidata real en el selector "Sesión vinculada" de Recuperación y el flujo de punta a punta (cancelar → crear makeup → pasar lista → `recovered`) funciona correctamente. Verificado en `tests/Feature/AttendanceSchedulingAndRecovery/Acceptance/CancelClassSessionTest.php` (12 tests: RF-05 Action, RF-06 rechazo en los 3 estados terminales, RF-07 preserva asistencia, RF-08 autorización Profesor+Admin, RF-09 recuperación punta a punta) y Dusk `AttendanceSchedulingAndRecoveryTest.php::UC-QA-04` (botón "Cancelar" vía `window.confirm()`) y `::UC-QA-07` (punta a punta).
+
+**Estado:** resuelto
 **Prioridad:** ALTA

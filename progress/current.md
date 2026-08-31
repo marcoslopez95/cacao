@@ -1,11 +1,68 @@
-# Sin feature activa — backlog de QA crítico cerrado (2026-08-30)
+# Sin feature activa — ronda de QA de asistencia cerrada (2026-08-31)
 
-Las 3 features de la cola (`16`, `17`, `18`) quedaron `completed`. Cierran HLZ-38, HLZ-39,
-HLZ-40, HLZ-41, HLZ-42, HLZ-43 de `specs/qa/backlog.md`. `15-attendance-module` no aplica —
-ya estaba completada externamente (ver historial abajo). Próximo paso: pedir al humano qué
-sigue (no queda ninguna feature pendiente en `feature_list.json`).
+Las 2 features de la cola (`19`, `20`) quedaron `completed`. Cierran HLZ-44, HLZ-45, HLZ-46 de
+`specs/qa/backlog.md` — no queda ningún HLZ pendiente en el backlog. Próximo paso: pedir al
+humano qué sigue (no queda ninguna feature pendiente en `feature_list.json`).
 
 ## Cola de features (orden acordado) — cerrada
+
+1. `19-attendance-advance-guard-fix` — ✅ completada (HLZ-45, crítico)
+2. `20-attendance-scheduling-and-recovery` — ✅ completada (HLZ-44 + HLZ-46)
+
+---
+
+## Feature anterior completada
+
+**Feature:** `20-attendance-scheduling-and-recovery`
+**Plan:** `specs/20-attendance-scheduling-and-recovery/tasks.md`
+**Estado:** COMPLETADA — 10/10 tasks completadas (2026-08-31)
+
+Cierra HLZ-44 (sin restricción horaria al crear/pasar lista en sesiones Regulares — ahora 403
+duro fuera de la ventana real del `Schedule` de la sección; Adelanto/Recuperación exentos) y
+HLZ-46 (faltaba el flujo de "Cancelar sesión", prerequisito real de Recuperación — nueva
+`CancelClassSessionAction`, ruta y botón en Profesor + Admin). El `tester` detectó y corrigió en
+`task-gate` una regresión cruzada real en `tests/Browser/Attendance/AttendanceQATest.php`
+(feature 15): su fixture creaba sesiones sin ningún `Schedule`, incompatibles con el guard nuevo.
+
+## Tareas
+
+- [x] Task 1 — `ClassSessionPolicy`: guard horario (`create`/`takeAttendance`) + `cancel()`
+- [x] Task 2 — `StoreClassSessionRequest`/`AdminStoreClassSessionRequest`: pasar `type` al Gate
+- [x] Task 3 — `CancelClassSessionAction` nueva
+- [x] Task 4 — Rutas `PATCH .../cancel` (Profesor + Admin) + Wayfinder
+- [x] Task 5 — `cancelSession()` en ambos controllers
+- [x] Task 6 — Botón "Cancelar" en `AttSessionCard.vue` (compartido Profesor/Admin vía prop `variant`)
+- [x] Task 7-9 — Tests Feature RF-01 a RF-09, suite en verde (957 passed), Pint
+- [x] Task 10 — QA Gate (7/7 UCs PASS)
+
+---
+
+## Feature anterior completada
+
+**Feature:** `19-attendance-advance-guard-fix`
+**Plan:** `specs/19-attendance-advance-guard-fix/tasks.md`
+**Estado:** COMPLETADA — 6/6 tasks completadas (2026-08-31)
+
+Cierra HLZ-45 (crítico): `CreateAdvanceSessionAction::handle()` ahora rechaza vincular un
+adelanto a una sesión que ya está `advanced`, portando el mismo guard que ya existía en
+`CreateMakeupSessionAction`. Sin cambios de diseño durante la implementación — el fix era
+mecánico desde el mapa inicial.
+
+## Tareas
+
+- [x] Task 1 — Guard en `CreateAdvanceSessionAction`
+- [x] Task 2-3 — Tests Feature RF-01/02/03/04
+- [x] Task 4 — Suite en verde (932 passed)
+- [x] Task 5 — Pint
+- [x] Task 6 — QA Gate (2/2 UCs PASS)
+
+---
+
+## Historial — backlog de QA crítico cerrado (2026-08-30)
+
+Las 3 features de la cola anterior (`16`, `17`, `18`) quedaron `completed`. Cerraron HLZ-38,
+HLZ-39, HLZ-40, HLZ-41, HLZ-42, HLZ-43 de `specs/qa/backlog.md`. `15-attendance-module` no
+aplicó — ya estaba completada externamente.
 
 1. `16-enrollment-level-guard-and-period-fix` — ✅ completada
 2. `17-student-dashboard-schedule-fix` — ✅ completada
