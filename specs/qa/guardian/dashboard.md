@@ -30,21 +30,21 @@ Solo estas dos rutas existen bajo `/guardian/*`. No hay horario ni asistencia re
 
 ## UCs de restricción por nivel educativo
 
-- **UC-G06** — [ESTADO: BUG — ver **HLZ-40**] No existe ningún guard (modelo, migración, Policy, controller) que impida que un estudiante `university` esté vinculado a un `Guardian`, ni que lo excluya de `/guardian/dashboard` o `/guardian/grades` si el vínculo llegara a existir.
-- **UC-G07** — [PENDIENTE tras fix] Guardian vinculado a un estudiante `university` (vía pivote, aunque no haya UI que lo cree hoy): no debe aparecer en `/guardian/dashboard` ni ser accesible vía `/guardian/grades?student_id=`.
+- **UC-G06** — [RESUELTO 2026-08-30 — feature `18-guardian-grades-multi-student`, ver HLZ-40] `Guardian\GradeController` y `Guardian\DashboardController` filtran `educational_level != University` en toda consulta de estudiantes elegibles.
+- **UC-G07** — [RESUELTO 2026-08-30] Guardian vinculado (forzado vía pivote) a un estudiante `university`: no aparece en `/guardian/dashboard` ni es accesible vía `/guardian/grades?student_id=` (403). Si es el único vinculado, `/guardian/dashboard` muestra 0 estudiantes y `/guardian/grades` responde 404 (sin estudiante elegible).
 - **UC-G08** — Estudiante `primary`/`secondary` vinculado: aparece correctamente en el dashboard del representante (comportamiento ya correcto, sin cambios).
 
 ## UCs de notas (`/guardian/grades`)
 
 - **UC-G09** — GET `/guardian/grades` con 1 estudiante vinculado: notas del período activo, con estado aprobado/reprobado por materia.
-- **UC-G10** — [ESTADO: BUG — ver **HLZ-41**] Con 2+ estudiantes vinculados: siempre muestra las notas del primero (`->first()`), sin selector ni parámetro para cambiar de estudiante — a diferencia del dashboard, que sí lista a todos.
-- **UC-G11** — [PENDIENTE tras fix] GET `/guardian/grades?student_id=X`: muestra las notas de X si pertenece al representante autenticado; 403 si no pertenece (mismo patrón que `EnrollmentController::resolveStudent`).
+- **UC-G10** — [RESUELTO 2026-08-30 — feature `18-guardian-grades-multi-student`, ver HLZ-41] Con 2+ estudiantes vinculados, `guardian/Grades/Index.vue` muestra un selector (`[dusk="guardian-grades-student-select"]`) para cambiar de estudiante sin recargar navegación fuera de la vista.
+- **UC-G11** — [RESUELTO 2026-08-30] GET `/guardian/grades?student_id=X`: muestra las notas de X si pertenece al representante autenticado; 403 si no pertenece (mismo patrón que `EnrollmentController::resolveStudent`). Sin `student_id`, cae al primer estudiante elegible (fallback preservado).
 - **UC-G12** — Sin inscripción activa para el estudiante mostrado: estado vacío, sin error.
 
 ## UCs de permisos
 
 - **UC-G13** — Usuario con rol `Estudiante` o `Profesor` accediendo a `/guardian/*`: 403 (fuera de `role:Representante`).
-- **UC-G14** — [PENDIENTE tras fix de HLZ-41] Representante intentando ver notas de un estudiante no vinculado vía manipulación de `student_id` en la URL: 403.
+- **UC-G14** — [RESUELTO 2026-08-30] Representante intentando ver notas de un estudiante no vinculado vía manipulación de `student_id` en la URL: 403.
 
 ---
 
@@ -54,13 +54,15 @@ Solo estas dos rutas existen bajo `/guardian/*`. No hay horario ni asistencia re
 |---|---|---|
 | UC-G01, G02, G03, G04, G13 | `tests/Feature/Guardian/DashboardTest.php` | 200 con props correctos, estudiantes vacío, 404 sin perfil guardian, `nota_promedio`/`inasistencias` en null, aislamiento de roles |
 | UC-G09, G12, G13 | `tests/Feature/Guardian/GradeViewTest.php` | Redirect no autenticado, notas del estudiante vinculado, sin período activo, notas publicadas |
-| UC-G05 | `tests/Browser/Guardian/GuardianEnrollmentTest.php` | Guardian inscribe desde el CTA del dashboard |
+| UC-G05 | `tests/Browser/Guardian/GuardianEnrollmentTest.php` | Guardian inscribe desde el CTA del dashboard (fixture corregido a `->secondary()` tras RF-05 — ver nota abajo) |
 | UC-G08 | `tests/Feature/Admin/StudentGuardianPivotTest.php` | Attach/detach del pivote, `primaryGuardian()` |
-| **UC-G06, G07** | — | **sin cobertura — requiere el fix de HLZ-40 primero** |
-| **UC-G10, G11, G14** | — | **sin cobertura — requiere el fix de HLZ-41 primero** |
+| UC-G06, G07, G11, G14 | `tests/Feature/GuardianGradesMultiStudent/Acceptance/GuardianGradesMultiStudentTest.php` | RF-01 a RF-05: `student_id` explícito, fallback, 403 ajeno, filtro `university` forzado en ambos controllers |
+| UC-G10 | `tests/Browser/Guardian/GuardianGradesMultiStudentTest.php` | UC-QA-01/02: selector visible con 2+ estudiantes, ausente con 1 solo, cambio de estudiante sin perder notas |
 
 ---
 
-## Notas de implementación pendiente
+## Notas de implementación
 
-Ver `HLZ-40` y `HLZ-41` en `specs/qa/backlog.md` para el detalle técnico y la acción sugerida de cada fix.
+`HLZ-40` y `HLZ-41` resueltos por la feature `18-guardian-grades-multi-student` (task-gate 2026-08-30). Detalle técnico en `specs/18-guardian-grades-multi-student/requirements.md` y `specs/qa/backlog.md`.
+
+**Regresión detectada y corregida en el mismo gate:** `tests/Browser/Guardian/GuardianEnrollmentTest.php` (feature `guardian-enrollment-entry`, preexistente) usaba `Student::factory()->create()` (default `educational_level = university`) vinculado a un guardian. Con el filtro RF-05 activo, ese estudiante ya no aparece en `/guardian/dashboard`, y el test fallaba esperando verlo. Diagnóstico confirmado leyendo el fixture y `StudentFactory::definition()` (default `University`) — no había otra causa. Corregido cambiando el fixture a `Student::factory()->secondary()->create(...)`, consistente con la regla de negocio HLZ-40 (universitarios no tienen representante con acceso al sistema); las aserciones de negocio del test no se tocaron.

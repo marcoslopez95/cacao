@@ -35,18 +35,18 @@ El flujo de inscripción vive en un único prefijo `/enrollment/*`, compartido e
 ## UCs de carga
 
 - **UC-E01** — GET `/enrollment` como estudiante universitario autenticado: 200, catálogo de materias del pensum activo, `Enrollment` draft auto-creado si no existía. **Confirmado en vivo 2026-08-30** con `est041@utcacao.edu.ve`: 6 materias con secciones reales, inscripción completa (selección, cambio de sección, cálculo de UC/horas, confirmación) sin errores.
-- **UC-E02** — GET `/enrollment?student_id=X` como representante, con X entre sus estudiantes vinculados: 200, catálogo para ese estudiante. **[ESTADO: BUG CRÍTICO — ver HLZ-43, confirmado en vivo 2026-08-30]** Para estudiantes `secondary`/`primary` el catálogo carga (200) pero siempre devuelve 0 materias — ver UC-E02b.
-- **UC-E02b** — [NUEVO, ESTADO: BUG CRÍTICO — ver **HLZ-43**] GET `/enrollment` o `/enrollment?student_id=X` para un estudiante `secondary`/`primary`: el catálogo siempre da "0 materias", pase lo que pase con los filtros. Causa: `EnrollmentController::index()` resuelve el período con `Period::where('status', Active)->first()` sin condicionar por `educational_level`, y con período Anual (escolar) y Semestral (universitario) activos a la vez, siempre toma el Semestral — cuyas secciones nunca coinciden con las Secciones Escolares (creadas bajo el período Anual). Confirmado en vivo con `sec16@utcacao.edu.ve` (self) y `rep04@utcacao.edu.ve` (representante, sobre el mismo estudiante): ambos caminos llegan a "0 materias".
+- **UC-E02** — GET `/enrollment?student_id=X` como representante, con X entre sus estudiantes vinculados: 200, catálogo para ese estudiante. **[RESUELTO — ver HLZ-43, feature `16-enrollment-level-guard-and-period-fix`, 2026-08-30]** El período activo ahora se resuelve por `educational_level` del estudiante (`Semester` vs `Year`) y el catálogo combina secciones directas (`sections`) + escolares vía pivote (`schoolSections`) — ya no da "0 materias" para `secondary`/`primary`.
+- **UC-E02b** — [RESUELTO — ver **HLZ-43**] GET `/enrollment` o `/enrollment?student_id=X` para un estudiante `secondary`/`primary`: el catálogo ya no da "0 materias". Causa original: `EnrollmentController::index()` resolvía el período con `Period::where('status', Active)->first()` sin condicionar por `educational_level`; con período Anual (escolar) y Semestral (universitario) activos a la vez, siempre tomaba el Semestral. Fix: `->where('type', ...)` condicionado al nivel del estudiante, más `Subject::schoolSections()` + combinación en `BuildEnrollmentCatalogAction::handle()`. **Test Dusk:** `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-03` — PASS.
 - **UC-E03** — GET `/enrollment` como representante sin `student_id`: usa el primer estudiante vinculado (`guardian->students()->first()`).
 - **UC-E04** — GET `/enrollment?student_id=X` donde X no pertenece al representante autenticado: 403.
 - **UC-E05** — GET `/enrollment` con usuario sin `student` ni `guardian` asociado: 403.
 
 ## UCs de auto-inscripción por nivel educativo
 
-- **UC-E06** — Estudiante universitario autenticado ejecuta `POST /enrollment`, `POST .../detail`, `POST .../confirm` sobre sí mismo: **permitido** (comportamiento correcto, ya funciona).
-- **UC-E07** — [ESTADO: BUG — ver **HLZ-38**] Estudiante de nivel `primary`/`secondary` autenticado intenta ejecutar `POST /enrollment` (o `addDetail`/`confirm`) sobre sí mismo: **debe** responder 403. Actualmente responde 200/201 — sin restricción de ningún tipo.
-- **UC-E08** — Representante inscribe a un estudiante `primary`/`secondary` vinculado: permitido en términos de acceso (comportamiento correcto), pero en la práctica **bloqueado por HLZ-43** — el botón "Inscribir" del dashboard del representante lleva a un catálogo vacío (ver UC-E02b). Confirmado en vivo con `rep04` sobre `sec16`/`sec17`.
-- **UC-E09** — [pendiente de decisión] Representante intenta inscribir a un estudiante `university` vinculado. Depende de `HLZ-40` (`specs/qa/guardian/dashboard.md`): si ese vínculo queda restringido en origen, este caso no debería poder ocurrir. Documentado como pendiente hasta resolver HLZ-40.
+- **UC-E06** — Estudiante universitario autenticado ejecuta `POST /enrollment`, `POST .../detail`, `POST .../confirm` sobre sí mismo: **permitido** (comportamiento correcto, ya funciona). **Test Dusk:** `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-01` — PASS (regresión confirmada tras el fix de HLZ-38/HLZ-43).
+- **UC-E07** — [RESUELTO — ver **HLZ-38**, feature `16-enrollment-level-guard-and-period-fix`] Estudiante de nivel `primary`/`secondary` autenticado intenta ejecutar `POST /enrollment` (o `addDetail`/`confirm`) sobre sí mismo: responde 403. `EnrollmentPolicy::create()` valida `educational_level !== University`; `EnrollmentController::index()` llama `Gate::authorize()` antes del `firstOrCreate`. El CTA "Ir a inscripciones →" también se oculta en `student/Dashboard.vue` para estos niveles, con mensaje "Tu representante debe inscribirte." **Tests:** `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentLevelGuardAcceptanceTest.php` (RF-01, RF-02), `StudentDashboardCtaAcceptanceTest.php`; **Test Dusk:** `EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-02` — PASS.
+- **UC-E08** — Representante inscribe a un estudiante `primary`/`secondary` vinculado: permitido, y **ya no bloqueado por HLZ-43** — el botón "Inscribir" del dashboard del representante lleva a un catálogo con materias reales. **Test Dusk:** `EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-03` — PASS.
+- **UC-E09** — [RESUELTO como caso defensivo — ver **HLZ-38**] Representante intenta inscribir a un estudiante `university` vinculado (escenario forzado por factory; no ocurre hoy en datos reales — depende de que `HLZ-40` restrinja el vínculo en origen, aún pendiente). `EnrollmentPolicy::create()` deniega con 403 en la rama con `$student` explícito cuando `$student->educational_level === University`, independientemente de cómo se haya formado el vínculo. **Test:** `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentLevelGuardAcceptanceTest.php::RF-04` — PASS.
 
 ## UCs de negocio (cupos, prelaciones, idempotencia)
 
@@ -66,6 +66,10 @@ El flujo de inscripción vive en un único prefijo `/enrollment/*`, compartido e
 - **UC-E20** — Usuario con rol `Admin`/`Profesor` accediendo a `/enrollment`: 403 (fuera de `role:Estudiante,Representante`).
 - **UC-E21** — Representante intentando editar/confirmar un `Enrollment` que no está en `draft` (ya `Confirmed`/`Approved`/`Rejected`): 403.
 
+## UCs de presentación del período (label)
+
+- **UC-E22** — [RESUELTO — ver **HLZ-43**, feature `16-enrollment-level-guard-and-period-fix`] El encabezado de `/enrollment` muestra el nombre real del `Lapse` vigente (por fecha) cuando el período resuelto es de tipo `Year`, en vez de `"{academic_year}er trimestre"` hardcodeado. **Precondición:** estudiante `secondary`/`primary`, período `Year` activo con ≥1 `Lapse` cuyo rango de fechas cubre la fecha actual. **Test Dusk:** `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-05` — PASS. Nota de implementación del test: `.enr-page-eyebrow` tiene `text-transform: uppercase` en CSS — la aserción Dusk compara contra el texto ya transformado por el navegador (`mb_strtoupper($lapse->name)`), no contra el string crudo de DB.
+
 ---
 
 ## Tests existentes (Feature/Unit/Dusk)
@@ -79,11 +83,15 @@ El flujo de inscripción vive en un único prefijo `/enrollment/*`, compartido e
 | UC-E10, E11 | `tests/Unit/Enrollment/EnrollmentServiceTest.php` | `hasQuota`, `isAlreadyEnrolled`, `calculateEnrolledCredits` |
 | UC-E01, E20 | `tests/Browser/Enrollment/EnrollmentFlowTest.php` | Ver lista, estado vacío, 403 admin, 403 estudiante viendo inscripción de otro |
 | UC-E08 | `tests/Browser/Guardian/GuardianEnrollmentTest.php` | Guardian inscribe desde el CTA del dashboard |
-| **UC-E06, E07, E09** | — | **pendiente — requiere el fix de HLZ-38 antes de poder escribir el test de rechazo** |
+| UC-E06, E07, E09 | `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentLevelGuardAcceptanceTest.php`, `StudentDashboardCtaAcceptanceTest.php` | Guard de nivel en Policy + Controller (self y guardian), CTA oculto en dashboard |
+| UC-E01, E06 | `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-01` | Regresión: estudiante universitario sigue autoinscribiéndose sin cambios |
+| UC-E07 | `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-02` | CTA oculto + 403 en visita directa a `/enrollment` para estudiante `secondary` |
+| UC-E02, UC-E02b, UC-E08 | `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentPeriodResolutionAcceptanceTest.php`, `EnrollmentSchoolCatalogAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-03` | Resolución de período por tipo/nivel + catálogo escolar vía pivote no vacío |
+| UC-E22 | `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-05` | Label de período muestra el Lapso real vigente |
 
 ---
 
-## Notas de implementación pendiente
+## Notas de implementación
 
-- Ver `HLZ-43` en `specs/qa/backlog.md` — **prioridad CRÍTICA**, confirmado en vivo: bloquea el 100% de la inscripción de Primaria/Bachillerato (catálogo siempre vacío por resolución incorrecta del período activo). Recomendado corregir antes que HLZ-38, ya que hoy en día HLZ-38 es difícil de ejercitar en la práctica (el estudiante no-universitario llega sin bloqueo hasta un catálogo vacío, pero nunca hasta confirmar una inscripción real).
-- Ver `HLZ-38` en `specs/qa/backlog.md` para el detalle técnico y la acción sugerida del guard de nivel educativo.
+- `HLZ-43` y `HLZ-38` — **resueltos** en el feature `16-enrollment-level-guard-and-period-fix` (2026-08-30). Ver `specs/qa/backlog.md` para el detalle técnico completo y la verificación de cada uno.
+- `HLZ-40` (`specs/qa/guardian/dashboard.md`) sigue **pendiente** — UC-E09 quedó cubierto como caso defensivo (Policy deniega aunque el vínculo exista), pero el guard de origen del vínculo guardian↔estudiante universitario no se ha implementado todavía.

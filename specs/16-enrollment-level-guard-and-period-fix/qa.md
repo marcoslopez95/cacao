@@ -17,7 +17,7 @@
 
 **Resultado esperado:** catálogo muestra materias, la confirmación responde 200/201, `Enrollment.status = confirmed` en DB.
 
-**Test Dusk:** pendiente
+**Test Dusk:** tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::"university student can select a section and confirm the enrollment (UC-QA-01, regression)" — PASS
 
 ---
 
@@ -32,7 +32,7 @@
 
 **Resultado esperado:** paso 2 confirma la ausencia del CTA; paso 3 responde 403. No se crea ningún `Enrollment` en DB para ese estudiante.
 
-**Test Dusk:** pendiente
+**Test Dusk:** tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::"secondary student dashboard hides the enrollment CTA and direct visit to /enrollment is forbidden (UC-QA-02)" — PASS
 
 ---
 
@@ -48,7 +48,7 @@
 
 **Resultado esperado:** el catálogo muestra materias con secciones reales (no "0 materias"); la inscripción se confirma exitosamente.
 
-**Test Dusk:** pendiente
+**Test Dusk:** tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::"guardian enrolls a linked secondary student with a non-empty catalog of real School sections (UC-QA-03)" — PASS
 
 ---
 
@@ -62,7 +62,7 @@
 
 **Resultado esperado:** 403.
 
-**Test Dusk:** pendiente (o Feature test, dado que es un escenario forzado por factory)
+**Test Dusk:** cubierto como Feature test (escenario forzado por factory) — tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentLevelGuardAcceptanceTest.php::"RF-04: guardian linked to a university student gets 403 on GET /enrollment (defensive scenario)" — PASS
 
 ---
 
@@ -77,4 +77,4 @@
 
 **Resultado esperado:** el encabezado muestra el nombre real del Lapse vigente (ej. "1er Lapso"), no "Xer trimestre" hardcodeado.
 
-**Test Dusk:** pendiente
+**Test Dusk:** tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::"enrollment header shows the real active Lapse name instead of the hardcoded trimester label (UC-QA-05)" — PASS

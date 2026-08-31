@@ -107,22 +107,22 @@
   {
     "id": "16-enrollment-level-guard-and-period-fix",
     "name": "HLZ-38+43 — Guard de nivel educativo en inscripción + resolución correcta del período activo por nivel",
-    "status": "pending",
-    "current_task": 0,
+    "status": "completed",
+    "current_task": 10,
     "plan": "specs/16-enrollment-level-guard-and-period-fix/tasks.md"
   },
   {
     "id": "17-student-dashboard-schedule-fix",
     "name": "HLZ-39+42 — Fix crash dashboard estudiante los domingos + horario 'Hoy' filtrado por EnrollmentDetail confirmed",
-    "status": "pending",
-    "current_task": 0,
+    "status": "completed",
+    "current_task": 8,
     "plan": "specs/17-student-dashboard-schedule-fix/tasks.md"
   },
   {
     "id": "18-guardian-grades-multi-student",
     "name": "HLZ-40+41 — Selector multi-estudiante en notas del representante + guard defensivo de nivel universitario",
-    "status": "pending",
-    "current_task": 0,
+    "status": "completed",
+    "current_task": 10,
     "plan": "specs/18-guardian-grades-multi-student/tasks.md"
   }
 ]

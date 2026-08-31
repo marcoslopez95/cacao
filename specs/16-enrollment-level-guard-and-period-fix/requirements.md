@@ -14,7 +14,7 @@ Dos hallazgos relacionados en `specs/qa/backlog.md` bloquean por completo la ins
 
 - RF-01: `GET /enrollment` para un estudiante autenticado con `educational_level != University` no crea ningún draft de inscripción — responde 403 antes de tocar la DB.
 - RF-02: `GET /enrollment` para un estudiante `University` sigue funcionando exactamente igual que hoy (regresión).
-- RF-03: `GET /enrollment?student_id={id}` iniciado por un representante para un estudiante `primary`/`secondary` vinculado resuelve el período `Year` activo y muestra el catálogo de materias con secciones reales (no vacío).
+- RF-03: `GET /enrollment?student_id={id}` iniciado por un representante para un estudiante `primary`/`secondary` vinculado resuelve el período `Year` activo y muestra el catálogo de materias con secciones reales (no vacío). **Nota (2026-08-30):** esto requiere que `BuildEnrollmentCatalogAction` también resuelva secciones escolares vía la tabla pivote `section_subjects` — ver corrección de diseño en `design.md`. El fix de período por sí solo no alcanza.
 - RF-04: `GET /enrollment?student_id={id}` iniciado por un representante para un estudiante `University` (si existiera el vínculo) responde 403.
 - RF-05: el período activo se resuelve según `Student::educational_level`: `University` → `Period` con `type = Semester`; `Primary`/`Secondary` → `Period` con `type = Year`.
 - RF-06: el label de período en la UI de inscripción muestra el nombre real del Lapso vigente (por fecha) cuando el período resuelto es de tipo `Year`, en vez de `"{academic_year}er trimestre"`.

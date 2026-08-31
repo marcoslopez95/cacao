@@ -17,7 +17,7 @@
 
 **Resultado esperado:** la vista muestra las notas del segundo estudiante, no del primero. La URL/petición incluye `student_id` del segundo.
 
-**Test Dusk:** pendiente
+**Test Dusk:** tests/Browser/Guardian/GuardianGradesMultiStudentTest.php::"UC-QA-01: representante con 2 estudiantes consulta notas del segundo mediante el selector" — PASS
 
 ---
 
@@ -31,7 +31,7 @@
 
 **Resultado esperado:** notas del único estudiante se muestran directamente, sin selector visible — comportamiento idéntico al actual.
 
-**Test Dusk:** pendiente
+**Test Dusk:** tests/Browser/Guardian/GuardianGradesMultiStudentTest.php::"UC-QA-02: representante con 1 solo estudiante no ve selector" — PASS
 
 ---
 
@@ -45,7 +45,7 @@
 
 **Resultado esperado:** 403.
 
-**Test:** Feature test (no requiere Dusk)
+**Test:** tests/Feature/GuardianGradesMultiStudent/Acceptance/GuardianGradesMultiStudentTest.php::"RF-03: student_id no vinculado al representante autenticado responde 403" — PASS
 
 ---
 
@@ -60,4 +60,4 @@
 
 **Resultado esperado:** el estudiante universitario no aparece en la lista de `/guardian/dashboard`; el intento directo en `/guardian/grades` responde 403 (o 404 si no queda ningún estudiante elegible).
 
-**Test:** Feature test (escenario forzado por factory, no requiere Dusk)
+**Test:** tests/Feature/GuardianGradesMultiStudent/Acceptance/GuardianGradesMultiStudentTest.php::"RF-05: un estudiante university vinculado por la fuerza no aparece en students de GradeController", "RF-05: student_id de un estudiante university vinculado por la fuerza responde 403", "RF-05: sin student_id, el fallback nunca recae en un estudiante university vinculado por la fuerza", "RF-05: un estudiante university vinculado por la fuerza no aparece en el dashboard del representante", "RF-05: un representante vinculado únicamente a un estudiante university (forzado) no ve estudiantes en el dashboard" — todas PASS

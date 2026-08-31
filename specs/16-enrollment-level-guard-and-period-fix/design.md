@@ -82,8 +82,68 @@ private function buildRules(?Period $period, ?Student $student): array
 
 Condicionar el CTA de inscripción existente (`"Ir a inscripciones →"`) a `props.student.educational_level === 'university'`. Cuando no aplique, mostrar un texto explicativo: "Tu representante debe inscribirte." El dato `educational_level` ya debe estar disponible en las props del dashboard (verificar en `Student\DashboardController::index()`; si no está, agregarlo al payload de Inertia).
 
+## Corrección al diseño (2026-08-30) — `BuildEnrollmentCatalogAction` sí requiere cambios
+
+**Hallazgo del `tester` en modo `pre`, verificado en DB:** la afirmación original de este documento ("el catálogo deja de estar vacío sin cambios aquí") era incorrecta. `BuildEnrollmentCatalogAction` resuelve secciones vía `Subject::sections()` (`HasMany`, FK directa `sections.subject_id`). Esa FK solo se usa para secciones `University` (1 sección = 1 materia). Las secciones `School` se crean con `subject_id = null` — una sola sección de grado (ej. "4to A") cubre **todas** las materias de ese grado simultáneamente, vinculadas por la tabla pivote `section_subjects` (`Section::sectionSubjects(): BelongsToMany`, sin relación inversa en `Subject` hoy). Confirmado en DB: 9 secciones escolares de Bachillerato, las 9 con `subject_id = null`; `Subject::sections()` devuelve 0 para cualquier materia de ese pensum. Sin este cambio, el fix de período (arriba) no alcanza para cerrar HLZ-43 — el período sería correcto pero el catálogo seguiría vacío.
+
+### 4. `app/Models/Subject.php`
+
+Agregar la relación inversa que falta:
+
+```php
+public function schoolSections(): BelongsToMany
+{
+    return $this->belongsToMany(Section::class, 'section_subjects');
+}
+```
+
+### 5. `app/Actions/Enrollment/BuildEnrollmentCatalogAction.php`
+
+Cargar también `schoolSections` con los mismos filtros que `sections`, y combinar ambas colecciones por materia:
+
+```php
+public function handle(Student $student, Period $period, Enrollment $draft): Collection
+{
+    $constraints = fn ($q) => $q
+        ->where('period_id', $period->id)
+        ->withCount([
+            'enrollmentDetails as enrolled' => fn ($q) => $q->whereIn('status', [
+                EnrollmentDetailStatus::Draft->value,
+                EnrollmentDetailStatus::Confirmed->value,
+            ]),
+        ])
+        ->with(['schedules.professor.user', 'theoryClassroom', 'labClassroom', 'mainTeacher.user']);
+
+    $subjects = $student->pensum->subjects()
+        ->with(['sections' => $constraints, 'schoolSections' => $constraints])
+        ->orderBy('period_number')
+        ->get();
+
+    // ... completedSubjectIds, selectedSubjectIds sin cambios ...
+
+    return $subjects
+        ->filter(fn ($subject) => $subject->sections->isNotEmpty() || $subject->schoolSections->isNotEmpty())
+        ->map(function ($subject) use ($student, $completedSubjectIds, $selectedSubjectIds) {
+            $allSections = $subject->sections->concat($subject->schoolSections);
+            $selectedDetail = $selectedSubjectIds->get($subject->id);
+
+            return [
+                'subject' => $subject,
+                'prereqs_ok' => $this->validator->canTake($student, $subject),
+                'completed' => in_array($subject->id, $completedSubjectIds),
+                'recommended_trim' => $subject->period_number === $student->academic_year,
+                'selected_section_id' => $selectedDetail?->section_id,
+                'selected_detail_id' => $selectedDetail?->id,
+                'sections' => $allSections,
+            ];
+        })
+        ->values();
+}
+```
+
+No hace falta preocuparse por duplicados: una sección `University` nunca tiene filas en `section_subjects` (solo se pueblan para secciones `School` en el seeder), así que `sections` y `schoolSections` son mutuamente excluyentes en la práctica.
+
 ## Sin cambios en
 
 - `StoreEnrollmentRequest::authorize()` — ya delega correctamente a `$this->user()->can('create', ...)`, se beneficia del fix en la Policy sin tocarlo.
-- `BuildEnrollmentCatalogAction` — sigue filtrando secciones por `period_id`; al llegar el `$period` correcto (anual para escolares), el catálogo deja de estar vacío sin cambios aquí.
-- Migraciones — no se agrega ninguna columna ni tabla nueva.
+- Migraciones — no se agrega ninguna columna ni tabla nueva (`section_subjects` ya existe).

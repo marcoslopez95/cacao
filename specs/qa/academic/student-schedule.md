@@ -17,9 +17,9 @@
 
 ## UCs del widget "Hoy" (dashboard actual)
 
-- **UC-SS01** — GET `/student/dashboard` con inscripción confirmada y clases programadas hoy: `today_schedules` lista las secciones correspondientes a `EnrollmentDetail` en estado `confirmed` únicamente.
-- **UC-SS02** — [ESTADO: BUG — ver **HLZ-39**] Comportamiento actual: `today_schedules` incluye secciones en estado `draft` y `rejected` mezcladas indistintamente con `confirmed` — no hay ningún filtro de status. Debe corregirse para cumplir UC-SS01.
-- **UC-SS02b** — [ESTADO: BUG CRÍTICO — ver **HLZ-42**, confirmado en vivo 2026-08-30] `GET /student/dashboard` cualquier domingo: `DayOfWeek::from(strtolower(now()->format('l')))` en `DashboardController.php:26` lanza `ValueError` porque el enum `DayOfWeek` no tiene caso `Sunday` — 500 total (no solo el widget de horario, todo el dashboard), sin try/catch. Reproducido con cuentas universitarias y escolar por igual. Debe resolverse con `tryFrom()` + manejo de `null` como "sin clases hoy", antes o junto con el fix de HLZ-39 ya que tocan la misma línea.
+- **UC-SS01** — [RESUELTO 2026-08-30, feature 17] GET `/student/dashboard` con inscripción confirmada y clases programadas hoy: `today_schedules` lista las secciones correspondientes a `EnrollmentDetail` en estado `confirmed` únicamente. Verificado con `tests/Feature/StudentDashboardScheduleFix/Acceptance/DashboardScheduleFixTest.php::RF-02` (regresión, día normal) y `::RF-03` (excluye draft/rejected).
+- **UC-SS02** — [RESUELTO 2026-08-30 — ver **HLZ-39**, feature 17] `DashboardController::index()` ahora construye `today_schedules` desde `$enrollment->confirmedDetails` (scope `status = confirmed`) en vez de `$enrollment->details`. `details` se preserva solo para `subjects_count` (no debe filtrarse). Verificado con `DashboardScheduleFixTest::RF-03: today_schedules solo incluye EnrollmentDetail confirmado, excluye draft` y `::RF-03: today_schedules excluye EnrollmentDetail rechazado`.
+- **UC-SS02b** — [RESUELTO — ver **HLZ-42**, corregido fuera del arnés en commit `2a91c45`, verificado en feature 17] `GET /student/dashboard` cualquier domingo ya no lanza `ValueError`: `DashboardController.php` usa `DayOfWeek::tryFrom($todayValue)?->label() ?? 'Domingo'`. Verificado con `DashboardScheduleFixTest::RF-01: dashboard un domingo responde 200 con today_schedules vacío` (200, `today_schedules: []`, `today_label` presente).
 - **UC-SS03** — Sin clases programadas hoy (día actual sin schedules coincidentes): estado vacío "Sin clases programadas hoy", sin error.
 - **UC-SS04** — Sin período activo o sin `Enrollment` para el período activo: `today_schedules` vacío, sin error.
 - **UC-SS05** — Cada item del widget expone: materia, código de sección, aula, hora inicio, hora fin, `is_current` (si la clase está en curso ahora mismo).
@@ -41,8 +41,8 @@
 |---|---|---|
 | UC-SS03, SS04 | `tests/Feature/Student/DashboardTest.php` | `today_schedules` presente (solo `->has()`, sin validar contenido/filtrado); casos sin período activo y sin enrollment |
 | UC-SS05 | `tests/Feature/Student/DashboardTest.php` | Presencia de props, no valida cada campo individualmente |
-| **UC-SS01, SS02** | — | **sin cobertura — ningún test verifica el filtrado por status; requiere el fix de HLZ-39 primero** |
-| **UC-SS02b** | — | **sin cobertura — ningún test cubre el caso domingo; requiere el fix de HLZ-42 primero** |
+| **UC-SS01, SS02** | `tests/Feature/StudentDashboardScheduleFix/Acceptance/DashboardScheduleFixTest.php` | RF-02 (regresión, todo confirmed) + RF-03 x2 (excluye draft, excluye rejected) — cubre el filtro por `confirmedDetails` end-to-end vía request HTTP real (JSON de Inertia), no Dusk: los UCs de `qa.md` de la feature 17 son de solo lectura, sin formulario, por lo que el Feature test HTTP real ya ejerce controller/policy/página completos |
+| **UC-SS02b** | `tests/Feature/StudentDashboardScheduleFix/Acceptance/DashboardScheduleFixTest.php::RF-01` | Domingo → 200, `today_schedules: []`, `today_label` presente. Test de regresión (fix ya aplicado fuera del arnés en `2a91c45`) |
 | UC-SS06 | — | sin cobertura (campo ausente) |
 | UC-SS07–SS11 | — | no aplica todavía — feature no implementada |
 

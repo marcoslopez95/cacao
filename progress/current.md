@@ -1,29 +1,95 @@
-# Feature activa: `16-enrollment-level-guard-and-period-fix`
+# Sin feature activa — backlog de QA crítico cerrado (2026-08-30)
 
-**Plan:** `specs/16-enrollment-level-guard-and-period-fix/tasks.md`
-**Estado:** PENDIENTE — 0/8 tasks completadas
+Las 3 features de la cola (`16`, `17`, `18`) quedaron `completed`. Cierran HLZ-38, HLZ-39,
+HLZ-40, HLZ-41, HLZ-42, HLZ-43 de `specs/qa/backlog.md`. `15-attendance-module` no aplica —
+ya estaba completada externamente (ver historial abajo). Próximo paso: pedir al humano qué
+sigue (no queda ninguna feature pendiente en `feature_list.json`).
 
-Prioridad decidida con el usuario (2026-08-30): atacar primero el backlog de QA crítico
-(HLZ-38, HLZ-43, HLZ-39, HLZ-42, HLZ-40, HLZ-41) antes de continuar con `15-attendance-module`,
-que queda en cola sin empezar.
+## Cola de features (orden acordado) — cerrada
+
+1. `16-enrollment-level-guard-and-period-fix` — ✅ completada
+2. `17-student-dashboard-schedule-fix` — ✅ completada
+3. `18-guardian-grades-multi-student` — ✅ completada
+
+---
+
+## Feature anterior completada
+
+**Feature:** `18-guardian-grades-multi-student`
+**Plan:** `specs/18-guardian-grades-multi-student/tasks.md`
+**Estado:** COMPLETADA — 10/10 tasks completadas (2026-08-30)
+
+Cierra HLZ-40 (vínculo guardian↔estudiante sin restricción de nivel) y HLZ-41 (GradeController
+solo mostraba el primer estudiante vinculado). `GradeController` y `DashboardController` de
+guardian ahora filtran `educational_level != University`; `GradeController` acepta `?student_id=`
+con selector nuevo en `guardian/Grades/Index.vue`. El `tester` detectó y corrigió en `task-gate`
+una regresión real en `tests/Browser/Guardian/GuardianEnrollmentTest.php` (fixture dependía de un
+estudiante `university` vinculado a un guardian, ya no válido bajo HLZ-40).
 
 ## Tareas
 
-- [ ] Task 1 — `EnrollmentPolicy::create()`: guard de `educational_level`
-- [ ] Task 2 — `EnrollmentController::index()`: Gate::authorize + resolución de período por tipo
-- [ ] Task 3 — `buildRules()`: label del Lapso vigente
-- [ ] Task 4 — `student/Dashboard.vue`: ocultar CTA de inscripción para no-universitarios
-- [ ] Task 5 — Tests Feature RF-01 a RF-05
-- [ ] Task 6 — Test suite en verde
-- [ ] Task 7 — Pint
-- [ ] Task 8 — QA Gate
+- [x] Task 1 — `GradeController`: aceptar `student_id` + filtro `educational_level`
+- [x] Task 2 — `GradeController`: props `student_id` + `students`
+- [x] Task 3 — `DashboardController`: filtro `educational_level`
+- [x] Task 4 — `guardian/Grades/Index.vue`: selector de estudiante
+- [x] Task 5-7 — Tests Feature RF-01, RF-03, RF-05 (+ regresión Dusk corregida)
+- [x] Task 8 — Suite en verde (927 passed)
+- [x] Task 9 — Pint
+- [x] Task 10 — QA Gate (4/4 UCs PASS)
 
-## Cola de features (orden acordado)
+---
 
-1. `16-enrollment-level-guard-and-period-fix` — activa (arriba)
-2. `17-student-dashboard-schedule-fix` — HLZ-39+42, pendiente
-3. `18-guardian-grades-multi-student` — HLZ-40+41, pendiente
-4. `15-attendance-module` — ya no aplica, ver nota abajo
+## Feature anterior completada
+
+**Feature:** `17-student-dashboard-schedule-fix`
+**Plan:** `specs/17-student-dashboard-schedule-fix/tasks.md`
+**Estado:** COMPLETADA — 8/8 tasks completadas (2026-08-30)
+
+Cierra HLZ-39 (horario "Hoy" no filtraba por `EnrollmentDetail::status = confirmed`) y confirma
+HLZ-42 (crash 500 los domingos), que ya estaba resuelto fuera del arnés en el commit `2a91c45`
+mientras esta sesión trabajaba en las specs 16-18. Único cambio de código: `DashboardController`
+usa `confirmedDetails` para `today_schedules`, preservando `details` para `subjects_count` (el
+reviewer detectó y corrigió una regresión de N+1 en la primera ronda). Sin tests Dusk — los 3 UCs
+son de solo lectura, sin formulario.
+
+## Tareas
+
+- [x] Task 1 — HLZ-42 verificado (ya resuelto externamente)
+- [x] Task 2 — `DashboardController`: `confirmedDetails` para `today_schedules`
+- [x] Task 3 — Test domingo → 200, vacío
+- [x] Task 4 — Test excluye draft/rejected
+- [x] Task 5 — Test regresión día normal
+- [x] Task 6 — Suite en verde (915 passed)
+- [x] Task 7 — Pint
+- [x] Task 8 — QA Gate (3/3 UCs PASS)
+
+---
+
+## Feature anterior completada
+
+**Feature:** `16-enrollment-level-guard-and-period-fix`
+**Plan:** `specs/16-enrollment-level-guard-and-period-fix/tasks.md`
+**Estado:** COMPLETADA — 10/10 tasks completadas (2026-08-30)
+
+Cierra HLZ-38 (guard de nivel educativo en inscripción) y HLZ-43 (período mal resuelto + catálogo
+vacío para no-universitarios). Durante `tester [pre]` se descubrió que el diseño original de
+HLZ-43 estaba incompleto — `BuildEnrollmentCatalogAction` solo resolvía secciones vía FK directa
+(`Subject::sections()`), pero las secciones escolares usan la tabla pivote `section_subjects` con
+`subject_id = null`. El humano aprobó ampliar el diseño (Opción A): se agregó
+`Subject::schoolSections(): BelongsToMany` y se combinaron ambas colecciones en la Action.
+
+## Tareas
+
+- [x] Task 1 — `EnrollmentPolicy::create()`: guard de `educational_level`
+- [x] Task 2 — `EnrollmentController::index()`: Gate::authorize + resolución de período por tipo
+- [x] Task 3 — `buildRules()`: label del Lapso vigente
+- [x] Task 4 — `student/Dashboard.vue`: ocultar CTA de inscripción para no-universitarios
+- [x] Task 5 — `Subject::schoolSections()` + `BuildEnrollmentCatalogAction` combinando ambas colecciones
+- [x] Task 6 — Actualizar 3 tests existentes rotos por el guard nuevo
+- [x] Task 7 — Tests Feature RF-01 a RF-07
+- [x] Task 8 — Test suite en verde (911 passed, 0 failures)
+- [x] Task 9 — Pint (pass)
+- [x] Task 10 — QA Gate (4 Dusk PASS + 1 Feature PASS, sin HLZs nuevos)
 
 ---
 

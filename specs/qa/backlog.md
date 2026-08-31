@@ -809,8 +809,8 @@ Estos son usuarios con rol `student` (S14 solo se activa para estudiantes).
 
 **Nota de seguimiento (2026-05-26):** El error es del build `Edit-B6E3sVrM.js`. El build actual es `Edit-COISBrbU.js` (compilado tras `user-edit-student-sections-fix`). No hay nuevas entradas en browser logs para estos usuarios con el build nuevo. Posiblemente resuelto como efecto secundario de esa feature — **requiere verificación manual** en `/security/users/130/edit` y `/security/users/63/edit`.
 
-**Estado:** pendiente (verificación pendiente)  
-**Prioridad:** CRÍTICO si el crash persiste con el build actual; BAJA si fue resuelto
+**Estado:** resuelto (verificado 2026-08-30, no requirió feature nueva)
+**Verificación:** `HousingProfileResource::toArray()` usa `whenLoaded('services', fn () => $this->services->map(...))`, que siempre resuelve a un array JSON plano (`[{...}]`), nunca al objeto `{data: [...]}` que causaba el crash. `UserController::edit()` eager-carga `student.housingProfile.services`. Confirmado con datos reales vía tinker (`json_encode()` produce un array válido) y con `storage/logs/laravel.log` sin ninguna ocurrencia del error `some is not a function`. Efecto secundario de `user-edit-student-sections-fix`, tal como se sospechaba en la nota de seguimiento.
 
 ---
 
@@ -864,7 +864,10 @@ Regla de negocio confirmada con el humano: solo estudiantes de nivel `university
 3. Ocultar o deshabilitar el CTA "Ir a inscripciones" en `student/Dashboard.vue` cuando el estudiante autenticado no sea universitario, con mensaje explicativo ("Tu representante debe inscribirte").
 4. Test: estudiante `primary`/`secondary` intentando `POST /enrollment` → 403; estudiante `university` → 200/201 (regresión).
 
-**Estado:** pendiente  
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30
+**Feature:** `16-enrollment-level-guard-and-period-fix`
+**Verificación:** `EnrollmentPolicy::create()` valida `Student::educational_level !== EducationalLevel::University` en ambas ramas (self y guardian). `EnrollmentController::index()` llama `Gate::authorize('create', [Enrollment::class, $student])` antes del `firstOrCreate`. `student/Dashboard.vue` oculta el CTA "Ir a inscripciones →" y muestra "Tu representante debe inscribirte." para `educational_level != university`. Tests: `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentLevelGuardAcceptanceTest.php` (RF-01, RF-02, RF-04), `StudentDashboardCtaAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-02` — todos en verde.
 **Prioridad:** ALTA (regla de negocio de acceso — afecta la integridad del flujo de inscripción por nivel)
 
 ---
@@ -888,8 +891,10 @@ El widget "Hoy" del dashboard del estudiante (`student/Dashboard.vue`) muestra l
 2. Test: estudiante con un `EnrollmentDetail` en `draft` y otro en `confirmed` el mismo día → `today_schedules` solo incluye el `confirmed`.
 3. Test de regresión: estudiante con todos los details `confirmed` → sin cambios de comportamiento.
 
-**Estado:** pendiente  
-**Prioridad:** ALTA (dato incorrecto mostrado al estudiante — puede llevarlo a asistir a una clase que no está realmente confirmada)
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30
+**Feature:** `17-student-dashboard-schedule-fix`
+**Verificación:** `DashboardController::index()` usa `confirmedDetails` (scope existente en `Enrollment.php`) para `today_schedules`, preservando `details` para `subjects_count`. Tests en `tests/Feature/StudentDashboardScheduleFix/Acceptance/DashboardScheduleFixTest.php` (RF-03 ×2). QA Gate aprobado — ver `specs/qa/academic/student-schedule.md`.
 
 ---
 
@@ -912,8 +917,10 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 2. Mínimo defensivo recomendado: en `Guardian\DashboardController` y `Guardian\GradeController`, filtrar `$guardian->students()->where('educational_level', '!=', EducationalLevel::University)`.
 3. Test: guardian vinculado (vía factory/pivote directo) a un estudiante `university` → no aparece en `/guardian/dashboard` ni es accesible vía `/guardian/grades?student_id=`.
 
-**Estado:** pendiente  
-**Prioridad:** MEDIA (no hay evidencia de que ocurra hoy en datos reales, pero no hay ningún guard que lo impida — riesgo de integridad de datos)
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30
+**Feature:** `18-guardian-grades-multi-student`
+**Verificación:** `Guardian\GradeController` y `Guardian\DashboardController` filtran `->where('educational_level', '!=', EducationalLevel::University)`. Test defensivo con vínculo forzado vía factory confirma exclusión en ambos controllers (listado, `student_id` directo, fallback). Bonus: se detectó y corrigió una regresión real en `tests/Browser/Guardian/GuardianEnrollmentTest.php`, cuyo fixture sí dependía de un estudiante `university` vinculado a un guardian — ajustado a `->secondary()`.
 
 ---
 
@@ -935,8 +942,10 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 3. Agregar selector de estudiante en `guardian/Grades/Index.vue` cuando el representante tenga 2+ estudiantes vinculados.
 4. Test: representante con 2 estudiantes, `GET /guardian/grades?student_id={segundo}` → muestra notas del segundo, no del primero.
 
-**Estado:** pendiente  
-**Prioridad:** MEDIA (afecta solo a representantes con múltiples estudiantes — funcionalidad ausente, no corrupción de datos)
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30
+**Feature:** `18-guardian-grades-multi-student`
+**Verificación:** `Guardian\GradeController::index()` acepta `?student_id=`, validado contra estudiantes elegibles del representante (`abort_if(!$student, 403)`), con fallback a `first()` sin el parámetro. Selector de estudiante agregado en `guardian/Grades/Index.vue` (visible solo con 2+ vinculados). Tests Dusk UC-QA-01/02 en verde.
 
 ---
 
@@ -959,8 +968,9 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 2. Test de regresión: mockear `now()` a un domingo y verificar que `GET /student/dashboard` responde 200 con `today_schedules` vacío, en vez de 500.
 3. Revisar si conviene además envolver todo el bloque de cálculo de horario en try/catch defensivo, dado que ya causó un crash total del dashboard por un dato aparentemente menor.
 
-**Estado:** pendiente
-**Prioridad:** CRÍTICA (crash total del portal del estudiante, reproducible al 100% cualquier domingo)
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30 (fix aplicado fuera del arnés en commit `2a91c45`, verificado y confirmado vía `feature 17-student-dashboard-schedule-fix`)
+**Verificación:** `DayOfWeek::tryFrom($todayValue)?->label() ?? 'Domingo'` — `GET /student/dashboard` un domingo responde 200 con `today_schedules: []`. Test de regresión en `tests/Feature/StudentDashboardScheduleFix/Acceptance/DashboardScheduleFixTest.php` (RF-01).
 
 ---
 
@@ -985,5 +995,8 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 3. Test: estudiante `secondary` con secciones escolares creadas en el período `Year` activo → catálogo no vacío, puede completar inscripción igual que un universitario.
 4. Test de regresión: estudiante `university` sigue viendo su catálogo normalmente contra el período `Semester`.
 
-**Estado:** pendiente
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30
+**Feature:** `16-enrollment-level-guard-and-period-fix`
+**Verificación:** `EnrollmentController::index()` resuelve `Period::where('status', Active)->where('type', ...)` condicionado a `PeriodType::Semester` (university) o `PeriodType::Year` (primary/secondary). `buildRules()` usa el `Lapse` vigente por fecha cuando el período es `Year`, en vez de `"{academic_year}er trimestre"` hardcodeado. Adicionalmente se agregó `Subject::schoolSections(): BelongsToMany` y `BuildEnrollmentCatalogAction::handle()` combina `sections` + `schoolSections` (ver `design.md`, "Corrección al diseño 2026-08-30") — sin este cambio el fix de período por sí solo no cerraba el catálogo vacío. Tests: `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentPeriodResolutionAcceptanceTest.php`, `EnrollmentSchoolCatalogAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-03,UC-QA-05` — todos en verde.
 **Prioridad:** CRÍTICA (bloquea el 100% de la inscripción de Primaria/Bachillerato, incluso para el representante)
