@@ -312,8 +312,8 @@ Los botones **Ver perfil** (ojo) y **Editar** (lápiz) en la tabla de `http://lo
 **Feature:** `student-academic-show`
 **UCs documentados en:** `specs/qa/academic/student-show.md`
 
-**Estado:** pendiente  
-**Prioridad:** MEDIA (funcionalidad esperada por usuarios admin)
+**Estado:** resuelto (verificado 2026-08-30, no requirió feature nueva)
+**Verificación:** `specs/student-academic-show/tasks.md` tiene las 12 tasks marcadas `[x]` — ruta `academic.students.show`, `StudentShowResource`, `Show.vue` y botones Editar/Ver wireados en `Index.vue`. El backlog no se había actualizado cuando se implementó.
 
 ---
 
@@ -605,8 +605,8 @@ Al recargar la página, `data.workDial` es `undefined`, por lo que el componente
 - **Opción A — Aceptar como diseño:** Documentar que `workDial` siempre vale `'+58'` por defecto. Si la institución es venezolana, esto es correcto en el 99% de los casos. No requiere acción.
 - **Opción B — Agregar columna `work_phone_dial`:** Agregar `work_phone_dial VARCHAR(10) DEFAULT '+58'` a `guardian_profiles`, persistirlo en `StoreGuardianProfileRequest`, `GuardianProfileWrapper`, `UpsertGuardianProfileAction`, y leerlo en `buildInitialFormData()`.
 
-**Estado:** pendiente  
-**Prioridad:** BAJA (cosmético — el número de teléfono persiste correctamente; solo el indicativo se resetea a +58)
+**Estado:** resuelto (verificado 2026-08-30, no requirió feature nueva)
+**Verificación:** la migración `2026_05_30_224853_add_work_phone_dial_to_guardian_profiles_table.php` (Opción B) ya está en el repo y completamente wireada: `GuardianProfile::$fillable`, `StoreGuardianProfileRequest`, `GuardianProfileWrapper::getWorkPhoneDial()`, `UpsertGuardianProfileAction`, `GuardianProfileResource` y `useUserEditForm.ts` (`workDial` ↔ `work_phone_dial`) leen/escriben el campo de punta a punta. El backlog no se había actualizado cuando se implementó.
 
 ---
 
@@ -698,7 +698,7 @@ d.coordSince = p.coordinator_since  ?? undefined   // igual
 
 ---
 
-## HLZ-27 — S01 Identidad: campos de identidad extendida no se cargan ni se persisten
+## HLZ-27 — S01 Identidad: campos de identidad extendida no se cargan ni se persisten (RESUELTO)
 
 **Fecha:** 2026-05-26  
 **Dominio:** security / users  
@@ -737,7 +737,7 @@ El formulario S01 muestra como editables: documento (tipo + número), fecha de n
 
 ---
 
-## HLZ-28 — S01 Identidad: mismatch de tipos entre catálogos estáticos y FKs de DB
+## HLZ-28 — S01 Identidad: mismatch de tipos entre catálogos estáticos y FKs de DB (RESUELTO)
 
 **Fecha:** 2026-05-26  
 **Dominio:** security / users / catalog  
@@ -809,8 +809,8 @@ Estos son usuarios con rol `student` (S14 solo se activa para estudiantes).
 
 **Nota de seguimiento (2026-05-26):** El error es del build `Edit-B6E3sVrM.js`. El build actual es `Edit-COISBrbU.js` (compilado tras `user-edit-student-sections-fix`). No hay nuevas entradas en browser logs para estos usuarios con el build nuevo. Posiblemente resuelto como efecto secundario de esa feature — **requiere verificación manual** en `/security/users/130/edit` y `/security/users/63/edit`.
 
-**Estado:** pendiente (verificación pendiente)  
-**Prioridad:** CRÍTICO si el crash persiste con el build actual; BAJA si fue resuelto
+**Estado:** resuelto (verificado 2026-08-30, no requirió feature nueva)
+**Verificación:** `HousingProfileResource::toArray()` usa `whenLoaded('services', fn () => $this->services->map(...))`, que siempre resuelve a un array JSON plano (`[{...}]`), nunca al objeto `{data: [...]}` que causaba el crash. `UserController::edit()` eager-carga `student.housingProfile.services`. Confirmado con datos reales vía tinker (`json_encode()` produce un array válido) y con `storage/logs/laravel.log` sin ninguna ocurrencia del error `some is not a function`. Efecto secundario de `user-edit-student-sections-fix`, tal como se sospechaba en la nota de seguimiento.
 
 ---
 
@@ -864,7 +864,10 @@ Regla de negocio confirmada con el humano: solo estudiantes de nivel `university
 3. Ocultar o deshabilitar el CTA "Ir a inscripciones" en `student/Dashboard.vue` cuando el estudiante autenticado no sea universitario, con mensaje explicativo ("Tu representante debe inscribirte").
 4. Test: estudiante `primary`/`secondary` intentando `POST /enrollment` → 403; estudiante `university` → 200/201 (regresión).
 
-**Estado:** pendiente  
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30
+**Feature:** `16-enrollment-level-guard-and-period-fix`
+**Verificación:** `EnrollmentPolicy::create()` valida `Student::educational_level !== EducationalLevel::University` en ambas ramas (self y guardian). `EnrollmentController::index()` llama `Gate::authorize('create', [Enrollment::class, $student])` antes del `firstOrCreate`. `student/Dashboard.vue` oculta el CTA "Ir a inscripciones →" y muestra "Tu representante debe inscribirte." para `educational_level != university`. Tests: `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentLevelGuardAcceptanceTest.php` (RF-01, RF-02, RF-04), `StudentDashboardCtaAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-02` — todos en verde.
 **Prioridad:** ALTA (regla de negocio de acceso — afecta la integridad del flujo de inscripción por nivel)
 
 ---
@@ -888,7 +891,10 @@ El widget "Hoy" del dashboard del estudiante (`student/Dashboard.vue`) muestra l
 2. Test: estudiante con un `EnrollmentDetail` en `draft` y otro en `confirmed` el mismo día → `today_schedules` solo incluye el `confirmed`.
 3. Test de regresión: estudiante con todos los details `confirmed` → sin cambios de comportamiento.
 
-**Estado:** pendiente  
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30
+**Feature:** `17-student-dashboard-schedule-fix`
+**Verificación:** `DashboardController::index()` usa `confirmedDetails` (scope existente en `Enrollment.php`) para `today_schedules`, preservando `details` para `subjects_count`. Tests en `tests/Feature/StudentDashboardScheduleFix/Acceptance/DashboardScheduleFixTest.php` (RF-03 ×2). QA Gate aprobado — ver `specs/qa/academic/student-schedule.md`.
 **Prioridad:** ALTA (dato incorrecto mostrado al estudiante — puede llevarlo a asistir a una clase que no está realmente confirmada)
 
 ---
@@ -912,7 +918,10 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 2. Mínimo defensivo recomendado: en `Guardian\DashboardController` y `Guardian\GradeController`, filtrar `$guardian->students()->where('educational_level', '!=', EducationalLevel::University)`.
 3. Test: guardian vinculado (vía factory/pivote directo) a un estudiante `university` → no aparece en `/guardian/dashboard` ni es accesible vía `/guardian/grades?student_id=`.
 
-**Estado:** pendiente  
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30
+**Feature:** `18-guardian-grades-multi-student`
+**Verificación:** `Guardian\GradeController` y `Guardian\DashboardController` filtran `->where('educational_level', '!=', EducationalLevel::University)`. Test defensivo con vínculo forzado vía factory confirma exclusión en ambos controllers (listado, `student_id` directo, fallback). Bonus: se detectó y corrigió una regresión real en `tests/Browser/Guardian/GuardianEnrollmentTest.php`, cuyo fixture sí dependía de un estudiante `university` vinculado a un guardian — ajustado a `->secondary()`.
 **Prioridad:** MEDIA (no hay evidencia de que ocurra hoy en datos reales, pero no hay ningún guard que lo impida — riesgo de integridad de datos)
 
 ---
@@ -935,7 +944,10 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 3. Agregar selector de estudiante en `guardian/Grades/Index.vue` cuando el representante tenga 2+ estudiantes vinculados.
 4. Test: representante con 2 estudiantes, `GET /guardian/grades?student_id={segundo}` → muestra notas del segundo, no del primero.
 
-**Estado:** pendiente  
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30
+**Feature:** `18-guardian-grades-multi-student`
+**Verificación:** `Guardian\GradeController::index()` acepta `?student_id=`, validado contra estudiantes elegibles del representante (`abort_if(!$student, 403)`), con fallback a `first()` sin el parámetro. Selector de estudiante agregado en `guardian/Grades/Index.vue` (visible solo con 2+ vinculados). Tests Dusk UC-QA-01/02 en verde.
 **Prioridad:** MEDIA (afecta solo a representantes con múltiples estudiantes — funcionalidad ausente, no corrupción de datos)
 
 ---
@@ -959,7 +971,9 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 2. Test de regresión: mockear `now()` a un domingo y verificar que `GET /student/dashboard` responde 200 con `today_schedules` vacío, en vez de 500.
 3. Revisar si conviene además envolver todo el bloque de cálculo de horario en try/catch defensivo, dado que ya causó un crash total del dashboard por un dato aparentemente menor.
 
-**Estado:** pendiente
+**Estado:** resuelto
+**Fecha de resolución:** 2026-08-30 (fix aplicado fuera del arnés en commit `2a91c45`, verificado y confirmado vía `feature 17-student-dashboard-schedule-fix`)
+**Verificación:** `DayOfWeek::tryFrom($todayValue)?->label() ?? 'Domingo'` — `GET /student/dashboard` un domingo responde 200 con `today_schedules: []`. Test de regresión en `tests/Feature/StudentDashboardScheduleFix/Acceptance/DashboardScheduleFixTest.php` (RF-01).
 **Prioridad:** CRÍTICA (crash total del portal del estudiante, reproducible al 100% cualquier domingo)
 
 ---
@@ -987,8 +1001,11 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 3. Test: estudiante `secondary` con secciones escolares creadas en el período `Year` activo → catálogo no vacío, puede completar inscripción igual que un universitario.
 4. Test de regresión: estudiante `university` sigue viendo su catálogo normalmente contra el período `Semester`, **y** ve el label de período correcto (no "trimestre").
 
-**Estado:** pendiente
-**Prioridad:** CRÍTICA (bloquea el 100% de la inscripción de Primaria/Bachillerato, incluso para el representante; el mislabel de período es de menor severidad pero de alcance más amplio de lo documentado originalmente)
+**Estado:** resuelto (diagnóstico original) — la ampliación de Ronda 3 (mislabel de período también en universitarios) sigue **pendiente**, ver nota arriba
+**Fecha de resolución:** 2026-08-30
+**Feature:** `16-enrollment-level-guard-and-period-fix`
+**Verificación:** `EnrollmentController::index()` resuelve `Period::where('status', Active)->where('type', ...)` condicionado a `PeriodType::Semester` (university) o `PeriodType::Year` (primary/secondary). `buildRules()` usa el `Lapse` vigente por fecha cuando el período es `Year`, en vez de `"{academic_year}er trimestre"` hardcodeado. Adicionalmente se agregó `Subject::schoolSections(): BelongsToMany` y `BuildEnrollmentCatalogAction::handle()` combina `sections` + `schoolSections` (ver `design.md`, "Corrección al diseño 2026-08-30") — sin este cambio el fix de período por sí solo no cerraba el catálogo vacío. Tests: `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentPeriodResolutionAcceptanceTest.php`, `EnrollmentSchoolCatalogAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-03,UC-QA-05` — todos en verde. **El mislabel de la línea 209 (ampliación Ronda 3) no estaba cubierto por estos tests y sigue sin corregir.**
+**Prioridad:** CRÍTICA (bloquea el 100% de la inscripción de Primaria/Bachillerato, incluso para el representante — RESUELTO; el mislabel de período que persiste es de menor severidad pero de alcance más amplio de lo documentado originalmente — PENDIENTE)
 
 ---
 
@@ -1013,7 +1030,9 @@ Ni `ClassSessionPolicy` (viewAny/create/update/takeAttendance), ni `StoreClassSe
 3. Decidir con el humano si la restricción debe ser dura (403) o blanda (advertencia + permiso de forzar con auditoría).
 4. Test: profesor intenta pasar lista/crear sesión fuera de su horario real → debe rechazarse o marcarse explícitamente como excepcional, no aceptarse en silencio.
 
-**Estado:** pendiente
+**Resolución (2026-08-31, feature `20-attendance-scheduling-and-recovery`):** guard agregado en `ClassSessionPolicy::create()` y `ClassSessionPolicy::takeAttendance()` — para sesiones `type=regular`, exige que el momento actual (día de la semana + hora) caiga dentro de algún `Schedule` real de la sección (`isWithinScheduleWindow()`); responde 403 fuera de esa ventana. Sesiones `makeup`/`advance` quedan exentas por decisión de negocio (RF-03), sin cambio de comportamiento. Aplica también al flujo Admin (`AdminStoreClassSessionRequest::authorize()` ahora pasa `type` al Policy). Se decidió restricción dura (403), no blanda. `schedule_id` en `class_sessions` quedó explícitamente fuera de alcance — la ventana se valida contra los `Schedule` de la `Section` directamente. Verificado en `tests/Feature/AttendanceSchedulingAndRecovery/Acceptance/ScheduleWindowGuardTest.php` (12 tests: RF-01 crear, RF-02 pasar lista, bordes inclusivos, RF-03 regresión Makeup/Advance, RF-04 flujo Admin) y Dusk `AttendanceSchedulingAndRecoveryTest.php::UC-QA-01`. El efecto secundario de `held_at` sobrescrito en `TakeAttendanceAction` (mencionado en la descripción original) queda fuera del alcance de este fix — no formaba parte de los RF acordados con el humano.
+
+**Estado:** resuelto
 **Prioridad:** ALTA
 
 ---
@@ -1038,7 +1057,9 @@ Ni `ClassSessionPolicy` (viewAny/create/update/takeAttendance), ni `StoreClassSe
 3. Test: crear un adelanto vinculado a una sesión ya `advanced` vía request directo (no solo vía UI) → debe responder con error de validación.
 4. Test: si llegaran a coexistir dos adelantos sobre el mismo target, pasar lista en ambos no debería perder silenciosamente los registros del primero sin dejar rastro.
 
-**Estado:** pendiente
+**Resolución (2026-08-31, feature `19-attendance-advance-guard-fix`):** guard portado a `CreateAdvanceSessionAction::handle()` — rechaza con `ValidationException` ("Esta sesión ya fue adelantada.") si `linked_session_id` ya tiene `status === Advanced`. Verificado en `tests/Feature/AttendanceAdvanceGuardFix/Acceptance/AdvanceGuardTest.php` (5 tests: Action, HTTP JSON 422, HTTP form/Inertia bypass de UI, 2 regresiones de camino feliz) y regresión Dusk `AttendanceQATest.php::UC-QA-03`. El punto 2 de la acción sugerida (restricción de dominio contra múltiples advance/makeup activos concurrentes sobre el mismo target) queda fuera del alcance de este fix — el guard de estado ya cierra la ruta de corrupción descrita.
+
+**Estado:** resuelto
 **Prioridad:** CRÍTICA (corrupción de datos de asistencia sin ningún aviso al usuario, reproducida en vivo con datos reales)
 
 ---
@@ -1062,7 +1083,9 @@ El selector "Sesión vinculada" del tipo "Recuperación" ("Elegí la sesión can
 2. Confirmar con `cacao_dev` si esto fue pospuesto deliberadamente o si hay otra vía prevista para llegar a `cancelled` no encontrada en esta revisión.
 3. Una vez exista el flujo de cancelación, volver a probar en vivo el selector de Recuperación (hoy no se pudo ejercitar ningún UC de este tipo por falta de datos alcanzables).
 
-**Estado:** pendiente
+**Resolución (2026-08-31, feature `20-attendance-scheduling-and-recovery`):** implementado `App\Actions\Attendance\CancelClassSessionAction::handle()` — transiciona `scheduled`/`held` a `cancelled` (rechaza con `ValidationException` 422 "Esta sesión no se puede cancelar." si ya está `cancelled`/`advanced`/`recovered`); cancelar una sesión `held` preserva sus `AttendanceRecord` existentes. Expuesto vía `PATCH .../attendance/sessions/{classSession}/cancel` en ambos controllers (Profesor y Admin), autorizado por `ClassSessionPolicy::cancel()` (mismo patrón dueño-de-sección + `Gate::before` para Admin). Una vez cancelada, la sesión aparece como candidata real en el selector "Sesión vinculada" de Recuperación y el flujo de punta a punta (cancelar → crear makeup → pasar lista → `recovered`) funciona correctamente. Verificado en `tests/Feature/AttendanceSchedulingAndRecovery/Acceptance/CancelClassSessionTest.php` (12 tests: RF-05 Action, RF-06 rechazo en los 3 estados terminales, RF-07 preserva asistencia, RF-08 autorización Profesor+Admin, RF-09 recuperación punta a punta) y Dusk `AttendanceSchedulingAndRecoveryTest.php::UC-QA-04` (botón "Cancelar" vía `window.confirm()`) y `::UC-QA-07` (punta a punta).
+
+**Estado:** resuelto
 **Prioridad:** ALTA
 
 ---
