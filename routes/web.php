@@ -308,6 +308,8 @@ Route::middleware(['auth', 'verified', 'role:Estudiante'])
             ->name('dashboard');
         Route::get('grades', [Student\GradeController::class, 'index'])
             ->name('grades.index');
+        Route::get('schedule', [Student\ScheduleController::class, 'index'])
+            ->name('schedule.index');
     });
 
 Route::middleware(['auth', 'verified', 'role:Representante'])

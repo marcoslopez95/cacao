@@ -1,3 +1,94 @@
+# Feature completada: 21-student-schedule-view (2026-09-13)
+
+**Estado:** COMPLETADA — 7/7 tasks completadas.
+**Plan:** `specs/21-student-schedule-view/tasks.md`
+**Próximo paso:** sin feature activa — pedir al humano qué sigue.
+
+Nueva vista `/student/schedule` con el horario semanal completo del estudiante, reutilizando
+`WeeklyGrid`/`ScheduleListView` sin modificarlos (solo montaje read-only). Durante el desarrollo se
+encontraron y corrigieron 2 bugs reales preexistentes en componentes compartidos con el módulo admin
+(aprobado por el humano como extensión de Task 2): `ScheduleEventCard.vue` ocultaba profesor/aula en
+modo `compact` (clases < 60 min) y recortaba contenido a mitad de glifo en clases muy cortas
+(fix: nuevo umbral `veryCompact`); `AppSidebarLayout.vue` no tenía breakpoint responsivo, rompiendo
+cualquier página de la app en viewport < 1024px (fix: drawer/scrim con `useMediaQuery` de
+`@vueuse/core`, patrón ya existente en el proyecto). Ambos fixes verificados sin regresión contra el
+módulo admin de horarios (`ScheduleViewsTest.php`, 10/10).
+
+## Feature Gate (Task 7) — 2026-09-13
+✅ APROBADO — 9/9 UCs de `specs/21-student-schedule-view/qa.md` en verde. 9 tests Dusk
+(`tests/Browser/Academic/StudentScheduleTest.php`) + 14 tests Feature
+(`tests/Feature/StudentScheduleView/Acceptance/StudentScheduleAcceptanceTest.php`). Suite completa:
+971 tests, 0 failures. Sin HLZs generados.
+
+## Task 6 completada — Wayfinder + Pint
+
+Wayfinder regenerado sin diff (ya reflejaba `student.schedule.index` desde Task 3). Pint formateó
+solo `tests/Browser/Academic/StudentScheduleTest.php` (orden de imports/tipos, sin tocar lógica ni
+assertions). Suite Pest completa (971) y Dusk de la feature (9/9) en verde.
+
+## Tasks 4-5 completadas — Auditoría de cobertura de tests
+
+Todos los escenarios de Task 4 (Feature) ya estaban cubiertos por los 14 tests de `pre` de Task 1.
+Task 5 (Dusk) tenía un gap real: "estado vacío" no tenía test Dusk propio (`qa.md` lo marcaba
+"pendiente"). El tester agregó 2 tests Dusk (`UC-QA-03` desktop/mobile) — pasaron en verde de
+inmediato, el código de aplicación ya soportaba el caso correctamente. Suite Dusk de la feature:
+9/9 verde. Suite Pest completa: 971 tests verde.
+
+## Task 3 completada — Link del dashboard
+
+`student/Dashboard.vue`: `<Link dusk="view-full-schedule-link">` vía Wayfinder (`@/routes/student/schedule`)
+en el widget "Hoy", hacia `student.schedule.index`. Con esta task, los 9 UCs de
+`specs/21-student-schedule-view/qa.md` ya tienen cobertura verde: UC-QA-01/02/06/07/08 vía Dusk
+(`StudentScheduleTest.php`, 7/7), UC-QA-03/04/05/09 vía Feature (`StudentScheduleAcceptanceTest.php`,
+14/14). Tasks 4 y 5 (escribir tests Feature/Dusk) ya están de facto satisfechas por los tests
+escritos en modo `pre` de Tasks 1-3 — falta confirmar formalmente que cubren cada escenario listado
+en `tasks.md` y cerrar Task 6 (Wayfinder regenerado + Pint) antes del Feature Gate (Task 7).
+
+## Task 2 completada (+ 2b/2c) — Frontend
+
+`student/Schedule.vue` monta `WeeklyGrid` (desktop, `hidden lg:block`) y `ScheduleListView` (mobile,
+`lg:hidden`), ambos read-only (`can-update`/`can-delete` en `false`, sin wiring de emits/click).
+
+Durante el gate se descubrieron y corrigieron 2 bugs preexistentes en componentes compartidos con el
+módulo admin de horarios (aprobado por el humano ampliar el alcance de esta task):
+- **Task 2b** — `ScheduleEventCard.vue` ocultaba profesor/aula en modo `compact` (clases < 60 min).
+  Fix: rediseño de la línea de metadata compacta + nuevo umbral `veryCompact` (height < 34px) que
+  oculta la metadata en vez de recortarla a mitad de glifo en clases muy cortas (~30 min). No se tocó
+  `useScheduleLayout.ts`/`PX_PER_HOUR`. 1 ronda de rechazo del reviewer (faltaba el umbral defensivo
+  vertical) → corregida y re-aprobada.
+- **Task 2c** — `AppSidebarLayout.vue` no tenía breakpoint responsivo (240px fijos rompían cualquier
+  página en viewport < 1024px, no solo esta feature). Fix: `useMediaQuery` de `@vueuse/core`
+  (patrón ya usado en `enrollment/Index.vue`, sin librerías nuevas) + drawer/scrim + botón hamburguesa
+  en `AppTopbar.vue`.
+
+Sin regresión: `ScheduleViewsTest.php` (admin, mismos componentes) 10/10 verde. `StudentScheduleTest.php`
+6/6 verde. Suite Pest completa 971 tests verde. UC-QA-01/02/07/08 de `qa.md` en verde. UC-QA-06 (link
+del dashboard) pendiente para Task 3.
+
+## Task 1 completada — Backend
+
+`Student\ScheduleController@index` (4 líneas, sin lógica de negocio) + `StudentScheduleResolver`
+(Service, no Action — lectura pura, sigue el patrón de `GradeConfigResolver`/`PrerequisiteValidator`)
++ ruta `student.schedule.index` dentro del grupo `role:Estudiante`. Reutiliza
+`App\Http\Resources\Scheduling\ScheduleResource` existente (mismo shape, sin duplicar). Filtra
+`EnrollmentDetail::confirmed` del período activo + vigencia del `Schedule` (`valid_from`/`valid_until`,
+borde `valid_until = hoy` incluido). `resources/js/pages/student/Schedule.vue` es un stub mínimo —
+el montaje real de `WeeklyGrid`/`ScheduleListView` es Task 2.
+
+14 tests Feature en verde (`tests/Feature/StudentScheduleView/Acceptance/StudentScheduleAcceptanceTest.php`).
+Reviewer aprobó sin observaciones. Tester (task-gate) aprobó: UCs backend-verificables de `qa.md`
+(UC-QA-03/04/05/09 + mitad backend de UC-QA-01/07) en verde; UCs que dependen de UI
+(UC-QA-01 mitad frontend, 02, 06, 07 mitad frontend, 08) quedan pendientes para Tasks 2/3/5 y se
+verifican en el Feature Gate (Task 7).
+
+Resumen: nueva vista `/student/schedule` con el horario semanal completo del estudiante
+(secciones `EnrollmentDetail::confirmed` del período activo, filtradas por vigencia),
+reutilizando sin modificar `WeeklyGrid.vue` (desktop) y `ScheduleListView.vue` (mobile),
+alternados por CSS puro (sin composable de breakpoint por JS — el proyecto no tiene ese
+patrón). Link "Ver horario completo →" agregado al dashboard del estudiante.
+
+---
+
 # Sin feature activa — ronda de QA de asistencia cerrada (2026-08-31)
 
 Las 2 features de la cola (`19`, `20`) quedaron `completed`. Cierran HLZ-44, HLZ-45, HLZ-46 de

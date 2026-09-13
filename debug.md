@@ -234,3 +234,40 @@ Pediste probar el módulo de asistencia como profesor, verificando específicame
 - **Dos secciones del mismo profesor con el mismo horario exacto** — "Microeconomía" e "Ingeniería de Software II" aparecen ambas programadas 13:00–15:30 el mismo día para `prof02` — no es un bug de código, sino un problema de calidad de datos en `schedules` (o su seeder), pero produce una UI confusa (¿cuál es "la clase actual" si hay dos al mismo tiempo?).
 - **`/admin/attendance*` sin middleware `role:Admin`** — a diferencia de otros grupos de rutas admin (que sí aplican `role:Admin` explícitamente), el grupo `Route::middleware(['auth', 'verified'])->prefix('admin')->group(...)` que contiene las rutas de asistencia (`routes/web.php:171-176`) no restringe por rol a nivel de middleware; depende enteramente de que `ClassSessionPolicy` (con su `Gate::before` para Admin, según los comentarios del propio archivo) haga el trabajo. En la práctica no parece explotable hoy (un profesor o estudiante autenticado sin perfil de profesor sería rechazado por la Policy igual), pero rompe el patrón de "defensa en profundidad" que sí siguen otros módulos admin — vale la pena agregar `role:Admin` explícito por consistencia.
 - Estas notas no estaban en el pedido original de esta ronda, pero se dejan registradas por si sirven de contexto adicional para `cacao_dev`.
+
+---
+
+# Ronda 3 — QA de `/student/schedule` (vista semanal) y cambio global de sidebar mobile
+
+**Fecha:** 2026-09-13
+**Pedido del humano:** probar la nueva vista `/student/schedule` (grid semanal desktop / lista agrupada por día en mobile) y el cambio de sidebar → menú hamburguesa en mobile que afecta toda la app.
+
+## Resultado general
+
+9 de 10 puntos del pedido se probaron **en vivo por click-through** y pasaron sin bugs — la feature en sí (grid semanal, responsive, solo-lectura, estados vacíos, permisos por rol) funciona como se pidió. El punto restante (clases de 30 min sin texto cortado) se verificó por **revisión de código fuente**, no por click-through, por un blocker genuino de datos que se explica abajo. Además, se encontraron 2 hallazgos incidentales nuevos y una posible resolución parcial de un hallazgo de Ronda 2, todos fuera del pedido original pero detectados en el camino (revisando "un par de páginas cualquiera en mobile", como pidió el humano).
+
+Detalle completo de los 17 UCs (SS07–SS17) en `specs/qa/academic/student-schedule.md` — no se repite aquí, solo el resumen y lo que requirió más trabajo de lo esperado.
+
+## UC-SS16 (clases de ~30 min) — por qué se verificó por código y no en vivo
+
+Se intentó construir un bloque de horario real de 30 min para un estudiante universitario inscrito (`est109`, en "Investigación Educativa" con María Torres y en "Estructuras Algebraicas" con Luis Rodríguez) para poder ver el bloque corto renderizado en `/student/schedule`. Esto resultó bloqueado en cascada:
+
+1. **Los 120 bloques de horario existentes en el sistema son, sin excepción, de 2h30m** (confirmado escaneando programáticamente el texto de toda la vista `/scheduling/schedules` sin ningún filtro — un solo patrón de duración único: "2h 30m"). No hay ningún bloque corto "en la naturaleza" que se pudiera usar directamente.
+2. Intentar crear uno nuevo para Luis Rodríguez (su sección real con `est109`) fue rechazado: "El profesor Luis Rodríguez superaría su límite de 20h/semana (25h actuales + 0.5h nuevas)" — Luis Rodríguez ya está en 25h sobre un límite de 20h.
+3. Se probó con la otra sección real de `est109` (María Torres, Investigación Educativa) — mismo resultado: también está en 25h/20h.
+4. Se hizo una encuesta rápida (sin guardar nada) de la carga de **todos** los profesores vía el selector del modal "Nuevo horario": **todos** los que dictan secciones reales están en 25h/20h (8 profesores) o exactamente en 20h/20h sin margen (5 más). Solo 5 cuentas Faker sin secciones asignadas tienen margen, inútiles para esta prueba. Este hallazgo quedó documentado como **HLZ-48** (nuevo) en `specs/qa/backlog.md`.
+5. Se probó **acortar** (no alargar) un bloque existente de María Torres de 2h30m a 30 min — en teoría reduce su carga de 25h a 23h, una mejora neta. Rechazado igual: la validación compara contra el total **resultante**, no contra si la edición mejora o empeora la situación ("22.5h actuales + 0.5h nuevas" = 23h, sigue sobre 20h). También documentado en HLZ-48.
+6. Como último recurso, se intentó subir temporalmente el límite de horas/semana de María Torres (de 20h a 30h) solo para destrabar la prueba y luego revertirlo — **esta acción fue bloqueada por el propio entorno de este QA** (clasificada como modificación de un recurso compartido, dado que `cacao_dev` tiene una sesión de desarrollo activa en paralelo sobre la misma base de datos). No se insistió ni se buscó una forma de evadir ese bloqueo — es una protección razonable dado el contexto de dos sesiones trabajando sobre el mismo entorno.
+
+Ante esto, se optó por la vía más rigurosa disponible: leer directamente `resources/js/components/scheduling/ScheduleEventCard.vue` y `resources/js/composables/scheduling/useScheduleLayout.ts` (vía el puente al equipo del usuario, `/var/www/cacao`). El código confirma el comportamiento exacto pedido, con un comentario del propio autor que describe el cálculo para una clase de 30 min casi palabra por palabra igual al pedido del humano ("mostrar solo el nombre de la materia si no entra el resto"). Detalle completo con cita del código en `specs/qa/academic/student-schedule.md` (UC-SS16). Se considera una verificación válida y suficientemente rigurosa dado el blocker, pero se deja explícito que no hubo un click-through visual final — si se quiere ese último paso, hace falta que `cacao_dev` provea un profesor/sección de prueba con margen de horas, o resuelva primero HLZ-48.
+
+## Hallazgos incidentales (fuera del pedido original)
+
+- **HLZ-47 (nuevo)** — `/settings/profile` carga con "Nombre" y "Correo electrónico" vacíos, en desktop y mobile. Detectado al revisar "un par de páginas cualquiera en mobile" para probar el nuevo menú hamburguesa, como pidió el humano — no tiene relación con el cambio de sidebar, es un bug preexistente. Detalle técnico completo en `specs/qa/backlog.md`.
+- **HLZ-48 (nuevo)** — todos los profesores con secciones reales están en o sobre su límite de horas/semana configurado (detalle arriba y en `specs/qa/backlog.md`).
+- **Ampliación de HLZ-43** — el mislabel "Xer TRIMESTRE" en `/enrollment` (documentado en Ronda 1 como afectando solo Primaria/Bachillerato) también se confirmó en vivo para un estudiante **universitario** (`est109`). La causa (línea 209 de `EnrollmentController::buildRules()`) nunca estuvo condicionada por nivel educativo, solo por la presencia de `academic_year` — se amplió la entrada existente en `specs/qa/backlog.md` en vez de crear un HLZ nuevo, mismo root cause.
+- **Posible resolución parcial de HLZ-46** — se encontró en el código (no probado en vivo) un endpoint nuevo `PATCH .../attendance/sessions/{classSession}/cancel` + `CancelClassSessionAction`, que parece ser exactamente el prerequisito que HLZ-46 marcó como faltante para que "Recuperación" sea usable. Queda para la próxima ronda de asistencia re-verificar esto en vivo — fuera de alcance de esta ronda.
+
+## Confirmaciones que sí replican el módulo admin (sin bugs)
+
+- El link "Ver horario completo →" del widget "Hoy", el grid desktop, la lista mobile agrupada por día, el comportamiento de solo-lectura (click no hace nada), los estados vacíos (sin inscripción confirmada / sin período activo), el acceso sin bloqueo para primaria/secundaria, y el 403 para Admin/Profesor/Representante — los 8 restantes — funcionan exactamente como se pidió, confirmado en vivo con `est109` y cuentas de otros roles. El menú hamburguesa mobile también se probó en `/enrollment` y `/settings/profile` además de `/student/schedule`, sin romper nada.

@@ -463,6 +463,43 @@ body {
 }
 @media (min-width: 1280px) { .app-content { padding: 32px; } }
 
+/* Mobile sidebar drawer (< 1024px, matches Tailwind `lg`) */
+@media (max-width: 1023px) {
+  .app-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 40;
+    transform: translateX(-100%);
+    transition: transform 200ms ease;
+    box-shadow: var(--shadow-lg);
+  }
+  .app-sidebar.app-sidebar--open {
+    transform: translateX(0);
+  }
+}
+.app-sidebar-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(19, 17, 16, 0.4);
+  z-index: 30;
+}
+
+/* Topbar hamburger (mobile only, hidden on desktop via `lg:hidden`) */
+.topbar-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.topbar-menu-btn:hover { background: var(--bg-surface-2); color: var(--text-primary); }
+
 /* Sidebar brand area */
 .sidebar-brand {
   display: flex;

@@ -2,6 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import { index as enrollmentIndex } from '@/routes/enrollment'
+import { index as studentScheduleIndex } from '@/routes/student/schedule'
 import type { StudentDashboardProps, StudentTodaySchedule } from '@/types/student-dashboard'
 
 const page = usePage()
@@ -191,8 +192,17 @@ function timeRange(item: StudentTodaySchedule): string {
         <!-- Today's timeline — only when enrollment exists -->
         <template v-else>
             <div>
-                <div style="font-size:var(--text-xs);font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px;">
-                    Hoy — {{ props.today_label }}
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+                    <div style="font-size:var(--text-xs);font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">
+                        Hoy — {{ props.today_label }}
+                    </div>
+                    <Link
+                        dusk="view-full-schedule-link"
+                        :href="studentScheduleIndex.url()"
+                        style="font-size:var(--text-sm);font-weight:600;color:var(--accent);text-decoration:none;white-space:nowrap;"
+                    >
+                        Ver horario completo →
+                    </Link>
                 </div>
 
                 <!-- Empty state -->

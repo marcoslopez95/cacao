@@ -243,6 +243,14 @@
       "spec": "specs/user-edit-s01-identity-fix/",
       "depends_on": [],
       "description": "HLZ-27/HLZ-28: S01 Identidad — 8 columnas de users (doc, fecha_nacimiento, género, nacionalidad, teléfonos, foto) no se exponen en UserEditResource ni se envían en el handler. Pérdida silenciosa de datos. Fix: catálogos dinámicos (documentTypes, genders, nationalities) + round-trip completo + AppDocInput refactor."
+    },
+    {
+      "id": "student-schedule-view",
+      "name": "Student Schedule View",
+      "status": "completed",
+      "spec": "specs/21-student-schedule-view/",
+      "depends_on": [],
+      "description": "Nueva vista /student/schedule con el horario semanal completo del estudiante (secciones EnrollmentDetail::confirmed del período activo, filtradas por vigencia), montando sin modificar WeeklyGrid.vue (desktop) y ScheduleListView.vue (mobile) alternados por CSS puro. Link 'Ver horario completo →' agregado al widget 'Hoy' del dashboard del estudiante."
     }
   ]
 }

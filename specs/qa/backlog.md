@@ -312,8 +312,8 @@ Los botones **Ver perfil** (ojo) y **Editar** (lápiz) en la tabla de `http://lo
 **Feature:** `student-academic-show`
 **UCs documentados en:** `specs/qa/academic/student-show.md`
 
-**Estado:** resuelto (verificado 2026-08-30, no requirió feature nueva)
-**Verificación:** `specs/student-academic-show/tasks.md` tiene las 12 tasks marcadas `[x]` — ruta `academic.students.show`, `StudentShowResource`, `Show.vue` y botones Editar/Ver wireados en `Index.vue`. El backlog no se había actualizado cuando se implementó.
+**Estado:** pendiente  
+**Prioridad:** MEDIA (funcionalidad esperada por usuarios admin)
 
 ---
 
@@ -605,8 +605,8 @@ Al recargar la página, `data.workDial` es `undefined`, por lo que el componente
 - **Opción A — Aceptar como diseño:** Documentar que `workDial` siempre vale `'+58'` por defecto. Si la institución es venezolana, esto es correcto en el 99% de los casos. No requiere acción.
 - **Opción B — Agregar columna `work_phone_dial`:** Agregar `work_phone_dial VARCHAR(10) DEFAULT '+58'` a `guardian_profiles`, persistirlo en `StoreGuardianProfileRequest`, `GuardianProfileWrapper`, `UpsertGuardianProfileAction`, y leerlo en `buildInitialFormData()`.
 
-**Estado:** resuelto (verificado 2026-08-30, no requirió feature nueva)
-**Verificación:** la migración `2026_05_30_224853_add_work_phone_dial_to_guardian_profiles_table.php` (Opción B) ya está en el repo y completamente wireada: `GuardianProfile::$fillable`, `StoreGuardianProfileRequest`, `GuardianProfileWrapper::getWorkPhoneDial()`, `UpsertGuardianProfileAction`, `GuardianProfileResource` y `useUserEditForm.ts` (`workDial` ↔ `work_phone_dial`) leen/escriben el campo de punta a punta. El backlog no se había actualizado cuando se implementó.
+**Estado:** pendiente  
+**Prioridad:** BAJA (cosmético — el número de teléfono persiste correctamente; solo el indicativo se resetea a +58)
 
 ---
 
@@ -698,7 +698,7 @@ d.coordSince = p.coordinator_since  ?? undefined   // igual
 
 ---
 
-## HLZ-27 — S01 Identidad: campos de identidad extendida no se cargan ni se persisten (RESUELTO)
+## HLZ-27 — S01 Identidad: campos de identidad extendida no se cargan ni se persisten
 
 **Fecha:** 2026-05-26  
 **Dominio:** security / users  
@@ -737,7 +737,7 @@ El formulario S01 muestra como editables: documento (tipo + número), fecha de n
 
 ---
 
-## HLZ-28 — S01 Identidad: mismatch de tipos entre catálogos estáticos y FKs de DB (RESUELTO)
+## HLZ-28 — S01 Identidad: mismatch de tipos entre catálogos estáticos y FKs de DB
 
 **Fecha:** 2026-05-26  
 **Dominio:** security / users / catalog  
@@ -809,8 +809,8 @@ Estos son usuarios con rol `student` (S14 solo se activa para estudiantes).
 
 **Nota de seguimiento (2026-05-26):** El error es del build `Edit-B6E3sVrM.js`. El build actual es `Edit-COISBrbU.js` (compilado tras `user-edit-student-sections-fix`). No hay nuevas entradas en browser logs para estos usuarios con el build nuevo. Posiblemente resuelto como efecto secundario de esa feature — **requiere verificación manual** en `/security/users/130/edit` y `/security/users/63/edit`.
 
-**Estado:** resuelto (verificado 2026-08-30, no requirió feature nueva)
-**Verificación:** `HousingProfileResource::toArray()` usa `whenLoaded('services', fn () => $this->services->map(...))`, que siempre resuelve a un array JSON plano (`[{...}]`), nunca al objeto `{data: [...]}` que causaba el crash. `UserController::edit()` eager-carga `student.housingProfile.services`. Confirmado con datos reales vía tinker (`json_encode()` produce un array válido) y con `storage/logs/laravel.log` sin ninguna ocurrencia del error `some is not a function`. Efecto secundario de `user-edit-student-sections-fix`, tal como se sospechaba en la nota de seguimiento.
+**Estado:** pendiente (verificación pendiente)  
+**Prioridad:** CRÍTICO si el crash persiste con el build actual; BAJA si fue resuelto
 
 ---
 
@@ -864,10 +864,7 @@ Regla de negocio confirmada con el humano: solo estudiantes de nivel `university
 3. Ocultar o deshabilitar el CTA "Ir a inscripciones" en `student/Dashboard.vue` cuando el estudiante autenticado no sea universitario, con mensaje explicativo ("Tu representante debe inscribirte").
 4. Test: estudiante `primary`/`secondary` intentando `POST /enrollment` → 403; estudiante `university` → 200/201 (regresión).
 
-**Estado:** resuelto
-**Fecha de resolución:** 2026-08-30
-**Feature:** `16-enrollment-level-guard-and-period-fix`
-**Verificación:** `EnrollmentPolicy::create()` valida `Student::educational_level !== EducationalLevel::University` en ambas ramas (self y guardian). `EnrollmentController::index()` llama `Gate::authorize('create', [Enrollment::class, $student])` antes del `firstOrCreate`. `student/Dashboard.vue` oculta el CTA "Ir a inscripciones →" y muestra "Tu representante debe inscribirte." para `educational_level != university`. Tests: `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentLevelGuardAcceptanceTest.php` (RF-01, RF-02, RF-04), `StudentDashboardCtaAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-02` — todos en verde.
+**Estado:** pendiente  
 **Prioridad:** ALTA (regla de negocio de acceso — afecta la integridad del flujo de inscripción por nivel)
 
 ---
@@ -891,10 +888,8 @@ El widget "Hoy" del dashboard del estudiante (`student/Dashboard.vue`) muestra l
 2. Test: estudiante con un `EnrollmentDetail` en `draft` y otro en `confirmed` el mismo día → `today_schedules` solo incluye el `confirmed`.
 3. Test de regresión: estudiante con todos los details `confirmed` → sin cambios de comportamiento.
 
-**Estado:** resuelto
-**Fecha de resolución:** 2026-08-30
-**Feature:** `17-student-dashboard-schedule-fix`
-**Verificación:** `DashboardController::index()` usa `confirmedDetails` (scope existente en `Enrollment.php`) para `today_schedules`, preservando `details` para `subjects_count`. Tests en `tests/Feature/StudentDashboardScheduleFix/Acceptance/DashboardScheduleFixTest.php` (RF-03 ×2). QA Gate aprobado — ver `specs/qa/academic/student-schedule.md`.
+**Estado:** pendiente  
+**Prioridad:** ALTA (dato incorrecto mostrado al estudiante — puede llevarlo a asistir a una clase que no está realmente confirmada)
 
 ---
 
@@ -917,10 +912,8 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 2. Mínimo defensivo recomendado: en `Guardian\DashboardController` y `Guardian\GradeController`, filtrar `$guardian->students()->where('educational_level', '!=', EducationalLevel::University)`.
 3. Test: guardian vinculado (vía factory/pivote directo) a un estudiante `university` → no aparece en `/guardian/dashboard` ni es accesible vía `/guardian/grades?student_id=`.
 
-**Estado:** resuelto
-**Fecha de resolución:** 2026-08-30
-**Feature:** `18-guardian-grades-multi-student`
-**Verificación:** `Guardian\GradeController` y `Guardian\DashboardController` filtran `->where('educational_level', '!=', EducationalLevel::University)`. Test defensivo con vínculo forzado vía factory confirma exclusión en ambos controllers (listado, `student_id` directo, fallback). Bonus: se detectó y corrigió una regresión real en `tests/Browser/Guardian/GuardianEnrollmentTest.php`, cuyo fixture sí dependía de un estudiante `university` vinculado a un guardian — ajustado a `->secondary()`.
+**Estado:** pendiente  
+**Prioridad:** MEDIA (no hay evidencia de que ocurra hoy en datos reales, pero no hay ningún guard que lo impida — riesgo de integridad de datos)
 
 ---
 
@@ -942,10 +935,8 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 3. Agregar selector de estudiante en `guardian/Grades/Index.vue` cuando el representante tenga 2+ estudiantes vinculados.
 4. Test: representante con 2 estudiantes, `GET /guardian/grades?student_id={segundo}` → muestra notas del segundo, no del primero.
 
-**Estado:** resuelto
-**Fecha de resolución:** 2026-08-30
-**Feature:** `18-guardian-grades-multi-student`
-**Verificación:** `Guardian\GradeController::index()` acepta `?student_id=`, validado contra estudiantes elegibles del representante (`abort_if(!$student, 403)`), con fallback a `first()` sin el parámetro. Selector de estudiante agregado en `guardian/Grades/Index.vue` (visible solo con 2+ vinculados). Tests Dusk UC-QA-01/02 en verde.
+**Estado:** pendiente  
+**Prioridad:** MEDIA (afecta solo a representantes con múltiples estudiantes — funcionalidad ausente, no corrupción de datos)
 
 ---
 
@@ -968,9 +959,8 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 2. Test de regresión: mockear `now()` a un domingo y verificar que `GET /student/dashboard` responde 200 con `today_schedules` vacío, en vez de 500.
 3. Revisar si conviene además envolver todo el bloque de cálculo de horario en try/catch defensivo, dado que ya causó un crash total del dashboard por un dato aparentemente menor.
 
-**Estado:** resuelto
-**Fecha de resolución:** 2026-08-30 (fix aplicado fuera del arnés en commit `2a91c45`, verificado y confirmado vía `feature 17-student-dashboard-schedule-fix`)
-**Verificación:** `DayOfWeek::tryFrom($todayValue)?->label() ?? 'Domingo'` — `GET /student/dashboard` un domingo responde 200 con `today_schedules: []`. Test de regresión en `tests/Feature/StudentDashboardScheduleFix/Acceptance/DashboardScheduleFixTest.php` (RF-01).
+**Estado:** pendiente
+**Prioridad:** CRÍTICA (crash total del portal del estudiante, reproducible al 100% cualquier domingo)
 
 ---
 
@@ -989,17 +979,16 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 - `/scheduling/periods` — `2026-I` (Semestral) y `2025-2026` (Anual) simultáneamente "Activo"
 - Bonus, mismo origen: `EnrollmentController::buildRules()` línea 208 hardcodea `"{$student->academic_year}er trimestre"` para el label del período, incluso cuando el período real del estudiante es Anual/Lapso, no Trimestral — se ve en la UI como "PERÍODO 2026-I · 4TO TRIMESTRE" para un estudiante de Bachillerato
 
+**Ampliación (2026-09-13, Ronda 3):** el "bonus" del label hardcodeado **no está acotado a Primaria/Bachillerato** como se pensó inicialmente — `buildRules()` línea 209 arma `$periodLabel` únicamente en base a `$student?->academic_year` (truthy o no), sin ninguna condición sobre `educational_level` ni sobre el `type` del período. Confirmado en vivo con `est109` (estudiante **universitario**, con `academic_year` poblado): la UI de `/enrollment` también le muestra "...ER TRIMESTRE", pese a que su período real es Semestral. Es decir, el mislabel afecta a cualquier estudiante con `academic_year` seteado, independientemente del nivel — la línea 209 nunca estuvo condicionada a nivel escolar, solo a la existencia del campo. No cambia el diagnóstico ni la acción sugerida (siguen siendo correctos), solo amplía el alcance real del bug.
+
 **Acción sugerida:**
 1. Resolver el período según `Student::educational_level`: universitarios contra el período `Semester` activo, `primary`/`secondary` contra el período `Year` activo (y, dentro de este, el Lapso vigente por fecha).
-2. Ajustar `buildRules()` para reflejar el `type` real del período del estudiante en vez de asumir "trimestre" siempre.
+2. Ajustar `buildRules()` para reflejar el `type` real del período del estudiante en vez de asumir "trimestre" siempre — condicionar explícitamente por `$period->type`, no solo por la presencia de `academic_year` (ver ampliación arriba: hoy afecta también a universitarios).
 3. Test: estudiante `secondary` con secciones escolares creadas en el período `Year` activo → catálogo no vacío, puede completar inscripción igual que un universitario.
-4. Test de regresión: estudiante `university` sigue viendo su catálogo normalmente contra el período `Semester`.
+4. Test de regresión: estudiante `university` sigue viendo su catálogo normalmente contra el período `Semester`, **y** ve el label de período correcto (no "trimestre").
 
-**Estado:** resuelto
-**Fecha de resolución:** 2026-08-30
-**Feature:** `16-enrollment-level-guard-and-period-fix`
-**Verificación:** `EnrollmentController::index()` resuelve `Period::where('status', Active)->where('type', ...)` condicionado a `PeriodType::Semester` (university) o `PeriodType::Year` (primary/secondary). `buildRules()` usa el `Lapse` vigente por fecha cuando el período es `Year`, en vez de `"{academic_year}er trimestre"` hardcodeado. Adicionalmente se agregó `Subject::schoolSections(): BelongsToMany` y `BuildEnrollmentCatalogAction::handle()` combina `sections` + `schoolSections` (ver `design.md`, "Corrección al diseño 2026-08-30") — sin este cambio el fix de período por sí solo no cerraba el catálogo vacío. Tests: `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentPeriodResolutionAcceptanceTest.php`, `EnrollmentSchoolCatalogAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-03,UC-QA-05` — todos en verde.
-**Prioridad:** CRÍTICA (bloquea el 100% de la inscripción de Primaria/Bachillerato, incluso para el representante)
+**Estado:** pendiente
+**Prioridad:** CRÍTICA (bloquea el 100% de la inscripción de Primaria/Bachillerato, incluso para el representante; el mislabel de período es de menor severidad pero de alcance más amplio de lo documentado originalmente)
 
 ---
 
@@ -1024,9 +1013,7 @@ Ni `ClassSessionPolicy` (viewAny/create/update/takeAttendance), ni `StoreClassSe
 3. Decidir con el humano si la restricción debe ser dura (403) o blanda (advertencia + permiso de forzar con auditoría).
 4. Test: profesor intenta pasar lista/crear sesión fuera de su horario real → debe rechazarse o marcarse explícitamente como excepcional, no aceptarse en silencio.
 
-**Resolución (2026-08-31, feature `20-attendance-scheduling-and-recovery`):** guard agregado en `ClassSessionPolicy::create()` y `ClassSessionPolicy::takeAttendance()` — para sesiones `type=regular`, exige que el momento actual (día de la semana + hora) caiga dentro de algún `Schedule` real de la sección (`isWithinScheduleWindow()`); responde 403 fuera de esa ventana. Sesiones `makeup`/`advance` quedan exentas por decisión de negocio (RF-03), sin cambio de comportamiento. Aplica también al flujo Admin (`AdminStoreClassSessionRequest::authorize()` ahora pasa `type` al Policy). Se decidió restricción dura (403), no blanda. `schedule_id` en `class_sessions` quedó explícitamente fuera de alcance — la ventana se valida contra los `Schedule` de la `Section` directamente. Verificado en `tests/Feature/AttendanceSchedulingAndRecovery/Acceptance/ScheduleWindowGuardTest.php` (12 tests: RF-01 crear, RF-02 pasar lista, bordes inclusivos, RF-03 regresión Makeup/Advance, RF-04 flujo Admin) y Dusk `AttendanceSchedulingAndRecoveryTest.php::UC-QA-01`. El efecto secundario de `held_at` sobrescrito en `TakeAttendanceAction` (mencionado en la descripción original) queda fuera del alcance de este fix — no formaba parte de los RF acordados con el humano.
-
-**Estado:** resuelto
+**Estado:** pendiente
 **Prioridad:** ALTA
 
 ---
@@ -1051,9 +1038,7 @@ Ni `ClassSessionPolicy` (viewAny/create/update/takeAttendance), ni `StoreClassSe
 3. Test: crear un adelanto vinculado a una sesión ya `advanced` vía request directo (no solo vía UI) → debe responder con error de validación.
 4. Test: si llegaran a coexistir dos adelantos sobre el mismo target, pasar lista en ambos no debería perder silenciosamente los registros del primero sin dejar rastro.
 
-**Resolución (2026-08-31, feature `19-attendance-advance-guard-fix`):** guard portado a `CreateAdvanceSessionAction::handle()` — rechaza con `ValidationException` ("Esta sesión ya fue adelantada.") si `linked_session_id` ya tiene `status === Advanced`. Verificado en `tests/Feature/AttendanceAdvanceGuardFix/Acceptance/AdvanceGuardTest.php` (5 tests: Action, HTTP JSON 422, HTTP form/Inertia bypass de UI, 2 regresiones de camino feliz) y regresión Dusk `AttendanceQATest.php::UC-QA-03`. El punto 2 de la acción sugerida (restricción de dominio contra múltiples advance/makeup activos concurrentes sobre el mismo target) queda fuera del alcance de este fix — el guard de estado ya cierra la ruta de corrupción descrita.
-
-**Estado:** resuelto
+**Estado:** pendiente
 **Prioridad:** CRÍTICA (corrupción de datos de asistencia sin ningún aviso al usuario, reproducida en vivo con datos reales)
 
 ---
@@ -1077,7 +1062,59 @@ El selector "Sesión vinculada" del tipo "Recuperación" ("Elegí la sesión can
 2. Confirmar con `cacao_dev` si esto fue pospuesto deliberadamente o si hay otra vía prevista para llegar a `cancelled` no encontrada en esta revisión.
 3. Una vez exista el flujo de cancelación, volver a probar en vivo el selector de Recuperación (hoy no se pudo ejercitar ningún UC de este tipo por falta de datos alcanzables).
 
-**Resolución (2026-08-31, feature `20-attendance-scheduling-and-recovery`):** implementado `App\Actions\Attendance\CancelClassSessionAction::handle()` — transiciona `scheduled`/`held` a `cancelled` (rechaza con `ValidationException` 422 "Esta sesión no se puede cancelar." si ya está `cancelled`/`advanced`/`recovered`); cancelar una sesión `held` preserva sus `AttendanceRecord` existentes. Expuesto vía `PATCH .../attendance/sessions/{classSession}/cancel` en ambos controllers (Profesor y Admin), autorizado por `ClassSessionPolicy::cancel()` (mismo patrón dueño-de-sección + `Gate::before` para Admin). Una vez cancelada, la sesión aparece como candidata real en el selector "Sesión vinculada" de Recuperación y el flujo de punta a punta (cancelar → crear makeup → pasar lista → `recovered`) funciona correctamente. Verificado en `tests/Feature/AttendanceSchedulingAndRecovery/Acceptance/CancelClassSessionTest.php` (12 tests: RF-05 Action, RF-06 rechazo en los 3 estados terminales, RF-07 preserva asistencia, RF-08 autorización Profesor+Admin, RF-09 recuperación punta a punta) y Dusk `AttendanceSchedulingAndRecoveryTest.php::UC-QA-04` (botón "Cancelar" vía `window.confirm()`) y `::UC-QA-07` (punta a punta).
-
-**Estado:** resuelto
+**Estado:** pendiente
 **Prioridad:** ALTA
+
+---
+
+## HLZ-47 — `/settings/profile` carga con los campos "Nombre" y "Correo electrónico" completamente vacíos
+
+**Fecha:** 2026-09-13
+**Dominio:** settings / auth
+**UC relacionado:** hallazgo incidental de Ronda 3 (revisión general de páginas en mobile tras el cambio de sidebar), sin UC previo documentado — ver `specs/qa/academic/student-schedule.md`, UC-SS17
+**Descripción:**
+Al entrar a `/settings/profile`, los inputs "Nombre" y "Correo electrónico" se renderizan vacíos en vez de mostrar los datos del usuario autenticado. Reproducido en vivo tanto en viewport desktop como mobile, con más de una cuenta — no es un problema de responsive ni relacionado al cambio de sidebar de esta ronda, es un bug preexistente que se detectó de casualidad al revisar páginas mobile por el pedido de "chusmear otras páginas" del humano. `settings/Profile.vue` lee el usuario desde `usePage().props.auth.user` (dato compartido globalmente por `HandleInertiaRequests::share()`, que sí incluye el modelo `User` completo) y lo bindea a los inputs vía `:default-value="user.name"` / `:default-value="user.email"` — un patrón poco común (uncontrolled input con `defaultValue`, no `v-model`/`:value`) combinado con el componente declarativo `<Form>` de Inertia v2. No se confirmó la causa raíz exacta (no se pudo instrumentar el árbol de Vue en vivo en esta ronda), pero el patrón de binding es el sospechoso más probable: o bien el valor de `user` no está disponible en el momento en que el input se monta por primera vez, o el propio `<Form>` está reseteando/remontando los inputs internos después de la asignación inicial de `defaultValue`.
+
+**Evidencia:**
+- `app/Http/Controllers/Settings/ProfileController.php::edit()` — el método Inertia solo pasa `mustVerifyEmail` y `status`; no pasa el usuario explícitamente (se apoya enteramente en el dato compartido `auth.user`)
+- `app/Http/Middleware/HandleInertiaRequests.php::share()` — `'auth' => ['user' => $user, ...]`, con el modelo `User` completo (no debería llegar vacío si hay sesión autenticada)
+- `resources/js/pages/settings/Profile.vue` — `const user = computed(() => page.props.auth.user)`, luego `:default-value="user.name"` y `:default-value="user.email"` en los inputs (líneas ~70 y ~90)
+- Reproducido en vivo: campos vacíos en desktop y en mobile, con la sesión claramente autenticada (el resto del layout — sidebar/hamburguesa, breadcrumbs, tabs de Configuración — muestra al usuario correctamente logueado)
+
+**Acción sugerida:**
+1. Instrumentar en vivo (Vue devtools o `console.log` temporal) si `page.props.auth.user` realmente llega vacío/`undefined` en el cliente, o si el dato SÍ llega pero el binding `:default-value` no lo refleja en el DOM — esto determina si el fix va en el backend/middleware o en el componente.
+2. Si el dato llega bien pero no se refleja: cambiar `:default-value` por `:value` + `v-model`, o confirmar con la documentación de Inertia v2 `<Form>` cuál es el patrón soportado para prellenar inputs no controlados dentro de ese componente.
+3. Agregar un test Dusk/Feature que visite `/settings/profile` autenticado y confirme que los inputs `#name`/`#email` traen el valor real del usuario (no vacío) — hoy no existe cobertura para esto pese a que `tests/Feature/Settings/ProfileUpdateTest.php` sí cubre el submit.
+
+**Estado:** pendiente
+**Prioridad:** ALTA (funcionalidad básica de cuenta rota — cualquier usuario que abra "Editar perfil" ve el formulario vacío, con riesgo de que lo reenvíe así y borre su propio nombre/correo)
+
+---
+
+## HLZ-48 — Todos los profesores con secciones reales están en o por encima de su límite configurado de horas/semana, bloqueando cualquier alta nueva de horario
+
+**Fecha:** 2026-09-13
+**Dominio:** scheduling / seed data
+**UC relacionado:** `specs/qa/academic/student-schedule.md`, UC-SS16 (bloqueó la construcción de un horario de prueba corto)
+**Descripción:**
+`Profesor::weekly_hour_limit` (columna "Límite horas/semana" en `/scheduling/professors`) es configurable por profesor (valores vistos: 14h, 15h, 20h, 28h, 36h), y la validación de `CreateClassSessionAction`/edición de horario en `/scheduling/schedules` la respeta correctamente al rechazar altas que la superen. El problema es de **datos de la instancia de desarrollo**, no de la validación en sí: de los profesores que efectivamente dictan secciones reales, 8 (Profesor Demo, Carlos Mendoza, Ana García, Luis Rodríguez, María Torres, Pedro Gómez, Carmen López, José Martínez) están en 25.0h contra un límite de 20h (**por encima** de su propio cupo), y otros 4 (Elena Vargas, Roberto Díaz, Patricia Sánchez, Miguel Herrera, más Laura Morales) están exactamente en 20.0h de 20h (**sin ningún margen**). Solo 5 profesores tienen margen real (Euna Prohaska, Cecelia Wintheiser, Mathilde Corwin, Loyce Hahn, Ayana Bergnaum), pero son cuentas Faker sin ninguna sección/materia asignada — no sirven para probar con datos reales de inscripción. Consecuencia práctica: hoy es **imposible**, vía el admin normal, agregar un solo horario nuevo (por corto que sea, incluso 15-30 min) para cualquier profesor que efectivamente esté dictando clase, sin antes reducir su carga existente o subir su límite individual. Adicionalmente, se confirmó que la validación se evalúa contra el **total resultante tras el cambio**, no contra el delta: intentar acortar un bloque existente de un profesor sobrecargado (por ejemplo, de 2h30m a 30 min, lo cual en teoría *reduce* su carga total de 25h a 22.5h) también fue rechazado, porque 22.5h + 0.5h nuevas = 23h sigue por encima del límite de 20h — es decir, hoy no hay forma de editar/acortar un horario existente de un profesor ya sobrecargado sin que la edición quede bloqueada igual, aunque el cambio en sí sea una mejora neta.
+
+**Evidencia:**
+- `/scheduling/professors` — columna "Límite horas/semana" por profesor (14h–36h según el registro)
+- Encuesta en vivo vía el selector "Profesor" del modal "Nuevo horario" (sin guardar ningún cambio): Profesor Demo, Carlos Mendoza, Ana García, Luis Rodríguez, María Torres, Pedro Gómez, Carmen López, José Martínez → "25.0 h de 20 h máx"; Elena Vargas, Roberto Díaz, Patricia Sánchez, Miguel Herrera, Laura Morales → "20.0 h de 20 h máx"; Euna Prohaska, Cecelia Wintheiser, Mathilde Corwin, Loyce Hahn, Ayana Bergnaum → "0.0 h" (sin secciones asignadas)
+- Intento en vivo: editar el bloque de María Torres (Investigación Educativa, Martes 15:30–18:00) acortando el "Fin" a 16:00 (0.5h en vez de 2.5h) → rechazado con "El profesor María Torres superaría su límite de 20h/semana (22.5h actuales + 0.5h nuevas)", pese a que el cambio reduce su carga total de 25h a 23h (sigue sobre el límite de 20h, pero es una mejora, no un empeoramiento)
+- Relacionado/mismo síntoma que la nota de Ronda 2 sobre "24 conflictos detectados esta semana" en el dashboard de `/scheduling/schedules` (doble-booking de profesor/aula) — ambos apuntan a que los datos sembrados de horario no respetan las propias reglas de negocio del sistema (límite de horas, no-solapamiento)
+
+**Acción sugerida:**
+1. Revisar el seeder de `schedules`/`professors` para que la carga horaria sembrada respete el límite configurado de cada profesor (o subir los límites sembrados para que coincidan con la carga real, si esa carga es la intencional).
+2. Decidir con el humano si la validación de edición debería comparar contra el **delta** (¿la edición aumenta o reduce la carga total?) en vez de contra el total resultante absoluto — hoy un profesor ya sobrecargado queda "congelado": no se le puede ni siquiera reducir la carga vía el admin sin múltiples ediciones que en algún punto individual sigan superando el límite.
+3. Test de regresión: crear un profesor de prueba sin secciones, confirmar que si tiene margen (`current + new <= limit`) la creación de un horario corto (~30 min) es aceptada — para no depender de datos de seed reales al validar UC-SS16 (`specs/qa/academic/student-schedule.md`).
+
+**Estado:** pendiente
+**Prioridad:** MEDIA (no bloquea a estudiantes ni representa una vulnerabilidad, pero es un problema de calidad de datos que impide operar el módulo de horarios en el admin con normalidad, y bloqueó directamente una verificación de QA en esta ronda)
+
+---
+
+## Nota de seguimiento — posible resolución parcial de HLZ-46 detectada en revisión de código (Ronda 3)
+
+Durante la revisión de código de esta ronda (no parte del pedido original) se encontró una ruta nueva no documentada en rondas anteriores: `PATCH /professor/sections/{section}/attendance/sessions/{classSession}/cancel` → `Professor\AttendanceController::cancelSession()`, respaldada por `Gate::authorize('cancel', $classSession)` y una nueva `App\Actions\Attendance\CancelClassSessionAction` que transiciona una sesión de `scheduled`/`held` a `cancelled` (rechaza cualquier otro estado con `ValidationException`). Esto es exactamente el prerequisito que `HLZ-46` identificó como faltante ("nada en el código pone una sesión en `status: cancelled`"). **No se volvió a probar en vivo el flujo completo de Recuperación con este nuevo endpoint** — queda fuera del alcance de esta ronda (enfocada en `/student/schedule` y el sidebar mobile) — pero se recomienda que la próxima ronda de QA de asistencia re-verifique `UC-A07`/`UC-A08` en `specs/qa/attendance/professor-attendance.md` usando este flujo, ya que `HLZ-46` podría estar resuelto o parcialmente resuelto.

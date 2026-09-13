@@ -26,6 +26,13 @@ const widthPct = 100 / lanes
 const leftPct  = lane * widthPct
 const color    = scheduleColor(props.schedule)
 const compact  = height < PX_PER_HOUR
+// Content-box available when `compact` = height - (3px top + 3px bottom padding).
+// Compact content stack = evt-title (12px * 1.15 ≈ 13.8px) + gap 2px + evt-compact-meta
+// (9.5px * 1.2 ≈ 11.4px) = 27.2px, needing a content-box of >= 27.2px → height >= 33.2px.
+// Below that, evt-compact-meta gets clipped mid-glyph instead of hidden cleanly, so we
+// drop it entirely and show only the title once height falls under this threshold
+// (e.g. 30-min classes: scheduleHeight 28px → rendered height 26px, well under 34px).
+const veryCompact = compact && height < 34
 const overlapped = lanes > 1
 
 const initials = props.schedule.professor.user.name
@@ -57,9 +64,9 @@ const initials = props.schedule.professor.user.name
         @keydown.enter.prevent="emit('open')"
         @keydown.space.prevent="emit('open')"
     >
-        <div class="evt-time">
+        <div v-if="!compact" class="evt-time">
             {{ schedule.startTime }}–{{ schedule.endTime }}
-            <span v-if="!compact" class="dur">{{ formatDuration(schedule) }}</span>
+            <span class="dur">{{ formatDuration(schedule) }}</span>
         </div>
         <div class="evt-title">{{ schedule.subject.name }}</div>
         <template v-if="!compact">
@@ -72,6 +79,13 @@ const initials = props.schedule.professor.user.name
                 {{ schedule.professor.user.name }}
             </div>
         </template>
+        <div v-else-if="!veryCompact" class="evt-compact-meta">
+            <span class="time">{{ schedule.startTime }}–{{ schedule.endTime }}</span>
+            <span class="sep">·</span>
+            <span class="room">{{ schedule.classroom.identifier }}</span>
+            <span class="sep">·</span>
+            <span class="prof">{{ schedule.professor.user.name }}</span>
+        </div>
 
         <div v-if="canUpdate || canDelete" class="evt-actions">
             <button v-if="canUpdate" title="Editar" @click.stop="emit('edit')">✎</button>
@@ -112,7 +126,8 @@ const initials = props.schedule.professor.user.name
 }
 .sch-evt.overlapped { padding: 6px 8px 6px 12px; }
 .sch-evt.overlapped::before { width: 3px; }
-.sch-evt.compact { padding: 4px 8px 4px 12px; gap: 1px; }
+.sch-evt.compact { padding: 3px 8px 3px 12px; gap: 2px; }
+.sch-evt.compact .evt-title { -webkit-line-clamp: 1; font-size: 12px; line-height: 1.15; }
 .sch-evt.conflict { border-color: var(--danger) !important; background: color-mix(in srgb, var(--danger) 6%, var(--bg-surface-2)); }
 .sch-evt.conflict::after { content: '⚠'; position: absolute; top: 5px; right: 7px; font-size: 11px; color: var(--danger); }
 
@@ -183,6 +198,31 @@ const initials = props.schedule.professor.user.name
     flex-shrink: 0;
 }
 
+.evt-compact-meta {
+    font-size: 9.5px;
+    line-height: 1.2;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.evt-compact-meta .time {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+.evt-compact-meta .room {
+    font-weight: 600;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+.evt-compact-meta .sep { opacity: 0.5; flex-shrink: 0; }
+.evt-compact-meta .prof { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 .evt-actions {
     position: absolute;
     top: 4px; right: 4px;
@@ -211,5 +251,5 @@ const initials = props.schedule.professor.user.name
 }
 
 @container (max-width: 110px) { .evt-meta { display: none; } }
-@container (max-width: 80px)  { .evt-prof { display: none; } .sch-evt { padding: 6px 6px 6px 10px; } }
+@container (max-width: 80px)  { .evt-prof { display: none; } .evt-compact-meta { display: none; } .sch-evt { padding: 6px 6px 6px 10px; } }
 </style>

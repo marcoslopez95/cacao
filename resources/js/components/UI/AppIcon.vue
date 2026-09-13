@@ -65,6 +65,7 @@ const paths: Record<string, string> = {
     'graduation-cap': '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
     'layout-list':    '<rect x="3" y="5" width="6" height="5" rx="1"/><rect x="3" y="14" width="6" height="5" rx="1"/><path d="M13 7h8M13 10h5M13 16h8M13 19h5"/>',
     pencil:           '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
+    menu:             '<path d="M4 6h16M4 12h16M4 18h16"/>',
 }
 </script>
 
