@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Form, Head, Link, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import SettingsTabs from '@/components/settings/SettingsTabs.vue';
 import Button from '@/components/UI/AppButton.vue';
@@ -8,20 +8,23 @@ import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
 
 type Props = {
+    user: {
+        id: number;
+        name: string;
+        email: string;
+        email_verified_at: string | null;
+    };
     mustVerifyEmail: boolean;
     status?: string;
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 defineOptions({
     layout: {
         breadcrumbs: [{ title: 'Configuración', href: edit() }],
     },
 });
-
-const page = usePage();
-const user = computed(() => page.props.auth.user);
 
 const isDirty = ref(false);
 const isSaved = ref(false);
@@ -35,8 +38,8 @@ function onSuccess(): void {
     isDirty.value = false;
     isSaved.value = true;
     setTimeout(() => {
- isSaved.value = false; 
-}, 2400);
+        isSaved.value = false;
+    }, 2400);
 }
 </script>
 
@@ -46,7 +49,6 @@ function onSuccess(): void {
 
     <SettingsTabs />
 
-    <!-- Información del perfil -->
     <Form
         v-bind="ProfileController.update.form()"
         class="sp-section"
@@ -71,12 +73,14 @@ function onSuccess(): void {
                         name="name"
                         class="sp-input"
                         :class="{ error: errors.name }"
-                        :default-value="user.name"
+                        :value="props.user.name"
                         required
                         autocomplete="name"
                         @input="onInput"
                     />
-                    <div v-if="errors.name" class="sp-error">{{ errors.name }}</div>
+                    <div v-if="errors.name" class="sp-error">
+                        {{ errors.name }}
+                    </div>
                 </div>
 
                 <div class="sp-field">
@@ -89,32 +93,68 @@ function onSuccess(): void {
                         name="email"
                         class="sp-input"
                         :class="{ error: errors.email }"
-                        :default-value="user.email"
+                        :value="props.user.email"
                         required
                         autocomplete="username"
                         @input="onInput"
                     />
-                    <div v-if="errors.email" class="sp-error">{{ errors.email }}</div>
+                    <div v-if="errors.email" class="sp-error">
+                        {{ errors.email }}
+                    </div>
 
-                    <div v-if="user.email_verified_at" class="sp-verif ok">
+                    <div
+                        v-if="props.user.email_verified_at"
+                        class="sp-verif ok"
+                    >
                         <span class="sp-verif-ico">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                            <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.4"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M20 6 9 17l-5-5" />
+                            </svg>
                         </span>
                         <div class="sp-verif-text">
-                            <strong>Correo verificado.</strong> Tu dirección de correo está confirmada.
+                            <strong>Correo verificado.</strong> Tu dirección de
+                            correo está confirmada.
                         </div>
                     </div>
                     <div v-else-if="mustVerifyEmail" class="sp-verif warn">
                         <span class="sp-verif-ico">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 1 21h22z"/><path d="M12 10v5M12 18h.01"/></svg>
+                            <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M12 3 1 21h22z" />
+                                <path d="M12 10v5M12 18h.01" />
+                            </svg>
                         </span>
                         <div class="sp-verif-text">
-                            <template v-if="status === 'verification-link-sent'">
-                                <strong>Enlace enviado.</strong> Revisa tu bandeja de entrada.
+                            <template
+                                v-if="status === 'verification-link-sent'"
+                            >
+                                <strong>Enlace enviado.</strong> Revisa tu
+                                bandeja de entrada.
                             </template>
                             <template v-else>
                                 <strong>Correo no verificado.</strong>
-                                <Link :href="send()" as="button" class="sp-verif-resend">
+                                <Link
+                                    :href="send()"
+                                    as="button"
+                                    class="sp-verif-resend"
+                                >
                                     Reenviar enlace de verificación
                                 </Link>
                             </template>
@@ -130,7 +170,18 @@ function onSuccess(): void {
                 :class="{ dirty: isDirty && !isSaved, saved: isSaved }"
             >
                 <template v-if="isSaved">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                    <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.4"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
                     Cambios guardados
                 </template>
                 <template v-else-if="isDirty">
@@ -149,5 +200,4 @@ function onSuccess(): void {
             </Button>
         </div>
     </Form>
-
 </template>

@@ -1,8 +1,123 @@
+# Feature completada: 22-qa-round3-followup-fixes (2026-09-13)
+
+**Estado:** COMPLETADA — 4/4 tasks completadas.
+**Plan:** `specs/22-qa-round3-followup-fixes/tasks.md`
+
+Agrupó 3 correcciones puntuales de la Ronda 3 de QA: HLZ-43 (ampliación — label de período
+"Xer trimestre" corregido para universitarios), HLZ-47 (`/settings/profile` ahora recibe `user`
+como prop tipada vía `ProfileUserResource`, en vez de leer `usePage().props.auth.user` en la
+página) y HLZ-48 (seeders demo suben `weekly_hour_limit` de los profesores sobre su límite real).
+Durante la implementación se encontró y corrigió un bug latente de Vue: `:default-value` nunca
+funcionó en `Profile.vue` (ni presumiblemente en `teams/Edit.vue`, que usa el mismo patrón sin
+test que lo cubra) — cambiado a `:value`, verificado sin regresión en el flujo de guardado.
+
+## Feature Gate (Task 4) — 2026-09-13
+✅ APROBADO — 4/4 UCs de `specs/22-qa-round3-followup-fixes/qa.md` en verde. 9 tests Feature
+(`tests/Feature/QaRound3FollowupFixes/Acceptance/`) + 7 tests Dusk
+(`tests/Browser/Enrollment/QaRound3PeriodLabelTest.php`,
+`tests/Browser/Settings/QaRound3ProfilePrefillTest.php`). Sin HLZs generados.
+
+## Task 3 completada — HLZ-48
+
+Verificado antes de tocar nada: `git status` sobre `database/seeders/` estaba limpio (sin cambios sin
+commitear) y el único solapamiento real de `demo-seeder-realism` con `DemoSectionsSeeder.php` (su
+Task 5, rango `period_number ∈ {2,4,6,8}`) ya estaba mergeado en master — sin conflicto, se procedió.
+
+`database/seeders/Demo/DemoSectionsSeeder.php`: nuevo método privado
+`raiseWeeklyHourLimitsForOverloadedProfessors()`, llamado al final de `run()` (después de
+`seedSchoolSections()`, que es lo último que corre en el seeder). Para cada profesor con al menos un
+`Schedule` sembrado, calcula su carga real con
+`ScheduleConflictService::professorCurrentWeeklyHours()` (el mismo cálculo que usa la validación de
+producción — reutilizado, no reimplementado) y, si supera su `weekly_hour_limit` actual, lo sube a
+`ceil(carga_real) + 5`. Margen elegido: 5h fijas (`WEEKLY_HOUR_LIMIT_MARGIN`), documentado en el
+PHPDoc del método — aproximadamente un day-pair adicional de 2.5h (2 días), para dejar margen real a
+una futura alta de horario sin volver a tocar el límite. Idempotente: se recalcula desde los
+`Schedule` reales en cada corrida, solo sube el límite (nunca lo baja), y no hace nada si el límite
+ya cubre la carga — seguro en `migrate:fresh --seed` repetido.
+
+Estado real verificado en la DB de desarrollo antes del fix (13 profesores con `Schedule`): 8 en
+25.0h/límite 20 (excedidos) y 5 en 20.0h/límite 20 (exactos, sin margen, no tocados por no ser
+`>`). Con el fix, los 8 excedidos quedan en límite 30 (25 + 5) — con margen real para un bloque
+nuevo de 30 min o más.
+
+Tests: `DemoSeederWeeklyHourLimitAcceptanceTest` (2/2, `--tia --compact`) en verde — no se tocó (es
+el contrato del tester). `DemoSeederTest` completo (8/8, 60 assertions) sin regresión. Pint sin
+observaciones (`pint --dirty --format agent` → pass).
+
+Nada bloqueó la task: sin conflicto real con `demo-seeder-realism`, archivo intocable no tocado.
+
+## Task 2 completada — HLZ-47
+
+`app/Http/Resources/Settings/ProfileUserResource.php` (nuevo): `toArray()` devuelve `id`, `name`,
+`email`, `email_verified_at` (campo agregado tras el bloqueo del tester en `pre`, ver design.md
+nota 2026-09-13, para no romper el badge "Correo verificado."). `ProfileController::edit()` pasa
+`'user' => new ProfileUserResource($request->user())` como prop explícita junto a `mustVerifyEmail`
+y `status`. `Profile.vue` reemplaza `const user = computed(() => page.props.auth.user)` por
+`defineProps<Props>()` tipada (`user: { id, name, email, email_verified_at }`), eliminando el uso de
+`usePage()` en el cuerpo de la página (violación de convención señalada en `CLAUDE.md`).
+
+**Hallazgo no previsto en el diseño, corregido dentro del mismo archivo (Profile.vue, no protegido):**
+`ProfileUserResource` necesitó `public static $wrap = null;` (mismo patrón ya usado en
+`DemographicProfileResource`) — sin esto, Inertia envuelve el resource en `{"data": {...}}` y el
+prop queda en `user.data.id` en vez de `user.id`, rompiendo el contrato de
+`ProfileEditPropsAcceptanceTest` (`user.id` no existe). Confirmado con `->dump()` de
+`AssertableInertia` antes de aplicar el fix.
+
+**Segundo hallazgo, más importante — bug preexistente en el binding, no introducido por esta task:**
+el Dusk test (`QaRound3ProfilePrefillTest`) seguía en rojo (inputs con valor `''`) incluso con el
+prop correcto y el build de Vite regenerado. Verificado con el HTML real renderizado (dump de
+`getPageSource()` en un test Dusk temporal, borrado después): Vue emitía literalmente el atributo
+`default-value="X"` en el DOM — no el atributo nativo `value` — porque `shouldSetAsProp` en
+`@vue/runtime-dom` (`runtime-dom.cjs.js:749`) evalúa `key in el` con la clave tal cual se escribe en
+el template (`"default-value"`, con guion), y esa cadena nunca es una propiedad real del elemento
+(la IDL real es `defaultValue`, camelCase) — cae a `setAttribute`, que no afecta el `.value` real del
+input. Esto ya afectaba a `Profile.vue` ANTES del fix de esta task (la instrucción original de no
+cambiar el binding asumía, sin verificarlo con un test de browser, que `:default-value` ya
+funcionaba — cita como referencia `teams/Edit.vue:111`, que usa el mismo patrón pero nunca tuvo un
+test Dusk que lo verificara). Fix aplicado: `:default-value` → `:value` en los dos inputs
+(`#name`/`#email`) de `Profile.vue`. No se tocó ningún archivo protegido — el fix vive enteramente
+en `Profile.vue`, que es el archivo que esta task ya tenía autorización para modificar. El `v-if`
+del badge y el resto del comportamiento no cambiaron.
+
+Tests en verde: `ProfileEditPropsAcceptanceTest` (5/5, Feature, `--tia`) +
+`QaRound3ProfilePrefillTest` (5/5, Dusk, UC-QA-03 desktop+mobile, 4 roles). Pint sin cambios
+necesarios (los 2 archivos PHP tocados ya cumplían el formato). Se corrió `npm run build` dos veces
+(prop nuevo + fix de binding) porque Dusk usa el bundle compilado, no Vite dev.
+
+**Reportar al leader:** el fix de `:value` en `Profile.vue` es una desviación de la instrucción
+literal de la delegación ("los `:default-value` ... no cambian de comportamiento"). Los tests no
+estaban mal — el bug era real y preexistente; sin el cambio, `QaRound3ProfilePrefillTest` queda en
+rojo indefinidamente. Ningún archivo intocable fue tocado.
+
+Agrupa 3 correcciones puntuales de la Ronda 3 de QA: HLZ-43 (ampliación — label de período
+"Xer trimestre" también afecta a universitarios), HLZ-47 (`/settings/profile` carga vacío por
+leer `usePage().props.auth.user` en la página en vez de una prop tipada) y HLZ-48 (profesores
+demo sembrados por encima de su `weekly_hour_limit`, sube el límite en vez de tocar
+secciones/horarios ya usados por el QA de la feature 21).
+
+## Task 1 completada — HLZ-43 (ampliación)
+
+`EnrollmentController::buildRules()` ahora condiciona `$periodLabel` explícitamente por
+`$period->type`: `PeriodType::Semester` usa `$period->name` (nombre real del período,
+nunca el fallback "Xer trimestre"); cualquier otro caso (incluido `Year`, antes de que el
+bloque `if` posterior lo pise con el `Lapse` vigente) preserva exactamente la expresión
+original basada en `$student->academic_year`, sin cambio de comportamiento para `Year`.
+`resources/js/pages/enrollment/Index.vue`: el copy de ayuda hardcodeado "este trimestre" se
+reemplazó por `{{ uiRules.trimester }}` (ya resuelto por backend), igual que el encabezado de
+la línea de arriba.
+
+Se corrió `npm run build` porque el Dusk inicial falló contra el bundle viejo (`este trimestre`
+aún compilado) — después del build, verde.
+
+Tests Task 1 en verde: `EnrollmentPeriodLabelAcceptanceTest` (2/2, Feature) +
+`QaRound3PeriodLabelTest` (2/2, Dusk, UC-QA-01/02). Pint sin cambios necesarios.
+
+---
+
 # Feature completada: 21-student-schedule-view (2026-09-13)
 
 **Estado:** COMPLETADA — 7/7 tasks completadas.
 **Plan:** `specs/21-student-schedule-view/tasks.md`
-**Próximo paso:** sin feature activa — pedir al humano qué sigue.
 
 Nueva vista `/student/schedule` con el horario semanal completo del estudiante, reutilizando
 `WeeklyGrid`/`ScheduleListView` sin modificarlos (solo montaje read-only). Durante el desarrollo se

@@ -117,6 +117,15 @@ tipo (teórica/lab) y vigencia (valid_from / valid_until).
 
 ---
 
+## UCs de datos sembrados (seeders demo)
+
+- **UC-H77** — Tras `migrate:fresh --seed`, ningún profesor demo con secciones/horarios reales queda con carga horaria semanal (`ScheduleConflictService::professorCurrentWeeklyHours()`) por encima de su propio `weekly_hour_limit`. Efecto colateral verificable: al menos un profesor con secciones reales tiene margen para que el admin cree un nuevo bloque de horario de al menos 30 min sin recibir el error de UC-H30 (`professorWeeklyHoursExceeded()`).
+  - **Origen:** HLZ-48 (`specs/qa/backlog.md`) — `DemoProfessorsSeeder` fijaba `weekly_hour_limit = 20` para todos los profesores mientras `DemoSectionsSeeder` sembraba `Schedule` directo a DB sin pasar por la validación de negocio, dejando 8/18 profesores demo por encima de su propio límite (5 más exactamente en el límite, sin margen) — bloqueaba cualquier alta/edición real de horario en el admin sobre esos profesores.
+  - **Fix:** `DemoSectionsSeeder::raiseWeeklyHourLimitsForOverloadedProfessors()` (feature `22-qa-round3-followup-fixes`, Task 3) recalcula la carga real sembrada con el mismo `ScheduleConflictService::professorCurrentWeeklyHours()` usado en producción y sube (nunca baja) el `weekly_hour_limit` del profesor con un margen fijo de +5h. Idempotente — no toca la validación de negocio (`professorWeeklyHoursExceeded()`), que queda intacta.
+  - **Nivel de test:** Feature/Unit contra datos sembrados — no requiere Dusk (no hay interacción de browser en la definición del UC en sí; el efecto colateral en el modal de alta ya está cubierto por UC-H30/UC-H31 en `ScheduleConflictsTest.php`, que siguen en verde tras el fix).
+
+---
+
 ## UCs de edición
 
 - **UC-H33** — Con permiso `schedules.update`, los controles de editar (lápiz) son visibles en los eventos de la grilla y en la lista. Sin ese permiso, los controles no aparecen.
@@ -279,6 +288,7 @@ tipo (teórica/lab) y vigencia (valid_from / valid_until).
 | UC-H30 | ScheduleConflictsTest.php | UC-H30 | PASS |
 | UC-H31 | ScheduleConflictsTest.php | UC-H31 | PASS |
 | UC-H32 | ScheduleConflictsTest.php | UC-H32 | PASS |
+| UC-H77 | tests/Feature/QaRound3FollowupFixes/Acceptance/DemoSeederWeeklyHourLimitAcceptanceTest.php | RF-05 (ambos tests) | PASS (Feature, no Dusk) |
 | UC-H33 | ScheduleEditTest.php | UC-H33a / UC-H33b | PASS |
 | UC-H34 | ScheduleEditTest.php | UC-H34 | PASS |
 | UC-H35 | ScheduleEditTest.php | UC-H35 | FALLO — HLZ-30 (toast nunca aparece) |

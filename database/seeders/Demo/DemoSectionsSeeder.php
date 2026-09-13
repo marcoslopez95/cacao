@@ -14,12 +14,21 @@ use App\Models\Professor;
 use App\Models\Schedule;
 use App\Models\Section;
 use App\Models\Subject;
+use App\Services\Scheduling\ScheduleConflictService;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class DemoSectionsSeeder extends Seeder
 {
+    /**
+     * Fixed cushion (in hours) added on top of a professor's rounded-up real
+     * weekly load when their seeded `weekly_hour_limit` is raised. Roughly one
+     * extra 2.5h day-pair schedule block, so QA/admin can still add a new
+     * schedule to these professors without immediately hitting the limit again.
+     */
+    private const WEEKLY_HOUR_LIMIT_MARGIN = 5;
+
     /**
      * Day pairs for schedule rotation.
      *
@@ -110,6 +119,46 @@ class DemoSectionsSeeder extends Seeder
         }
 
         $this->seedSchoolSections($professors, $classrooms);
+
+        $this->raiseWeeklyHourLimitsForOverloadedProfessors();
+    }
+
+    /**
+     * Raise `weekly_hour_limit` for any demo professor whose real seeded schedule
+     * load exceeds their current limit, so the demo dataset never violates its own
+     * business rule (`ScheduleConflictService::professorWeeklyHoursExceeded()`)
+     * out of the box. Uses the same hour calculation as production validation
+     * (`professorCurrentWeeklyHours()`) so the fix and the rule it satisfies never
+     * drift apart.
+     *
+     * Idempotent: recomputed from the actual seeded schedules every run, only
+     * raises (never lowers) the limit, and does nothing once the professor's
+     * limit already covers their load — safe on repeated `migrate:fresh --seed`.
+     */
+    private function raiseWeeklyHourLimitsForOverloadedProfessors(): void
+    {
+        $service = app(ScheduleConflictService::class);
+
+        $professorIds = Schedule::query()
+            ->whereNotNull('professor_id')
+            ->distinct()
+            ->pluck('professor_id');
+
+        foreach ($professorIds as $professorId) {
+            $professor = Professor::find($professorId);
+
+            if (! $professor) {
+                continue;
+            }
+
+            $weeklyHours = $service->professorCurrentWeeklyHours($professor);
+
+            if ($weeklyHours > $professor->weekly_hour_limit) {
+                $professor->update([
+                    'weekly_hour_limit' => (int) ceil($weeklyHours) + self::WEEKLY_HOUR_LIMIT_MARGIN,
+                ]);
+            }
+        }
     }
 
     /**

@@ -251,6 +251,14 @@
       "spec": "specs/21-student-schedule-view/",
       "depends_on": [],
       "description": "Nueva vista /student/schedule con el horario semanal completo del estudiante (secciones EnrollmentDetail::confirmed del período activo, filtradas por vigencia), montando sin modificar WeeklyGrid.vue (desktop) y ScheduleListView.vue (mobile) alternados por CSS puro. Link 'Ver horario completo →' agregado al widget 'Hoy' del dashboard del estudiante."
+    },
+    {
+      "id": "qa-round3-followup-fixes",
+      "name": "QA Round 3 Follow-up Fixes",
+      "status": "completed",
+      "spec": "specs/22-qa-round3-followup-fixes/",
+      "depends_on": [],
+      "description": "HLZ-43 (ampliación): label de período 'Xer trimestre' hardcodeado también afecta a universitarios, corregido condicionando por Period::type. HLZ-47: /settings/profile carga con Nombre/Correo vacíos porque Profile.vue lee usePage().props.auth.user en vez de recibir una prop tipada (viola convención del proyecto). HLZ-48: profesores demo nacen sobre su weekly_hour_limit porque DemoSectionsSeeder asigna horarios sin pasar por ScheduleConflictService — se sube el límite sembrado en vez de tocar secciones/horarios ya usados por QA de la feature 21."
     }
   ]
 }

@@ -1001,11 +1001,11 @@ Regla de negocio confirmada con el humano: los estudiantes universitarios no tie
 3. Test: estudiante `secondary` con secciones escolares creadas en el período `Year` activo → catálogo no vacío, puede completar inscripción igual que un universitario.
 4. Test de regresión: estudiante `university` sigue viendo su catálogo normalmente contra el período `Semester`, **y** ve el label de período correcto (no "trimestre").
 
-**Estado:** resuelto (diagnóstico original) — la ampliación de Ronda 3 (mislabel de período también en universitarios) sigue **pendiente**, ver nota arriba
-**Fecha de resolución:** 2026-08-30
-**Feature:** `16-enrollment-level-guard-and-period-fix`
-**Verificación:** `EnrollmentController::index()` resuelve `Period::where('status', Active)->where('type', ...)` condicionado a `PeriodType::Semester` (university) o `PeriodType::Year` (primary/secondary). `buildRules()` usa el `Lapse` vigente por fecha cuando el período es `Year`, en vez de `"{academic_year}er trimestre"` hardcodeado. Adicionalmente se agregó `Subject::schoolSections(): BelongsToMany` y `BuildEnrollmentCatalogAction::handle()` combina `sections` + `schoolSections` (ver `design.md`, "Corrección al diseño 2026-08-30") — sin este cambio el fix de período por sí solo no cerraba el catálogo vacío. Tests: `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentPeriodResolutionAcceptanceTest.php`, `EnrollmentSchoolCatalogAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-03,UC-QA-05` — todos en verde. **El mislabel de la línea 209 (ampliación Ronda 3) no estaba cubierto por estos tests y sigue sin corregir.**
-**Prioridad:** CRÍTICA (bloquea el 100% de la inscripción de Primaria/Bachillerato, incluso para el representante — RESUELTO; el mislabel de período que persiste es de menor severidad pero de alcance más amplio de lo documentado originalmente — PENDIENTE)
+**Estado:** resuelto (diagnóstico original + ampliación de Ronda 3)
+**Fecha de resolución:** 2026-08-30 (diagnóstico original); 2026-09-13 (ampliación)
+**Feature:** `16-enrollment-level-guard-and-period-fix`; `22-qa-round3-followup-fixes`
+**Verificación:** `EnrollmentController::index()` resuelve `Period::where('status', Active)->where('type', ...)` condicionado a `PeriodType::Semester` (university) o `PeriodType::Year` (primary/secondary). `buildRules()` usa el `Lapse` vigente por fecha cuando el período es `Year`, en vez de `"{academic_year}er trimestre"` hardcodeado. Adicionalmente se agregó `Subject::schoolSections(): BelongsToMany` y `BuildEnrollmentCatalogAction::handle()` combina `sections` + `schoolSections` (ver `design.md`, "Corrección al diseño 2026-08-30"). Tests: `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentPeriodResolutionAcceptanceTest.php`, `EnrollmentSchoolCatalogAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-03,UC-QA-05` — todos en verde. **Ampliación (Ronda 3) resuelta en feature `22-qa-round3-followup-fixes`:** `buildRules()` ahora condiciona `$periodLabel` explícitamente por `$period->type` (Semester usa el nombre real del período, no el fallback "Xer trimestre"); copy hardcodeado "este trimestre" eliminado de `enrollment/Index.vue`. Tests: `tests/Feature/QaRound3FollowupFixes/Acceptance/EnrollmentPeriodLabelAcceptanceTest.php` (2/2), `tests/Browser/Enrollment/QaRound3PeriodLabelTest.php` (UC-QA-01, UC-QA-02) — todos en verde.
+**Prioridad:** CRÍTICA (bloqueaba el 100% de la inscripción de Primaria/Bachillerato, incluso para el representante — RESUELTO; el mislabel de período — RESUELTO)
 
 ---
 
@@ -1109,8 +1109,12 @@ Al entrar a `/settings/profile`, los inputs "Nombre" y "Correo electrónico" se 
 2. Si el dato llega bien pero no se refleja: cambiar `:default-value` por `:value` + `v-model`, o confirmar con la documentación de Inertia v2 `<Form>` cuál es el patrón soportado para prellenar inputs no controlados dentro de ese componente.
 3. Agregar un test Dusk/Feature que visite `/settings/profile` autenticado y confirme que los inputs `#name`/`#email` traen el valor real del usuario (no vacío) — hoy no existe cobertura para esto pese a que `tests/Feature/Settings/ProfileUpdateTest.php` sí cubre el submit.
 
-**Estado:** pendiente
-**Prioridad:** ALTA (funcionalidad básica de cuenta rota — cualquier usuario que abra "Editar perfil" ve el formulario vacío, con riesgo de que lo reenvíe así y borre su propio nombre/correo)
+**Estado:** resuelto
+**Fecha de resolución:** 2026-09-13
+**Feature:** `22-qa-round3-followup-fixes`
+**Verificación:** causa raíz confirmada — `Profile.vue` leía `usePage().props.auth.user` en la página (violación de convención) Y, adicionalmente, `:default-value` nunca funcionó en este runtime de Vue (`shouldSetAsProp` no reconoce la clave con guion, cae a `setAttribute` sin efecto en `.value`) — bug latente independiente de la fuente del dato. Fix: `ProfileController::edit()` pasa `user` como prop tipada vía `ProfileUserResource` (nuevo, incluye `email_verified_at` para no romper el badge "Correo verificado."); `Profile.vue` recibe la prop con `defineProps` y usa `:value` en vez de `:default-value`. Tests: `tests/Feature/QaRound3FollowupFixes/Acceptance/ProfileEditPropsAcceptanceTest.php` (5/5), `tests/Browser/Settings/QaRound3ProfilePrefillTest.php` (5/5, 4 roles + mobile) — todos en verde. `tests/Feature/Settings/ProfileUpdateTest.php` (flujo de guardado existente) sin regresión.
+**Nota:** `resources/js/pages/teams/Edit.vue:111` usa el mismo patrón `:default-value` sin ningún test Dusk que lo cubra — probablemente tiene el mismo bug latente. Documentado como HLZ-49.
+**Prioridad:** ALTA (funcionalidad básica de cuenta rota — cualquier usuario que abriera "Editar perfil" veía el formulario vacío, con riesgo de reenviarlo así y borrar su propio nombre/correo)
 
 ---
 
@@ -1133,8 +1137,36 @@ Al entrar a `/settings/profile`, los inputs "Nombre" y "Correo electrónico" se 
 2. Decidir con el humano si la validación de edición debería comparar contra el **delta** (¿la edición aumenta o reduce la carga total?) en vez de contra el total resultante absoluto — hoy un profesor ya sobrecargado queda "congelado": no se le puede ni siquiera reducir la carga vía el admin sin múltiples ediciones que en algún punto individual sigan superando el límite.
 3. Test de regresión: crear un profesor de prueba sin secciones, confirmar que si tiene margen (`current + new <= limit`) la creación de un horario corto (~30 min) es aceptada — para no depender de datos de seed reales al validar UC-SS16 (`specs/qa/academic/student-schedule.md`).
 
+**Estado:** resuelto
+**Fecha de resolución:** 2026-09-13
+**Feature:** `22-qa-round3-followup-fixes`
+**Verificación:** `DemoSectionsSeeder::raiseWeeklyHourLimitsForOverloadedProfessors()` (nuevo, invocado al final de `run()`) calcula la carga real de cada profesor con `ScheduleConflictService::professorCurrentWeeklyHours()` (mismo cálculo que la validación de producción, sin duplicarlo) y sube `weekly_hour_limit` a `ceil(carga_real) + 5h` de margen cuando lo supera — nunca lo baja, idempotente en corridas repetidas de `migrate:fresh --seed`. Se decidió subir el límite en vez de reducir la carga sembrada, para no invalidar secciones/horarios ya usados por el QA Gate de la feature `21-student-schedule-view`. Verificado: los 8 profesores que estaban sobre su límite (25h/20h) ahora quedan en límite 30h, con margen real. Tests: `tests/Feature/QaRound3FollowupFixes/Acceptance/DemoSeederWeeklyHourLimitAcceptanceTest.php` (2/2) — 0 profesores sobre su propio límite tras el seed, al menos un profesor con margen ≥30min. Sin regresión en `DemoSeederTest` (8/8) ni en los Dusk de scheduling (`ScheduleConflictsTest`, `ScheduleCreateTest`, `ScheduleEditTest`).
+**Prioridad:** MEDIA (no bloqueaba a estudiantes ni representaba una vulnerabilidad, pero impedía operar el módulo de horarios en el admin con normalidad — RESUELTO)
+
+---
+
+## HLZ-49 — `teams/Edit.vue` probablemente tiene el mismo bug de `:default-value` que HLZ-47, sin test que lo detecte
+
+**Fecha:** 2026-09-13
+**Dominio:** teams (settings de equipo)
+**UC relacionado:** nuevo (sin UC definido aún — nunca se auditó este flujo)
+**Descripción:**
+Durante el fix de HLZ-47 (feature `22-qa-round3-followup-fixes`), el implementer confirmó vía HTML renderizado que `:default-value` **nunca funciona** en el runtime de Vue de este proyecto: `shouldSetAsProp` (`@vue/runtime-dom`) evalúa `key in el` con la clave literal `"default-value"` (con guion), que no es una IDL prop real del elemento (`defaultValue` es camelCase) — cae a `setAttribute()`, sin efecto sobre `.value`. `resources/js/pages/teams/Edit.vue:111` usa exactamente el mismo patrón (`:default-value="team.name"`, dentro de un `<Form>` de Inertia v2, mismo namespace de componente que `Profile.vue` antes del fix) y **nunca tuvo un test Dusk que lo cubriera** — es la razón por la que HLZ-47 lo citó originalmente como "referencia de que el patrón funciona", cuando en realidad nadie lo había verificado en vivo.
+
+**No confirmado en vivo todavía** — es una sospecha de alta probabilidad basada en código idéntico, no una reproducción con evidencia Dusk.
+
+**Evidencia:**
+- `resources/js/pages/teams/Edit.vue:111` — `:default-value="team.name"` en un `<input>` sin `v-model`/`:value`, dentro de `<Form>` (línea 100-114)
+- Mismo patrón exacto que `resources/js/pages/settings/Profile.vue` tenía antes del fix de HLZ-47 (commit de la feature `22-qa-round3-followup-fixes`)
+- Ningún test en `tests/Browser/` ni `tests/Feature/` ejercita el valor inicial de `#team-name-input` — solo se testea el submit
+
+**Acción sugerida:**
+1. Reproducir en vivo: abrir `/teams/{slug}/edit` con un equipo real y confirmar si el input "Team name" carga vacío
+2. Si se confirma: aplicar el mismo fix que HLZ-47 (`:default-value` → `:value` en el input `#team-name`)
+3. Agregar un test Dusk/Feature que confirme el prefill, para que este patrón no vuelva a colarse sin cobertura en otros formularios del proyecto
+
 **Estado:** pendiente
-**Prioridad:** MEDIA (no bloquea a estudiantes ni representa una vulnerabilidad, pero es un problema de calidad de datos que impide operar el módulo de horarios en el admin con normalidad, y bloqueó directamente una verificación de QA en esta ronda)
+**Prioridad:** MEDIA (mismo síntoma que HLZ-47 — Nombre de equipo no persiste visualmente al recargar — pero afecta un flujo de menor uso que el perfil personal; no confirmado en vivo todavía)
 
 ---
 

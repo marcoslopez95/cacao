@@ -206,7 +206,10 @@ class EnrollmentController extends Controller
 
     private function buildRules(?Period $period, ?Student $student): array
     {
-        $periodLabel = $student?->academic_year ? "{$student->academic_year}er trimestre" : '';
+        $periodLabel = match ($period?->type) {
+            PeriodType::Semester => $period->name,
+            default => $student?->academic_year ? "{$student->academic_year}er trimestre" : '',
+        };
 
         if ($period?->type === PeriodType::Year) {
             $lapse = $period->lapses()

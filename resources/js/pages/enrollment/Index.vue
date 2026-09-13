@@ -149,7 +149,7 @@ async function handleConfirm(): Promise<void> {
             <span class="enr-page-eyebrow">Período {{ uiRules.period }} · {{ uiRules.trimester }}</span>
             <h1 class="enr-page-title">Inscripción de materias</h1>
             <p class="enr-page-sub">
-                Selecciona las materias y secciones que cursarás este trimestre.
+                Selecciona las materias y secciones que cursarás en {{ uiRules.trimester }}.
                 Solo puedes elegir <strong>una sección por materia</strong>.
             </p>
         </div>

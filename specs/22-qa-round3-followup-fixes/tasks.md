@@ -1,0 +1,6 @@
+# Tasks — QA Round 3 Follow-up Fixes (feature 22)
+
+- [x] Task 1 — `EnrollmentController::buildRules()`: condicionar `$periodLabel` explícitamente por `$period->type` (Semester usa el nombre real del período; Year mantiene la resolución del Lapse vigente, sin el fallback hardcodeado "Xer trimestre"). `enrollment/Index.vue`: reemplazar el copy hardcodeado "este trimestre" (línea ~152) por el label ya resuelto en `uiRules.trimester`
+- [x] Task 2 — Crear `App\Http\Resources\Settings\ProfileUserResource` (id, name, email, email_verified_at); `ProfileController::edit()` pasa `user` como prop explícita vía ese Resource; `resources/js/pages/settings/Profile.vue` recibe `user` con `defineProps` en vez de `usePage().props.auth.user`
+- [x] Task 3 — Confirmar el punto exacto en el flujo de seeders donde `DemoSectionsSeeder` asigna horarios a cada profesor; ajustar `weekly_hour_limit` de los profesores demo cuya carga real sembrada supere su límite actual, con margen razonable. Verificar antes de tocar nada que `demo-seeder-realism` (status `in_progress` en `feature_list.json`) no tiene trabajo en curso sobre los mismos archivos
+- [x] Task 4 — QA Gate: tester en modo `feature-gate` verifica los 4 UCs de `specs/22-qa-round3-followup-fixes/qa.md` en verde

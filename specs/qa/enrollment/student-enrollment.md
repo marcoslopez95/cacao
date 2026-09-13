@@ -68,7 +68,8 @@ El flujo de inscripción vive en un único prefijo `/enrollment/*`, compartido e
 
 ## UCs de presentación del período (label)
 
-- **UC-E22** — [RESUELTO — ver **HLZ-43**, feature `16-enrollment-level-guard-and-period-fix`] El encabezado de `/enrollment` muestra el nombre real del `Lapse` vigente (por fecha) cuando el período resuelto es de tipo `Year`, en vez de `"{academic_year}er trimestre"` hardcodeado. **Precondición:** estudiante `secondary`/`primary`, período `Year` activo con ≥1 `Lapse` cuyo rango de fechas cubre la fecha actual. **Test Dusk:** `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-05` — PASS. Nota de implementación del test: `.enr-page-eyebrow` tiene `text-transform: uppercase` en CSS — la aserción Dusk compara contra el texto ya transformado por el navegador (`mb_strtoupper($lapse->name)`), no contra el string crudo de DB.
+- **UC-E22** — [RESUELTO — ver **HLZ-43**, feature `16-enrollment-level-guard-and-period-fix`] El encabezado de `/enrollment` muestra el nombre real del `Lapse` vigente (por fecha) cuando el período resuelto es de tipo `Year`, en vez de `"{academic_year}er trimestre"` hardcodeado. **Precondición:** estudiante `secondary`/`primary`, período `Year` activo con ≥1 `Lapse` cuyo rango de fechas cubre la fecha actual. **Test Dusk:** `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-05` — PASS. Nota de implementación del test: `.enr-page-eyebrow` tiene `text-transform: uppercase` en CSS — la aserción Dusk compara contra el texto ya transformado por el navegador (`mb_strtoupper($lapse->name)`), no contra el string crudo de DB. **Regresión reverificada 2026-09-13** — ver UC-E23 (feature `22-qa-round3-followup-fixes`, HLZ-43 ampliación) vía representante (`.../QaRound3PeriodLabelTest.php` UC-QA-02) — PASS, sin regresión.
+- **UC-E23** — [RESUELTO — ver **HLZ-43 (ampliación)**, feature `22-qa-round3-followup-fixes`, 2026-09-13] `EnrollmentController::buildRules()` condicionaba `$periodLabel` solo por `$student->academic_year`, sin ninguna condición sobre `$period->type` — para período `Semester` (universitario) el label quedaba en `"Xer trimestre"` en vez del nombre real del período. Fix: `match ($period?->type)` — `Semester` usa `$period->name`; cualquier otro caso (incluido `Year`, luego pisado por la resolución del Lapse) mantiene el fallback anterior. El copy hardcodeado "este trimestre" en `enrollment/Index.vue` también se reemplazó por `{{ uiRules.trimester }}`. **Precondición:** estudiante `university`, período `Semester` activo. **Tests:** `tests/Feature/QaRound3FollowupFixes/Acceptance/EnrollmentPeriodLabelAcceptanceTest.php` (RF-01, backend); **Test Dusk:** `tests/Browser/Enrollment/QaRound3PeriodLabelTest.php::UC-QA-01` — PASS.
 
 ---
 
@@ -88,10 +89,13 @@ El flujo de inscripción vive en un único prefijo `/enrollment/*`, compartido e
 | UC-E07 | `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-02` | CTA oculto + 403 en visita directa a `/enrollment` para estudiante `secondary` |
 | UC-E02, UC-E02b, UC-E08 | `tests/Feature/EnrollmentLevelGuardAndPeriodFix/Acceptance/EnrollmentPeriodResolutionAcceptanceTest.php`, `EnrollmentSchoolCatalogAcceptanceTest.php`, `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-03` | Resolución de período por tipo/nivel + catálogo escolar vía pivote no vacío |
 | UC-E22 | `tests/Browser/Enrollment/EnrollmentLevelGuardAndPeriodFixTest.php::UC-QA-05` | Label de período muestra el Lapso real vigente |
+| UC-E22 (regresión) | `tests/Browser/Enrollment/QaRound3PeriodLabelTest.php::UC-QA-02` | Representante ve el Lapso real vigente para estudiante `secondary`, sin regresión tras el fix de HLZ-43 ampliación |
+| UC-E23 | `tests/Feature/QaRound3FollowupFixes/Acceptance/EnrollmentPeriodLabelAcceptanceTest.php`, `tests/Browser/Enrollment/QaRound3PeriodLabelTest.php::UC-QA-01` | Label de período Semestral muestra el nombre real del período, nunca "Xer trimestre" |
 
 ---
 
 ## Notas de implementación
 
 - `HLZ-43` y `HLZ-38` — **resueltos** en el feature `16-enrollment-level-guard-and-period-fix` (2026-08-30). Ver `specs/qa/backlog.md` para el detalle técnico completo y la verificación de cada uno.
+- `HLZ-43` (ampliación, label de período `Semester`) — **resuelto** en el feature `22-qa-round3-followup-fixes` (2026-09-13). Ver UC-E23 arriba.
 - `HLZ-40` (`specs/qa/guardian/dashboard.md`) sigue **pendiente** — UC-E09 quedó cubierto como caso defensivo (Policy deniega aunque el vínculo exista), pero el guard de origen del vínculo guardian↔estudiante universitario no se ha implementado todavía.
