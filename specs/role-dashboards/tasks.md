@@ -6,14 +6,14 @@
 
 ## Progreso general
 
-- [ ] Task 1 — Relación `Professor::sections()` + `Professor\DashboardController`
-- [ ] Task 2 — `Student\DashboardController`
-- [ ] Task 3 — `Guardian\DashboardController`
-- [ ] Task 4 — TypeScript types para los tres dashboards
-- [ ] Task 5 — `professor/Dashboard.vue`
-- [ ] Task 6 — `student/Dashboard.vue`
-- [ ] Task 7 — `guardian/Dashboard.vue`
-- [ ] Task 8 — Pest feature tests
+- [x] Task 1 — Relación `Professor::sections()` + `Professor\DashboardController`
+- [x] Task 2 — `Student\DashboardController`
+- [x] Task 3 — `Guardian\DashboardController`
+- [x] Task 4 — TypeScript types para los tres dashboards
+- [x] Task 5 — `professor/Dashboard.vue`
+- [x] Task 6 — `student/Dashboard.vue`
+- [x] Task 7 — `guardian/Dashboard.vue`
+- [x] Task 8 — Pest feature tests
 
 ---
 

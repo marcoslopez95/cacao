@@ -6,13 +6,13 @@
 
 ## Progreso general
 
-- [ ] Task 1 — Middleware `EnsureRole`
-- [ ] Task 2 — Trait `ResolvesLoginRedirect` + fix `LoginResponse` y `TwoFactorLoginResponse`
-- [ ] Task 3 — Rutas de portales por rol
-- [ ] Task 4 — Controladores de dashboard por rol
-- [ ] Task 5 — Feature tests de login multi-rol y acceso a portales
-- [ ] Task 6 — Páginas Vue de dashboard por rol
-- [ ] Task 7 — `AppSidebar.vue` — navegación contextual por rol
+- [x] Task 1 — Middleware `EnsureRole`
+- [x] Task 2 — Trait `ResolvesLoginRedirect` + fix `LoginResponse` y `TwoFactorLoginResponse`
+- [x] Task 3 — Rutas de portales por rol
+- [x] Task 4 — Controladores de dashboard por rol
+- [x] Task 5 — Feature tests de login multi-rol y acceso a portales
+- [x] Task 6 — Páginas Vue de dashboard por rol
+- [x] Task 7 — `AppSidebar.vue` — navegación contextual por rol
 
 ---
 
