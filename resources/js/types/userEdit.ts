@@ -307,6 +307,7 @@ export interface GuardianProfileData {
     occupation: string | null
     employer: string | null
     work_phone: string | null
+    work_phone_dial: string | null
     education_level_id: number | null
     marital_status_id: number | null
     created_at: string | null

@@ -1,5 +1,6 @@
 import { useHttp } from '@inertiajs/vue3'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
+import { trackActiveSection } from '@/composables/forms/userFormScrollSpy'
 import type { SectionStatus } from '@/composables/forms/useUserFormPage'
 import { upsert as upsertStaffProfile } from '@/routes/academic/professors/staff-profile'
 import { upsert as upsertGuardianProfile } from '@/routes/security/guardians/profile'
@@ -16,9 +17,11 @@ import { upsert as upsertDemographic } from '@/routes/security/users/demographic
 import { upsert as upsertHealth } from '@/routes/security/users/health-profile'
 import { update as updateIdentity } from '@/routes/security/users/identity'
 import type { UserEditProps } from '@/types/userEdit'
-import type { UserFormData } from '@/types/userForm'
+import type { AutosaveState, UserFormData } from '@/types/userForm'
 import { UF_SECTIONS, UF_TABS } from '@/types/userFormCatalogs'
 import type { RoleKey, TabDef } from '@/types/userFormCatalogs'
+
+const AUTOSAVE_DELAY_MS = 600
 
 export function useUserEditForm(props: UserEditProps) {
     const roleKey = (props.user.roles[0] ?? '') as RoleKey | ''
@@ -49,10 +52,34 @@ export function useUserEditForm(props: UserEditProps) {
         }
     })
 
-    const autosave = ref<{ status: 'idle' | 'saving' | 'saved' | 'error'; when: Date | null; message?: string }>({
-        status: 'idle',
-        when: null,
-    })
+    const autosave = ref<AutosaveState>({ status: 'idle', when: null })
+    let autosaveTimer: ReturnType<typeof setTimeout> | null = null
+
+    function clearAutosaveTimer(): void {
+        if (autosaveTimer) {
+            clearTimeout(autosaveTimer)
+            autosaveTimer = null
+        }
+    }
+
+    // Draft indicator (per spec: simulated). Any field change -> "Guardando…" -> "Guardado hace Xs".
+    // Persistence only happens through the explicit per-section save; skipped while one is in flight.
+    watch(
+        formData,
+        () => {
+            if (saving.value !== null) {
+                return
+            }
+
+            clearAutosaveTimer()
+            autosave.value = { status: 'saving', when: null }
+            autosaveTimer = setTimeout(() => {
+                autosave.value = { status: 'saved', when: new Date() }
+                autosaveTimer = null
+            }, AUTOSAVE_DELAY_MS)
+        },
+        { deep: true },
+    )
 
     // Single http instance; transform() overrides data per call
     const http = useHttp()
@@ -70,6 +97,7 @@ return 'complete'
     }
 
     async function saveSection(n: number): Promise<void> {
+        clearAutosaveTimer()
         saving.value = n
         errors.value[n] = {}
         autosave.value = { status: 'saving', when: null }
@@ -114,30 +142,9 @@ return 'complete'
     }
 
     function setupScrollSpy(sectionNums: number[]): () => void {
-        const els = sectionNums
-            .map(n => document.getElementById(`sec-${n}`))
-            .filter((el): el is HTMLElement => el !== null)
-
-        if (!els.length) {
-return () => {}
-}
-
-        const obs = new IntersectionObserver(
-            entries => {
-                const visible = entries
-                    .filter(e => e.isIntersecting)
-                    .sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top)
-
-                if (visible.length) {
-                    activeSection.value = parseInt(visible[0].target.id.replace('sec-', ''))
-                }
-            },
-            { rootMargin: '-30% 0px -50% 0px' },
-        )
-
-        els.forEach(el => obs.observe(el))
-
-        return () => obs.disconnect()
+        return trackActiveSection(sectionNums, n => {
+            activeSection.value = n
+        })
     }
 
     // ── Section save handlers ──────────────────────────────────────────────

@@ -4,7 +4,7 @@ import AppFormField from '@/components/UI/AppFormField.vue'
 import AppPasswordInput from '@/components/UI/AppPasswordInput.vue'
 import AppPasswordStrength from '@/components/UI/AppPasswordStrength.vue'
 import AppPillRadios from '@/components/UI/AppPillRadios.vue'
-import type { UserFormData } from '@/types/userForm'
+import type { PasswordMode, UserFormData } from '@/types/userForm'
 
 const props = defineProps<{
     data: UserFormData
@@ -21,6 +21,14 @@ const passwordModeOptions = [
     { key: 'random', label: 'Generar contraseña aleatoria' },
 ]
 
+const passwordModes: readonly string[] = passwordModeOptions.map(o => o.key)
+
+function onPasswordModeChange(mode: string): void {
+    if (passwordModes.includes(mode)) {
+        props.setField('passwordMode', mode as PasswordMode)
+    }
+}
+
 const currentPasswordMode = computed(() => props.data.passwordMode ?? 'link')
 </script>
 
@@ -30,7 +38,7 @@ const currentPasswordMode = computed(() => props.data.passwordMode ?? 'link')
             <AppPillRadios
                 :model-value="currentPasswordMode"
                 :options="passwordModeOptions"
-                @update:model-value="setField('passwordMode', $event)"
+                @update:model-value="onPasswordModeChange"
             />
         </AppFormField>
 

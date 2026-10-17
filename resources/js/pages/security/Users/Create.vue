@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3'
-import { router } from '@inertiajs/vue3'
-import { computed, reactive, ref } from 'vue'
+import { Head, router, useForm } from '@inertiajs/vue3'
+import { computed } from 'vue'
+import UserFormFooter from '@/components/security/UserForm/UserFormFooter.vue'
+import UserFormHeader from '@/components/security/UserForm/UserFormHeader.vue'
 import UserFormRolePicker from '@/components/security/UserForm/UserFormRolePicker.vue'
 import UserFormS01Identity from '@/components/security/UserForm/UserFormS01Identity.vue'
 import UserFormS02Credentials from '@/components/security/UserForm/UserFormS02Credentials.vue'
 import UserFormSection from '@/components/security/UserForm/UserFormSection.vue'
-import { store } from '@/routes/security/users'
-import { index } from '@/routes/security/users'
-import type { UserFormData } from '@/types/userForm'
-import { UF_ROLES } from '@/types/userFormCatalogs'
-import type { RoleKey } from '@/types/userFormCatalogs'
+import { useUserFormPage } from '@/composables/forms/useUserFormPage'
+import { store, index } from '@/routes/security/users'
 
 defineOptions({
     layout: {
@@ -22,31 +20,31 @@ defineOptions({
     },
 })
 
-const activeRole = ref<RoleKey | ''>('')
-const localData  = reactive<UserFormData>({})
+/** Sections collected on creation; the rest of the profile is completed from the edit page. */
+const CREATE_SECTIONS = [1, 2] as const
 
-function setField<K extends keyof UserFormData>(key: K, value: UserFormData[K]): void {
-    ;(localData as Record<string, unknown>)[key as string] = value
-}
+const { activeRole, formData, completion, autosave, pickRole, resetRole, setField } = useUserFormPage({
+    sections: CREATE_SECTIONS,
+})
 
 const form = useForm(() => ({
-    first_name:    localData.firstName    ?? '',
-    last_name:     localData.lastName     ?? '',
-    email:         localData.email        ?? '',
+    first_name:    formData.firstName    ?? '',
+    last_name:     formData.lastName     ?? '',
+    email:         formData.email        ?? '',
     role:          activeRole.value,
-    password_mode: localData.passwordMode ?? 'link',
-    password:      localData.passwordMode === 'manual' ? (localData.password ?? '') : undefined,
-    document_type_id:    localData.docTypeId      ?? undefined,
-    doc_number:          localData.docNumber      ?? undefined,
-    phone1:              localData.phone1         ?? undefined,
-    phone1_country_code: localData.phone1Dial     ?? undefined,
-    gender_id:           localData.genderId       ?? undefined,
-    nationality_id:      localData.nationalityId  ?? undefined,
-    birth_date:          localData.birthDate      ?? undefined,
+    password_mode: formData.passwordMode ?? 'link',
+    password:      formData.passwordMode === 'manual' ? (formData.password ?? '') : undefined,
+    document_type_id:    formData.docTypeId      ?? undefined,
+    doc_number:          formData.docNumber      ?? undefined,
+    phone1:              formData.phone1         ?? undefined,
+    phone1_country_code: formData.phone1Dial     ?? undefined,
+    gender_id:           formData.genderId       ?? undefined,
+    nationality_id:      formData.nationalityId  ?? undefined,
+    birth_date:          formData.birthDate      ?? undefined,
 }))
 
-const canSubmit = computed(
-    () => !!localData.firstName && !!localData.lastName && !!localData.email && !!activeRole.value,
+const hasRequiredFields = computed(
+    () => !!formData.firstName && !!formData.lastName && !!formData.email && !!activeRole.value,
 )
 
 function submit(): void {
@@ -58,23 +56,16 @@ function submit(): void {
     <Head title="Nuevo usuario" />
 
     <div class="up-content">
-        <UserFormRolePicker v-if="!activeRole" @pick="k => (activeRole = k)" />
+        <UserFormRolePicker v-if="!activeRole" @pick="pickRole" />
 
         <template v-else>
-            <div class="uf-create-header">
-                <div class="uf-create-header-top">
-                    <h1 class="uf-create-title">
-                        Nuevo usuario
-                        <span class="uf-mode-tag">{{ UF_ROLES[activeRole].label }}</span>
-                    </h1>
-                    <button type="button" class="uf-btn ghost sm" @click="activeRole = ''">
-                        Cambiar rol
-                    </button>
-                </div>
-                <p class="uf-create-sub">
-                    Completá los datos básicos. Podrás agregar el perfil completo en el siguiente paso.
-                </p>
-            </div>
+            <UserFormHeader
+                :role="activeRole"
+                :completion="completion"
+                :autosave="autosave"
+                description="Completá los datos básicos. Podrás agregar el perfil completo en el siguiente paso."
+                @change-role="resetRole"
+            />
 
             <div class="uf-sections uf-sections--create">
                 <UserFormSection
@@ -87,7 +78,7 @@ function submit(): void {
                     @enter-edit="() => {}"
                     @cancel="() => {}"
                 >
-                    <UserFormS01Identity :data="localData" :set-field="setField" />
+                    <UserFormS01Identity :data="formData" :set-field="setField" />
                 </UserFormSection>
 
                 <UserFormSection
@@ -100,7 +91,7 @@ function submit(): void {
                     @enter-edit="() => {}"
                     @cancel="() => {}"
                 >
-                    <UserFormS02Credentials :data="localData" :set-field="setField" />
+                    <UserFormS02Credentials :data="formData" :set-field="setField" />
                 </UserFormSection>
             </div>
 
@@ -108,19 +99,16 @@ function submit(): void {
                 <p v-for="(msg, field) in form.errors" :key="field" class="uf-error">{{ msg }}</p>
             </div>
 
-            <div class="uf-create-footer">
-                <button type="button" class="uf-btn ghost" @click="router.visit(index().url)">
-                    Cancelar
-                </button>
-                <button
-                    type="button"
-                    class="uf-btn primary"
-                    :disabled="!canSubmit || form.processing"
-                    @click="submit"
-                >
-                    {{ form.processing ? 'Creando usuario…' : 'Crear usuario →' }}
-                </button>
-            </div>
+            <UserFormFooter
+                :completion="completion"
+                :total-sections="CREATE_SECTIONS.length"
+                :autosave="autosave"
+                :can-submit-extra="hasRequiredFields"
+                :processing="form.processing"
+                :show-save-draft="false"
+                @discard="router.visit(index().url)"
+                @submit="submit"
+            />
         </template>
     </div>
 </template>

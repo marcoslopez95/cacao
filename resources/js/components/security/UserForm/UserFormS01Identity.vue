@@ -88,7 +88,7 @@ const fullName = computed(() =>
                     :type-id="data.docTypeId ?? null"
                     :number="data.docNumber ?? ''"
                     :catalog="catalogData.documentTypes"
-                    @update:type-id="setField('docTypeId', $event)"
+                    @update:type-id="setField('docTypeId', $event ?? undefined)"
                     @update:number="setField('docNumber', $event)"
                 />
             </AppFormField>
@@ -108,7 +108,7 @@ const fullName = computed(() =>
                     dusk="gender-select"
                     class="uf-select"
                     :value="data.genderId ?? null"
-                    @change="setField('genderId', Number(($event.target as HTMLSelectElement).value) || null)"
+                    @change="setField('genderId', Number(($event.target as HTMLSelectElement).value) || undefined)"
                 >
                     <option :value="null">Seleccionar</option>
                     <option v-for="g in catalogData.genders" :key="g.id" :value="g.id">{{ g.name }}</option>
@@ -120,7 +120,7 @@ const fullName = computed(() =>
                     dusk="nationality-select"
                     class="uf-select"
                     :value="data.nationalityId ?? null"
-                    @change="setField('nationalityId', Number(($event.target as HTMLSelectElement).value) || null)"
+                    @change="setField('nationalityId', Number(($event.target as HTMLSelectElement).value) || undefined)"
                 >
                     <option :value="null">Seleccionar</option>
                     <option v-for="c in catalogData.nationalities" :key="c.id" :value="c.id">{{ c.name }}</option>

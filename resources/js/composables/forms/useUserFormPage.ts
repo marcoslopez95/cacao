@@ -1,10 +1,10 @@
 import { computed, reactive, ref, watch } from 'vue'
-import type { UserFormData } from '@/types/userForm'
+import { trackActiveSection } from '@/composables/forms/userFormScrollSpy'
+import type { AutosaveState, UserFormData } from '@/types/userForm'
 import type { RoleKey, TabDef } from '@/types/userFormCatalogs'
 import { UF_SECTIONS, UF_TABS } from '@/types/userFormCatalogs'
 
 export type SectionStatus = 'empty' | 'partial' | 'complete' | 'editing'
-type AutosaveStatus = 'idle' | 'saving' | 'saved'
 
 export interface CompletionResult {
     pct: number
@@ -12,16 +12,20 @@ export interface CompletionResult {
     sectionsPartial: Set<number>
 }
 
-function computeCompletion(data: UserFormData, role: RoleKey | ''): CompletionResult {
+function computeCompletion(
+    data: UserFormData,
+    role: RoleKey | '',
+    renderedSections?: readonly number[],
+): CompletionResult {
     if (!role) {
 return { pct: 0, sectionsComplete: new Set(), sectionsPartial: new Set() }
 }
 
     const checks: Record<number, string[] | (() => boolean)> = {
-        1:  ['firstName', 'lastName', 'docNumber', 'birthDate', 'nationality', 'phone1'],
+        1:  ['firstName', 'lastName', 'docNumber', 'birthDate', 'nationalityId', 'phone1'],
         2:  ['email'],
         3:  () => (data.addresses?.length ?? 0) > 0
-                    && !!data.addresses?.[0]?.country
+                    && !!data.addresses?.[0]?.country_id
                     && !!data.addresses?.[0]?.line1,
         4:  ['birthCity', 'birthCountry'],
         5:  ['emergencyName', 'emergencyPhone', 'emergencyRel', 'bloodType'],
@@ -40,7 +44,9 @@ return { pct: 0, sectionsComplete: new Set(), sectionsPartial: new Set() }
     }
 
     const tabs: TabDef[] = UF_TABS[role] ?? []
-    const sectionsToCheck = tabs.flatMap(t => t.sections)
+    const sectionsToCheck = tabs
+        .flatMap(t => t.sections)
+        .filter(sec => !renderedSections || renderedSections.includes(sec))
     let done = 0
     let total = 0
     const sectionsComplete = new Set<number>()
@@ -88,17 +94,19 @@ continue
     }
 }
 
-export function useUserFormPage() {
+export interface UserFormPageOptions {
+    /** Sections the page actually renders; completion is computed over these only. Defaults to every section of the role. */
+    sections?: readonly number[]
+}
+
+export function useUserFormPage(options: UserFormPageOptions = {}) {
     const activeRole      = ref<RoleKey | ''>('')
     const activeTab       = ref<string>('')
     const activeSection   = ref<number | null>(null)
     const formData        = reactive<UserFormData>({})
     const savedSections   = ref<Set<number>>(new Set())
     const editingSections = ref<Set<number>>(new Set())
-    const autosave        = ref<{ status: AutosaveStatus; when: Date | null }>({
-        status: 'idle',
-        when: null,
-    })
+    const autosave        = ref<AutosaveState>({ status: 'idle', when: null })
     let autosaveTimer: ReturnType<typeof setTimeout> | null = null
 
     const tabs = computed<TabDef[]>(() => UF_TABS[activeRole.value as RoleKey] ?? [])
@@ -108,7 +116,7 @@ export function useUserFormPage() {
     )
 
     const completion = computed<CompletionResult>(
-        () => computeCompletion(formData, activeRole.value),
+        () => computeCompletion(formData, activeRole.value, options.sections),
     )
 
     function pickRole(key: RoleKey): void {
@@ -161,34 +169,9 @@ return 'partial'
     }
 
     function setupScrollSpy(sectionNums: number[]): () => void {
-        const els = sectionNums
-            .map(n => document.getElementById(`sec-${n}`))
-            .filter((el): el is HTMLElement => el !== null)
-
-        if (!els.length) {
-return () => {}
-}
-
-        const obs = new IntersectionObserver(
-            entries => {
-                const visible = entries
-                    .filter(e => e.isIntersecting)
-                    .sort(
-                        (a, b) =>
-                            a.target.getBoundingClientRect().top -
-                            b.target.getBoundingClientRect().top,
-                    )
-
-                if (visible.length) {
-                    activeSection.value = parseInt(visible[0].target.id.replace('sec-', ''))
-                }
-            },
-            { rootMargin: '-30% 0px -50% 0px' },
-        )
-
-        els.forEach(el => obs.observe(el))
-
-        return () => obs.disconnect()
+        return trackActiveSection(sectionNums, n => {
+            activeSection.value = n
+        })
     }
 
     function setField<K extends keyof UserFormData>(key: K, value: UserFormData[K]): void {

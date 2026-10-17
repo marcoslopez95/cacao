@@ -484,21 +484,23 @@ body {
   z-index: 30;
 }
 
-/* Topbar hamburger (mobile only, hidden on desktop via `lg:hidden`) */
-.topbar-menu-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  color: var(--text-secondary);
-  cursor: pointer;
-  flex-shrink: 0;
+/* Topbar hamburger (mobile only, hidden on desktop via `lg:hidden`; kept in @layer components so utilities win) */
+@layer components {
+  .topbar-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .topbar-menu-btn:hover { background: var(--bg-surface-2); color: var(--text-primary); }
 }
-.topbar-menu-btn:hover { background: var(--bg-surface-2); color: var(--text-primary); }
 
 /* Sidebar brand area */
 .sidebar-brand {

@@ -2,6 +2,16 @@
 // CACAO · User form data interfaces
 // ============================================================
 
+export type PasswordMode = 'link' | 'manual' | 'random'
+
+export type AutosaveStatus = 'idle' | 'saving' | 'saved' | 'error'
+
+export interface AutosaveState {
+    status: AutosaveStatus
+    when: Date | null
+    message?: string
+}
+
 export interface AddressItem {
     __id: number
     country_id?: number
@@ -66,7 +76,7 @@ export interface UserFormData {
     // S2 — Credenciales de acceso
     email?: string
     password?: string
-    passwordMode?: 'link' | 'manual' | 'random'
+    passwordMode?: PasswordMode
 
     // S3 — Dirección (repetible)
     addresses?: AddressItem[]
