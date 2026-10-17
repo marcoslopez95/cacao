@@ -138,5 +138,12 @@
     "status": "completed",
     "current_task": 10,
     "plan": "specs/20-attendance-scheduling-and-recovery/tasks.md"
+  },
+  {
+    "id": "23-user-form-hlz-fixes",
+    "name": "HLZ-50..54 — Formulario de usuario: hamburger desktop, types, scroll spy, autosave, Create con Header/Footer",
+    "status": "completed",
+    "current_task": 6,
+    "plan": "specs/23-user-form-hlz-fixes/tasks.md"
   }
 ]

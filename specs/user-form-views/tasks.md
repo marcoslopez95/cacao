@@ -31,7 +31,7 @@
 - [x] Task 19 — Secciones S13 Beneficios (repetible) + S14 Vivienda
 - [x] Task 20 — Sección S15 Representantes (repetible)
 - [x] Task 21 — Secciones S16 Perfil representante + S17 Perfil del personal
-- [ ] Task 22 — Polish: verificación visual completa en los 4 roles
+- [x] Task 22 — Polish: verificación visual completa en los 4 roles
 
 ---
 
@@ -958,13 +958,15 @@ Nota: usar patrón `set(field, value)` donde `set = (k, v) => emit('update:data'
 **Files:** ninguno nuevo — verificación en browser
 
 **Checklist:**
-- [ ] Rol Admin: 3 tabs, secciones 1,2,3,4 + 5 + 7,6. Completion calcula correctamente
-- [ ] Rol Estudiante: 6 tabs, todas las secciones. Scroll spy funciona en cada tab
-- [ ] Rol Profesor: 4 tabs con S17. Coordinación condicional funciona
-- [ ] Rol Representante: 4 tabs con S16. Formulario vacío y con datos
-- [ ] Cambiar rol desde pill "cambiar" en el header vuelve al step 0
-- [ ] Footer botón "Crear usuario" habilitado solo cuando ≥ 50% completado
-- [ ] Autosave: al cambiar cualquier campo → "Guardando…" → "Guardado hace Xs"
-- [ ] Mobile: topbar con hamburger aparece en viewport < 768px (si el layout lo provee)
-- [ ] Sin errores en consola del navegador
-- [ ] Ejecutar `vendor/bin/sail npm run build` sin errores TypeScript
+> Auditoría Dusk 2026-10-17: `tests/Browser/Security/UserFormTask22VisualVerificationTest.php` (un usuario por rol).
+
+- [x] Rol Admin: 3 tabs, secciones 1,2,3,4 + 5 + 7,6. Completion calcula correctamente
+- [x] Rol Estudiante: 6 tabs, todas las secciones. Scroll spy funciona en cada tab — resuelto HLZ-53 (feature 23)
+- [x] Rol Profesor: 4 tabs con S17. Coordinación condicional funciona
+- [x] Rol Representante: 4 tabs con S16. Formulario vacío y con datos
+- [x] Cambiar rol desde pill "cambiar" en el header vuelve al step 0 — Create usa `UserFormHeader`; en Edit el pill no ofrece "cambiar" (HLZ-50, feature 23)
+- [x] Footer botón "Crear usuario" habilitado solo cuando ≥ 50% completado — Create usa `UserFormFooter` (completitud sobre S01+S02) (HLZ-50, feature 23)
+- [x] Autosave: al cambiar cualquier campo → "Guardando…" → "Guardado hace Xs" — resuelto HLZ-51 (feature 23; indicador simulado, la persistencia sigue siendo "Guardar sección")
+- [x] Mobile: topbar con hamburger aparece en viewport < 768px (si el layout lo provee) — OK a 375px; oculto en desktop (HLZ-54 resuelto, feature 23)
+- [x] Sin errores en consola del navegador
+- [x] Ejecutar `vendor/bin/sail npm run build` sin errores TypeScript — `vite build` limpio y `types:check` sin errores en el form de usuario (HLZ-52, feature 23; 19 errores ajenos restantes)

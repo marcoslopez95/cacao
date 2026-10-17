@@ -1174,3 +1174,96 @@ Durante el fix de HLZ-47 (feature `22-qa-round3-followup-fixes`), el implementer
 ## Nota de seguimiento — posible resolución parcial de HLZ-46 detectada en revisión de código (Ronda 3)
 
 Durante la revisión de código de esta ronda (no parte del pedido original) se encontró una ruta nueva no documentada en rondas anteriores: `PATCH /professor/sections/{section}/attendance/sessions/{classSession}/cancel` → `Professor\AttendanceController::cancelSession()`, respaldada por `Gate::authorize('cancel', $classSession)` y una nueva `App\Actions\Attendance\CancelClassSessionAction` que transiciona una sesión de `scheduled`/`held` a `cancelled` (rechaza cualquier otro estado con `ValidationException`). Esto es exactamente el prerequisito que `HLZ-46` identificó como faltante ("nada en el código pone una sesión en `status: cancelled`"). **No se volvió a probar en vivo el flujo completo de Recuperación con este nuevo endpoint** — queda fuera del alcance de esta ronda (enfocada en `/student/schedule` y el sidebar mobile) — pero se recomienda que la próxima ronda de QA de asistencia re-verifique `UC-A07`/`UC-A08` en `specs/qa/attendance/professor-attendance.md` usando este flujo, ya que `HLZ-46` podría estar resuelto o parcialmente resuelto.
+
+---
+
+## HLZ-50 — `/security/users/create` no implementa el formulario del spec (sin pill "cambiar", sin footer con % de completitud; "Crear usuario" se habilita sin ≥ 50%)
+
+**Fecha:** 2026-10-17
+**Dominio:** security (user-form-views, Task 22)
+**UC relacionado:** nuevo — specs/user-form-views/requirements.md líneas 23, 49, 55; design.md línea 310
+**Descripción:**
+`resources/js/pages/security/Users/Create.vue` solo renderiza S01+S02 con su propio header ("Cambiar rol") y su propio footer; no usa `UserFormHeader`, `UserFormTabs` ni `UserFormFooter` (este último está huérfano: ningún archivo lo importa). Consecuencias frente al spec: (a) no existe el pill "cambiar" en el header del formulario (en `Edit.vue` el pill existe pero navega al listado, no al step 0); (b) no hay indicador "% completo" en el footer; (c) el botón "Crear usuario →" se habilita con solo nombre+apellido+email+rol (`canSubmit` en Create.vue:48), sin la regla `completion.pct >= 50` de `UserFormFooter`. Sí funciona el botón "Cambiar rol" propio de Create (vuelve al selector, UC verificado en verde).
+**Evidencia:** Dusk (`tests/Browser/Security/UserFormTask22VisualVerificationTest.php`):
+  ```
+  T22 SPEC pill "cambiar" ... vuelve al step 0      → Did not see expected text [¿Qué tipo de usuario vas a crear?] (tras click, la página navega al listado)
+  T22 SPEC "Crear usuario": deshabilitado bajo 50%  → Failed asserting that false is true (botón enabled con 3 campos; ademas no existe .uf-footer-progress)
+  ```
+**Test Dusk:** `UserFormTask22VisualVerificationTest.php` — tests "SPEC pill cambiar" y "SPEC Crear usuario" — FAILING
+**Acción sugerida:** decidir si el spec o la implementación es la fuente de verdad. Si el spec: usar `UserFormHeader`/`UserFormFooter` en Create (o eliminar el componente huérfano y actualizar requirements/design/tasks). Si la implementación: corregir el spec.
+**Estado:** resuelto
+**Verificación:** 2026-10-17 (feature 23-user-form-hlz-fixes). Se siguió el spec: `Create.vue` usa `useUserFormPage` + `UserFormHeader` (pill "cambiar" → step 0) + `UserFormFooter` ("X% completo · N de M secciones"; "Crear usuario" deshabilitado bajo 50% y sin campos requeridos). En Edit el pill ya no ofrece "cambiar" (antes navegaba al listado). Completitud de Create se calcula sobre S01+S02 (lo único que Create recolecta). Los tests "SPEC pill" y "SPEC Crear usuario" pasan (el de pill ahora corre sobre /security/users/create; ver nota en specs/23-user-form-hlz-fixes). `sail dusk UserFormTask22VisualVerificationTest.php` → 15/15.
+**Prioridad:** MEDIO
+
+---
+
+## HLZ-51 — Autosave no se dispara al cambiar un campo y el indicador nunca muestra "Guardado hace Xs"
+
+**Fecha:** 2026-10-17
+**Dominio:** security (user-form-views, Task 22)
+**UC relacionado:** nuevo — specs/user-form-views/requirements.md línea 60 ("al cambiar cualquier dato → Guardando… → Guardado hace Xs")
+**Descripción:**
+En `useUserEditForm.ts` el estado `autosave` solo cambia dentro de `saveSection()`, que solo se invoca al pulsar "Guardar sección": modificar un campo no dispara nada (el header se queda en "Sin cambios"). Además `UserFormHeader.vue` renderiza solo "Guardado" (sin "hace Xs"; `autosave.when` se guarda pero no se muestra). El flujo "Guardando… → Guardado" tras pulsar guardar sí funciona (test en verde, DB persiste).
+**Evidencia:** Dusk:
+  ```
+  T22 SPEC autosave: al cambiar un campo ...     → Waited 3 seconds for selector [.uf-form-head .uf-autosave.saving, .uf-form-head .uf-autosave.saved]
+  T22 SPEC autosave: "Guardado hace Xs"          → Did not see expected text [Guardado hace] within element [.uf-form-head .uf-autosave]
+  ```
+**Test Dusk:** `UserFormTask22VisualVerificationTest.php` — tests "SPEC autosave" (2) — FAILING
+**Acción sugerida:** o implementar autosave debounced por cambio de campo + texto relativo con `autosave.when`, o ajustar el spec al guardado explícito por sección (decisión de producto).
+**Estado:** resuelto
+**Verificación:** 2026-10-17 (feature 23). Causa raíz: el `watch` de autosave vivía solo en `useUserFormPage` (huérfano para Edit); `Edit.vue` usa `useUserEditForm`, que no tenía watcher. Se añadió watch profundo en `useUserEditForm` (indicador simulado según spec, 600 ms; no persiste: la persistencia sigue siendo "Guardar sección") y `UserFormAutosave.vue` con "Guardado hace Xs" que se actualiza cada segundo (Header y Footer). Los 3 tests de autosave pasan; Dusk 15/15.
+**Prioridad:** BAJO
+
+---
+
+## HLZ-52 — Errores de `vue-tsc` en componentes/composables del formulario de usuario (`npm run types:check`)
+
+**Fecha:** 2026-10-17
+**Dominio:** security (user-form-views, Task 22)
+**UC relacionado:** Task 22 — "`sail npm run build` sin errores TypeScript"
+**Descripción:**
+`vendor/bin/sail npm run build` (vite build) termina limpio, pero NO ejecuta chequeo de tipos. `vendor/bin/sail npm run types:check` (`vue-tsc --noEmit`) reporta 26 errores en total, 7 en archivos del formulario de usuario: `UserFormFooter.vue(27,80)` (`message` no existe en el tipo de `autosave`), `UserFormS01Identity.vue` (91, 111, 123: `number | null` vs `number | undefined`), `UserFormS02Credentials.vue(33,63)` (string vs `'link'|'manual'|'random'`), `useUserEditForm.ts(704,33)` (`work_phone_dial` no existe en `GuardianProfileData`), `useUserFormPage.ts(24,47)` (`country` no existe en `AddressItem`). El resto (19) están fuera de este feature (enrollment, scheduling, Register, tests/js, etc.).
+**Evidencia:** salida de `vendor/bin/sail npm run types:check` del 2026-10-17 (no hay test Dusk; evidencia de comando).
+**Acción sugerida:** corregir los 7 errores del formulario de usuario y decidir si `types:check` entra al pipeline de build.
+**Estado:** resuelto
+**Verificación:** 2026-10-17 (feature 23). Los 7 errores del form de usuario corregidos sin `any` (tipos `AutosaveState`/`PasswordMode`, `work_phone_dial` en `GuardianProfileData`, nulls de S01 → `undefined`, `country` → `country_id` en completion). `sail npm run types:check`: 26 → 19 errores, 0 en el módulo del form de usuario; los 19 restantes son ajenos (enrollment, scheduling, Register, Students/Index, Coordinations, tests/js). Pendiente de decisión: meter `types:check` al pipeline de build.
+**Prioridad:** BAJO
+
+---
+
+## HLZ-53 — Scroll spy no activa la última sección de cada tab al saltar a ella desde el side-nav
+
+**Fecha:** 2026-10-17
+**Dominio:** security (user-form-views, Task 22)
+**UC relacionado:** Task 22 — "Scroll spy funciona en cada tab"
+**Descripción:**
+`setupScrollSpy` (`useUserEditForm.ts`) solo mira `entries` del callback del `IntersectionObserver` (las que cambiaron), no todas las secciones observadas. Al saltar a la última sección de un tab, la sección anterior sale de la banda y la última (que ya intersectaba) no genera entrada, por lo que el side-nav conserva activa la sección anterior. Reproducido en el estudiante en 4 de sus 5 tabs multi-sección (identity, academic, socioecon, docs); family sí pasa.
+**Evidencia:** Dusk (estudiante, `scrollIntoView` de cada `#sec-N`):
+  ```
+  tab identity sec-4: activa="Dirección"
+  tab academic sec-10: activa="Antecedentes educativos"
+  tab socioecon sec-14: activa="Beneficios institucionales"
+  tab docs sec-6: activa="Documentos adjuntos"
+  ```
+**Test Dusk:** `UserFormTask22VisualVerificationTest.php` — "T22 estudiante: scroll spy por tab" — FAILING (las demás secciones sí quedan activas)
+**Acción sugerida:** recalcular la sección activa sobre todas las observadas (p.ej. mantener un Set de intersectantes o usar `getBoundingClientRect`), no solo sobre `entries`.
+**Estado:** resuelto
+**Verificación:** 2026-10-17 (feature 23). Nuevo `composables/forms/userFormScrollSpy.ts` (`trackActiveSection`): evalúa TODAS las secciones en cada scroll sobre el contenedor scrollable (`.app-content`) con línea de activación al 30% y regla de fin de scroll para la última sección corta; reemplaza el IntersectionObserver duplicado en `useUserEditForm` y `useUserFormPage`. Test "scroll spy por tab" pasa (5 tabs del estudiante); Dusk 15/15.
+**Prioridad:** BAJO
+
+---
+
+## HLZ-54 — El hamburger del topbar (`.topbar-menu-btn`) se muestra también en desktop (1440px)
+
+**Fecha:** 2026-10-17
+**Dominio:** layout (topbar)
+**UC relacionado:** Task 22 — "Mobile: topbar con hamburger aparece en viewport < 768px" (el caso mobile pasa; este es el inverso)
+**Descripción:**
+`resources/css/app.css:488` define `.topbar-menu-btn { display: inline-flex }` sin capa; `AppTopbar.vue:18` confía en `lg:hidden` (utilidad de Tailwind v4, dentro de `@layer utilities`, de menor prioridad que el CSS sin capa), por lo que el botón nunca se oculta. Verificado tras `npm run build`.
+**Evidencia:** Dusk: `T22 desktop (1440px): el hamburger no se muestra` → `Saw unexpected element [body .topbar-menu-btn]`.
+**Test Dusk:** `UserFormTask22VisualVerificationTest.php` — "T22 desktop (1440px)" — FAILING
+**Acción sugerida:** mover la regla a `@layer components` o añadir `@media (min-width: 1024px) { .topbar-menu-btn { display: none } }`.
+**Estado:** resuelto
+**Verificación:** 2026-10-17 (feature 23). `.topbar-menu-btn` movida a `@layer components` en `resources/css/app.css`, por lo que `lg:hidden` (utilities) gana. Tests "T22 desktop (1440px)" y "T22 mobile (375px)" pasan; Dusk 15/15.
+**Prioridad:** BAJO

@@ -1,3 +1,12 @@
+# Feature completada: 23-user-form-hlz-fixes (2026-10-17)
+
+**Estado:** COMPLETADA — 6/6 tasks.
+**Plan:** `specs/23-user-form-hlz-fixes/tasks.md`
+
+Resuelve HLZ-50..54 (Task 22 de user-form-views). RED: 6 tests de `UserFormTask22VisualVerificationTest.php`.
+
+---
+
 # Feature completada: 22-qa-round3-followup-fixes (2026-09-13)
 
 **Estado:** COMPLETADA — 4/4 tasks completadas.
