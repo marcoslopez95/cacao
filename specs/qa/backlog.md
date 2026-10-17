@@ -1165,8 +1165,9 @@ Durante el fix de HLZ-47 (feature `22-qa-round3-followup-fixes`), el implementer
 2. Si se confirma: aplicar el mismo fix que HLZ-47 (`:default-value` → `:value` en el input `#team-name`)
 3. Agregar un test Dusk/Feature que confirme el prefill, para que este patrón no vuelva a colarse sin cobertura en otros formularios del proyecto
 
-**Estado:** pendiente
-**Prioridad:** MEDIA (mismo síntoma que HLZ-47 — Nombre de equipo no persiste visualmente al recargar — pero afecta un flujo de menor uso que el perfil personal; no confirmado en vivo todavía)
+**Estado:** resuelto
+**Verificación:** causa confirmada con Dusk (RED): `/settings/teams/{slug}` renderizaba `[data-test="team-name-input"]` con valor vacío. Fix: `:default-value` → `:value` en `resources/js/pages/teams/Edit.vue:111` (único uso restante en `resources/js`). Test creado: `tests/Browser/Teams/TeamEditPrefillTest.php` (1/1 en verde tras el fix). `tests/Feature/Teams` (33/33) sin regresión; `npm run build` sin errores.
+**Prioridad:** MEDIA (mismo síntoma que HLZ-47 — Nombre de equipo no persiste visualmente al recargar — pero afecta un flujo de menor uso que el perfil personal; confirmado en vivo con Dusk)
 
 ---
 

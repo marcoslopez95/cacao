@@ -108,7 +108,7 @@ const confirmCancelInvitation = (invitation: TeamInvitation) => {
                         id="team-name"
                         name="name"
                         data-test="team-name-input"
-                        :default-value="team.name"
+                        :value="team.name"
                         required
                         class="input"
                     />
